@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PointOfSales</string>
+    <string name="login_error_message">Incorrect sredentials</string>
+    <string name="login_success_message">Login success</string>
+</resources>
