@@ -19,7 +19,7 @@ public class SubCategoryAsync extends AsyncTask<ButtonsModel, Void, List<Buttons
         List<ButtonsModel> buttonsModelList = new ArrayList<>();
         String[]images = {"", ""};
         for (int i = 0; i < 20; i++) {
-            buttonsModelList.add(new ButtonsModel("Product" + i, ""));
+            buttonsModelList.add(new ButtonsModel("Product" + i, "", i));
         }
         return buttonsModelList;
     }

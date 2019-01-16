@@ -41,7 +41,7 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
-
+        ((ButtonsViewHolder)holder).name.setText(buttonsModelList.get(i).getName());
     }
 
 

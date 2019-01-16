@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,16 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.custom.ImageLoader;
+import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
 public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<RoomTableModel> roomTableModelList;
-    public RoomsTablesAdapter(List<RoomTableModel> roomTableModelList) {
+    private SelectionContract selectionContract;
+    public RoomsTablesAdapter(List<RoomTableModel> roomTableModelList, SelectionContract selectionContract) {
         this.roomTableModelList = roomTableModelList;
+        this.selectionContract = selectionContract;
     }
 
     @NonNull
@@ -33,11 +37,13 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView name;
         private TextView price;
         private ImageView imageUrl;
+        private CardView rootView;
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             price = itemView.findViewById(R.id.price);
             imageUrl = itemView.findViewById(R.id.image);
+            rootView = itemView.findViewById(R.id.rootView);
         }
     }
 
@@ -45,7 +51,12 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
         final RoomTableModel productsModel = roomTableModelList.get(i);
-
+        ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectionContract.listClicked(productsModel.getName());
+            }
+        });
         ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
         ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
 //        ((CategoryViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {

@@ -29,20 +29,28 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     static class ProductsViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
+        private TextView quantity;
         private TextView price;
-        private ImageView imageUrl;
+
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
+            quantity = itemView.findViewById(R.id.quantity);
             price = itemView.findViewById(R.id.price);
-            imageUrl = itemView.findViewById(R.id.image);
         }
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
+        ProductsModel productsModel = productsModelList.get(i);
+        if(holder instanceof CheckoutAdapter.ProductsViewHolder){
 
+            ((ProductsViewHolder)holder).name.setText(productsModel.getShortName());
+            ((ProductsViewHolder)holder).quantity.setText(String.valueOf(productsModel.getPrice()));
+            ((ProductsViewHolder)holder).price.setText(productsModel.getPrice() + (productsModel.isVattable() ?" V" : " N"));
+
+        }
     }
 
 

@@ -6,28 +6,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
+import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
 
-public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, List<ProductsModel>> {
-    private AsyncContract asyncContract;
-    public CheckoutItemsAsync(AsyncContract asyncContract) {
-        this.asyncContract = asyncContract;
+public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsModel> {
+    private CheckoutItemsContract checkoutItemsContract;
+    private ProductsModel selectedProduct;
+    private List<ProductsModel> productList;
+    public CheckoutItemsAsync(CheckoutItemsContract checkoutItemsContract, List<ProductsModel> productsList ,ProductsModel selectedProduct) {
+        this.checkoutItemsContract = checkoutItemsContract;
+        this.selectedProduct = selectedProduct;
+        this.productList = productsList;
     }
 
     @Override
-    protected List<ProductsModel> doInBackground(ProductsModel... productsModels) {
-        List<ProductsModel> productsModelList = new ArrayList<>();
-        String[]images = {"", ""};
-        for (int i = 0; i < 20; i++) {
-            productsModelList.add(new ProductsModel("Product" + i, 100.00, 12.00, true, images));
-        }
-        return productsModelList;
+    protected ProductsModel doInBackground(ProductsModel... productsModels) {
+
+        productList.add(selectedProduct);
+        return selectedProduct;
     }
 
     @Override
-    protected void onPostExecute(List<ProductsModel> productsModels) {
-        this.asyncContract.doneLoading(productsModels, "checkout");
-        super.onPostExecute(productsModels);
+    protected void onPostExecute(ProductsModel productsModel) {
+        this.checkoutItemsContract.itemAdded(productsModel);
+        super.onPostExecute(productsModel);
     }
 
     @Override

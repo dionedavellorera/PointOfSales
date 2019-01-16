@@ -19,11 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
+import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
+    private SelectionContract centralInterface;
 
     private LeftFrameFragment preLoginLeftFrameFragment;
     private RightFrameFragment preLoginRightFrameFragment;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         initializeFragments();
 
         decideViewToShow();
+
+
+
+
     }
 
     private void initializeViews() {
@@ -62,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         preLoginLeftFrameFragment = LeftFrameFragment.newInstance();
         preLoginRightFrameFragment = RightFrameFragment.newInstance(this);
 
-        postLoginLeftFrameFragment = nerdvana.com.pointofsales.postlogin.LeftFrameFragment.newInstance();
-        postLoginRightFrameFragment = nerdvana.com.pointofsales.postlogin.RightFrameFragment.newInstance();
+        postLoginLeftFrameFragment = nerdvana.com.pointofsales.postlogin.LeftFrameFragment.newInstance(centralInterface);
+        postLoginRightFrameFragment = nerdvana.com.pointofsales.postlogin.RightFrameFragment.newInstance(centralInterface);
     }
 
     private void decideViewToShow() {
@@ -130,13 +138,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void showListMenu(View anchor) {
-
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("title", "this is my title");
         map.put("icon", R.drawable.ic_launcher_background);
         data.add(map);
-
-
 
         ListPopupWindow popupWindow = new ListPopupWindow(this);
 
@@ -154,4 +159,5 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        popupWindow.setOnItemClickListener(myListener); // the callback for when a list item is selected
         popupWindow.show();
     }
+
 }

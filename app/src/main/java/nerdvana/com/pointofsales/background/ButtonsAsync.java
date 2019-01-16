@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.background;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
@@ -19,9 +21,16 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
     protected List<ButtonsModel> doInBackground(ButtonsModel... buttonsModels) {
         List<ButtonsModel> buttonsModelList = new ArrayList<>();
         String[]images = {"", ""};
-        for (int i = 0; i < 10; i++) {
-            buttonsModelList.add(new ButtonsModel("Product" + i, ""));
-        }
+        buttonsModelList.add(new ButtonsModel("SAVE", "",1));
+        buttonsModelList.add(new ButtonsModel("VOID", "",2));
+        buttonsModelList.add(new ButtonsModel("PAY", "",3));
+
+        Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
+            @Override
+            public int compare(ButtonsModel o1, ButtonsModel o2) {
+                return String.valueOf(o1.getPosition()).compareTo(String.valueOf(o2.getPosition()));
+            }
+        });
         return buttonsModelList;
     }
 

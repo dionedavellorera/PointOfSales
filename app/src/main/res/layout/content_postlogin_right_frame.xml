@@ -9,7 +9,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:focusable="true"
     android:layout_marginBottom="40dp"
-    android:id="@+id/rightFrameConstraint">
+    android:id="@+id/rightFrameConstraint"
+    android:background="#cbc375">
 
     <android.support.v7.widget.SearchView
         app:iconifiedByDefault="false"
@@ -19,33 +20,19 @@
         app:queryHint="Search product here"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/rightGuide"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <android.support.v7.widget.RecyclerView
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="@id/rightGuide"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search"
         android:layout_margin="3dp"
         android:id="@+id/listProducts"
         android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        app:layout_constraintRight_toRightOf="parent"/>
 
-    <android.support.constraint.Guideline
-        android:id="@+id/rightGuide"
-        app:layout_constraintGuide_percent="0.8"
-        android:orientation="vertical"
-        android:layout_width="1dp"
-        android:layout_height="match_parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/listDepartments"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/rightGuide"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"/>
 
 
 </android.support.constraint.ConstraintLayout>
