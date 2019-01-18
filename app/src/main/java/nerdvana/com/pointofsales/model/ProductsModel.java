@@ -10,8 +10,10 @@ public class ProductsModel {
     private boolean isAvailable;
     private String[] imageUrls;
     private boolean isVattable;
+    private boolean isSerialNumberRequired;
     private List<ProductsModel> productsList;
 
+    private boolean isSelected;
     public ProductsModel(String name, double price,
                          double vat, boolean isAvailable,
                          String[] imageUrls, boolean isVattable,
@@ -24,6 +26,30 @@ public class ProductsModel {
         this.isVattable = isVattable;
         this.shortName = shortName;
         this.productsList = productsList;
+    }
+
+    public ProductsModel(String name, double price,
+                         double vat, boolean isAvailable,
+                         String[] imageUrls, boolean isVattable,
+                         String shortName, List<ProductsModel> productsList,
+                         boolean isSelected) {
+        this.name = name;
+        this.price = price;
+        this.vat = vat;
+        this.isAvailable = isAvailable;
+        this.imageUrls = imageUrls;
+        this.isVattable = isVattable;
+        this.shortName = shortName;
+        this.productsList = productsList;
+        this.isSelected = isSelected;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 
     public List<ProductsModel> getProductsList() {

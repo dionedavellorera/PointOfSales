@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -120,7 +121,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void setProductAdapter() {
 
-        checkoutAdapter = new CheckoutAdapter(selectedProductsList);
+        checkoutAdapter = new CheckoutAdapter(selectedProductsList, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -234,13 +235,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void productsClicked(ProductsModel productsModel) {
         if (noItems.getVisibility() == View.VISIBLE) noItems.setVisibility(View.GONE);
+        productsModel.setSelected(false);
         new CheckoutItemsAsync(this, selectedProductsList , productsModel).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void itemAdded(ProductsModel itemAdded) {
         checkoutAdapter.notifyDataSetChanged();
-//        checkoutAdapter.notifyItemInserted(selectedProductsList.size() - 1);
 
         listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
         computeTotal(itemAdded);
@@ -254,5 +255,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Override
     public void itemRemoved(ProductsModel item) {
 
+    }
+
+    @Override
+    public void itemSelected(ProductsModel itemSelected, int position) {
+        selectedProductsList.get(position).setSelected(itemSelected.isSelected() ? false : true);
+//        itemSelected.setSelected(itemSelected.isSelected() ? false : true);
+        checkoutAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void itemLongClicked(ProductsModel itemSelected, int position, View view) {
+        PopupMenu popupMenu = new PopupMenu(getActivity(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_checkout_item, popupMenu.getMenu());
+        popupMenu.show();
     }
 }
