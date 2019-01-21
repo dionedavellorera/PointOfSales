@@ -10,7 +10,10 @@ public class ProductsModel {
     private boolean isAvailable;
     private String[] imageUrls;
     private boolean isVattable;
+
     private boolean isSerialNumberRequired;
+    private int lowStackCount;
+
     private List<ProductsModel> productsList;
 
     private boolean isSelected;

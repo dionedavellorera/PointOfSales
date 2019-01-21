@@ -21,9 +21,9 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
     protected List<ButtonsModel> doInBackground(ButtonsModel... buttonsModels) {
         List<ButtonsModel> buttonsModelList = new ArrayList<>();
         String[]images = {"", ""};
-        buttonsModelList.add(new ButtonsModel("SAVE", "",1));
-        buttonsModelList.add(new ButtonsModel("VOID", "",2));
-        buttonsModelList.add(new ButtonsModel("PAY", "",3));
+        buttonsModelList.add(new ButtonsModel(100,"SAVE", "",1));
+        buttonsModelList.add(new ButtonsModel(101,"VOID", "",2));
+        buttonsModelList.add(new ButtonsModel(102,"PAY", "",3));
 
         Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
             @Override

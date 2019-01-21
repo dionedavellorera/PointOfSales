@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +12,16 @@ import android.widget.TextView;
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 
 public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ButtonsModel> buttonsModelList;
-    public ButtonsAdapter(List<ButtonsModel> buttonsModelList) {
+    private ButtonsContract buttonsContract;
+    public ButtonsAdapter(List<ButtonsModel> buttonsModelList, ButtonsContract buttonsContract) {
         this.buttonsModelList = buttonsModelList;
+        this.buttonsContract = buttonsContract;
     }
 
     @NonNull
@@ -31,16 +35,24 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class ButtonsViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private ImageView imageUrl;
+        private CardView rootView;
         public ButtonsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             imageUrl = itemView.findViewById(R.id.image);
+            rootView = itemView.findViewById(R.id.rootView);
         }
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
+        ((ButtonsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonsContract.clicked(buttonsModelList.get(i));
+            }
+        });
         ((ButtonsViewHolder)holder).name.setText(buttonsModelList.get(i).getName());
     }
 

@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.postlogin.adapter;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+
         return new CheckoutAdapter.ProductsViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_checkout_items, viewGroup, false));
     }
 
@@ -43,37 +45,44 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             quantity = itemView.findViewById(R.id.quantity);
             price = itemView.findViewById(R.id.price);
             rootView = itemView.findViewById(R.id.rootView);
+
         }
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
-        final ProductsModel productsModel = productsModelList.get(i);
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
+        final ProductsModel productsModel = productsModelList.get(holder.getAdapterPosition());
 
         if(holder instanceof CheckoutAdapter.ProductsViewHolder){
+
             ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    checkoutItemsContract.itemSelected(productsModel, i);
+                    checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
+                    notifyItemChanged(i);
                 }
             });
 
             ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    checkoutItemsContract.itemLongClicked(productsModel, i, v);
+                    checkoutItemsContract.itemLongClicked(productsModel, holder.getAdapterPosition(), v);
                     return false;
                 }
             });
-
+            Log.d("VIEWPOSITION", String.valueOf(holder.getAdapterPosition()));
             ((ProductsViewHolder)holder).name.setText(productsModel.getShortName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(productsModel.getPrice()));
             ((ProductsViewHolder)holder).price.setText(productsModel.getPrice() + (productsModel.isVattable() ?" V" : " N"));
-
-            if (productsModel.isSelected()) {
+            Log.d("TESTESTTEST", String.valueOf(productsModelList.get(holder.getAdapterPosition()).isSelected()));
+            if (productsModelList.get(holder.getAdapterPosition()).isSelected()) {
+                Log.d("TESTTEST", "ISSELECTED TRUE");
+//                ((ProductsViewHolder) holder).rootView.setSelected(true);
                 ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.colorAccent);
             } else {
+                Log.d("TESTTEST", "ISSELECTED FALSE");
+//                ((ProductsViewHolder) holder).rootView.setSelected(false);
                 ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.colorWhite);
             }
         }

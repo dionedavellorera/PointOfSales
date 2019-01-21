@@ -258,7 +258,6 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
             case "products":
                 productsList = list;
                 originalProductsList =  new ArrayList<>(list);
-                Log.d("TEKTEK11", String.valueOf(originalProductsList.size()));
                 productsAdapter.addItems(list);
 
                 break;
@@ -287,6 +286,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @Override
     public void listClicked(String input) {
+
         BusProvider.getInstance().post(new FragmentNotifierModel(input));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
@@ -308,12 +308,6 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                 }
                 beforeChangeProductList = new ArrayList<>(productsList);
                 repopulateList(tempProduct.getProductsList());
-//                List<ProductsModel> tempProduct2 = tempProduct.getProductsList();
-//                productsList.clear();
-//                for (ProductsModel productsModel : tempProduct2) {
-//                    productsList.add(new ProductsModel(productsModel.getName(), productsModel.getPrice(), productsModel.getVat(), productsModel.isAvailable(), productsModel.getImageUrls(), productsModel.isVattable(), productsModel.getShortName(), productsModel.getProductsList()))
-//                }
-//                productsList = tempProduct2;
                 productsAdapter.notifyDataSetChanged();
             } else {
                 BusProvider.getInstance().post(productsList.get(position));

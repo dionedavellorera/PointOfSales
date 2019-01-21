@@ -7,7 +7,7 @@
     android:layout_margin="3dp"
     android:id="@+id/rootView">
     <RelativeLayout
-        android:background="#696969"
+        android:background="@drawable/itembg"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView

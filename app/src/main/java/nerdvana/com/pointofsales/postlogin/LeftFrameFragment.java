@@ -34,6 +34,7 @@ import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.background.SubCategoryAsync;
 import nerdvana.com.pointofsales.custom.BusProvider;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
+import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
@@ -44,7 +45,7 @@ import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
-public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract {
+public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract, ButtonsContract {
     private View view;
 
     private double amountToPay = 0;
@@ -132,7 +133,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void setButtonsAdapter() {
-        buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>());
+        buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>(), this);
         listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
         listButtons.setAdapter(buttonsAdapter);
         new ButtonsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -142,7 +143,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         categoryAdapter = new CategoryAdapter(new ArrayList<ButtonsModel>());
         listCategory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listCategory.setAdapter(categoryAdapter);
-        new CategoryAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        new CategoryAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
 
@@ -150,7 +151,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         subCategoryAdapter = new CategoryAdapter(new ArrayList<ButtonsModel>());
         listSubCategory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         listSubCategory.setAdapter(subCategoryAdapter);
-        new SubCategoryAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        new SubCategoryAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 
@@ -241,8 +242,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Override
     public void itemAdded(ProductsModel itemAdded) {
-        checkoutAdapter.notifyDataSetChanged();
-
+        checkoutAdapter.notifyItemInserted(selectedProductsList.size() - 1);
+//        checkoutAdapter.notifyDataSetChanged();
         listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
         computeTotal(itemAdded);
     }
@@ -259,8 +260,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Override
     public void itemSelected(ProductsModel itemSelected, int position) {
-        selectedProductsList.get(position).setSelected(itemSelected.isSelected() ? false : true);
-//        itemSelected.setSelected(itemSelected.isSelected() ? false : true);
+        itemSelected.setSelected(itemSelected.isSelected() ? false : true);
         checkoutAdapter.notifyItemChanged(position);
     }
 
@@ -269,5 +269,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_checkout_item, popupMenu.getMenu());
         popupMenu.show();
+    }
+
+    @Override
+    public void clicked(ButtonsModel buttonsModel) {
+        switch (buttonsModel.getId()) {
+            case 100: //SAVE TRANSACTION:
+//                selectedProductsList;
+                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
+                break;
+            case 101: //VOID
+                break;
+            case 102: //PAYMENT
+                break;
+        }
     }
 }
