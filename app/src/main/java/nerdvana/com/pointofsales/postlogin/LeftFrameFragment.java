@@ -242,8 +242,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Override
     public void itemAdded(ProductsModel itemAdded) {
-        checkoutAdapter.notifyItemInserted(selectedProductsList.size() - 1);
-//        checkoutAdapter.notifyDataSetChanged();
+//        checkoutAdapter.notifyItemInserted(selectedProductsList.size() - 1);
+        checkoutAdapter.notifyDataSetChanged();
         listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
         computeTotal(itemAdded);
     }

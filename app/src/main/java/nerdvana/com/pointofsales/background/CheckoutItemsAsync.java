@@ -21,15 +21,26 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
 
     @Override
     protected ProductsModel doInBackground(ProductsModel... productsModels) {
+//        String name, double price,
+//        double vat, boolean isAvailable,
+//        String[] imageUrls, boolean isVattable,
+//        String shortName, List<ProductsModel> productsList
 
-        productList.add(selectedProduct);
+        productList.add(new ProductsModel(
+                selectedProduct.getName(), selectedProduct.getPrice(),
+                selectedProduct.getVat(), selectedProduct.isAvailable(),
+                selectedProduct.getImageUrls(), selectedProduct.isVattable(),
+                selectedProduct.getShortName(), selectedProduct.getProductsList()
+        ));
         return selectedProduct;
     }
 
     @Override
     protected void onPostExecute(ProductsModel productsModel) {
-        this.checkoutItemsContract.itemAdded(productsModel);
+
         super.onPostExecute(productsModel);
+
+        this.checkoutItemsContract.itemAdded(productsModel);
     }
 
     @Override
