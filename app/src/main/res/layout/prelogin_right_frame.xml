@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/darkgrey"
+    >
 
     <TextView
         android:id="@+id/loginLabel"
@@ -18,7 +20,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
         android:id="@+id/username"
@@ -33,6 +35,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/loginLabel" />
+
 
     <EditText
         android:id="@+id/password"
@@ -62,5 +65,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/password"
+        android:background="@drawable/buttonstyle"/>
+
+
+    <!--<android.support.design.widget.TextInputLayout-->
+        <!--android:id="@+id/unamedesign"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_marginEnd="15dp"-->
+        <!--android:layout_marginStart="15dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--app:layout_constraintEnd_toStartOf="@+id/loginLabel"-->
+        <!--app:layout_constraintHorizontal_bias="0.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/proceed">-->
+
+        <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:id="@+id/usernames"-->
+            <!--android:layout_width="265dp"-->
+            <!--android:layout_height="51dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:background="@drawable/textboxstyle"-->
+            <!--android:drawableLeft="@drawable/icon_user"-->
+            <!--android:hint="USERNAME"-->
+            <!--android:inputType="textAutoComplete">-->
+
+        <!--</android.support.design.widget.TextInputLayout>-->
+
+    <!--</android.support.design.widget.TextInputLayout>-->
+
 </android.support.constraint.ConstraintLayout>

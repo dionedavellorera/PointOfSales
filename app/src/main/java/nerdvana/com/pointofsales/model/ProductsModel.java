@@ -13,29 +13,20 @@ public class ProductsModel {
 
     private boolean isSerialNumberRequired;
     private int lowStackCount;
+    private int productStatus;
 
     private List<ProductsModel> productsList;
 
     private boolean isSelected;
-    public ProductsModel(String name, double price,
-                         double vat, boolean isAvailable,
-                         String[] imageUrls, boolean isVattable,
-                         String shortName, List<ProductsModel> productsList) {
-        this.name = name;
-        this.price = price;
-        this.vat = vat;
-        this.isAvailable = isAvailable;
-        this.imageUrls = imageUrls;
-        this.isVattable = isVattable;
-        this.shortName = shortName;
-        this.productsList = productsList;
-    }
+
+
 
     public ProductsModel(String name, double price,
                          double vat, boolean isAvailable,
                          String[] imageUrls, boolean isVattable,
                          String shortName, List<ProductsModel> productsList,
-                         boolean isSelected) {
+                         boolean isSelected, boolean isSerialNumberRequired,
+                         int lowStackCount, int productStatus) {
         this.name = name;
         this.price = price;
         this.vat = vat;
@@ -45,6 +36,9 @@ public class ProductsModel {
         this.shortName = shortName;
         this.productsList = productsList;
         this.isSelected = isSelected;
+        this.isSerialNumberRequired = isSerialNumberRequired;
+        this.lowStackCount = lowStackCount;
+        this.productStatus = productStatus;
     }
 
     public boolean isSelected() {
@@ -85,5 +79,21 @@ public class ProductsModel {
 
     public String[] getImageUrls() {
         return imageUrls;
+    }
+
+    public boolean isSerialNumberRequired() {
+        return isSerialNumberRequired;
+    }
+
+    public int getLowStackCount() {
+        return lowStackCount;
+    }
+
+    public int getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(int productStatus) {
+        this.productStatus = productStatus;
     }
 }

@@ -30,7 +30,9 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
                 selectedProduct.getName(), selectedProduct.getPrice(),
                 selectedProduct.getVat(), selectedProduct.isAvailable(),
                 selectedProduct.getImageUrls(), selectedProduct.isVattable(),
-                selectedProduct.getShortName(), selectedProduct.getProductsList()
+                selectedProduct.getShortName(), selectedProduct.getProductsList(),
+                selectedProduct.isSelected(), selectedProduct.isSerialNumberRequired(),
+                selectedProduct.getLowStackCount(), selectedProduct.getProductStatus()
         ));
         return selectedProduct;
     }

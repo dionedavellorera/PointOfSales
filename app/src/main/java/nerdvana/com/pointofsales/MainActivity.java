@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales;
 
+
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+
 
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
@@ -42,8 +45,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 
 
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
@@ -53,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         initializeFragments();
 
         decideViewToShow();
-
+//
 
 
 
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         preLoginRightFrameFragment = RightFrameFragment.newInstance(this);
 
         postLoginLeftFrameFragment = nerdvana.com.pointofsales.postlogin.LeftFrameFragment.newInstance(centralInterface);
-        postLoginRightFrameFragment = nerdvana.com.pointofsales.postlogin.RightFrameFragment.newInstance(centralInterface);
+        postLoginRightFrameFragment = nerdvana.com.pointofsales.postlogin.RightFrameFragment.newInstance();
     }
 
     private void decideViewToShow() {
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             if (userModel.isLoggedIn()) { //post login
                 logout.setVisibility(View.VISIBLE);
                 user.setVisibility(View.VISIBLE);
-                user.setText(String.format("%s %s", "Welcome, Have a good day", userModel.getUsername()));
+                user.setText(String.format("%s %s", getResources().getString(R.string.welcome_text), userModel.getUsername()));
                 openFragment(R.id.leftFrame, postLoginLeftFrameFragment);
 
                 openFragment(R.id.rightFrame, postLoginRightFrameFragment);
@@ -160,4 +164,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         popupWindow.show();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferenceManager.saveString(this, "", ApplicationConstants.SELECTED_ROOM_TABLE);
+    }
 }

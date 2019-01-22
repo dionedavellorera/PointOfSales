@@ -1,15 +1,19 @@
 package nerdvana.com.pointofsales.postlogin;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +29,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.background.ButtonsAsync;
@@ -33,6 +38,7 @@ import nerdvana.com.pointofsales.background.CheckoutItemsAsync;
 import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.background.SubCategoryAsync;
 import nerdvana.com.pointofsales.custom.BusProvider;
+import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
@@ -65,6 +71,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private CategoryAdapter categoryAdapter;
     private CategoryAdapter subCategoryAdapter;
 
+    private ConstraintLayout rootView;
+
     private UserModel userModel;
     private boolean isValid = false;
 
@@ -92,6 +100,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         noItems = view.findViewById(R.id.notItems);
         header = view.findViewById(R.id.header);
 
+        rootView = view.findViewById(R.id.rootView);
         selectedProductsList = new ArrayList<>();
     }
 
@@ -128,6 +137,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         linearLayoutManager.setStackFromEnd(true);
         listCheckoutItems.setLayoutManager(linearLayoutManager);
         listCheckoutItems.setAdapter(checkoutAdapter);
+        enableSwipeToDeleteAndUndo();
+
 //        new CheckoutItemsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //        checkoutAdapter.addItems(productsModelList);
     }
@@ -237,6 +248,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void productsClicked(ProductsModel productsModel) {
         if (noItems.getVisibility() == View.VISIBLE) noItems.setVisibility(View.GONE);
         productsModel.setSelected(false);
+//        productsModel.setProductStatus(ProductConstants.VOID);
         new CheckoutItemsAsync(this, selectedProductsList , productsModel).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -283,5 +295,48 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 102: //PAYMENT
                 break;
         }
+    }
+
+    private void enableSwipeToDeleteAndUndo() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getContext()) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+
+//                final int position = viewHolder.getAdapterPosition();
+//                final String item = mAdapter.getData().get(position);
+//                mAdapter.removeItem(position);
+                final ProductsModel itemToRestore = selectedProductsList.get(viewHolder.getAdapterPosition());
+                selectedProductsList.remove(viewHolder.getAdapterPosition());
+                checkoutAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
+
+                Snackbar snackbar = Snackbar
+                        .make(rootView, "Item was removed from the list.", Snackbar.LENGTH_LONG);
+                snackbar.setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new CheckoutItemsAsync(LeftFrameFragment.this, selectedProductsList , itemToRestore).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                        mAdapter.restoreItem(item, position);
+//                        recyclerView.scrollToPosition(position);
+                    }
+                });
+
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+
+            }
+
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                if (selectedProductsList.get(viewHolder.getAdapterPosition()).getProductStatus() != ProductConstants.PENDING) {
+                    return 0;
+                }
+                return super.getMovementFlags(recyclerView, viewHolder);
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(listCheckoutItems);
     }
 }

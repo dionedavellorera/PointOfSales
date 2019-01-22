@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.postlogin;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,12 +60,11 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private DepartmentsAdapter departmentsAdapter;
     private List<ProductsModel> productsList;
     private List<ProductsModel> originalProductsList;
-    private List<ProductsModel> beforeChangeProductList;
     private List<BreadcrumbModel> categoryClickedArray;
 
     private TextView breadcrumb;
     private String breadcrumbString = "";
-    public static RightFrameFragment newInstance(SelectionContract selectionContract) {
+    public static RightFrameFragment newInstance() {
 
         RightFrameFragment rightFrameFragment = new RightFrameFragment();
         return rightFrameFragment;
@@ -73,16 +74,15 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.postlogin_right_frame, container, false);
-        productsList = new ArrayList<>();
-        originalProductsList = new ArrayList<>();
-        categoryClickedArray = new ArrayList<>();
-        beforeChangeProductList = new ArrayList<>();
+
+        initializeArrays();
+
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.userSettings), UserModel.class);
+
         if (userModel != null) {
             isValid = true;
         }
 
-        ListPopupWindow listPopupWindow = new ListPopupWindow(getContext());
 
         initializeViews(view);
 
@@ -92,13 +92,17 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
         setRoomsTableAdapter();
 
-//        setDepartmentAdapter();
-
         return view;
     }
 
+    private void initializeArrays() {
+        productsList = new ArrayList<>();
+        originalProductsList = new ArrayList<>();
+        categoryClickedArray = new ArrayList<>();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private void initializeViews(View view) {
-//        listDepartments = view.findViewById(R.id.listDepartments);
         breadcrumb = view.findViewById(R.id.breadcrumb);
         listProducts = view.findViewById(R.id.listProducts);
         listTableRoomSelection = view.findViewById(R.id.listTableRoomSelection);
@@ -107,51 +111,27 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         bottomSheetHeader = view.findViewById(R.id.bottomSheetHeader);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         rightFrameConstraint = view.findViewById(R.id.rightFrameConstraint);
-        breadcrumb.setText("Home");
+        breadcrumb.setText(getResources().getString(R.string.home_text));
 
         breadcrumb.setOnTouchListener(new DrawableClickListener.LeftDrawableClickListener(breadcrumb) {
             @Override
             public boolean onDrawableClick() {
-                breadcrumb.setText("Home");
+                breadcrumb.setText(getResources().getString(R.string.home_text));
                 breadcrumbString = "";
                 categoryClickedArray.clear();
                 productsList.clear();
-//                productsList = new ArrayList<>(originalProductsList);
 
                 for (ProductsModel productsModel : originalProductsList) {
-                    productsList.add(new ProductsModel(productsModel.getName(), productsModel.getPrice(), productsModel.getVat(), productsModel.isAvailable(), productsModel.getImageUrls(), productsModel.isVattable(), productsModel.getShortName(), productsModel.getProductsList()));
+                    productsList.add(
+                            new ProductsModel(
+                                    productsModel.getName(), productsModel.getPrice(),
+                                    productsModel.getVat(), productsModel.isAvailable(),
+                                    productsModel.getImageUrls(), productsModel.isVattable(),
+                                    productsModel.getShortName(), productsModel.getProductsList(),
+                                    productsModel.isSelected(), productsModel.isSerialNumberRequired(),
+                                    productsModel.getLowStackCount(), productsModel.getProductStatus()));
                 }
                 productsAdapter.notifyDataSetChanged();
-
-//                if (categoryClickedArray.size() > 0) {
-//
-//
-////                    if (categoryClickedArray.size() < 1) {
-////                        breadcrumbString += String.format("%s %s", "", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-////                        breadcrumb.setText(breadcrumbString);
-////                    } else {
-////                        breadcrumbString += String.format(" %s %s", ">>", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-////                        breadcrumb.setText(breadcrumbString);
-////                    }
-//                    Toast.makeText(getContext(), "should repopulate list", Toast.LENGTH_SHORT).show();
-////                    beforeChangeProductList = new ArrayList<>(productsList);
-//                    Log.d("HHH", String.valueOf(categoryClickedArray.get(categoryClickedArray.size() - 1).getProdList().size()));
-//                    repopulateList(categoryClickedArray.get(categoryClickedArray.size() - 1).getProdList());
-////                    List<ProductsModel> tempProduct2 = categoryClickedArray.get(categoryClickedArray.size() - 1).getProdList().getProductsList();
-////                    productsList.clear();
-////                    productsList = tempProduct2;
-//                    productsAdapter.notifyDataSetChanged();
-//
-//                    categoryClickedArray.remove(categoryClickedArray.size() - 1);
-//                } else {
-//                    Log.d("TEKTEK", String.valueOf(originalProductsList.size()));
-////                    repopulateList(originalProductsList);
-////                    List<ProductsModel> tempProduct2 = originalProductsList;
-////                    beforeChangeProductList = new ArrayList<>(productsList);
-//                    productsList.clear();
-//                    productsList = originalProductsList;
-//                    productsAdapter.notifyDataSetChanged();
-//                }
 
                 return true;
             }
@@ -162,29 +142,22 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
             public void onStateChanged(@NonNull View view, int i) {
                 switch (i) {
                     case BottomSheetBehavior.STATE_DRAGGING: {
-//                        Log.d("BOTTOMSHEET", "DRAGGING");
                         break;
                     }
                     case BottomSheetBehavior.STATE_SETTLING: {
-//                        Log.d("BOTTOMSHEET", "SETTLING");
                         break;
                     }
                     case BottomSheetBehavior.STATE_EXPANDED: {
-//                        Log.d("BOTTOMSHEET", "EXPANDED");
-//                        setRoomsTableAdapter();
                         new RoomsTablesAsync(RightFrameFragment.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        bottomSheetHeader.setText("Slide down to close");
-
+                        bottomSheetHeader.setText(getResources().getString(R.string.pulldown_text));
                         break;
                     }
                     case BottomSheetBehavior.STATE_COLLAPSED: {
-//                        Log.d("BOTTOMSHEET", "COLLAPSED");
                         showAppropriateView();
                         hasCollapsed = true;
                         break;
                     }
                     case BottomSheetBehavior.STATE_HIDDEN: {
-//                        Log.d("BOTTOMSHEET", "HIDDEN");
                         break;
                     }
                 }
@@ -200,24 +173,24 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
             @Override
             public void onClick(View v) {
                 if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    pullUpBottomSheet();
                 } else {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    pullDownBottomSheet();
                 }
             }
         });
-
-
     }
 
     private void showAppropriateView() {
+        //is valid determines userModel is not null
+        //decide what view to show depending on system type
         if (isValid) {
             switch (userModel.getSystemType().toLowerCase()) {
                 case "room":
-                    setView("room");
+                    setView(getResources().getString(R.string.room_text));
                     break;
                 case "table":
-                    setView("table");
+                    setView(getResources().getString(R.string.table_text));
                     break;
                 case "checkout":
 //                    setView("Not Available");
@@ -235,17 +208,17 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     private void setView(String title) {
-        bottomSheetHeader.setText(String.format("%s %s", "Swipe up to view", title));
+        bottomSheetHeader.setText(String.format("%s %s", getResources().getString(R.string.pullup_text), title));
     }
 
     private void setProductAdapter() {
+        //set products adapter with 5 columns (grid layout)
         productsAdapter = new ProductsAdapter(productsList, this);
-
-//        GridLayoutManagerOverScroll gridLayoutManager = new GridLayoutManagerOverScroll(getContext(), 5, this);
         listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
         listProducts.setAdapter(productsAdapter);
         productsAdapter.notifyDataSetChanged();
 
+        //asynchronously add products to the list
         new ProductsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -253,13 +226,12 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @Override
     public void doneLoading(List list, String isFor) {
-
+        //notifier that an async job is done
         switch (isFor) {
             case "products":
                 productsList = list;
                 originalProductsList =  new ArrayList<>(list);
                 productsAdapter.addItems(list);
-
                 break;
             case "roomstables":
                 roomsTablesAdapter.addItems(list);
@@ -276,66 +248,63 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
     }
 
-    private void setDepartmentAdapter() {
-//        departmentsAdapter = new DepartmentsAdapter(new ArrayList<DepartmentsModel>());
-//        listDepartments.setLayoutManager(new LinearLayoutManager(getContext()));
-//        listDepartments.setAdapter(departmentsAdapter);
-//        new DepartmentsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-
     @Override
     public void listClicked(String input) {
-
+        //notifies leftfragment that an area is clicked and updates the ui
+        //closes the bottom sheet immediately after selecting
+        saveSelectedSpace(input);
         BusProvider.getInstance().post(new FragmentNotifierModel(input));
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
     public void productClicked(int position) {
-        if (categoryClickedArray.size() > 0) {
-            ProductsModel tempProduct = productsList.get(position);
-            if (tempProduct.getProductsList().size() != 0) {
-
-                categoryClickedArray.add(new BreadcrumbModel(tempProduct.getName(), position, new ArrayList<ProductsModel>(productsList)));
-
-                if (categoryClickedArray.size() < 1) {
-                    breadcrumbString += String.format("%s %s", "", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-                    breadcrumb.setText(breadcrumbString);
-                } else {
-                    breadcrumbString += String.format(" %s %s", "»", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-                    breadcrumb.setText(breadcrumbString);
-                }
-                beforeChangeProductList = new ArrayList<>(productsList);
-                repopulateList(tempProduct.getProductsList());
-                productsAdapter.notifyDataSetChanged();
-            } else {
-                BusProvider.getInstance().post(productsList.get(position));
-                Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
-            }
+        //checks if system is hotel / dine in and verifies if there is a selected area to put order
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE)) &&
+                (userModel.getSystemType().equals("room") || userModel.getSystemType().equals("table"))) {
+            Toast.makeText(getContext(), getResources().getString(R.string.error_no_space_selected), Toast.LENGTH_SHORT).show();
+            pullUpBottomSheet();
         } else {
-            if (productsList.get(position).getProductsList().size() != 0) {
+            //checkout/proceed to order
+            //conditions are for breadcrumb purposes, dynamic product listing (unlimited categories)
+            if (categoryClickedArray.size() > 0) {
+                ProductsModel tempProduct = productsList.get(position);
+                if (tempProduct.getProductsList().size() != 0) {
+                    categoryClickedArray.add(new BreadcrumbModel(tempProduct.getName(), position, new ArrayList<ProductsModel>(productsList)));
 
-                if (categoryClickedArray.size() < 1) {
-                    breadcrumbString += String.format("%s %s", "", productsList.get(position).getName());
-                    breadcrumb.setText(breadcrumbString);
+                    if (categoryClickedArray.size() < 1) {
+                        breadcrumbString += String.format("%s %s", "", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
+                        breadcrumb.setText(breadcrumbString);
+                    } else {
+                        breadcrumbString += String.format(" %s %s", "»", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
+                        breadcrumb.setText(breadcrumbString);
+                    }
+                    repopulateList(tempProduct.getProductsList());
+                    productsAdapter.notifyDataSetChanged();
                 } else {
-                    breadcrumbString += String.format(" %s %s", "»", productsList.get(position).getName());
-                    breadcrumb.setText(breadcrumbString);
+                    BusProvider.getInstance().post(productsList.get(position));
+                    Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
                 }
-
-                categoryClickedArray.add(new BreadcrumbModel(productsList.get(position).getName(), position, productsList));
-                beforeChangeProductList = new ArrayList<>(productsList);
-                repopulateList(productsList.get(position).getProductsList());
-//                List<ProductsModel> tempProduct = productsList.get(position).getProductsList();
-//                productsList.clear();
-//                productsList = tempProduct;
-                productsAdapter.notifyDataSetChanged();
             } else {
-                BusProvider.getInstance().post(productsList.get(position));
-                Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                if (productsList.get(position).getProductsList().size() != 0) {
+                    if (categoryClickedArray.size() < 1) {
+                        breadcrumbString += String.format("%s %s", "", productsList.get(position).getName());
+                        breadcrumb.setText(breadcrumbString);
+                    } else {
+                        breadcrumbString += String.format(" %s %s", "»", productsList.get(position).getName());
+                        breadcrumb.setText(breadcrumbString);
+                    }
+
+                    categoryClickedArray.add(new BreadcrumbModel(productsList.get(position).getName(), position, productsList));
+                    repopulateList(productsList.get(position).getProductsList());
+                    productsAdapter.notifyDataSetChanged();
+                } else {
+                    BusProvider.getInstance().post(productsList.get(position));
+                    Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                }
             }
         }
+
 
     }
 
@@ -343,8 +312,27 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 //        List<ProductsModel> tempProduct2 = tempProduct;
         productsList.clear();
         for (ProductsModel productsModel : tempProduct) {
-            productsList.add(new ProductsModel(productsModel.getName(), productsModel.getPrice(), productsModel.getVat(), productsModel.isAvailable(), productsModel.getImageUrls(), productsModel.isVattable(), productsModel.getShortName(), productsModel.getProductsList()));
+            productsList.add(
+                    new ProductsModel(
+                            productsModel.getName(), productsModel.getPrice(),
+                            productsModel.getVat(), productsModel.isAvailable(),
+                            productsModel.getImageUrls(), productsModel.isVattable(),
+                            productsModel.getShortName(), productsModel.getProductsList(),
+                            productsModel.isSelected(), productsModel.isSerialNumberRequired(),
+                            productsModel.getLowStackCount(), productsModel.getProductStatus()));
         }
+    }
+
+    private void pullUpBottomSheet() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    private void pullDownBottomSheet() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    }
+
+    private void saveSelectedSpace(String selectedSpace) {
+        SharedPreferenceManager.saveString(getContext(), selectedSpace, ApplicationConstants.SELECTED_ROOM_TABLE);
     }
 
 

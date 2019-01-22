@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
@@ -71,19 +72,30 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     return false;
                 }
             });
-            Log.d("VIEWPOSITION", String.valueOf(holder.getAdapterPosition()));
+
             ((ProductsViewHolder)holder).name.setText(productsModel.getShortName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(productsModel.getPrice()));
             ((ProductsViewHolder)holder).price.setText(productsModel.getPrice() + (productsModel.isVattable() ?" V" : " N"));
-            Log.d("TESTESTTEST", String.valueOf(productsModelList.get(holder.getAdapterPosition()).isSelected()));
+
             if (productsModelList.get(holder.getAdapterPosition()).isSelected()) {
-                Log.d("TESTTEST", "ISSELECTED TRUE");
 //                ((ProductsViewHolder) holder).rootView.setSelected(true);
                 ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.colorAccent);
             } else {
-                Log.d("TESTTEST", "ISSELECTED FALSE");
 //                ((ProductsViewHolder) holder).rootView.setSelected(false);
                 ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.colorWhite);
+            }
+
+            switch (productsModelList.get(holder.getAdapterPosition()).getProductStatus()) {
+                case ProductConstants.DISABLED: //will only be used on product listing
+                    break;
+                case ProductConstants.PAID: //will only be used for viewing purposess
+                    break;
+                case ProductConstants.PENDING: //on initial order, can remove without having to void
+                    break;
+                case ProductConstants.SAVED: //saved items that requires special permission to remove
+                    break;
+                case ProductConstants.VOID: //voided items for viewing only
+                    break;
             }
         }
     }
@@ -98,4 +110,6 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         return productsModelList.size();
     }
+
+
 }
