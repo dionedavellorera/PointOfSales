@@ -39,6 +39,7 @@ import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.background.SubCategoryAsync;
 import nerdvana.com.pointofsales.custom.BusProvider;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
+import nerdvana.com.pointofsales.entities.TransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
@@ -55,6 +56,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private View view;
 
     private double amountToPay = 0;
+
 
     private TextView total;
     private TextView header;
@@ -229,7 +231,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fragmentNotified(FragmentNotifierModel fragmentNotifierModel) {
+
         setView(fragmentNotifierModel.getNotifier());
+
+    }
+
+    private List<TransactionEntity> getTableRecord() {
+        return TransactionEntity.
+                findWithQuery(
+                        TransactionEntity.class,
+                        "SELECT * from Transaction_Entity WHERE room_table_number = ?",
+                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE));
     }
 
     @Override
@@ -249,7 +261,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (noItems.getVisibility() == View.VISIBLE) noItems.setVisibility(View.GONE);
         productsModel.setSelected(false);
 //        productsModel.setProductStatus(ProductConstants.VOID);
-        new CheckoutItemsAsync(this, selectedProductsList , productsModel).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new CheckoutItemsAsync(this,
+                selectedProductsList ,
+                productsModel,
+                getContext(),
+                getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId(),
+                5,
+                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -316,7 +334,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 snackbar.setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new CheckoutItemsAsync(LeftFrameFragment.this, selectedProductsList , itemToRestore).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                        //fetch, quantity && transId from database
+
+
+                        new CheckoutItemsAsync(
+                                LeftFrameFragment.this,
+                                selectedProductsList ,
+                                itemToRestore,
+                                getContext(),
+                                getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId() ,
+                                5,
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE)
+                                ).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //                        mAdapter.restoreItem(item, position);
 //                        recyclerView.scrollToPosition(position);
                     }
@@ -338,5 +368,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
         itemTouchhelper.attachToRecyclerView(listCheckoutItems);
+    }
+
+
+    private void addItemToCart(ProductsModel itemSelected) {
+
     }
 }

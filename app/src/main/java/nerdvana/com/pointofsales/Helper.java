@@ -12,4 +12,8 @@ public class Helper {
 
         if (imm != null) imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+    public static String generatedTransactionId() {
+      return "";
+    };
 }

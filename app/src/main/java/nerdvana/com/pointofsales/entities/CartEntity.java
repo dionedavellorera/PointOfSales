@@ -1,10 +1,10 @@
-package nerdvana.com.pointofsales.model;
+package nerdvana.com.pointofsales.entities;
+
 
 import com.orm.SugarRecord;
 
-import java.util.List;
+public class CartEntity extends SugarRecord<CartEntity> {
 
-public class ProductsModel extends SugarRecord<ProductsModel> {
     private String name;
     private String shortName;
     private double price;
@@ -15,53 +15,46 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
     private boolean isSerialNumberRequired;
     private int lowStackCount;
     private int productStatus;
-    private List<ProductsModel> productsList;
-    private boolean isSelected;
-    public ProductsModel() {}
+    private String _transId;
+    private int quantity;
 
 
-    public ProductsModel(String name, double price,
-                         double vat, boolean isAvailable,
-                         String[] imageUrls, boolean isVattable,
-                         String shortName, List<ProductsModel> productsList,
-                         boolean isSelected, boolean isSerialNumberRequired,
-                         int lowStackCount, int productStatus) {
+    public CartEntity() {}
+
+    public CartEntity(String name, String shortName,
+                      double price, double vat,
+                      boolean isAvailable, String[] imageUrls,
+                      boolean isVattable, boolean isSerialNumberRequired,
+                      int lowStackCount, int productStatus,
+                      String _transId, int quantity) {
         this.name = name;
+        this.shortName = shortName;
         this.price = price;
         this.vat = vat;
         this.isAvailable = isAvailable;
         this.imageUrls = imageUrls;
         this.isVattable = isVattable;
-        this.shortName = shortName;
-        this.productsList = productsList;
-        this.isSelected = isSelected;
         this.isSerialNumberRequired = isSerialNumberRequired;
         this.lowStackCount = lowStackCount;
         this.productStatus = productStatus;
+        this._transId = _transId;
+        this.quantity = quantity;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
-    public List<ProductsModel> getProductsList() {
-        return productsList;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public boolean isVattable() {
-        return isVattable;
+    public String get_transId() {
+        return _transId;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 
     public double getPrice() {
@@ -80,6 +73,10 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
         return imageUrls;
     }
 
+    public boolean isVattable() {
+        return isVattable;
+    }
+
     public boolean isSerialNumberRequired() {
         return isSerialNumberRequired;
     }
@@ -92,7 +89,5 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
         return productStatus;
     }
 
-    public void setProductStatus(int productStatus) {
-        this.productStatus = productStatus;
-    }
+
 }
