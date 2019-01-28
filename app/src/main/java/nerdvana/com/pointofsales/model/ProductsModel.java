@@ -17,6 +17,8 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
     private int productStatus;
     private List<ProductsModel> productsList;
     private boolean isSelected;
+    private Long productId;
+
     public ProductsModel() {}
 
 
@@ -25,7 +27,8 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
                          String[] imageUrls, boolean isVattable,
                          String shortName, List<ProductsModel> productsList,
                          boolean isSelected, boolean isSerialNumberRequired,
-                         int lowStackCount, int productStatus) {
+                         int lowStackCount, int productStatus,
+                         Long productId) {
         this.name = name;
         this.price = price;
         this.vat = vat;
@@ -38,6 +41,12 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
         this.isSerialNumberRequired = isSerialNumberRequired;
         this.lowStackCount = lowStackCount;
         this.productStatus = productStatus;
+        this.productId = productId;
+
+    }
+
+    public Long getProductId() {
+        return productId;
     }
 
     public boolean isSelected() {

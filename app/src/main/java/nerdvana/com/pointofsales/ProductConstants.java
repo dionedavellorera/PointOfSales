@@ -9,5 +9,6 @@ public class ProductConstants {
     public static final int PAID = 1003;
     public static final int VOID = 1004;
     public static final int DISABLED = 1005;
+    public static final int DELETED = 1006;
 
 }

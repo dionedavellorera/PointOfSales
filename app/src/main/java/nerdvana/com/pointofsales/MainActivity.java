@@ -1,6 +1,8 @@
 package nerdvana.com.pointofsales;
 
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-//        setContentView(R.layout.activity_main);
-
 
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,9 +57,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         initializeFragments();
 
         decideViewToShow();
-//
-
-
 
     }
 
@@ -141,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
     }
 
+    @SuppressLint("NewApi")
     private void showListMenu(View anchor) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("title", "this is my title");
@@ -159,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         popupWindow.setAnchorView(anchor);
         popupWindow.setAdapter(adapter);
+//        popupWindow.setBackgroundDrawable(getDrawable(R.drawable.lblstyle));//----
         popupWindow.setWidth(400); // note: don't use pixels, use a dimen resource
 //        popupWindow.setOnItemClickListener(myListener); // the callback for when a list item is selected
         popupWindow.show();
@@ -167,7 +166,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+
         SharedPreferenceManager.saveString(this, "", ApplicationConstants.SELECTED_ROOM_TABLE);
+
+        super.onDestroy();
+
     }
 }

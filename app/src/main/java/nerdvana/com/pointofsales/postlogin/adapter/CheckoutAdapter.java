@@ -1,5 +1,7 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -51,6 +53,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         final ProductsModel productsModel = productsModelList.get(holder.getAdapterPosition());
@@ -77,12 +80,15 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(productsModel.getPrice()));
             ((ProductsViewHolder)holder).price.setText(productsModel.getPrice() + (productsModel.isVattable() ?" V" : " N"));
 
+            ((ProductsViewHolder)holder).name.setTextColor(Color.parseColor("#d3d3d3"));
+            ((ProductsViewHolder)holder).quantity.setTextColor(Color.parseColor("#d3d3d3"));
+            ((ProductsViewHolder)holder).price.setTextColor(Color.parseColor("#d3d3d3"));
             if (productsModelList.get(holder.getAdapterPosition()).isSelected()) {
 //                ((ProductsViewHolder) holder).rootView.setSelected(true);
-                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.colorAccent);
+                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.highlight);
             } else {
 //                ((ProductsViewHolder) holder).rootView.setSelected(false);
-                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.colorWhite);
+                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.navyblue);
             }
 
             switch (productsModelList.get(holder.getAdapterPosition()).getProductStatus()) {

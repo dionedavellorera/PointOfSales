@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -38,23 +39,26 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView price;
         private ImageView imageUrl;
         private CardView rootView;
+        private RelativeLayout rel;
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             price = itemView.findViewById(R.id.price);
             imageUrl = itemView.findViewById(R.id.image);
             rootView = itemView.findViewById(R.id.rootView);
+            rel = itemView.findViewById(R.id.rel);
         }
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int i) {
         final RoomTableModel productsModel = roomTableModelList.get(i);
         ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectionContract.listClicked(productsModel.getName());
+                ((ProductsViewHolder)holder).rel.setSelected(true);
             }
         });
         ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());

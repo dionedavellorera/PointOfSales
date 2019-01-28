@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.background;
 
 import android.os.AsyncTask;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 
 public class CategoryAsync {
+
 //        extends AsyncTask<ButtonsModel, Void, List<ButtonsModel>> {
 //    private AsyncContract asyncContract;
 //    public CategoryAsync(AsyncContract asyncContract) {

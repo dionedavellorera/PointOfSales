@@ -8,5 +8,6 @@ public class TransactionConstants {
     public static final int PARTIALLY_PAID = 2002;
     public static final int FULLY_PAID = 2003;
     public static final int VOID = 2004;
+    public static final int SAVED = 2005;
 
 }

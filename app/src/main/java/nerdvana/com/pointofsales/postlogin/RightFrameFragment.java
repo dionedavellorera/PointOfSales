@@ -129,7 +129,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                                     productsModel.getImageUrls(), productsModel.isVattable(),
                                     productsModel.getShortName(), productsModel.getProductsList(),
                                     productsModel.isSelected(), productsModel.isSerialNumberRequired(),
-                                    productsModel.getLowStackCount(), productsModel.getProductStatus()));
+                                    productsModel.getLowStackCount(), productsModel.getProductStatus(),
+                                    productsModel.getProductId()));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -155,6 +156,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                     case BottomSheetBehavior.STATE_COLLAPSED: {
                         showAppropriateView();
                         hasCollapsed = true;
+                        bottomSheet.scrollTo(0, 0);
                         break;
                     }
                     case BottomSheetBehavior.STATE_HIDDEN: {
@@ -259,6 +261,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @Override
     public void productClicked(int position) {
+
+        Log.d("PRODUCTIDSHIT", String.valueOf(productsList.get(position).getProductId()));
+
         //checks if system is hotel / dine in and verifies if there is a selected area to put order
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE)) &&
                 (userModel.getSystemType().equals("room") || userModel.getSystemType().equals("table"))) {
@@ -319,7 +324,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                             productsModel.getImageUrls(), productsModel.isVattable(),
                             productsModel.getShortName(), productsModel.getProductsList(),
                             productsModel.isSelected(), productsModel.isSerialNumberRequired(),
-                            productsModel.getLowStackCount(), productsModel.getProductStatus()));
+                            productsModel.getLowStackCount(), productsModel.getProductStatus(),
+                            productsModel.getProductId()));
         }
     }
 

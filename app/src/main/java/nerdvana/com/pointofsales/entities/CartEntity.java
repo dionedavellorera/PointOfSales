@@ -5,12 +5,13 @@ import com.orm.SugarRecord;
 
 public class CartEntity extends SugarRecord<CartEntity> {
 
+    private Long productId;
     private String name;
     private String shortName;
     private double price;
     private double vat;
     private boolean isAvailable;
-    private String[] imageUrls;
+    private String imageUrls;
     private boolean isVattable;
     private boolean isSerialNumberRequired;
     private int lowStackCount;
@@ -23,10 +24,11 @@ public class CartEntity extends SugarRecord<CartEntity> {
 
     public CartEntity(String name, String shortName,
                       double price, double vat,
-                      boolean isAvailable, String[] imageUrls,
+                      boolean isAvailable, String imageUrls,
                       boolean isVattable, boolean isSerialNumberRequired,
                       int lowStackCount, int productStatus,
-                      String _transId, int quantity) {
+                      String _transId, int quantity,
+                      Long productId) {
         this.name = name;
         this.shortName = shortName;
         this.price = price;
@@ -39,6 +41,11 @@ public class CartEntity extends SugarRecord<CartEntity> {
         this.productStatus = productStatus;
         this._transId = _transId;
         this.quantity = quantity;
+        this.productId = productId;
+    }
+
+    public Long getProductId() {
+        return productId;
     }
 
     public int getQuantity() {
@@ -69,7 +76,7 @@ public class CartEntity extends SugarRecord<CartEntity> {
         return isAvailable;
     }
 
-    public String[] getImageUrls() {
+    public String getImageUrls() {
         return imageUrls;
     }
 
@@ -89,5 +96,7 @@ public class CartEntity extends SugarRecord<CartEntity> {
         return productStatus;
     }
 
-
+    public void setProductStatus(int productStatus) {
+        this.productStatus = productStatus;
+    }
 }

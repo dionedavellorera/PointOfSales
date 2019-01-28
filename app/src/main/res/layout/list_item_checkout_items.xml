@@ -9,59 +9,87 @@
         android:id="@+id/guideOne"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.4"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <TextView
-        android:id="@+id/name"
-        android:padding="10dp"
-        android:textColor="@color/colorBlack"
-        android:textSize="17sp"
-        android:text="This is a sample text this is a sample text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/guideOne"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/name"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-10dp"
+        android:layout_marginBottom="-10dp"
+        android:fontFamily="@font/amiri"
+        android:padding="10dp"
+        android:text="This is a sample text this is a sample text"
+        android:textColor="@color/colorBlack"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guideOne"
+        app:layout_constraintTop_toTopOf="parent" />
     <android.support.constraint.Guideline
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/guideTwo"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.7"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <android.support.constraint.Guideline
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/guideThree"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.9"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/quantity"
-        android:padding="10dp"
-        android:textSize="17sp"
-        android:gravity="center"
-        android:text="100"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/guideTwo"
-        app:layout_constraintLeft_toRightOf="@id/guideOne"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-10dp"
+        android:layout_marginBottom="-10dp"
+        android:fontFamily="@font/amiri"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="100"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/guideOne"
+        app:layout_constraintRight_toLeftOf="@id/guideTwo"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/price"
-        android:padding="10dp"
-        android:gravity="center"
-        android:text="100.00"
-        app:layout_constraintRight_toLeftOf="@id/guideThree"
-        app:layout_constraintLeft_toRightOf="@id/guideTwo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-10dp"
+        android:layout_marginBottom="-10dp"
+        android:fontFamily="@font/amiri"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="100.00"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/guideTwo"
+        app:layout_constraintRight_toLeftOf="@id/guideThree"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <android.support.constraint.Guideline
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/bottomGuide"
         android:layout_width="match_parent"
         android:layout_height="1dp"

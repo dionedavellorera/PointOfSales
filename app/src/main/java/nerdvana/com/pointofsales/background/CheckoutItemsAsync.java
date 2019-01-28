@@ -12,6 +12,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.TransactionConstants;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.TransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
@@ -47,14 +48,7 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
 //        String[] imageUrls, boolean isVattable,
 //        String shortName, List<ProductsModel> productsList
 
-        productList.add(new ProductsModel(
-                selectedProduct.getName(), selectedProduct.getPrice(),
-                selectedProduct.getVat(), selectedProduct.isAvailable(),
-                selectedProduct.getImageUrls(), selectedProduct.isVattable(),
-                selectedProduct.getShortName(), selectedProduct.getProductsList(),
-                selectedProduct.isSelected(), selectedProduct.isSerialNumberRequired(),
-                selectedProduct.getLowStackCount(), selectedProduct.getProductStatus()
-        ));
+
         final UserModel userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.userSettings), UserModel.class);
 
 
@@ -65,14 +59,16 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
                     selectedProduct.getPrice(),
                     selectedProduct.getVat(),
                     selectedProduct.isAvailable(),
-                    selectedProduct.getImageUrls(),
+                    selectedProduct.getImageUrls()[0],
                     selectedProduct.isVattable(),
                     selectedProduct.isSerialNumberRequired(),
                     selectedProduct.getLowStackCount(),
                     selectedProduct.getProductStatus(),
                     _transId,
-                    quantity
+                    quantity,
+                    selectedProduct.getProductId()
             );
+            addToList(selectedProduct, cartItem.getId());
             cartItem.save();
         } else { //create transId and insert new product
 
@@ -84,7 +80,8 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
             TransactionEntity transaction = new TransactionEntity(
                     transactionId,
                     "",
-                    roomTableNumber);
+                    roomTableNumber,
+                    TransactionConstants.PENDING);
             transaction.save();
 
 
@@ -94,15 +91,18 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
                     selectedProduct.getPrice(),
                     selectedProduct.getVat(),
                     selectedProduct.isAvailable(),
-                    selectedProduct.getImageUrls(),
+                    selectedProduct.getImageUrls()[0],
                     selectedProduct.isVattable(),
                     selectedProduct.isSerialNumberRequired(),
                     selectedProduct.getLowStackCount(),
                     selectedProduct.getProductStatus(),
                     transactionId,
-                    quantity
+                    quantity,
+                    selectedProduct.getProductId()
 
             );
+
+            addToList(selectedProduct, cartItem.getId());
             cartItem.save();
 
 
@@ -125,5 +125,17 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+    }
+
+    private void addToList(ProductsModel selectedProduct, Long productId) {
+        productList.add(new ProductsModel(
+                selectedProduct.getName(), selectedProduct.getPrice(),
+                selectedProduct.getVat(), selectedProduct.isAvailable(),
+                selectedProduct.getImageUrls(), selectedProduct.isVattable(),
+                selectedProduct.getShortName(), selectedProduct.getProductsList(),
+                selectedProduct.isSelected(), selectedProduct.isSerialNumberRequired(),
+                selectedProduct.getLowStackCount(), selectedProduct.getProductStatus(),
+                productId
+        ));
     }
 }

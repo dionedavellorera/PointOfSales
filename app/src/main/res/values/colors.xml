@@ -5,15 +5,18 @@
 
     <color name="colorPrimary">#273749</color>
     <color name="colorPrimaryDark">#282f35</color>
-    <color name="colorAccent">#ff79b0</color>
+    <color name="colorAccent">#6B6E70</color>
     <color name="colorLtGrey">#d3d3d3</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
 
     <color name="light">#D8DBE2</color>
-    <color name="lightblue">#8ea3be</color>
+    <color name="lightblue">#B8CBE4</color>
+    <color name="logintextcolor">#FFB8CBE4</color>
+    <color name="fordeletecolor">#008081</color>
     <color name="lightgrey">#7a818b</color>
     <color name="darkgrey">#484C55</color>
+    <color name="highlight">#474A52</color>
     <color name="navyblue">#212c40</color>
 
 </resources>
