@@ -2,7 +2,10 @@ package nerdvana.com.pointofsales;
 
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,25 +14,36 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
+import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-
+import nerdvana.com.pointofsales.custom.BusProvider;
+import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
+import nerdvana.com.pointofsales.model.FragmentNotifierModel;
+import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
+import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
 import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
+
+    public static String roomNumber;
+
     private SelectionContract centralInterface;
 
     private LeftFrameFragment preLoginLeftFrameFragment;
@@ -38,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private nerdvana.com.pointofsales.postlogin.RightFrameFragment postLoginRightFrameFragment;
 
     private Button logout;
+    private Button showMap;
     private TextView user;
 
     private UserModel userModel;
@@ -63,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private void initializeViews() {
         logout = findViewById(R.id.logout);
         logout.setOnClickListener(this);
+        showMap = findViewById(R.id.showMap);
+        showMap.setOnClickListener(this);
         user = findViewById(R.id.user);
     }
 
@@ -77,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void decideViewToShow() {
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
+
+        openFragment(R.id.bottomFrame, new BottomFrameFragment());
+
         if (userModel != null) {
             if (userModel.isLoggedIn()) { //post login
                 logout.setVisibility(View.VISIBLE);
@@ -135,6 +155,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //                SharedPreferenceManager.clearPreference(this);
 //                decideViewToShow();
             break;
+            case R.id.showMap:
+                Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
+                startActivityForResult(roomSelectionIntent, 10);
+            break;
         }
     }
 
@@ -167,9 +191,36 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Override
     protected void onDestroy() {
 
-        SharedPreferenceManager.saveString(this, "", ApplicationConstants.SELECTED_ROOM_TABLE);
-
         super.onDestroy();
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 10) {
+                RoomTableModel selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
+
+//                saveSelectedSpace(selected.getName());
+
+                Log.d("TESTTEST", "ACT RESULT");
+
+                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+                CurrentTransactionEntity currentTransactionEntity = new
+                        CurrentTransactionEntity( selected.getName());
+
+                currentTransactionEntity.save();
+                BusProvider.getInstance().post(new FragmentNotifierModel(selected.getName()));
+
+                Toast.makeText(this, selected.getName() + " selected", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "CANCELLED", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+//    private void saveSelectedSpace(String selectedSpace) {
+//        SharedPreferenceManager.saveString(MainActivity.this, selectedSpace, ApplicationConstants.SELECTED_ROOM_TABLE);
+//    }
 }

@@ -31,6 +31,7 @@ import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.BusProvider;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
+import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
@@ -251,21 +252,35 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     @Override
-    public void listClicked(String input) {
-        //notifies leftfragment that an area is clicked and updates the ui
-        //closes the bottom sheet immediately after selecting
-        saveSelectedSpace(input);
-        BusProvider.getInstance().post(new FragmentNotifierModel(input));
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+    public void listClicked(RoomTableModel selectedItem) {
+        Toast.makeText(getContext(), "SAVED", Toast.LENGTH_SHORT).show();
+        saveSelectedSpace(selectedItem.getName());
+//        BusProvider.getInstance().post(new FragmentNotifierModel(selectedItem.getName()));
+    }
+
+//    @Override
+//    public void listClicked(String input) {
+//        //notifies leftfragment that an area is clicked and updates the ui
+//        //closes the bottom sheet immediately after selecting
+//        saveSelectedSpace(input);
+//        BusProvider.getInstance().post(new FragmentNotifierModel(input));
+//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+//    }
+
+    private String selectedRoomNumber() {
+        List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
+        return currentTransaction.size() > 0 ? currentTransaction.get(0).getRoomNumber(): "";
     }
 
     @Override
     public void productClicked(int position) {
 
-        Log.d("PRODUCTIDSHIT", String.valueOf(productsList.get(position).getProductId()));
+//        Log.d("PRODUCTIDSHIT", String.valueOf(productsList.get(position).getProductId()));
+//        Log.d("PRODUCTIDSHIT", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE));
+//        Log.d("PRODUCTIDSHIT", userModel.getSystemType());
 
         //checks if system is hotel / dine in and verifies if there is a selected area to put order
-        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE)) &&
+        if (TextUtils.isEmpty(selectedRoomNumber()) &&
                 (userModel.getSystemType().equals("room") || userModel.getSystemType().equals("table"))) {
             Toast.makeText(getContext(), getResources().getString(R.string.error_no_space_selected), Toast.LENGTH_SHORT).show();
             pullUpBottomSheet();
@@ -338,7 +353,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     private void saveSelectedSpace(String selectedSpace) {
-        SharedPreferenceManager.saveString(getContext(), selectedSpace, ApplicationConstants.SELECTED_ROOM_TABLE);
+        CurrentTransactionEntity currentTransaction = new CurrentTransactionEntity(selectedSpace);
+        currentTransaction.save();
+//        SharedPreferenceManager.saveString(getContext(), selectedSpace, ApplicationConstants.SELECTED_ROOM_TABLE);
     }
 
 

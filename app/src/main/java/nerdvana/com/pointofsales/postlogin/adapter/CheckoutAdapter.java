@@ -40,6 +40,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView name;
         private TextView quantity;
         private TextView price;
+        private ImageView iconStatus;
         private ConstraintLayout rootView;
 
         public ProductsViewHolder(@NonNull View itemView) {
@@ -48,7 +49,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             quantity = itemView.findViewById(R.id.quantity);
             price = itemView.findViewById(R.id.price);
             rootView = itemView.findViewById(R.id.rootView);
-
+            iconStatus = itemView.findViewById(R.id.iconStatus);
         }
     }
 
@@ -59,6 +60,12 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final ProductsModel productsModel = productsModelList.get(holder.getAdapterPosition());
 
         if(holder instanceof CheckoutAdapter.ProductsViewHolder){
+
+            if (productsModel.getProductStatus() == ProductConstants.SAVED) {
+                ((ProductsViewHolder) holder).iconStatus.setVisibility(View.VISIBLE);
+            } else {
+                ((ProductsViewHolder) holder).iconStatus.setVisibility(View.GONE);
+            }
 
             ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
                 @Override

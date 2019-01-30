@@ -57,7 +57,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectionContract.listClicked(productsModel.getName());
+                selectionContract.listClicked(productsModel);
                 ((ProductsViewHolder)holder).rel.setSelected(true);
             }
         });

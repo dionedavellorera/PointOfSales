@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +48,7 @@ import nerdvana.com.pointofsales.background.SubCategoryAsync;
 import nerdvana.com.pointofsales.custom.BusProvider;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.entities.CartEntity;
+import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.TransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
@@ -62,13 +65,16 @@ import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
-        ButtonsContract, SaveTransactionContract, RetrieveCartItemContract {
+         SaveTransactionContract, RetrieveCartItemContract {
     private View view;
 
     private double amountToPay = 0;
 
 
     private TextView total;
+    private TextView discount;
+    private TextView tax;
+    private TextView subTotal;
     private TextView header;
     private TextView noItems;
 
@@ -76,9 +82,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private RecyclerView listCheckoutItems;
     private RecyclerView listButtons;
-
-    private RecyclerView listCategory;
-    private RecyclerView listSubCategory;
 
     private CategoryAdapter categoryAdapter;
     private CategoryAdapter subCategoryAdapter;
@@ -100,13 +103,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void initializeViews(View view) {
-        total = view.findViewById(R.id.total);
+        total = view.findViewById(R.id.totalValue);
+        discount = view.findViewById(R.id.discountValue);
+        tax = view.findViewById(R.id.taxValue);
+        subTotal = view.findViewById(R.id.subTotalValue);
 
         listCheckoutItems = view.findViewById(R.id.listCheckoutItems);
         listButtons = view.findViewById(R.id.listButtons);
-
-        listCategory = view.findViewById(R.id.listCategory);
-        listSubCategory = view.findViewById(R.id.listSubCategory);
 
         noItems = view.findViewById(R.id.notItems);
         header = view.findViewById(R.id.header);
@@ -121,7 +124,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         view = inflater.inflate(R.layout.postlogin_left_frame, container, false);
         initializeViews(view);
         setProductAdapter();
-        setButtonsAdapter();
+//        setButtonsAdapter();
 
 
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.userSettings), UserModel.class);
@@ -129,14 +132,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             isValid = true;
         }
 
+
+
         defaultView();
-
-
-//        setListCategory();
-//        setListSubCategory();
-
-
-
+        Log.d("ETET", "ETET");
+        Log.d("ETET", selectedRoomNumber());
+        if (!TextUtils.isEmpty(selectedRoomNumber())) {
+            //reload data from selected table && set views
+            retrieveCartItems();
+            setView(selectedRoomNumber());
+            computeFromDb();
+        }
         return view;
     }
 
@@ -154,27 +160,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //        checkoutAdapter.addItems(productsModelList);
     }
 
-    private void setButtonsAdapter() {
-        buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>(), this);
-        listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
-        listButtons.setAdapter(buttonsAdapter);
-        new ButtonsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    private void setListCategory() {
-        categoryAdapter = new CategoryAdapter(new ArrayList<ButtonsModel>());
-        listCategory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        listCategory.setAdapter(categoryAdapter);
-//        new CategoryAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-    }
-
-    private void setListSubCategory() {
-        subCategoryAdapter = new CategoryAdapter(new ArrayList<ButtonsModel>());
-        listSubCategory.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        listSubCategory.setAdapter(subCategoryAdapter);
-//        new SubCategoryAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
+//    private void setButtonsAdapter() {
+//        buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>(), this);
+//        listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
+//        listButtons.setAdapter(buttonsAdapter);
+//        new ButtonsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//    }
 
 
 
@@ -217,10 +208,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     break;
             }
 
+            total.setText("0.00");
+            discount.setText("0.00");
+            tax.setText("0.00");
+            subTotal.setText("0.00");
+
+
         }
     }
 
     private void setView(String input) {
+
+        Log.d("TETE", input);
+
         if (isValid) { //means userModel is not null
 //            noItems.setVisibility(View.VISIBLE);
             switch (userModel.getSystemType().toLowerCase()) {
@@ -239,9 +239,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     @Subscribe
-    public void fragmentNotified(FragmentNotifierModel fragmentNotifierModel) {
+    public void fragmentNotifier(FragmentNotifierModel fragmentNotifierModel) {
+
         retrieveCartItems();
         setView(fragmentNotifierModel.getNotifier());
+
     }
 
     private void retrieveCartItems() {
@@ -259,6 +261,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             linearLayoutManager.setStackFromEnd(true);
             listCheckoutItems.setLayoutManager(linearLayoutManager);
             listCheckoutItems.setAdapter(checkoutAdapter);
+
+            total.setText("0.00");
         }
     }
 
@@ -267,7 +271,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 findWithQuery(
                         TransactionEntity.class,
                         SqlQueries.GET_PENDING_TABLE_ORDER,
-                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE));
+                        selectedRoomNumber());
     }
 
     private List<CartEntity> getCartRecord(String transactionId) {
@@ -282,13 +286,31 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+//        BusProvider.getInstance().unregister(this);
+
+        Log.d("TESTTEST", "ONPAUSE");
     }
 
     @Override
     public void onResume() {
         super.onResume();
+//        BusProvider.getInstance().register(this);
+
+        Log.d("TESTTEST", "ONRESUME");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
         BusProvider.getInstance().register(this);
+        Log.d("TESTTEST", "ATTACH");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        BusProvider.getInstance().unregister(this);
+        Log.d("TESTTEST", "DETACH");
     }
 
     @Subscribe
@@ -301,7 +323,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 getContext(),
                 getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId(),
                 5,
-                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE))
+                selectedRoomNumber())
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -338,9 +360,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         popupMenu.show();
     }
 
-    @Override
-    public void clicked(ButtonsModel buttonsModel) {
-        switch (buttonsModel.getId()) {
+//    @Override
+//    public void clicked(ButtonsModel buttonsModel) {
+//        switch (buttonsModel.getId()) {
+//            case 100: //SAVE TRANSACTION:
+//                saveTransaction();
+//                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
+//                break;
+//            case 101: //VOID
+//                break;
+//            case 102: //PAYMENT
+//                break;
+//        }
+//    }
+
+
+    @Subscribe
+    public void clickedButton(ButtonsModel clickedItem) {
+        switch (clickedItem.getId()) {
             case 100: //SAVE TRANSACTION:
                 saveTransaction();
                 Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
@@ -405,12 +442,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void saveTransaction() {
         new SaveTransactionAsync(getTableRecord(), this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);;
+        CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
     }
 
     @Override
     public void finishedSaving() {
-        SharedPreferenceManager.saveString(getContext(), "", ApplicationConstants.SELECTED_ROOM_TABLE);
         clearCartItems();
+
+        defaultView();
+
+        CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
     }
 
     private void clearCartItems() {
@@ -433,5 +474,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         listCheckoutItems.setAdapter(checkoutAdapter);
         checkoutAdapter.notifyDataSetChanged();
 
+        computeFromDb();
+
+
+    }
+
+    private void computeFromDb() {
+        Log.d("COMUPTEFROMDB", "Y");
+        double temp = 0;
+        for (ProductsModel p : selectedProductsList) {
+            temp += p.getPrice();
+        }
+
+        total.setText(temp < 1 ? "0.00": String.valueOf(temp));
+    }
+
+
+    private String selectedRoomNumber() {
+        List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
+        return currentTransaction.size() > 0 ? currentTransaction.get(0).getRoomNumber(): "";
     }
 }

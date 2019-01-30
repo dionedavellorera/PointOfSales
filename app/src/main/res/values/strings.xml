@@ -13,4 +13,7 @@
     <string name="welcome_text">Welcome, Have a good day</string>
 
     <string name="error_no_space_selected">Please select a space where to place the order</string>
+    <string name="title_activity_rooms">RoomsActivity</string>
+
+    <string name="room_selection_callback_code">1</string>
 </resources>
