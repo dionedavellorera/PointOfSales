@@ -190,8 +190,12 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
         switch (v.getId()) {
             case R.id.checkout:
                 if (payment >= balance) {
+                    dismiss();
+                    paymentSuccess();
                     Toast.makeText(getContext(), "Payment accepted", Toast.LENGTH_SHORT).show();
                 } else {
+                    dismiss();
+                    paymentFailed();
                     Toast.makeText(getContext(), "Payment not accepted", Toast.LENGTH_SHORT).show();
                 }
                 break;
