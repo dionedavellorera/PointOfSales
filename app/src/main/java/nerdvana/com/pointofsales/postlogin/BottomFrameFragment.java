@@ -52,17 +52,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
 
     @Override
     public void clicked(ButtonsModel buttonsModel) {
-        switch (buttonsModel.getId()) {
-            case 100: //SAVE TRANSACTION:
-                BusProvider.getInstance().post(buttonsModel);
-//                saveTransaction();
-                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
-                break;
-            case 101: //VOID
-                break;
-            case 102: //PAYMENT
-                break;
-        }
+        BusProvider.getInstance().post(buttonsModel);
     }
 
     @Override

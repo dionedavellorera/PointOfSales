@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <include layout="@layout/incl_header_dialog"
+        android:id="@+id/titleBar"/>
+
+    <TextView
+        android:layout_below="@id/titleBar"
+        android:padding="5dp"
+        android:id="@+id/balanceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="PAYMENT :"
+        android:textSize="19sp"
+        android:textColor="@color/colorBlack"/>
+
+    <TextView
+        android:layout_below="@id/titleBar"
+        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/balanceValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="12,000.00"
+        android:gravity="right"
+        android:textSize="19sp"
+        android:textColor="@color/colorBlack"
+        android:textStyle="bold"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/balanceLabel"
+        android:id="@+id/tilCash"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:text="0"
+            android:inputType="numberDecimal"
+            android:id="@+id/inputCash"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Cash"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/tilCash"
+        android:id="@+id/tilCreditCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <EditText
+                android:text="0"
+                android:inputType="numberDecimal"
+                android:id="@+id/inputCreditCard"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Credit Card"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/tilCreditCard"
+        android:id="@+id/tilCharge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:text="0"
+            android:inputType="numberDecimal"
+            android:id="@+id/inputCharge"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Charge"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/tilCharge"
+        android:id="@+id/tilAr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:text="0"
+            android:inputType="numberDecimal"
+            android:id="@+id/inputAr"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Accounts Receivable"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:padding="5dp"
+        android:id="@+id/labelTotal"
+        android:layout_below="@id/tilAr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount Tendered"/>
+
+    <TextView
+        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/totalPayment"
+        android:layout_below="@id/tilAr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"/>
+
+    <TextView
+        android:padding="5dp"
+        android:layout_below="@id/labelTotal"
+        android:id="@+id/labelChange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change"/>
+
+    <TextView
+        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/totalChange"
+        android:layout_below="@id/labelTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"/>
+
+    <Button
+        android:layout_below="@id/labelChange"
+        android:id="@+id/checkout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CHECKOUT"/>
+
+</RelativeLayout>

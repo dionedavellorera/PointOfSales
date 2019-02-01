@@ -1,7 +1,10 @@
 package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,12 +34,16 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Result;
+
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PaymentActivity;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
+import nerdvana.com.pointofsales.SystemConstants;
 import nerdvana.com.pointofsales.TransactionConstants;
 import nerdvana.com.pointofsales.background.ButtonsAsync;
 import nerdvana.com.pointofsales.background.CategoryAsync;
@@ -47,6 +55,7 @@ import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.background.SubCategoryAsync;
 import nerdvana.com.pointofsales.custom.BusProvider;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
+import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.TransactionEntity;
@@ -219,8 +228,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void setView(String input) {
 
-        Log.d("TETE", input);
-
         if (isValid) { //means userModel is not null
 //            noItems.setVisibility(View.VISIBLE);
             switch (userModel.getSystemType().toLowerCase()) {
@@ -360,21 +367,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         popupMenu.show();
     }
 
-//    @Override
-//    public void clicked(ButtonsModel buttonsModel) {
-//        switch (buttonsModel.getId()) {
-//            case 100: //SAVE TRANSACTION:
-//                saveTransaction();
-//                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
-//                break;
-//            case 101: //VOID
-//                break;
-//            case 102: //PAYMENT
-//                break;
-//        }
-//    }
-
-
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
@@ -385,9 +377,67 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 101: //VOID
                 break;
             case 102: //PAYMENT
+                if ((userModel.getSystemType().equals(SystemConstants.SYS_ROOM) ||
+                        userModel.getSystemType().equals(SystemConstants.SYS_TABLE)) &&
+                    TextUtils.isEmpty(selectedRoomNumber())) {
+                    //alert need to select table / room
+                    Toast.makeText(getContext(), getString(R.string.error_no_space_selected), Toast.LENGTH_SHORT).show();
+                } else if(userModel.getSystemType().equals(SystemConstants.SYS_CHECKOUT)) {
+
+                    //show total
+
+                } else {
+                    if (getTableRecord().size() > 0) {
+                        double balance = 0;
+                        for (ProductsModel selectedItem : selectedProductsList) {
+                            balance += selectedItem.getPrice();
+                        }
+                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance) {
+                            @Override
+                            public void paymentSuccess() {
+
+                                for (TransactionEntity t : getTableRecord()) {
+                                    if (t.getTransactionStatus() == TransactionConstants.PENDING) {
+                                        t.setTransactionStatus(TransactionConstants.FULLY_PAID);
+                                        t.save();
+                                    }
+                                }
+
+                                for (ProductsModel p : selectedProductsList) {
+                                    if (p.getProductStatus() != ProductConstants.PENDING &&
+                                            p.getProductStatus() != ProductConstants.VOID &&
+                                            p.getProductStatus() != ProductConstants.DISABLED) {
+                                        p.setProductStatus(ProductConstants.PAID);
+                                        p.save();
+                                    }
+                                }
+
+                                clearCartItems();
+                                defaultView();
+                                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+                            }
+
+                            @Override
+                            public void paymentFailed() {
+
+                            }
+                        };
+//                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance);
+                        paymentDialog.show();
+//                        Intent paymentIntent = new Intent(getContext(), PaymentActivity.class);
+//                        paymentIntent.putExtra("transaction_number", getTableRecord().get(0).getTransactionId());
+//                        startActivityForResult(paymentIntent, 100);
+                    } else {
+                        Toast.makeText(getContext(), "No transactions made yet.", Toast.LENGTH_SHORT).show();
+                    }
+
+
+                }
+
                 break;
         }
     }
+
 
     private void enableSwipeToDeleteAndUndo() {
         SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getContext()) {
@@ -402,28 +452,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 checkoutAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
 
-
-//                Snackbar snackbar = Snackbar
-//                        .make(rootView, "Item was removed from the list.", Snackbar.LENGTH_LONG);
-//                snackbar.setAction("UNDO", new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        //fetch, quantity && transId from database
-//                        new CheckoutItemsAsync(
-//                                LeftFrameFragment.this,
-//                                selectedProductsList ,
-//                                itemToRestore,
-//                                getContext(),
-//                                getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId() ,
-//                                5,
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE)
-//                                ).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//                    }
-//                });
-
-//                snackbar.setActionTextColor(Color.YELLOW);
-//                snackbar.show();
-
+                computeFromDb();
             }
 
             @Override
@@ -480,7 +509,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void computeFromDb() {
-        Log.d("COMUPTEFROMDB", "Y");
         double temp = 0;
         for (ProductsModel p : selectedProductsList) {
             temp += p.getPrice();
@@ -493,5 +521,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private String selectedRoomNumber() {
         List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
         return currentTransaction.size() > 0 ? currentTransaction.get(0).getRoomNumber(): "";
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100) {
+            if (resultCode == Activity.RESULT_OK) {
+                Toast.makeText(getContext(), "OK GO", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "OK DONT GO", Toast.LENGTH_SHORT).show();
+
+            }
+        }
     }
 }

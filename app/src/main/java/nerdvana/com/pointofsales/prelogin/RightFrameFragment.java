@@ -16,6 +16,7 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.SystemConstants;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.model.UserModel;
 
@@ -63,7 +64,7 @@ public class RightFrameFragment extends Fragment implements View.OnClickListener
         // table
         // checkout
         if (!TextUtils.isEmpty(username.trim()) && !TextUtils.isEmpty(password.trim())) {
-            UserModel userModel = new UserModel(username, true, "room");
+            UserModel userModel = new UserModel(username, true, SystemConstants.SYS_ROOM);
             SharedPreferenceManager.saveString(getContext(), GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
             isValid = true;
         }

@@ -19,6 +19,7 @@ public class TransactionEntity extends SugarRecord<TransactionEntity> {
         this.transactionStatus = transactionStatus;
     }
 
+
     public void setTransactionStatus(int transactionStatus) {
         this.transactionStatus = transactionStatus;
     }

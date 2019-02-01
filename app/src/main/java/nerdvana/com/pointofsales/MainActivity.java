@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
@@ -164,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @SuppressLint("NewApi")
     private void showListMenu(View anchor) {
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("title", "this is my title");
+        final HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("title", "Logout");
         map.put("icon", R.drawable.ic_launcher_background);
         data.add(map);
 
@@ -179,12 +180,29 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 new int[] {android.R.id.text1, android.R.id.icon}); // The view ids to map the data to
 
 
+        popupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (data.get(position).get("title").toString().toLowerCase()) {
+                    case "logout":
+                        SharedPreferenceManager.clearPreference(getApplicationContext());
+                        CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+
+                        openFragment(R.id.leftFrame, preLoginLeftFrameFragment);
+                        openFragment(R.id.rightFrame, preLoginRightFrameFragment);
+                        break;
+                }
+            }
+        });
+
         popupWindow.setAnchorView(anchor);
         popupWindow.setAdapter(adapter);
 //        popupWindow.setBackgroundDrawable(getDrawable(R.drawable.lblstyle));//----
         popupWindow.setWidth(400); // note: don't use pixels, use a dimen resource
 //        popupWindow.setOnItemClickListener(myListener); // the callback for when a list item is selected
         popupWindow.show();
+
+
     }
 
 
