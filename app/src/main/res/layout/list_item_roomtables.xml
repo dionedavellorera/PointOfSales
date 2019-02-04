@@ -10,7 +10,6 @@
     >
     <RelativeLayout
         android:id="@+id/rel"
-        android:background="@drawable/roomtable_selector"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView

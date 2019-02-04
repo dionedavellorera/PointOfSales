@@ -2,9 +2,7 @@ package nerdvana.com.pointofsales;
 
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,13 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
-import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 
-import nerdvana.com.pointofsales.custom.BusProvider;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
@@ -40,6 +34,7 @@ import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
 import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
+import nerdvana.com.pointofsales.requests.TestRequest;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
 
@@ -73,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         initializeFragments();
 
         decideViewToShow();
+
+        BusProvider.getInstance().post(new TestRequest("test"));
 
     }
 

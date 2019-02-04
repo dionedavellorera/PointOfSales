@@ -15,6 +15,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:name=".PaymentActivity"
             android:label="@string/title_activity_payment"
             android:parentActivityName=".MainActivity"
@@ -24,6 +25,7 @@
                 android:value="nerdvana.com.pointofsales.MainActivity" />
         </activity>
         <activity
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:name=".RoomsActivity"
             android:label="@string/title_activity_rooms"
             android:parentActivityName=".MainActivity"
@@ -50,6 +52,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:name=".MainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">

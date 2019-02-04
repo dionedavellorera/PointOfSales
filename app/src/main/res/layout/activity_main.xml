@@ -31,6 +31,7 @@
                     android:layout_height="match_parent" />
 
                 <Button
+                    android:visibility="gone"
                     android:layout_toLeftOf="@id/showMap"
                     android:id="@+id/showTables"
                     android:layout_margin="5dp"

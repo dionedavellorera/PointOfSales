@@ -1,11 +1,8 @@
 package nerdvana.com.pointofsales;
 
-import android.app.Application;
-
 import com.facebook.stetho.Stetho;
 import com.orm.SugarApp;
-
-import nerdvana.com.pointofsales.custom.BusProvider;
+import com.squareup.otto.Bus;
 
 public class PosApplication extends SugarApp {
     @Override
@@ -13,7 +10,13 @@ public class PosApplication extends SugarApp {
         super.onCreate();
 
 
-        new BusProvider();
+        Bus mBus = BusProvider.getInstance();
+        PosManager autopilotManager = new PosManager(this, mBus);
+        mBus.register(autopilotManager);
+//        mBus.register(BusProvider.getInstance());
+        new UserServices(this);
+
+//        new BusProvider();
         new GsonHelper();
         new SharedPreferenceManager(this);
         Stetho.initializeWithDefaults(this);
