@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.entities.CartEntity;
+import nerdvana.com.pointofsales.entities.PaymentEntity;
 
 public abstract class PaymentDialog extends Dialog implements View.OnClickListener {
 
@@ -192,6 +194,7 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
                 if (payment >= balance) {
                     dismiss();
                     paymentSuccess();
+                    savePayment();
                     Toast.makeText(getContext(), "Payment accepted", Toast.LENGTH_SHORT).show();
                 } else {
                     dismiss();
@@ -204,4 +207,45 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
 
     public abstract void paymentSuccess();
     public abstract void paymentFailed();
+
+    private void savePayment() {
+        double tempBalance = balance;
+        if (!creditCard.getText().toString().equalsIgnoreCase("0")) {
+            savePaymentToDb(tempBalance, "CREDIT CARD",
+                            "SINGLE", "RECEIPT-001",
+                            _credit, transactionNumber);
+            tempBalance = tempBalance - _credit;
+        }
+
+        if (!cash.getText().toString().equalsIgnoreCase("0")) {
+            savePaymentToDb(tempBalance, "CASH",
+                    "SINGLE", "RECEIPT-001",
+                    _cash, transactionNumber);
+            tempBalance = tempBalance - _cash;
+        }
+
+        if (!ar.getText().toString().equalsIgnoreCase("0")) {
+            savePaymentToDb(tempBalance, "AR",
+                    "SINGLE", "RECEIPT-001",
+                    _ar, transactionNumber);
+            tempBalance = tempBalance - _ar;
+        }
+
+        if (!charge.getText().toString().equalsIgnoreCase("0")) {
+            savePaymentToDb(tempBalance, "CHARGE",
+                    "SINGLE", "RECEIPT-001",
+                    _charge, transactionNumber);
+            tempBalance = tempBalance - _charge;
+        }
+
+    }
+
+    private void savePaymentToDb(double balance, String paymentMethod,
+                                 String paymentType, String receiptNumber,
+                                 double tenderedAmount, String transactionNumber) {
+        PaymentEntity payment = new PaymentEntity(receiptNumber, transactionNumber,
+                                                paymentMethod, balance,
+                                                tenderedAmount, paymentType);
+        payment.save();
+    }
 }

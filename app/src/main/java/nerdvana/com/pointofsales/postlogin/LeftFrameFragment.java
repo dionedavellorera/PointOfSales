@@ -58,6 +58,7 @@ import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
+import nerdvana.com.pointofsales.entities.PaymentEntity;
 import nerdvana.com.pointofsales.entities.TransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
@@ -395,20 +396,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance) {
                             @Override
                             public void paymentSuccess() {
-
-                                for (TransactionEntity t : getTableRecord()) {
-                                    if (t.getTransactionStatus() == TransactionConstants.PENDING) {
-                                        t.setTransactionStatus(TransactionConstants.FULLY_PAID);
-                                        t.save();
+                                if (getTableRecord().size() > 0) {
+                                    String tempTransId = getTableRecord().get(0).getTransactionId();
+                                    for (TransactionEntity t : getTableRecord()) {
+                                        if (t.getTransactionStatus() == TransactionConstants.PENDING) {
+                                            t.setTransactionStatus(TransactionConstants.FULLY_PAID);
+                                            t.save();
+                                        }
                                     }
-                                }
-
-                                for (ProductsModel p : selectedProductsList) {
-                                    if (p.getProductStatus() != ProductConstants.PENDING &&
-                                            p.getProductStatus() != ProductConstants.VOID &&
-                                            p.getProductStatus() != ProductConstants.DISABLED) {
-                                        p.setProductStatus(ProductConstants.PAID);
-                                        p.save();
+                                    for (CartEntity c : getCartRecord(tempTransId)) {
+                                        if (c.getProductStatus() != ProductConstants.PENDING &&
+                                                c.getProductStatus() != ProductConstants.VOID &&
+                                                c.getProductStatus() != ProductConstants.DISABLED)
+                                            c.setProductStatus(ProductConstants.PAID);
+                                        c.save();
                                     }
                                 }
 
@@ -534,5 +535,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             }
         }
+    }
+
+    private void savePayment() {
+        PaymentEntity payment = new PaymentEntity();
     }
 }
