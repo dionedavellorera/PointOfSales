@@ -1,10 +1,15 @@
 package nerdvana.com.pointofsales.prelogin;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +46,8 @@ public class RightFrameFragment extends Fragment implements View.OnClickListener
         proceed.setOnClickListener(this);
         username = view.findViewById(R.id.username);
         password = view.findViewById(R.id.password);
+
+
         return view;
     }
 
@@ -64,8 +71,8 @@ public class RightFrameFragment extends Fragment implements View.OnClickListener
         // table
         // checkout
         if (!TextUtils.isEmpty(username.trim()) && !TextUtils.isEmpty(password.trim())) {
-            UserModel userModel = new UserModel(username, true, SystemConstants.SYS_ROOM);
-            SharedPreferenceManager.saveString(getContext(), GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+//            UserModel userModel = new UserModel(username, true, SystemConstants.SYS_ROOM);
+//            SharedPreferenceManager.saveString(getContext(), GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
             isValid = true;
         }
         return isValid;

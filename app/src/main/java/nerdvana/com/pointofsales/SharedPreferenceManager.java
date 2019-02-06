@@ -11,9 +11,6 @@ public class SharedPreferenceManager {
         SharedPreferenceManager.sharedPreferences = context.getSharedPreferences(APP_SETTINGS, Context.MODE_PRIVATE);
     }
 
-//    private static SharedPreferences getSharedPreferences() {
-//        return
-//    }
 
     public static String getString(Context context, String key) {
         return SharedPreferenceManager.sharedPreferences.getString(key , "");
@@ -31,5 +28,4 @@ public class SharedPreferenceManager {
         editor.apply();
     }
 
-    // other getters/setters
 }

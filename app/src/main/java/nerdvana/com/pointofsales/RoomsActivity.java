@@ -9,13 +9,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.orm.query.Select;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
+import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
@@ -42,7 +46,8 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
 
         setRoomsTableAdapter();
 
-        new RoomsTablesAsync(RoomsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        sendRoomListRequest();
+//        new RoomsTablesAsync(RoomsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -77,4 +82,29 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
         finish();
     }
 
+    private void sendRoomListRequest() {
+        BusProvider.getInstance().post(new FetchRoomRequest());
+    }
+
+    @Subscribe
+    public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
+        Log.d("TEST_LOG", "Y");
+        Log.d("TEST_LOG", String.valueOf(fetchRoomResponse.getResult().size()));
+        if (fetchRoomResponse.getResult().size() > 0) {
+            new RoomsTablesAsync(this, fetchRoomResponse.getResult()).execute();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
 }

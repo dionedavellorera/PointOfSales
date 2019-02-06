@@ -18,6 +18,9 @@ public class PosApplication extends SugarApp {
 
 //        new BusProvider();
         new GsonHelper();
+
+        new DbInit().execute();
+
         new SharedPreferenceManager(this);
         Stetho.initializeWithDefaults(this);
     }

@@ -66,6 +66,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
         RightFrameFragment rightFrameFragment = new RightFrameFragment();
         return rightFrameFragment;
+
     }
 
     @Nullable
@@ -147,7 +148,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                         break;
                     }
                     case BottomSheetBehavior.STATE_EXPANDED: {
-                        new RoomsTablesAsync(RightFrameFragment.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//                        new RoomsTablesAsync(RightFrameFragment.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         bottomSheetHeader.setText(getResources().getString(R.string.pulldown_text));
                         break;
                     }

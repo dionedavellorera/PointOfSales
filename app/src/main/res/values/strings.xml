@@ -17,4 +17,5 @@
 
     <string name="room_selection_callback_code">1</string>
     <string name="title_activity_payment">PaymentActivity</string>
+    <string name="title_activity_setup">SetupActivity</string>
 </resources>

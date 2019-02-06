@@ -1,10 +1,14 @@
 package nerdvana.com.pointofsales;
 
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,12 +24,21 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
+import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
+import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
+import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
@@ -71,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         BusProvider.getInstance().post(new TestRequest("test"));
 
+        requestRoomStatusList();
     }
 
     private void initializeViews() {
@@ -185,8 +199,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         SharedPreferenceManager.clearPreference(getApplicationContext());
                         CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
 
-                        openFragment(R.id.leftFrame, preLoginLeftFrameFragment);
-                        openFragment(R.id.rightFrame, preLoginRightFrameFragment);
+//                        openFragment(R.id.leftFrame, preLoginLeftFrameFragment);
+//                        openFragment(R.id.rightFrame, preLoginRightFrameFragment);
+
+                        finish();
+                        startActivity(new Intent(MainActivity.this, SetupActivity.class));
                         break;
                 }
             }
@@ -238,4 +255,28 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //    private void saveSelectedSpace(String selectedSpace) {
 //        SharedPreferenceManager.saveString(MainActivity.this, selectedSpace, ApplicationConstants.SELECTED_ROOM_TABLE);
 //    }
+
+    private void requestRoomStatusList() {
+        List<RoomStatusEntity> list = RoomStatusEntity.listAll(RoomStatusEntity.class);
+        if (list.size() < 1) {
+            BusProvider.getInstance().post(new FetchRoomStatusRequest());
+        }
+    }
+
+    @Subscribe
+    public void onReceiveRoomStatusList(FetchRoomStatusResponse fetchRoomStatusResponse) {
+        new RoomStatusAsync(fetchRoomStatusResponse.getResult()).execute();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
 }
