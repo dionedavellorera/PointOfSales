@@ -7,16 +7,18 @@
     android:background="@color/darkgrey"
     >
 
+
+
+
     <TextView
         android:id="@+id/loginLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/amiri"
         android:gravity="center"
         android:text="POST LOGIN"
         android:textColor="@color/light"
-        android:textSize="32sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

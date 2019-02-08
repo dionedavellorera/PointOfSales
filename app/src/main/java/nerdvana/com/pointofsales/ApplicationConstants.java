@@ -14,6 +14,8 @@ public class ApplicationConstants {
     public static final String SERIAL_NUMBER = "serial_number";
     public static final String API_BASE_URL = "api_base_url";
 
+    public static final String MACHINE_ID = "machine_id";
+
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 
 }

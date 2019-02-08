@@ -21,6 +21,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
+import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.RoomTableModel;
@@ -46,8 +47,8 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
 
         setRoomsTableAdapter();
 
+//        new RoomsTablesAsync(this, new ArrayList<FetchRoomResponse.Result>()).execute();
         sendRoomListRequest();
-//        new RoomsTablesAsync(RoomsActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -88,8 +89,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
 
     @Subscribe
     public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
-        Log.d("TEST_LOG", "Y");
-        Log.d("TEST_LOG", String.valueOf(fetchRoomResponse.getResult().size()));
         if (fetchRoomResponse.getResult().size() > 0) {
             new RoomsTablesAsync(this, fetchRoomResponse.getResult()).execute();
         }

@@ -41,6 +41,7 @@ import nerdvana.com.pointofsales.background.DeleteCartItemAsync;
 import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
+import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
@@ -130,8 +131,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         defaultView();
-        Log.d("ETET", "ETET");
-        Log.d("ETET", selectedRoomNumber());
         if (!TextUtils.isEmpty(selectedRoomNumber())) {
             //reload data from selected table && set views
             retrieveCartItems();
@@ -325,7 +324,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //        checkoutAdapter.notifyDataSetChanged();
 
         retrieveCartItems();
-
         listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
         computeTotal(itemAdded);
     }
@@ -361,6 +359,37 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
                 break;
             case 101: //VOID
+                final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                    @Override
+                    public void passwordSuccess() {
+                        ArrayList<Long> selectedIds = new ArrayList<>();
+                        for (ProductsModel p : selectedProductsList) {
+                            if (p.isSelected()) {
+                                selectedIds.add(p.getProductId());
+                            }
+                        }
+
+
+                        String tempTransId = getTableRecord().get(0).getTransactionId();
+
+                        for (CartEntity c : getCartRecord(tempTransId)) {
+                            if (selectedIds.contains(c.getProductId())) {
+                                c.setProductStatus(ProductConstants.VOID);
+                                c.save();
+                            }
+                        }
+
+                        retrieveCartItems();
+                        computeFromDb();
+
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+
+                    }
+                };
+                if(!passwordDialog.isShowing()) passwordDialog.show();
                 break;
             case 102: //PAYMENT
                 if ((userModel.getSystemType().equals(SystemConstants.SYS_ROOM) ||

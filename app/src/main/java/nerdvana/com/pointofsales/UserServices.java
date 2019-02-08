@@ -4,8 +4,11 @@ import com.squareup.otto.Subscribe;
 
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
+import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
+import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.requests.TestRequest;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -16,9 +19,9 @@ public class UserServices extends BaseService {
     }
 
     @Subscribe
-    public void onReceiveFb(TestRequest sendNotificationListRequest) {
+    public void onReceiveTestConnection(TestRequest sendNotificationListRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        Call<ResponseBody> hotelCall = iUsers.sendTestRequest(
+        Call<TestConnectionResponse> hotelCall = iUsers.sendTestRequest(
                 sendNotificationListRequest.getMapValue());
         asyncRequest(hotelCall);
     }
@@ -36,6 +39,14 @@ public class UserServices extends BaseService {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchRoomStatusResponse> roomStatusListRequest = iUsers.sendRoomStatusListRequest(
                 fetchRoomStatusRequest.getMapValue());
+        asyncRequest(roomStatusListRequest);
+    }
+
+    @Subscribe
+    public void onReceiveVerifyMachine(VerifyMachineRequest verifyMachineRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<VerifyMachineResponse> roomStatusListRequest = iUsers.sendVerifyMachineRequest(
+                verifyMachineRequest.getMapValue());
         asyncRequest(roomStatusListRequest);
     }
 

@@ -3,8 +3,11 @@ package nerdvana.com.pointofsales;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -29,7 +32,9 @@ import com.squareup.otto.Subscribe;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -85,6 +90,23 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         BusProvider.getInstance().post(new TestRequest("test"));
 
         requestRoomStatusList();
+
+        Log.d("TAG", "SERIAL: " + Build.SERIAL);
+        Log.d("TAG","MODEL: " + Build.MODEL);
+        Log.d("TAG","ID: " + Build.ID);
+        Log.d("TAG","Manufacture: " + Build.MANUFACTURER);
+        Log.d("TAG","brand: " + Build.BRAND);
+        Log.d("TAG","type: " + Build.TYPE);
+        Log.d("TAG","user: " + Build.USER);
+        Log.d("TAG","BASE: " + Build.VERSION_CODES.BASE);
+        Log.d("TAG","INCREMENTAL " + Build.VERSION.INCREMENTAL);
+        Log.d("TAG","SDK  " + Build.VERSION.SDK);
+        Log.d("TAG","BOARD: " + Build.BOARD);
+        Log.d("TAG","BRAND " + Build.BRAND);
+        Log.d("TAG","HOST " + Build.HOST);
+        Log.d("TAG","FINGERPRINT: "+Build.FINGERPRINT);
+        Log.d("TAG","Version Code: " + Build.VERSION.RELEASE);
+
     }
 
     private void initializeViews() {

@@ -67,21 +67,25 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((ProductsViewHolder) holder).iconStatus.setVisibility(View.GONE);
             }
 
-            ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
-                    notifyItemChanged(i);
-                }
-            });
+            if (productsModel.getProductStatus() != ProductConstants.PENDING &&
+                    productsModel.getProductStatus() != ProductConstants.VOID) {
+                ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
+                        notifyItemChanged(i);
+                    }
+                });
+            }
 
-            ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    checkoutItemsContract.itemLongClicked(productsModel, holder.getAdapterPosition(), v);
-                    return false;
-                }
-            });
+
+//            ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    checkoutItemsContract.itemLongClicked(productsModel, holder.getAdapterPosition(), v);
+//                    return false;
+//                }
+//            });
 
             ((ProductsViewHolder)holder).name.setText(productsModel.getShortName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(productsModel.getPrice()));
@@ -91,10 +95,8 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ProductsViewHolder)holder).quantity.setTextColor(Color.parseColor("#d3d3d3"));
             ((ProductsViewHolder)holder).price.setTextColor(Color.parseColor("#d3d3d3"));
             if (productsModelList.get(holder.getAdapterPosition()).isSelected()) {
-//                ((ProductsViewHolder) holder).rootView.setSelected(true);
                 ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.highlight);
             } else {
-//                ((ProductsViewHolder) holder).rootView.setSelected(false);
                 ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.navyblue);
             }
 

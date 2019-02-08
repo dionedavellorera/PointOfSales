@@ -22,6 +22,26 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
     @Override
     protected List<RoomTableModel> doInBackground(RoomTableModel... productsModels) {
         List<RoomTableModel> productsModelList = new ArrayList<>();
+//        for (int i = 0; i < 15; i++) {
+//            productsModelList.add(
+//                    new RoomTableModel(
+//                            i,
+//                            i,
+//                            "SUPER STANDARD",
+//                            i,
+//                            "STANDARD",
+//                            i,
+//                            "CANCEY",
+//                            "CLEAN",
+//                            "RM" + i,
+//                            "0.00",
+//                            true,
+//                            "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
+//                            "1",
+//                            "#000000"
+//                    )
+//            );
+//        }
         for (FetchRoomResponse.Result r : roomList) {
             productsModelList.add(
                     new RoomTableModel(
@@ -42,11 +62,6 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                     )
             );
         }
-//        String[]images = {"https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF"};
-//        productsModelList.add(new RoomTableModel("Room 101", "100", true, images[0], RoomConstants.CLEAN, "#7dff44"));
-//        for (int i = 0; i < 20; i++) {
-//            productsModelList.add(new RoomTableModel("Table" + i, "100", true, images[0]));
-//        }
         return productsModelList;
     }
 
