@@ -1,5 +1,10 @@
 package nerdvana.com.pointofsales.model;
 
+import java.util.List;
+
+import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
+import nerdvana.com.pointofsales.api_responses.RoomRate;
+
 public class RoomTableModel {
 
     private int roomId;
@@ -14,19 +19,21 @@ public class RoomTableModel {
     private String statusDescription;
 
     private String name;
-    private String price;
+    private List<RoomRate> price;
     private boolean isAvailable;
     private String imageUrl;
     private String status; //clean, occupied, dirty, etc, etc => CRoom_Stat
     private String hexColor;
+    private double amountSelected;
 
     public RoomTableModel(int roomId, int roomTypeId,
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,
                           String areaName, String statusDescription,
-                          String name, String price,
+                          String name, List<RoomRate> roomRateList,
                           boolean isAvailable, String imageUrl,
-                          String status, String hexColor) {
+                          String status, String hexColor,
+                          double amountSelected) {
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;
         this.roomType = roomType;
@@ -36,24 +43,17 @@ public class RoomTableModel {
         this.areaName = areaName;
         this.statusDescription = statusDescription;
         this.name = name;
-        this.price = price;
+        this.price = roomRateList;
         this.isAvailable = isAvailable;
         this.imageUrl = imageUrl;
         this.status = status;
         this.hexColor = hexColor;
+        this.amountSelected = amountSelected;
     }
 
-//    public RoomTableModel(String name, String price,
-//                          boolean isAvailable, String imageUrl,
-//                          String status, String hexColor) {
-//        this.name = name;
-//        this.price = price;
-//        this.isAvailable = isAvailable;
-//        this.imageUrl = imageUrl;
-//        this.status = status;
-//        this.hexColor = hexColor;
-//    }
-
+    public double getAmountSelected() {
+        return amountSelected;
+    }
 
     public int getRoomId() {
         return roomId;
@@ -91,8 +91,8 @@ public class RoomTableModel {
         return name;
     }
 
-    public String getPrice() {
-        return price;
+    public RoomTableModel(List<RoomRate> price) {
+        this.price = price;
     }
 
     public boolean isAvailable() {
@@ -109,5 +109,9 @@ public class RoomTableModel {
 
     public String getHexColor() {
         return hexColor;
+    }
+
+    public List<RoomRate> getPrice() {
+        return price;
     }
 }

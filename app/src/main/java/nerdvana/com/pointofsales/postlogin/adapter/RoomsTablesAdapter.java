@@ -65,7 +65,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
 
 
-        ((RoomsTablesAdapter.ProductsViewHolder)holder).rel.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
+        ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
 
 //        if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.CLEAN)) {
 //
@@ -86,6 +86,15 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     public void addItems(List<RoomTableModel> roomTableModelList) {
+        this.roomTableModelList = roomTableModelList;
+        notifyDataSetChanged();
+    }
+
+    public List<RoomTableModel> getRoomTableModelList() {
+        return roomTableModelList;
+    }
+
+    public void setRoomTableModelList(List<RoomTableModel> roomTableModelList) {
         this.roomTableModelList = roomTableModelList;
         notifyDataSetChanged();
     }

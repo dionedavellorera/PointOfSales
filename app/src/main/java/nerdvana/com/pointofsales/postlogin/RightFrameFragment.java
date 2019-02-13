@@ -252,7 +252,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @Override
     public void listClicked(RoomTableModel selectedItem) {
         Toast.makeText(getContext(), "SAVED", Toast.LENGTH_SHORT).show();
-        saveSelectedSpace(selectedItem.getName());
+        saveSelectedSpace(selectedItem.getName(), selectedItem.getAmountSelected());
 //        BusProvider.getInstance().post(new FragmentNotifierModel(selectedItem.getName()));
     }
 
@@ -350,8 +350,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
-    private void saveSelectedSpace(String selectedSpace) {
-        CurrentTransactionEntity currentTransaction = new CurrentTransactionEntity(selectedSpace);
+    private void saveSelectedSpace(String selectedSpace, double amountSelected) {
+        CurrentTransactionEntity currentTransaction = new CurrentTransactionEntity(selectedSpace, amountSelected);
         currentTransaction.save();
 //        SharedPreferenceManager.saveString(getContext(), selectedSpace, ApplicationConstants.SELECTED_ROOM_TABLE);
     }

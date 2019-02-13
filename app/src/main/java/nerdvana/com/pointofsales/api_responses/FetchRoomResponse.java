@@ -10,6 +10,12 @@ public class FetchRoomResponse {
     @SerializedName("result")
     @Expose
     private List<Result> result = null;
+    @SerializedName("status")
+    @Expose
+    private Integer status;
+    @SerializedName("mesage")
+    @Expose
+    private String mesage;
 
     public List<Result> getResult() {
         return result;
@@ -19,319 +25,26 @@ public class FetchRoomResponse {
         this.result = result;
     }
 
-    public static class Area {
-
-        @SerializedName("id")
-        @Expose
-        private Integer id;
-        @SerializedName("room_area")
-        @Expose
-        private String roomArea;
-        @SerializedName("flag")
-        @Expose
-        private Integer flag;
-        @SerializedName("created_by")
-        @Expose
-        private Integer createdBy;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getRoomArea() {
-            return roomArea;
-        }
-
-        public void setRoomArea(String roomArea) {
-            this.roomArea = roomArea;
-        }
-
-        public Integer getFlag() {
-            return flag;
-        }
-
-        public void setFlag(Integer flag) {
-            this.flag = flag;
-        }
-
-        public Integer getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(Integer createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-
+    public Integer getStatus() {
+        return status;
     }
 
-    public static class Creator {
-
-        @SerializedName("id")
-        @Expose
-        private Integer id;
-        @SerializedName("user_id")
-        @Expose
-        private Integer userId;
-        @SerializedName("name")
-        @Expose
-        private String name;
-        @SerializedName("username")
-        @Expose
-        private String username;
-        @SerializedName("email")
-        @Expose
-        private String email;
-        @SerializedName("password")
-        @Expose
-        private String password;
-        @SerializedName("image_file")
-        @Expose
-        private Object imageFile;
-        @SerializedName("group_id")
-        @Expose
-        private Integer groupId;
-        @SerializedName("created_by")
-        @Expose
-        private Integer createdBy;
-        @SerializedName("created_at")
-        @Expose
-        private Object createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public Integer getUserId() {
-            return userId;
-        }
-
-        public void setUserId(Integer userId) {
-            this.userId = userId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public Object getImageFile() {
-            return imageFile;
-        }
-
-        public void setImageFile(Object imageFile) {
-            this.imageFile = imageFile;
-        }
-
-        public Integer getGroupId() {
-            return groupId;
-        }
-
-        public void setGroupId(Integer groupId) {
-            this.groupId = groupId;
-        }
-
-        public Integer getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(Integer createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public Object getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(Object createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
-    public static class Parent {
-
-        @SerializedName("id")
-        @Expose
-        private Integer id;
-        @SerializedName("room_type")
-        @Expose
-        private String roomType;
-        @SerializedName("parent_id")
-        @Expose
-        private Object parentId;
-        @SerializedName("flag")
-        @Expose
-        private Integer flag;
-        @SerializedName("created_by")
-        @Expose
-        private Integer createdBy;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getRoomType() {
-            return roomType;
-        }
-
-        public void setRoomType(String roomType) {
-            this.roomType = roomType;
-        }
-
-        public Object getParentId() {
-            return parentId;
-        }
-
-        public void setParentId(Object parentId) {
-            this.parentId = parentId;
-        }
-
-        public Integer getFlag() {
-            return flag;
-        }
-
-        public void setFlag(Integer flag) {
-            this.flag = flag;
-        }
-
-        public Integer getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(Integer createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-
+    public String getMesage() {
+        return mesage;
     }
 
-    public static class Result {
+    public void setMesage(String mesage) {
+        this.mesage = mesage;
+    }
+
+
+
+
+    public class Result {
 
         @SerializedName("id")
         @Expose
@@ -339,6 +52,9 @@ public class FetchRoomResponse {
         @SerializedName("room_no")
         @Expose
         private String roomNo;
+        @SerializedName("room_name")
+        @Expose
+        private String roomName;
         @SerializedName("CRoom_Stat")
         @Expose
         private Integer cRoomStat;
@@ -396,6 +112,14 @@ public class FetchRoomResponse {
 
         public void setRoomNo(String roomNo) {
             this.roomNo = roomNo;
+        }
+
+        public String getRoomName() {
+            return roomName;
+        }
+
+        public void setRoomName(String roomName) {
+            this.roomName = roomName;
         }
 
         public Integer getCRoomStat() {
@@ -512,17 +236,20 @@ public class FetchRoomResponse {
 
     }
 
-    public static class RoomRate {
+    public class Type {
 
         @SerializedName("id")
         @Expose
         private Integer id;
-        @SerializedName("room_rate_id")
+        @SerializedName("room_type")
         @Expose
-        private Integer roomRateId;
-        @SerializedName("room_id")
+        private String roomType;
+        @SerializedName("parent_id")
         @Expose
-        private Integer roomId;
+        private Object parentId;
+        @SerializedName("flag")
+        @Expose
+        private Integer flag;
         @SerializedName("created_by")
         @Expose
         private Integer createdBy;
@@ -537,7 +264,10 @@ public class FetchRoomResponse {
         private Object deletedAt;
         @SerializedName("room_rate")
         @Expose
-        private RoomRate_ roomRate;
+        private List<RoomRate> roomRate = null;
+        @SerializedName("parent")
+        @Expose
+        private Object parent;
 
         public Integer getId() {
             return id;
@@ -547,20 +277,28 @@ public class FetchRoomResponse {
             this.id = id;
         }
 
-        public Integer getRoomRateId() {
-            return roomRateId;
+        public String getRoomType() {
+            return roomType;
         }
 
-        public void setRoomRateId(Integer roomRateId) {
-            this.roomRateId = roomRateId;
+        public void setRoomType(String roomType) {
+            this.roomType = roomType;
         }
 
-        public Integer getRoomId() {
-            return roomId;
+        public Object getParentId() {
+            return parentId;
         }
 
-        public void setRoomId(Integer roomId) {
-            this.roomId = roomId;
+        public void setParentId(Object parentId) {
+            this.parentId = parentId;
+        }
+
+        public Integer getFlag() {
+            return flag;
+        }
+
+        public void setFlag(Integer flag) {
+            this.flag = flag;
         }
 
         public Integer getCreatedBy() {
@@ -595,36 +333,36 @@ public class FetchRoomResponse {
             this.deletedAt = deletedAt;
         }
 
-        public RoomRate_ getRoomRate() {
+        public List<RoomRate> getRoomRate() {
             return roomRate;
         }
 
-        public void setRoomRate(RoomRate_ roomRate) {
+        public void setRoomRate(List<RoomRate> roomRate) {
             this.roomRate = roomRate;
+        }
+
+        public Object getParent() {
+            return parent;
+        }
+
+        public void setParent(Object parent) {
+            this.parent = parent;
         }
 
     }
 
-    public class RoomRate_ {
+
+    public class Area {
 
         @SerializedName("id")
         @Expose
         private Integer id;
-        @SerializedName("room_rate")
+        @SerializedName("room_area")
         @Expose
-        private String roomRate;
-        @SerializedName("minHr")
+        private String roomArea;
+        @SerializedName("printer_path")
         @Expose
-        private Integer minHr;
-        @SerializedName("maxHr")
-        @Expose
-        private Integer maxHr;
-        @SerializedName("gracePeriod")
-        @Expose
-        private Integer gracePeriod;
-        @SerializedName("is_promo")
-        @Expose
-        private Integer isPromo;
+        private String printerPath;
         @SerializedName("flag")
         @Expose
         private Integer flag;
@@ -649,44 +387,20 @@ public class FetchRoomResponse {
             this.id = id;
         }
 
-        public String getRoomRate() {
-            return roomRate;
+        public String getRoomArea() {
+            return roomArea;
         }
 
-        public void setRoomRate(String roomRate) {
-            this.roomRate = roomRate;
+        public void setRoomArea(String roomArea) {
+            this.roomArea = roomArea;
         }
 
-        public Integer getMinHr() {
-            return minHr;
+        public String getPrinterPath() {
+            return printerPath;
         }
 
-        public void setMinHr(Integer minHr) {
-            this.minHr = minHr;
-        }
-
-        public Integer getMaxHr() {
-            return maxHr;
-        }
-
-        public void setMaxHr(Integer maxHr) {
-            this.maxHr = maxHr;
-        }
-
-        public Integer getGracePeriod() {
-            return gracePeriod;
-        }
-
-        public void setGracePeriod(Integer gracePeriod) {
-            this.gracePeriod = gracePeriod;
-        }
-
-        public Integer getIsPromo() {
-            return isPromo;
-        }
-
-        public void setIsPromo(Integer isPromo) {
-            this.isPromo = isPromo;
+        public void setPrinterPath(String printerPath) {
+            this.printerPath = printerPath;
         }
 
         public Integer getFlag() {
@@ -731,7 +445,8 @@ public class FetchRoomResponse {
 
     }
 
-    public static class Status {
+
+    public class Status {
 
         @SerializedName("id")
         @Expose
@@ -868,118 +583,7 @@ public class FetchRoomResponse {
 
     }
 
-    public static class Type {
 
-        @SerializedName("id")
-        @Expose
-        private Integer id;
-        @SerializedName("room_type")
-        @Expose
-        private String roomType;
-        @SerializedName("parent_id")
-        @Expose
-        private Integer parentId;
-        @SerializedName("flag")
-        @Expose
-        private Integer flag;
-        @SerializedName("created_by")
-        @Expose
-        private Integer createdBy;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
-        @SerializedName("room_rate")
-        @Expose
-        private List<Object> roomRate = null;
-        @SerializedName("parent")
-        @Expose
-        private Parent parent;
 
-        public Integer getId() {
-            return id;
-        }
 
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getRoomType() {
-            return roomType;
-        }
-
-        public void setRoomType(String roomType) {
-            this.roomType = roomType;
-        }
-
-        public Integer getParentId() {
-            return parentId;
-        }
-
-        public void setParentId(Integer parentId) {
-            this.parentId = parentId;
-        }
-
-        public Integer getFlag() {
-            return flag;
-        }
-
-        public void setFlag(Integer flag) {
-            this.flag = flag;
-        }
-
-        public Integer getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(Integer createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-
-        public List<Object> getRoomRate() {
-            return roomRate;
-        }
-
-        public void setRoomRate(List<Object> roomRate) {
-            this.roomRate = roomRate;
-        }
-
-        public Parent getParent() {
-            return parent;
-        }
-
-        public void setParent(Parent parent) {
-            this.parent = parent;
-        }
-
-    }
 }

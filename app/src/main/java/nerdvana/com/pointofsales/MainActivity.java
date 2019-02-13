@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
 
+    private boolean doubleBackToExitPressedOnce;
+    private Handler mHandler = new Handler();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,22 +95,23 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         BusProvider.getInstance().post(new TestRequest("test"));
 
         requestRoomStatusList();
-
-        Log.d("TAG", "SERIAL: " + Build.SERIAL);
-        Log.d("TAG","MODEL: " + Build.MODEL);
-        Log.d("TAG","ID: " + Build.ID);
-        Log.d("TAG","Manufacture: " + Build.MANUFACTURER);
-        Log.d("TAG","brand: " + Build.BRAND);
-        Log.d("TAG","type: " + Build.TYPE);
-        Log.d("TAG","user: " + Build.USER);
-        Log.d("TAG","BASE: " + Build.VERSION_CODES.BASE);
-        Log.d("TAG","INCREMENTAL " + Build.VERSION.INCREMENTAL);
-        Log.d("TAG","SDK  " + Build.VERSION.SDK);
-        Log.d("TAG","BOARD: " + Build.BOARD);
-        Log.d("TAG","BRAND " + Build.BRAND);
-        Log.d("TAG","HOST " + Build.HOST);
-        Log.d("TAG","FINGERPRINT: "+Build.FINGERPRINT);
-        Log.d("TAG","Version Code: " + Build.VERSION.RELEASE);
+//
+//        Log.d("TAG", "SERIAL: " + Build.SERIAL);
+//        Log.d("TAG","MODEL: " + Build.MODEL);
+//        Log.d("TAG","ID: " + Build.ID);
+//        Log.d("TAG","Manufacture: " + Build.MANUFACTURER);
+//        Log.d("TAG","brand: " + Build.BRAND);
+//        Log.d("TAG","type: " + Build.TYPE);
+//        Log.d("TAG","user: " + Build.USER);
+//        Log.d("TAG","BASE: " + Build.VERSION_CODES.BASE);
+//        Log.d("TAG","INCREMENTAL " + Build.VERSION.INCREMENTAL);
+//        Log.d("TAG","SDK  " + Build.VERSION.SDK);
+//        Log.d("TAG","BOARD: " + Build.BOARD);
+//        Log.d("TAG","BRAND " + Build.BRAND);
+//        Log.d("TAG","HOST " + Build.HOST);
+//        Log.d("TAG","FINGERPRINT: "+Build.FINGERPRINT);
+//        Log.d("TAG","Version Code: " + Build.VERSION.RELEASE);
+//        Log.d("MYCONNECTION", String.valueOf(Utils.checkConnection(this)));
 
     }
 
@@ -247,6 +253,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         super.onDestroy();
 
+        if (mHandler != null) { mHandler.removeCallbacks(mRunnable); }
+
     }
 
     @Override
@@ -254,18 +262,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 10) {
+
+
                 RoomTableModel selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
-
-//                saveSelectedSpace(selected.getName());
-
-                Log.d("TESTTEST", "ACT RESULT");
 
                 CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
                 CurrentTransactionEntity currentTransactionEntity = new
-                        CurrentTransactionEntity( selected.getName());
+                CurrentTransactionEntity( selected.getName(), selected.getAmountSelected());
 
                 currentTransactionEntity.save();
-                BusProvider.getInstance().post(new FragmentNotifierModel(selected.getName()));
+
+
+                BusProvider.getInstance().post(new FragmentNotifierModel(selected));
 
                 Toast.makeText(this, selected.getName() + " selected", Toast.LENGTH_SHORT).show();
             }
@@ -301,4 +309,34 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onResume();
         BusProvider.getInstance().register(this);
     }
+
+    @Subscribe
+    public void apiError(ApiError apiError) {
+        Toast.makeText(MainActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
+    }
+
+    private final Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            doubleBackToExitPressedOnce = false;
+        }
+    };
+
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+
+        mHandler.postDelayed(mRunnable, 2000);
+    }
+
+
+
+
 }

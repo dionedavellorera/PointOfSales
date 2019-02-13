@@ -1,13 +1,13 @@
 package nerdvana.com.pointofsales.model;
 
 public class FragmentNotifierModel {
-    private String notifier;
+    private RoomTableModel selectedRoom;
 
-    public FragmentNotifierModel(String notifier) {
-        this.notifier = notifier;
+    public FragmentNotifierModel(RoomTableModel selectedRoom) {
+        this.selectedRoom = selectedRoom;
     }
 
-    public String getNotifier() {
-        return notifier;
+    public RoomTableModel getSelectedRoom() {
+        return selectedRoom;
     }
 }

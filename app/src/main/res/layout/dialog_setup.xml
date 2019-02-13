@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:layout_margin="10dp"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
+    <TextView
+        android:padding="10dp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/navyblue"
+        android:textSize="18sp"
+        android:gravity="center_vertical"
+        android:text="SETUP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <android.support.design.widget.TextInputLayout
+        android:padding="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:maxLength="40"
+            android:maxLines="1"
+            android:imeOptions="actionNext"
             android:id="@+id/ipAddress"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -17,36 +30,50 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:padding="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:maxLength="40"
+            android:maxLines="1"
+            android:imeOptions="actionNext"
             android:id="@+id/branchName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Branch name"/>
+            android:hint="Company"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:padding="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:maxLength="40"
+            android:maxLines="1"
+            android:imeOptions="actionNext"
             android:id="@+id/branchCode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Branch code"/>
+            android:hint="Code"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:padding="3dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
+            android:maxLength="40"
+            android:maxLines="1"
+            android:imeOptions="actionNext"
             android:id="@+id/serialNumber"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="Serial number"/>
+            android:hint="Product key"/>
     </android.support.design.widget.TextInputLayout>
 
     <Button
+        android:layout_margin="5dp"
+        android:background="@drawable/button_selector"
         android:id="@+id/proceed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

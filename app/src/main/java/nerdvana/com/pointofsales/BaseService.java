@@ -2,6 +2,8 @@ package nerdvana.com.pointofsales;
 
 import android.util.Log;
 
+import com.squareup.otto.Bus;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,7 +26,12 @@ public class BaseService {
         apiCall.enqueue(new Callback<T>() {
             @Override
             public void onResponse(Call<T> call, Response<T> response) {
-                BusProvider.getInstance().post(response.body());
+                try {
+                    BusProvider.getInstance().post(response.body());
+                } catch (Exception e) {
+                    BusProvider.getInstance().post(new ApiError(e.getMessage()));
+                }
+
             }
 
             @Override

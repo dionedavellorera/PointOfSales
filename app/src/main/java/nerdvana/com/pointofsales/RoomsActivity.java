@@ -6,11 +6,21 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.orm.query.Select;
 import com.squareup.otto.Subscribe;
@@ -18,37 +28,55 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.adapters.RoomFilterAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
+import nerdvana.com.pointofsales.api_responses.RoomRate;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
+import nerdvana.com.pointofsales.custom.SpacesItemDecoration;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
+import nerdvana.com.pointofsales.interfaces.RoomFilterContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
+import nerdvana.com.pointofsales.model.ButtonsModel;
+import nerdvana.com.pointofsales.model.FilterOptionModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.postlogin.RightFrameFragment;
+import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
 
-public class RoomsActivity extends AppCompatActivity implements AsyncContract, SelectionContract {
+public class RoomsActivity extends AppCompatActivity implements AsyncContract,
+        SelectionContract, RoomFilterContract {
 
     private RoomsTablesAdapter roomsTablesAdapter;
     private RecyclerView listTableRoomSelection;
+
+    private RecyclerView listFilters;
+
+    private List<RoomTableModel> originalRoomList;
+    private List<RoomTableModel> filteredRoomList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
+        listFilters = findViewById(R.id.listFilters);
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         listTableRoomSelection = findViewById(R.id.listTableRoomSelection);
 
-
         setRoomsTableAdapter();
-
-//        new RoomsTablesAsync(this, new ArrayList<FetchRoomResponse.Result>()).execute();
         sendRoomListRequest();
+
+        setRoomFilter();
+
+        originalRoomList = new ArrayList<>();
+        filteredRoomList = new ArrayList<>();
     }
 
     @Override
@@ -57,13 +85,13 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
         setResult(RESULT_CANCELED, intent);
         finish();
         return true;
-//        return super.onSupportNavigateUp();
     }
 
     @Override
     public void doneLoading(List list, String isFor) {
         switch (isFor) {
             case "roomstables":
+                originalRoomList = list;
                 roomsTablesAdapter.addItems(list);
                 break;
         }
@@ -71,8 +99,10 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
 
     private void setRoomsTableAdapter() {
         roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this);
-        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
+        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, Utils.getDeviceWidth(RoomsActivity.this) / 190));
+        listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
+        roomsTablesAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -92,7 +122,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
         if (fetchRoomResponse.getResult().size() > 0) {
             new RoomsTablesAsync(this, fetchRoomResponse.getResult()).execute();
         }
-
     }
 
     @Override
@@ -105,5 +134,64 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract, S
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+    }
+
+    @Subscribe
+    public void apiError(ApiError apiError) {
+        Toast.makeText(RoomsActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void setRoomFilter() {
+        List<String> allowedPosStatus = new ArrayList<>();
+        allowedPosStatus.add("welcome");
+        allowedPosStatus.add("occupied");
+        allowedPosStatus.add("soa");
+        allowedPosStatus.add("clean");
+        List<FilterOptionModel> filterOptionsList = new ArrayList<>();
+        List<RoomStatusEntity> rse = RoomStatusEntity.listAll(RoomStatusEntity.class);
+        filterOptionsList.add(new FilterOptionModel("ALL", true, 0));
+        for (RoomStatusEntity r : rse) {
+            if (allowedPosStatus.contains(r.getRoom_status().toLowerCase())) {
+                filterOptionsList.add(new FilterOptionModel(r.getRoom_status().toUpperCase(), false, r.getCore_id()));
+            }
+        }
+
+        RoomFilterAdapter roomFilterAdapter = new RoomFilterAdapter(filterOptionsList, this);
+        listFilters.setLayoutManager(new LinearLayoutManager(RoomsActivity.this, LinearLayout.HORIZONTAL, false));
+
+        listFilters.setAdapter(roomFilterAdapter);
+
+
+
+        roomFilterAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void filterSelected(int statusId) {
+        if (statusId == 0) { //SHOW ALL
+            roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this);
+            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, Utils.getDeviceWidth(RoomsActivity.this) / 190));
+//            listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
+            listTableRoomSelection.setAdapter(roomsTablesAdapter);
+
+
+
+            roomsTablesAdapter.notifyDataSetChanged();
+        } else {
+            //SHOW SELECTED STATUS
+            filteredRoomList = new ArrayList<>();
+            for (RoomTableModel rtm : originalRoomList) {
+                if (rtm.getStatus().equalsIgnoreCase(String.valueOf(statusId))) {
+                    filteredRoomList.add(rtm);
+                }
+            }
+            roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this);
+            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, Utils.getDeviceWidth(RoomsActivity.this) / 190));
+            listTableRoomSelection.setAdapter(roomsTablesAdapter);
+
+
+
+            roomsTablesAdapter.notifyDataSetChanged();
+        }
     }
 }

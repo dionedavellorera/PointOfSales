@@ -43,14 +43,8 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
 
     @Override
     protected ProductsModel doInBackground(ProductsModel... productsModels) {
-//        String name, double price,
-//        double vat, boolean isAvailable,
-//        String[] imageUrls, boolean isVattable,
-//        String shortName, List<ProductsModel> productsList
-
 
         final UserModel userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.userSettings), UserModel.class);
-
 
         if (!TextUtils.isEmpty(_transId)) { //just insert product, transId exist
             CartEntity cartItem = new CartEntity(

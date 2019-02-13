@@ -18,9 +18,11 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
     private List<ProductsModel> productsList;
     private boolean isSelected;
     private Long productId;
+    private boolean isRoom = false;
+
+
 
     public ProductsModel() {}
-
 
     public ProductsModel(String name, double price,
                          double vat, boolean isAvailable,
@@ -42,7 +44,6 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
         this.lowStackCount = lowStackCount;
         this.productStatus = productStatus;
         this.productId = productId;
-
     }
 
     public Long getProductId() {

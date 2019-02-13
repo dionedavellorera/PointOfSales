@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales;
 
+import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
@@ -8,6 +9,9 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -95,12 +99,14 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 if (validateLogin(username.getText().toString(), password.getText().toString())) {
                     startActivity(new Intent(this, MainActivity.class));
                     finish();
-                } else {
-//                    preloginContract.loginFailed();
                 }
+//                else {
+//                    Toast.makeText(SetupActivity.this, "Machine number missing, please setup first", Toast.LENGTH_SHORT).show();
+//                }
                 break;
             case R.id.setup:
                 setupDialog = new Dialog(this);
+                setupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 setupDialog.setContentView(R.layout.dialog_setup);
 
                 final EditText ipAddress = setupDialog.findViewById(R.id.ipAddress);
@@ -120,34 +126,62 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 proceed.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                ipAddress.getText().toString(),ApplicationConstants.HOST);
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                branchName.getText().toString(),ApplicationConstants.BRANCH);
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                branchCode.getText().toString(),ApplicationConstants.CODE);
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                serial.getText().toString(),ApplicationConstants.SERIAL_NUMBER);
 
-                        String apiBaseUrl = String.format("%s/%s/%s/%s/",
-                                ipAddress.getText().toString(),
-                                "api",
-                                branchName.getText().toString(),
-                                branchCode.getText().toString());
-                        SharedPreferenceManager.saveString(SetupActivity.this, apiBaseUrl, ApplicationConstants.API_BASE_URL);
-                        PosClient.changeApiBaseUrl(
-                                apiBaseUrl
-                        );
+                        if (!TextUtils.isEmpty(ipAddress.getText().toString().trim()) &&
+                                !TextUtils.isEmpty(branchName.getText().toString().trim()) &&
+                                !TextUtils.isEmpty(branchCode.getText().toString().trim()) &&
+                                !TextUtils.isEmpty(serial.getText().toString().trim())) {
+
+                            if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
+                                    ipAddress.getText().toString(),
+                                    "api",
+                                    branchName.getText().toString(),
+                                    branchCode.getText().toString()))) {
+
+                                SharedPreferenceManager.saveString(SetupActivity.this,
+                                        ipAddress.getText().toString(),ApplicationConstants.HOST);
+                                SharedPreferenceManager.saveString(SetupActivity.this,
+                                        branchName.getText().toString(),ApplicationConstants.BRANCH);
+                                SharedPreferenceManager.saveString(SetupActivity.this,
+                                        branchCode.getText().toString(),ApplicationConstants.CODE);
+                                SharedPreferenceManager.saveString(SetupActivity.this,
+                                        serial.getText().toString(),ApplicationConstants.SERIAL_NUMBER);
+
+                                String apiBaseUrl = String.format("%s/%s/%s/%s/",
+                                        ipAddress.getText().toString(),
+                                        "api",
+                                        branchName.getText().toString(),
+                                        branchCode.getText().toString());
+                                SharedPreferenceManager.saveString(SetupActivity.this, apiBaseUrl, ApplicationConstants.API_BASE_URL);
+                                PosClient.changeApiBaseUrl(
+                                        apiBaseUrl
+                                );
+
+                                sendVerifyMachineRequest(serial.getText().toString().toUpperCase());
+
+                            } else {
+                                Toast.makeText(SetupActivity.this, "Please enter valid url", Toast.LENGTH_SHORT).show();
+                            }
 
 
-                        sendVerifyMachineRequest(serial.getText().toString().toUpperCase());
+
+
+                        } else {
+
+                            Toast.makeText(SetupActivity.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+
+                        }
 
 
                     }
                 });
 
+                if (!setupDialog.isShowing()) {
+                    setupDialog.show();
+                    Window window = setupDialog.getWindow();
+                    window.setLayout((Utils.getDeviceWidth(SetupActivity.this) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
+                }
 
-                if (!setupDialog.isShowing()) setupDialog.show();
                 break;
         }
     }
@@ -160,8 +194,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         // checkout
         if (!TextUtils.isEmpty(username.trim()) && !TextUtils.isEmpty(password.trim())) {
             userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
-            if (TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST))) {
-                Toast.makeText(SetupActivity.this, "Please setup first", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.MACHINE_ID))) {
+                Toast.makeText(SetupActivity.this, "Machine not yet registered", Toast.LENGTH_SHORT).show();
                 isValid = false;
             } else {
                 UserModel userModel = new UserModel(username,
@@ -174,6 +208,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 isValid = true;
             }
 
+        } else {
+            Toast.makeText(SetupActivity.this, "Please enter username and password", Toast.LENGTH_SHORT).show();
         }
         return isValid;
     }
@@ -211,5 +247,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             }
         }
         Toast.makeText(getApplicationContext(), verifyMachineResponse.getMesage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe
+    public void apiError(ApiError apiError) {
+        Toast.makeText(SetupActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
     }
 }

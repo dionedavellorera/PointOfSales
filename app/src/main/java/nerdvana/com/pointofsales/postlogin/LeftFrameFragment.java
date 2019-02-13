@@ -36,6 +36,7 @@ import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.SystemConstants;
 import nerdvana.com.pointofsales.TransactionConstants;
+import nerdvana.com.pointofsales.api_responses.RoomRate;
 import nerdvana.com.pointofsales.background.CheckoutItemsAsync;
 import nerdvana.com.pointofsales.background.DeleteCartItemAsync;
 import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
@@ -43,6 +44,7 @@ import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
+import nerdvana.com.pointofsales.dialogs.RateDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
@@ -55,17 +57,19 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
+import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
-         SaveTransactionContract, RetrieveCartItemContract {
+         SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
     private View view;
 
     private double amountToPay = 0;
 
+    private List<RoomRate> roomRateList;
 
     private TextView total;
     private TextView discount;
@@ -109,9 +113,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         noItems = view.findViewById(R.id.notItems);
         header = view.findViewById(R.id.header);
+        header.setOnClickListener(this);
+
 
         rootView = view.findViewById(R.id.rootView);
         selectedProductsList = new ArrayList<>();
+        roomRateList = new ArrayList<>();
     }
 
     @Nullable
@@ -230,11 +237,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
+    //branchcode-year-autoincrement 8 digit
+
     @Subscribe
-    public void fragmentNotifier(FragmentNotifierModel fragmentNotifierModel) {
+    public void notify(FragmentNotifierModel selectedRoom) {
+
+        this.roomRateList = selectedRoom.getSelectedRoom().getPrice();
 
         retrieveCartItems();
-        setView(fragmentNotifierModel.getNotifier());
+
+        computeFromDb();
+
+        setView(selectedRoom.getSelectedRoom().getName());
 
     }
 
@@ -279,16 +293,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void onPause() {
         super.onPause();
 //        BusProvider.getInstance().unregister(this);
-
-        Log.d("TESTTEST", "ONPAUSE");
     }
 
     @Override
     public void onResume() {
         super.onResume();
 //        BusProvider.getInstance().register(this);
-
-        Log.d("TESTTEST", "ONRESUME");
     }
 
     @Override
@@ -321,8 +331,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Override
     public void itemAdded(ProductsModel itemAdded) {
-//        checkoutAdapter.notifyDataSetChanged();
-
         retrieveCartItems();
         listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
         computeTotal(itemAdded);
@@ -330,6 +338,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void computeTotal(ProductsModel itemAdded) {
         amountToPay += itemAdded.getPrice();
+
         total.setText(String.valueOf(amountToPay));
     }
 
@@ -526,8 +535,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void computeFromDb() {
         double temp = 0;
         for (ProductsModel p : selectedProductsList) {
+
             temp += p.getPrice();
+
         }
+
+        List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
+
+        temp += currentTransaction.get(0).getAmount();
 
         total.setText(temp < 1 ? "0.00": String.valueOf(temp));
     }
@@ -553,5 +568,30 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void savePayment() {
         PaymentEntity payment = new PaymentEntity();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.header:
+                RateDialog rateDialog = new RateDialog(getContext(), roomRateList) {
+                    @Override
+                    public void rateChangeSuccess(double amountSelected) {
+                        List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
+                        for (CurrentTransactionEntity c : currentTransaction) {
+                            c.setAmount(amountSelected);
+                            c.save();
+                        }
+                        computeFromDb();
+                    }
+                };
+                if (roomRateList.size() > 0) {
+                    rateDialog.show();
+                } else {
+                    Toast.makeText(getContext(), "No room rate list found", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+        }
     }
 }
