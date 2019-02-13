@@ -160,7 +160,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                                 sendVerifyMachineRequest(serial.getText().toString().toUpperCase());
 
                             } else {
-                                
+
                                 Toast.makeText(SetupActivity.this, "Please enter valid url", Toast.LENGTH_SHORT).show();
 
                             }
