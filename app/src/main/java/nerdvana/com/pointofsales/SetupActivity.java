@@ -165,9 +165,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
                             }
 
-
-
-
                         } else {
 
                             Toast.makeText(SetupActivity.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();

@@ -37,15 +37,15 @@ public class RoomRateInner {
     @SerializedName("deleted_at")
     @Expose
     private Object deletedAt;
-    @SerializedName("amount")
-    @Expose
-    private Amount amount;
-    @SerializedName("per_hour")
-    @Expose
-    private PerHour perHour;
-    @SerializedName("x_person")
-    @Expose
-    private XPerson xPerson;
+//    @SerializedName("amount")
+//    @Expose
+//    private Amount amount;
+//    @SerializedName("per_hour")
+//    @Expose
+//    private PerHour perHour;
+//    @SerializedName("x_person")
+//    @Expose
+//    private XPerson xPerson;
 
     public Integer getId() {
         return id;
@@ -135,27 +135,27 @@ public class RoomRateInner {
         this.deletedAt = deletedAt;
     }
 
-    public Amount getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Amount amount) {
-        this.amount = amount;
-    }
-
-    public PerHour getPerHour() {
-        return perHour;
-    }
-
-    public void setPerHour(PerHour perHour) {
-        this.perHour = perHour;
-    }
-
-    public XPerson getXPerson() {
-        return xPerson;
-    }
-
-    public void setXPerson(XPerson xPerson) {
-        this.xPerson = xPerson;
-    }
+//    public Amount getAmount() {
+//        return amount;
+//    }
+//
+//    public void setAmount(Amount amount) {
+//        this.amount = amount;
+//    }
+//
+//    public PerHour getPerHour() {
+//        return perHour;
+//    }
+//
+//    public void setPerHour(PerHour perHour) {
+//        this.perHour = perHour;
+//    }
+//
+//    public XPerson getXPerson() {
+//        return xPerson;
+//    }
+//
+//    public void setXPerson(XPerson xPerson) {
+//        this.xPerson = xPerson;
+//    }
 }

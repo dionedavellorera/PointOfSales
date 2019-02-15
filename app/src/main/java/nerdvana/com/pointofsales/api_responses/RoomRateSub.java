@@ -3,16 +3,16 @@ package nerdvana.com.pointofsales.api_responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RoomRate {
+public class RoomRateSub {
     @SerializedName("id")
     @Expose
     private Integer id;
-    @SerializedName("room_rate_id")
+    @SerializedName("room_rate_price_id")
     @Expose
-    private Integer roomRateId;
-    @SerializedName("room_type_id")
+    private Integer roomRatePriceId;
+    @SerializedName("room_id")
     @Expose
-    private Integer roomTypeId;
+    private Integer roomId;
     @SerializedName("created_by")
     @Expose
     private Integer createdBy;
@@ -25,9 +25,9 @@ public class RoomRate {
     @SerializedName("deleted_at")
     @Expose
     private Object deletedAt;
-    @SerializedName("room_rate")
+    @SerializedName("rate_price")
     @Expose
-    private RoomRateInner roomRate;
+    private RatePrice ratePrice;
 
     public Integer getId() {
         return id;
@@ -37,20 +37,20 @@ public class RoomRate {
         this.id = id;
     }
 
-    public Integer getRoomRateId() {
-        return roomRateId;
+    public Integer getRoomRatePriceId() {
+        return roomRatePriceId;
     }
 
-    public void setRoomRateId(Integer roomRateId) {
-        this.roomRateId = roomRateId;
+    public void setRoomRatePriceId(Integer roomRatePriceId) {
+        this.roomRatePriceId = roomRatePriceId;
     }
 
-    public Integer getRoomTypeId() {
-        return roomTypeId;
+    public Integer getRoomId() {
+        return roomId;
     }
 
-    public void setRoomTypeId(Integer roomTypeId) {
-        this.roomTypeId = roomTypeId;
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
     }
 
     public Integer getCreatedBy() {
@@ -85,11 +85,11 @@ public class RoomRate {
         this.deletedAt = deletedAt;
     }
 
-    public RoomRateInner getRoomRate() {
-        return roomRate;
+    public RatePrice getRatePrice() {
+        return ratePrice;
     }
 
-    public void setRoomRate(RoomRateInner roomRate) {
-        this.roomRate = roomRate;
+    public void setRatePrice(RatePrice ratePrice) {
+        this.ratePrice = ratePrice;
     }
 }

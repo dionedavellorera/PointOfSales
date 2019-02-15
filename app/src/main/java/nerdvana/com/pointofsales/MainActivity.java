@@ -272,6 +272,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 currentTransactionEntity.save();
 
+                Log.d("PUPU", String.valueOf(selected.getPrice().size()));
 
                 BusProvider.getInstance().post(new FragmentNotifierModel(selected));
 

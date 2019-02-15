@@ -5,8 +5,6 @@ import java.util.Map;
 
 public class VerifyMachineRequest {
 
-
-
     private Map<String, String> mapValue;
     public VerifyMachineRequest(String productKey, String androidId,
                                 String serial, String model,

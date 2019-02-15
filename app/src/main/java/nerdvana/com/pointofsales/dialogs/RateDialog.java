@@ -13,7 +13,7 @@ import android.widget.Spinner;
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.api_responses.RoomRate;
+import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 
 public abstract class RateDialog extends Dialog implements View.OnClickListener {
 
@@ -21,10 +21,10 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
     private Spinner rateSpinner;
     private double amountSelected = 0;
 
-    private List<RoomRate> roomRateList;
-    public RateDialog(@NonNull Context context, List<RoomRate> roomRateList) {
+    private List<RoomRateMain> roomRateMainList;
+    public RateDialog(@NonNull Context context, List<RoomRateMain> roomRateMainList) {
         super(context);
-        this.roomRateList = roomRateList;
+        this.roomRateMainList = roomRateMainList;
     }
 
     public RateDialog(@NonNull Context context, int themeResId) {
@@ -47,7 +47,7 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
         rateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                amountSelected = roomRateList.get(position).getRoomRate().getAmount().getAmount();
+                amountSelected = roomRateMainList.get(position).getRatePrice().getAmount();
             }
 
             @Override

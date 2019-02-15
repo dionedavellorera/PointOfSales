@@ -4,6 +4,8 @@ import com.facebook.stetho.Stetho;
 import com.orm.SugarApp;
 import com.squareup.otto.Bus;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 public class PosApplication extends SugarApp {
     @Override
     public void onCreate() {
@@ -23,5 +25,7 @@ public class PosApplication extends SugarApp {
 
         new SharedPreferenceManager(this);
         Stetho.initializeWithDefaults(this);
+
+        JodaTimeAndroid.init(this);
     }
 }

@@ -2,7 +2,9 @@ package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,16 +35,31 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.RoomConstants;
+import nerdvana.com.pointofsales.SetupActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.SystemConstants;
 import nerdvana.com.pointofsales.TransactionConstants;
-import nerdvana.com.pointofsales.api_responses.RoomRate;
+import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.CheckInRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
+import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
+import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
+import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
+import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
+import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
+import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.RoomRateMain;
+import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import nerdvana.com.pointofsales.background.CheckoutItemsAsync;
 import nerdvana.com.pointofsales.background.DeleteCartItemAsync;
 import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
+import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
@@ -62,6 +80,7 @@ import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+import okhttp3.ResponseBody;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
@@ -69,7 +88,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private double amountToPay = 0;
 
-    private List<RoomRate> roomRateList;
+    private CheckInDialog checkInDialog;
+
+    private List<RoomRateMain> roomRateMainList;
 
     private TextView total;
     private TextView discount;
@@ -96,6 +117,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private static SelectionContract selectionContract;
 
+    private List<FetchCarResponse.Result> carList;
+    private List<FetchVehicleResponse.Result> vehicleList;
+    private List<FetchGuestTypeResponse.Result> guestTypeList;
+    private RoomTableModel selectedRoom;
     public static LeftFrameFragment newInstance(SelectionContract selectionContract) {
         LeftFrameFragment.selectionContract = selectionContract;
         LeftFrameFragment leftFrameFragment = new LeftFrameFragment();
@@ -117,8 +142,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         rootView = view.findViewById(R.id.rootView);
+
         selectedProductsList = new ArrayList<>();
-        roomRateList = new ArrayList<>();
+        carList = new ArrayList<>();
+        vehicleList = new ArrayList<>();
+        guestTypeList = new ArrayList<>();
+        roomRateMainList = new ArrayList<>();
     }
 
     @Nullable
@@ -144,6 +173,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             setView(selectedRoomNumber());
             computeFromDb();
         }
+
+        fetchCarRequest();
+        fetchVehicleRequest();
+        fetchGuestTypeRequest();
+
         return view;
     }
 
@@ -241,14 +275,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void notify(FragmentNotifierModel selectedRoom) {
-
-        this.roomRateList = selectedRoom.getSelectedRoom().getPrice();
+        this.selectedRoom = selectedRoom.getSelectedRoom();
+        this.roomRateMainList = selectedRoom.getSelectedRoom().getPrice();
 
         retrieveCartItems();
 
         computeFromDb();
 
         setView(selectedRoom.getSelectedRoom().getName());
+
+        fetchRoomPending(String.valueOf(selectedRoom.getSelectedRoom().getRoomId()));
 
     }
 
@@ -364,8 +400,21 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
             case 100: //SAVE TRANSACTION:
-                saveTransaction();
-                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
+//                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                if (selectedRoom != null) {
+                    switch (selectedRoom.getStatus()) {
+                        case RoomConstants.CLEAN:
+                            //pass this price array to dialog selectedRoom.getPrice().get(0).getRatePrice()
+
+
+
+                            Toast.makeText(getContext(), "PLEASE CHECK IN GUEST", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+
+//                saveTransaction();
+//                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
                 break;
             case 101: //VOID
                 final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
@@ -574,7 +623,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.header:
-                RateDialog rateDialog = new RateDialog(getContext(), roomRateList) {
+                RateDialog rateDialog = new RateDialog(getContext(), roomRateMainList) {
                     @Override
                     public void rateChangeSuccess(double amountSelected) {
                         List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
@@ -585,7 +634,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         computeFromDb();
                     }
                 };
-                if (roomRateList.size() > 0) {
+                if (roomRateMainList.size() > 0) {
                     rateDialog.show();
                 } else {
                     Toast.makeText(getContext(), "No room rate list found", Toast.LENGTH_SHORT).show();
@@ -593,5 +642,90 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
         }
+    }
+
+    private void fetchCarRequest() {
+        BusProvider.getInstance().post(new FetchCarRequest());
+    }
+
+    private void fetchVehicleRequest() {
+        BusProvider.getInstance().post(new FetchVehicleRequest());
+    }
+
+    private void fetchGuestTypeRequest() {
+        BusProvider.getInstance().post(new FetchGuestTypeRequest());
+    }
+
+    @Subscribe
+    public void fetchCarResponse(FetchCarResponse fetchCarResponse) {
+        carList = fetchCarResponse.getResult();
+    }
+
+    @Subscribe
+    public void fetchVehicleResponse(FetchVehicleResponse fetchVehicleResponse) {
+        vehicleList = fetchVehicleResponse.getResult();
+    }
+
+    @Subscribe
+    public void fetchGuestTypeResponse(FetchGuestTypeResponse fetchGuestTypeResponse) {
+        guestTypeList = fetchGuestTypeResponse.getResult();
+    }
+
+    @Subscribe
+    public void guestWelcomeResponse(WelcomeGuestResponse welcomeGuestResponse) {
+        Log.d("TEKTEK", "WEEE");
+    }
+
+    private void fetchRoomPending(String roomId) {
+        BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+    }
+
+    @Subscribe
+    public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
+        if (fetchRoomPendingResponse.getResult() != null) {
+            switch (fetchRoomPendingResponse.getResult().getStatus()) {
+                case 20: //onnego show check in form
+                    checkInDialog = new CheckInDialog(getActivity(), selectedRoom, carList, vehicleList, guestTypeList);
+                    checkInDialog.show();
+
+                    checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()), "1");
+                        }
+                    });
+                    Window window = checkInDialog.getWindow();
+                    window.setLayout((Utils.getDeviceWidth(getContext()) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
+                    break;
+                case 59: //check in guest
+                    if (checkInDialog != null && checkInDialog.isShowing()) {
+                        checkInDialog.dismiss();
+                    }
+
+                    final AlertDialog.Builder al = new AlertDialog.Builder(getActivity());
+                    al.setMessage("Confirm check in guest?");
+                    al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            BusProvider.getInstance().post(new CheckInRequest("1", String.valueOf(selectedRoom.getRoomId())));
+                            dialog.cancel();
+                        }
+                    });
+
+                    al.show();
+
+                    break;
+
+                case 2: //already checked in, can now order
+                    Toast.makeText(getContext(), "Please order", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        } else {
+            Toast.makeText(getContext(), "Call fetch room pending", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void sendOffGoingNegoRequest(String roomId, String userId ) {
+        BusProvider.getInstance().post(new OffGoingNegoRequest(roomId, userId));
     }
 }

@@ -2,8 +2,7 @@ package nerdvana.com.pointofsales.model;
 
 import java.util.List;
 
-import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
-import nerdvana.com.pointofsales.api_responses.RoomRate;
+import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 
 public class RoomTableModel {
 
@@ -19,7 +18,7 @@ public class RoomTableModel {
     private String statusDescription;
 
     private String name;
-    private List<RoomRate> price;
+    private List<RoomRateMain> price;
     private boolean isAvailable;
     private String imageUrl;
     private String status; //clean, occupied, dirty, etc, etc => CRoom_Stat
@@ -30,7 +29,7 @@ public class RoomTableModel {
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,
                           String areaName, String statusDescription,
-                          String name, List<RoomRate> roomRateList,
+                          String name, List<RoomRateMain> roomRateMainList,
                           boolean isAvailable, String imageUrl,
                           String status, String hexColor,
                           double amountSelected) {
@@ -43,7 +42,7 @@ public class RoomTableModel {
         this.areaName = areaName;
         this.statusDescription = statusDescription;
         this.name = name;
-        this.price = roomRateList;
+        this.price = roomRateMainList;
         this.isAvailable = isAvailable;
         this.imageUrl = imageUrl;
         this.status = status;
@@ -91,7 +90,7 @@ public class RoomTableModel {
         return name;
     }
 
-    public RoomTableModel(List<RoomRate> price) {
+    public RoomTableModel(List<RoomRateMain> price) {
         this.price = price;
     }
 
@@ -111,7 +110,11 @@ public class RoomTableModel {
         return hexColor;
     }
 
-    public List<RoomRate> getPrice() {
+    public List<RoomRateMain> getPrice() {
         return price;
+    }
+
+    public void setPrice(List<RoomRateMain> price) {
+        this.price = price;
     }
 }
