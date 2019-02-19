@@ -47,23 +47,23 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
         final UserModel userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.userSettings), UserModel.class);
 
         if (!TextUtils.isEmpty(_transId)) { //just insert product, transId exist
-            CartEntity cartItem = new CartEntity(
-                    selectedProduct.getName(),
-                    selectedProduct.getShortName(),
-                    selectedProduct.getPrice(),
-                    selectedProduct.getVat(),
-                    selectedProduct.isAvailable(),
-                    selectedProduct.getImageUrls()[0],
-                    selectedProduct.isVattable(),
-                    selectedProduct.isSerialNumberRequired(),
-                    selectedProduct.getLowStackCount(),
-                    selectedProduct.getProductStatus(),
-                    _transId,
-                    quantity,
-                    selectedProduct.getProductId()
-            );
-            addToList(selectedProduct, cartItem.getId());
-            cartItem.save();
+//            CartEntity cartItem = new CartEntity(
+//                    selectedProduct.getName(),
+//                    selectedProduct.getShortName(),
+//                    selectedProduct.getPrice(),
+//                    selectedProduct.getVat(),
+//                    selectedProduct.isAvailable(),
+//                    selectedProduct.getImageUrls()[0],
+//                    selectedProduct.isVattable(),
+//                    selectedProduct.isSerialNumberRequired(),
+//                    selectedProduct.getLowStackCount(),
+//                    selectedProduct.getProductStatus(),
+//                    _transId,
+//                    quantity,
+//                    selectedProduct.getProductId()
+//            );
+//            addToList(selectedProduct, cartItem.getId());
+//            cartItem.save();
         } else { //create transId and insert new product
 
             String transactionId = String.format("%s-%s",
@@ -80,25 +80,25 @@ public class CheckoutItemsAsync extends AsyncTask<ProductsModel, Void, ProductsM
             transaction.save();
 
 
-            CartEntity cartItem = new CartEntity(
-                    selectedProduct.getName(),
-                    selectedProduct.getShortName(),
-                    selectedProduct.getPrice(),
-                    selectedProduct.getVat(),
-                    selectedProduct.isAvailable(),
-                    selectedProduct.getImageUrls()[0],
-                    selectedProduct.isVattable(),
-                    selectedProduct.isSerialNumberRequired(),
-                    selectedProduct.getLowStackCount(),
-                    selectedProduct.getProductStatus(),
-                    transactionId,
-                    quantity,
-                    selectedProduct.getProductId()
-
-            );
-
-            addToList(selectedProduct, cartItem.getId());
-            cartItem.save();
+//            CartEntity cartItem = new CartEntity(
+//                    selectedProduct.getName(),
+//                    selectedProduct.getShortName(),
+//                    selectedProduct.getPrice(),
+//                    selectedProduct.getVat(),
+//                    selectedProduct.isAvailable(),
+//                    selectedProduct.getImageUrls()[0],
+//                    selectedProduct.isVattable(),
+//                    selectedProduct.isSerialNumberRequired(),
+//                    selectedProduct.getLowStackCount(),
+//                    selectedProduct.getProductStatus(),
+//                    transactionId,
+//                    quantity,
+//                    selectedProduct.getProductId()
+//
+//            );
+//
+//            addToList(selectedProduct, cartItem.getId());
+//            cartItem.save();
 
 
 

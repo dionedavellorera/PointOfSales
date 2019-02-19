@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <android.support.v7.widget.SearchView
+        android:id="@+id/searchRate"
+        app:iconifiedByDefault="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_below="@id/searchRate"
+        android:id="@+id/listRates"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <Spinner
+        android:visibility="gone"
         android:layout_margin="10dp"
         android:id="@+id/rateSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <Button
+        android:visibility="gone"
         android:layout_margin="10dp"
         android:layout_below="@id/rateSpinner"
         android:id="@+id/update"

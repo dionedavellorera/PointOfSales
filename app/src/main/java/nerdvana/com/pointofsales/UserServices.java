@@ -2,9 +2,11 @@ package nerdvana.com.pointofsales;
 
 import com.squareup.otto.Subscribe;
 
+import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
+import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
@@ -12,9 +14,11 @@ import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
+import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
@@ -116,6 +120,22 @@ public class UserServices extends BaseService {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<ResponseBody> checkinRequest = iUsers.sendOffGoingNegoRequest(
                 offGoingNegoRequest.getMapValue());
+        asyncRequest(checkinRequest);
+    }
+
+    @Subscribe
+    public void onReceiveFetchPayment(FetchPaymentRequest fetchPaymentRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchPaymentResponse> checkinRequest = iUsers.sendFetchPaymentRequest(
+                fetchPaymentRequest.getMapValue());
+        asyncRequest(checkinRequest);
+    }
+
+    @Subscribe
+    public void onReceiveAddRoomPrice(AddRoomPriceRequest addRoomPriceRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<AddRoomPriceResponse> checkinRequest = iUsers.sendAddRoomPriceRequest(
+                addRoomPriceRequest.getMapValue());
         asyncRequest(checkinRequest);
     }
 }

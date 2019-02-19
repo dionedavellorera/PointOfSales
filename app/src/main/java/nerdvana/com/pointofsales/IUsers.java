@@ -2,9 +2,11 @@ package nerdvana.com.pointofsales;
 
 import java.util.Map;
 
+import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
@@ -63,4 +65,12 @@ public interface IUsers {
     @POST("offGoingNego")
     @FormUrlEncoded
     Call<ResponseBody> sendOffGoingNegoRequest(@FieldMap Map<String, String> params);
+
+    @POST("fetchPaymentType")
+    @FormUrlEncoded
+    Call<FetchPaymentResponse> sendFetchPaymentRequest(@FieldMap Map<String, String> params);
+
+    @POST("addRoomPrice")
+    @FormUrlEncoded
+    Call<AddRoomPriceResponse> sendAddRoomPriceRequest(@FieldMap Map<String, String> params);
 }

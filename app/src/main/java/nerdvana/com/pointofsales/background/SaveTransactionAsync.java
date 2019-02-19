@@ -27,11 +27,10 @@ public class SaveTransactionAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         if (myCart.size() > 0) {
-            for (CartEntity cartRecord : getCartRecord(myCart.get(0).getTransactionId())) {
-                cartRecord.setProductStatus(ProductConstants.SAVED);
-                cartRecord.save();
-            }
-
+//            for (CartEntity cartRecord : getCartRecord(myCart.get(0).getTransactionId())) {
+//                cartRecord.setProductStatus(ProductConstants.SAVED);
+//                cartRecord.save();
+//            }
 //            myCart.get(0).setTransactionStatus(TransactionConstants.SAVED);
 //            myCart.get(0).save();
         }

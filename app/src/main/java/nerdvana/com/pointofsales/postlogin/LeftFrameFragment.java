@@ -36,12 +36,11 @@ import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
-import nerdvana.com.pointofsales.SetupActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.SystemConstants;
-import nerdvana.com.pointofsales.TransactionConstants;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
@@ -61,7 +60,6 @@ import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
-import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
@@ -73,6 +71,7 @@ import nerdvana.com.pointofsales.interfaces.RetrieveCartItemContract;
 import nerdvana.com.pointofsales.interfaces.SaveTransactionContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
+import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
@@ -80,7 +79,6 @@ import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
-import okhttp3.ResponseBody;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
@@ -99,7 +97,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private TextView header;
     private TextView noItems;
 
-    private List<ProductsModel> selectedProductsList;
+    private List<CartItemsModel> cartItemList;
 
     private RecyclerView listCheckoutItems;
     private RecyclerView listButtons;
@@ -143,11 +141,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         rootView = view.findViewById(R.id.rootView);
 
-        selectedProductsList = new ArrayList<>();
+        cartItemList = new ArrayList<>();
         carList = new ArrayList<>();
         vehicleList = new ArrayList<>();
         guestTypeList = new ArrayList<>();
         roomRateMainList = new ArrayList<>();
+        cartItemList = new ArrayList<>();
     }
 
     @Nullable
@@ -169,7 +168,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         defaultView();
         if (!TextUtils.isEmpty(selectedRoomNumber())) {
             //reload data from selected table && set views
-            retrieveCartItems();
+//            retrieveCartItems();
             setView(selectedRoomNumber());
             computeFromDb();
         }
@@ -183,13 +182,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void setProductAdapter() {
 
-        checkoutAdapter = new CheckoutAdapter(selectedProductsList, this);
+        checkoutAdapter = new CheckoutAdapter(cartItemList, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         listCheckoutItems.setLayoutManager(linearLayoutManager);
         listCheckoutItems.setAdapter(checkoutAdapter);
-        enableSwipeToDeleteAndUndo();
+//        enableSwipeToDeleteAndUndo();
 
 //        new CheckoutItemsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 //        checkoutAdapter.addItems(productsModelList);
@@ -213,7 +212,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                noItems.setVisibility(View.GONE);
 ////                checkoutAdapter.addItems(list);
 //
-//                selectedProductsList.add(((ProductsModel)item));
+//                cartItemList.add(((ProductsModel)item));
 //                checkoutAdapter.notifyDataSetChanged();
 //                break;
             case "buttons":
@@ -278,7 +277,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         this.selectedRoom = selectedRoom.getSelectedRoom();
         this.roomRateMainList = selectedRoom.getSelectedRoom().getPrice();
 
-        retrieveCartItems();
+//        retrieveCartItems();
 
         computeFromDb();
 
@@ -294,10 +293,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     getTableRecord().get(0).getTransactionId(),
                     this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            selectedProductsList.clear();
-            selectedProductsList = new ArrayList<>();
+            cartItemList.clear();
+            cartItemList = new ArrayList<>();
 
-            checkoutAdapter = new CheckoutAdapter(selectedProductsList, this);
+            checkoutAdapter = new CheckoutAdapter(cartItemList, this);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
             linearLayoutManager.setReverseLayout(true);
             linearLayoutManager.setStackFromEnd(true);
@@ -355,19 +354,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void productsClicked(ProductsModel productsModel) {
         if (noItems.getVisibility() == View.VISIBLE) noItems.setVisibility(View.GONE);
         productsModel.setSelected(false);
-        new CheckoutItemsAsync(this,
-                selectedProductsList ,
-                productsModel,
-                getContext(),
-                getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId(),
-                5,
-                selectedRoomNumber())
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//        new CheckoutItemsAsync(this,
+//                cartItemList,
+//                productsModel,
+//                getContext(),
+//                getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId(),
+//                5,
+//                selectedRoomNumber())
+//                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void itemAdded(ProductsModel itemAdded) {
-        retrieveCartItems();
+//        retrieveCartItems();
         listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
         computeTotal(itemAdded);
     }
@@ -399,19 +398,56 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
-            case 100: //SAVE TRANSACTION:
-//                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            case 103: //ADD RATE TO EXISTING TRANSACTION
                 if (selectedRoom != null) {
-                    switch (selectedRoom.getStatus()) {
-                        case RoomConstants.CLEAN:
-                            //pass this price array to dialog selectedRoom.getPrice().get(0).getRatePrice()
+                    if (selectedRoom.getStatus().equalsIgnoreCase(RoomConstants.OCCUPIED)) {
+                        final RateDialog rateDialog = new RateDialog(getContext(), selectedRoom.getPrice()) {
+                            @Override
+                            public void rateChangeSuccess(RoomRateMain selectedRate) {
+
+//                                addRateRequest("0",
+//                                        String.valueOf(selectedRate.getRatePrice().getRoomRateId()),
+//                                        "1");
+                                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+
+                                this.dismiss();
+
+//                                cartItemList.add(new CartItemsModel(
+//                                        "",
+//                                        selectedRoom.getRoomId(),
+//                                        0,
+//                                        selectedRoom.getRoomTypeId(),
+//                                        selectedRate.getRatePrice().getRoomRateId(),
+//                                        selectedRate.getRoomRatePriceId(),
+//                                        selectedRate.getRatePrice().getRoomRate().getRoomRate(),
+//                                        false,
+//                                        selectedRate.getRatePrice().getAmount(),
+//                                        0
+//                                ));
+//                                checkoutAdapter.notifyDataSetChanged();
+                            }
+                        };
+
+                        rateDialog.show();
 
 
+                        Toast.makeText(getContext(), "ADD RATE DIALOG",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "ROOM NOT OCCUPIED", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "PLEASE SELECT A ROOM", Toast.LENGTH_SHORT).show();
+                }
 
-                            Toast.makeText(getContext(), "PLEASE CHECK IN GUEST", Toast.LENGTH_SHORT).show();
-                            break;
+                break;
+            case 100: //SAVE TRANSACTION:
+                if (selectedRoom != null) {
+                    if (selectedRoom.getStatus().equalsIgnoreCase(RoomConstants.OCCUPIED)) {
+
                     }
                 }
+//                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+
 
 //                saveTransaction();
 //                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
@@ -420,25 +456,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                     @Override
                     public void passwordSuccess() {
-                        ArrayList<Long> selectedIds = new ArrayList<>();
-                        for (ProductsModel p : selectedProductsList) {
-                            if (p.isSelected()) {
-                                selectedIds.add(p.getProductId());
-                            }
-                        }
-
-
-                        String tempTransId = getTableRecord().get(0).getTransactionId();
-
-                        for (CartEntity c : getCartRecord(tempTransId)) {
-                            if (selectedIds.contains(c.getProductId())) {
-                                c.setProductStatus(ProductConstants.VOID);
-                                c.save();
-                            }
-                        }
-
-                        retrieveCartItems();
-                        computeFromDb();
+//                        ArrayList<Long> selectedIds = new ArrayList<>();
+//                        for (ProductsModel p : cartItemList) {
+//                            if (p.isSelected()) {
+//                                selectedIds.add(p.getProductId());
+//                            }
+//                        }
+//
+//
+//                        String tempTransId = getTableRecord().get(0).getTransactionId();
+//
+//                        for (CartEntity c : getCartRecord(tempTransId)) {
+//                            if (selectedIds.contains(c.getProductId())) {
+//                                c.setProductStatus(ProductConstants.VOID);
+//                                c.save();
+//                            }
+//                        }
+//
+//                        retrieveCartItems();
+//                        computeFromDb();
 
                     }
 
@@ -460,51 +496,56 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     //show total
 
                 } else {
-                    if (getTableRecord().size() > 0) {
-                        double balance = 0;
-                        for (ProductsModel selectedItem : selectedProductsList) {
-                            balance += selectedItem.getPrice();
-                        }
-                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance) {
-                            @Override
-                            public void paymentSuccess() {
-                                if (getTableRecord().size() > 0) {
-                                    String tempTransId = getTableRecord().get(0).getTransactionId();
-                                    for (TransactionEntity t : getTableRecord()) {
-                                        if (t.getTransactionStatus() == TransactionConstants.PENDING) {
-                                            t.setTransactionStatus(TransactionConstants.FULLY_PAID);
-                                            t.save();
-                                        }
-                                    }
-                                    for (CartEntity c : getCartRecord(tempTransId)) {
-                                        if (c.getProductStatus() != ProductConstants.PENDING &&
-                                                c.getProductStatus() != ProductConstants.VOID &&
-                                                c.getProductStatus() != ProductConstants.DISABLED)
-                                            c.setProductStatus(ProductConstants.PAID);
-                                        c.save();
-                                    }
-                                }
 
-                                clearCartItems();
-                                defaultView();
-                                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
-                            }
-
-                            @Override
-                            public void paymentFailed() {
-
-                            }
-                        };
-//                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance);
-                        paymentDialog.show();
-//                        Intent paymentIntent = new Intent(getContext(), PaymentActivity.class);
-//                        paymentIntent.putExtra("transaction_number", getTableRecord().get(0).getTransactionId());
-//                        startActivityForResult(paymentIntent, 100);
-                    } else {
-                        Toast.makeText(getContext(), "No transactions made yet.", Toast.LENGTH_SHORT).show();
-                    }
-
-
+                    //loop payment details then pass to payment dialog
+//                    if (getTableRecord().size() > 0) {
+//                        double balance = 0;
+//                        for (ProductsModel selectedItem : cartItemList) {
+//                            balance += selectedItem.getPrice();
+//                        }
+//                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance) {
+//                            @Override
+//                            public void onClick(View v) {
+//
+//                            }
+//
+//                            @Override
+//                            public void paymentSuccess() {
+//                                if (getTableRecord().size() > 0) {
+//                                    String tempTransId = getTableRecord().get(0).getTransactionId();
+//                                    for (TransactionEntity t : getTableRecord()) {
+//                                        if (t.getTransactionStatus() == TransactionConstants.PENDING) {
+//                                            t.setTransactionStatus(TransactionConstants.FULLY_PAID);
+//                                            t.save();
+//                                        }
+//                                    }
+//                                    for (CartEntity c : getCartRecord(tempTransId)) {
+//                                        if (c.getProductStatus() != ProductConstants.PENDING &&
+//                                                c.getProductStatus() != ProductConstants.VOID &&
+//                                                c.getProductStatus() != ProductConstants.DISABLED)
+//                                            c.setProductStatus(ProductConstants.PAID);
+//                                        c.save();
+//                                    }
+//                                }
+//
+//                                clearCartItems();
+//                                defaultView();
+//                                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+//                            }
+//
+//                            @Override
+//                            public void paymentFailed() {
+//
+//                            }
+//                        };
+////                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance);
+//                        paymentDialog.show();
+////                        Intent paymentIntent = new Intent(getContext(), PaymentActivity.class);
+////                        paymentIntent.putExtra("transaction_number", getTableRecord().get(0).getTransactionId());
+////                        startActivityForResult(paymentIntent, 100);
+//                    } else {
+//                        Toast.makeText(getContext(), "No transactions made yet.", Toast.LENGTH_SHORT).show();
+//                    }
                 }
 
                 break;
@@ -518,10 +559,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-//                final ProductsModel itemToRestore = selectedProductsList.get(viewHolder.getAdapterPosition());
-                new DeleteCartItemAsync(selectedProductsList.get(viewHolder.getAdapterPosition())).execute();
+//                final ProductsModel itemToRestore = cartItemList.get(viewHolder.getAdapterPosition());
+//                new DeleteCartItemAsync(cartItemList.get(viewHolder.getAdapterPosition())).execute();
 
-                selectedProductsList.remove(viewHolder.getAdapterPosition());
+//                cartItemList.remove(viewHolder.getAdapterPosition());
 
                 checkoutAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
 
@@ -530,9 +571,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                if (selectedProductsList.get(viewHolder.getAdapterPosition()).getProductStatus() != ProductConstants.PENDING) {
-                    return 0;
-                }
+//                if (cartItemList.get(viewHolder.getAdapterPosition()).getProductStatus() != ProductConstants.PENDING) {
+//                    return 0;
+//                }
                 return super.getMovementFlags(recyclerView, viewHolder);
             }
         };
@@ -558,23 +599,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void clearCartItems() {
         header.setText("No room selected");
-        selectedProductsList.clear();
+        cartItemList.clear();
         checkoutAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void cartItemRetrieved(List<ProductsModel> cartItemList) {
 
-        selectedProductsList.clear();
-        selectedProductsList = cartItemList.size() > 0 ? cartItemList : new ArrayList<ProductsModel>();
+        this.cartItemList.clear();
+//        this.cartItemList = cartItemList.size() > 0 ? cartItemList : new ArrayList<ProductsModel>();
 
-        checkoutAdapter = new CheckoutAdapter(selectedProductsList, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
-        listCheckoutItems.setLayoutManager(linearLayoutManager);
-        listCheckoutItems.setAdapter(checkoutAdapter);
-        checkoutAdapter.notifyDataSetChanged();
+//        checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+//        linearLayoutManager.setReverseLayout(true);
+//        linearLayoutManager.setStackFromEnd(true);
+//        listCheckoutItems.setLayoutManager(linearLayoutManager);
+//        listCheckoutItems.setAdapter(checkoutAdapter);
+//        checkoutAdapter.notifyDataSetChanged();
 
         computeFromDb();
 
@@ -583,11 +624,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void computeFromDb() {
         double temp = 0;
-        for (ProductsModel p : selectedProductsList) {
-
-            temp += p.getPrice();
-
-        }
+//        for (ProductsModel p : cartItemList) {
+//
+//            temp += p.getPrice();
+//
+//        }
 
         List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
 
@@ -623,19 +664,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.header:
-                RateDialog rateDialog = new RateDialog(getContext(), roomRateMainList) {
-                    @Override
-                    public void rateChangeSuccess(double amountSelected) {
-                        List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
-                        for (CurrentTransactionEntity c : currentTransaction) {
-                            c.setAmount(amountSelected);
-                            c.save();
-                        }
-                        computeFromDb();
-                    }
-                };
+//                RateDialog rateDialog = new RateDialog(getContext(), roomRateMainList) {
+//                    @Override
+//                    public void rateChangeSuccess(double amountSelected) {
+//                        List<CurrentTransactionEntity> currentTransaction  = CurrentTransactionEntity.listAll(CurrentTransactionEntity.class);
+//                        for (CurrentTransactionEntity c : currentTransaction) {
+//                            c.setAmount(amountSelected);
+//                            c.save();
+//                        }
+//                        computeFromDb();
+//                    }
+//                };
                 if (roomRateMainList.size() > 0) {
-                    rateDialog.show();
+//                    rateDialog.show();
                 } else {
                     Toast.makeText(getContext(), "No room rate list found", Toast.LENGTH_SHORT).show();
                 }
@@ -682,6 +723,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
+        cartItemList = new ArrayList<>();
+        if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
+            for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
+                cartItemList.add(new CartItemsModel(
+                    r.getTransaction().getControlNo(),
+                        r.getRoomId(),
+                        0,
+                        r.getRoomTypeId(),
+                        r.getRoomRateId(),
+                        r.getRoomRatePriceId(),
+                        r.getRoomRate(),
+                        false,
+                        r.getTransaction().getRc(),
+                        r.getId()
+                ));
+            }
+
+            checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            linearLayoutManager.setReverseLayout(true);
+            linearLayoutManager.setStackFromEnd(true);
+            listCheckoutItems.setLayoutManager(linearLayoutManager);
+            listCheckoutItems.setAdapter(checkoutAdapter);
+            checkoutAdapter.notifyDataSetChanged();
+        }
+
+
         if (fetchRoomPendingResponse.getResult() != null) {
             switch (fetchRoomPendingResponse.getResult().getStatus()) {
                 case 20: //onnego show check in form
@@ -707,8 +775,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
                             BusProvider.getInstance().post(new CheckInRequest("1", String.valueOf(selectedRoom.getRoomId())));
                             dialog.cancel();
+                            BusProvider.getInstance().post(new ProductsModel());
                         }
                     });
 
@@ -727,5 +797,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void sendOffGoingNegoRequest(String roomId, String userId ) {
         BusProvider.getInstance().post(new OffGoingNegoRequest(roomId, userId));
+    }
+
+//    private void fetchPaymentTypeRequest() {
+//        BusProvider.getInstance().post();
+//    }
+
+    @Subscribe
+    public void onReceiveWelcomeGuestResponse(WelcomeGuestResponse welcomeGuestResponse) {
+//        Log.d("TEKTEK", welcomeGuestResponse.getMessage());
+        CartEntity myCart = new CartEntity();
+    }
+
+    private void addRateRequest(String productId, String roomRateId, String quantity) {
+        BusProvider.getInstance().post(new AddRoomPriceRequest(productId, roomRateId, quantity));
     }
 }

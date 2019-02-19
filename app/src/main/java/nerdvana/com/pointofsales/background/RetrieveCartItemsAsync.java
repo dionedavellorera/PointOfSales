@@ -36,23 +36,23 @@ public class RetrieveCartItemsAsync extends AsyncTask<Void, Void, List<ProductsM
 //        boolean isSelected, boolean isSerialNumberRequired,
 //        int lowStackCount, int productStatus
 
-        for (CartEntity cartRecord : getCartRecord(transactionId)) {
-            cartList.add(new ProductsModel(
-                    cartRecord.getName(),
-                    cartRecord.getPrice(),
-                    cartRecord.getVat(),
-                    cartRecord.isAvailable(),
-                    new String[]{""},
-                    cartRecord.isVattable(),
-                    cartRecord.getShortName(),
-                    new ArrayList<ProductsModel>(),
-                    false,
-                    cartRecord.isSerialNumberRequired(),
-                    cartRecord.getLowStackCount(),
-                    cartRecord.getProductStatus(),
-                    cartRecord.getProductId()
-            ));
-        }
+//        for (CartEntity cartRecord : getCartRecord(transactionId)) {
+//            cartList.add(new ProductsModel(
+//                    cartRecord.getName(),
+//                    cartRecord.getPrice(),
+//                    cartRecord.getVat(),
+//                    cartRecord.isAvailable(),
+//                    new String[]{""},
+//                    cartRecord.isVattable(),
+//                    cartRecord.getShortName(),
+//                    new ArrayList<ProductsModel>(),
+//                    false,
+//                    cartRecord.isSerialNumberRequired(),
+//                    cartRecord.getLowStackCount(),
+//                    cartRecord.getProductStatus(),
+//                    cartRecord.getProductId()
+//            ));
+//        }
 
         return cartList;
     }

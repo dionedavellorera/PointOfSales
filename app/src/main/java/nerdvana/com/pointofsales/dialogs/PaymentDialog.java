@@ -11,48 +11,53 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SqlQueries;
+import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
+import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
 
 public abstract class PaymentDialog extends Dialog implements View.OnClickListener {
 
-    private String transactionNumber;
-
-    TextInputLayout tilCash;
-    EditText cash;
-    TextInputLayout tilCreditCard;
-    EditText creditCard;
-    TextInputLayout tilCharge;
-    EditText charge;
-    TextInputLayout tilAr;
-    EditText ar;
-
-    TextView balanceValue;
-
-    TextView totalChange;
-    TextView totalPayment;
-    Button checkout;
-
-    double balance = 0;
-    double payment = 0;
-
-    double _cash = 0;
-    double _credit = 0;
-    double _charge = 0;
-    double _ar = 0;
+//    private String transactionNumber;
+//
+//    TextInputLayout tilCash;
+//    EditText cash;
+//    TextInputLayout tilCreditCard;
+//    EditText creditCard;
+//    TextInputLayout tilCharge;
+//    EditText charge;
+//    TextInputLayout tilAr;
+//    EditText ar;
+//
+//    TextView balanceValue;
+//
+//    TextView totalChange;
+//    TextView totalPayment;
+//    Button checkout;
+//
+//    double balance = 0;
+//    double payment = 0;
+//
+//    double _cash = 0;
+//    double _credit = 0;
+//    double _charge = 0;
+//    double _ar = 0;
 
     public PaymentDialog(@NonNull Context context, String transactionNumber, double balance) {
         super(context);
-        this.transactionNumber = transactionNumber;
-        this.balance = balance;
-
+//        this.transactionNumber = transactionNumber;
+//        this.balance = balance;
     }
 
     public PaymentDialog(@NonNull Context context, int themeResId) {
@@ -68,184 +73,208 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
-        tilCash = findViewById(R.id.tilCash);
-        cash = findViewById(R.id.inputCash);
-        tilCreditCard = findViewById(R.id.tilCreditCard);
-        creditCard = findViewById(R.id.inputCreditCard);
-        tilCharge = findViewById(R.id.tilCharge);
-        charge = findViewById(R.id.inputCharge);
-        tilAr = findViewById(R.id.tilAr);
-        ar = findViewById(R.id.inputAr);
-        totalChange = findViewById(R.id.totalChange);
-        totalPayment = findViewById(R.id.totalPayment);
-        balanceValue = findViewById(R.id.balanceValue);
-        checkout = findViewById(R.id.checkout);
-        checkout.setOnClickListener(this);
-        addTextWatchers();
 
-        balanceValue.setText(String.valueOf(balance));
+//        tilCash = findViewById(R.id.tilCash);
+//        cash = findViewById(R.id.inputCash);
+//        tilCreditCard = findViewById(R.id.tilCreditCard);
+//        creditCard = findViewById(R.id.inputCreditCard);
+//        tilCharge = findViewById(R.id.tilCharge);
+//        charge = findViewById(R.id.inputCharge);
+//        tilAr = findViewById(R.id.tilAr);
+//        ar = findViewById(R.id.inputAr);
+//        totalChange = findViewById(R.id.totalChange);
+//        totalPayment = findViewById(R.id.totalPayment);
+//        balanceValue = findViewById(R.id.balanceValue);
+//        checkout = findViewById(R.id.checkout);
+//        checkout.setOnClickListener(this);
+//        addTextWatchers();
+//
+//        balanceValue.setText(String.valueOf(balance));
     }
 
-    private void addTextWatchers() {
-        ar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//    private void addTextWatchers() {
+//        ar.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (ar.getText().toString().trim().equalsIgnoreCase("")) {
+//                    _ar = 0;
+//                    ar.setText("0");
+//                } else {
+//                    _ar = Double.valueOf(ar.getText().toString());
+//                }
+//
+//                computeTotal();
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
+//        charge.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (charge.getText().toString().trim().equalsIgnoreCase("")) {
+//                    _charge = 0;
+//                    charge.setText("0");
+//                } else {
+//                    _charge = Double.valueOf(charge.getText().toString());
+//                }
+//
+//                computeTotal();
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
+//        creditCard.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (creditCard.getText().toString().trim().equalsIgnoreCase("")) {
+//                    _credit = 0;
+//                    creditCard.setText("0");
+//                } else {
+//                    _credit = Double.valueOf(creditCard.getText().toString());
+//                }
+//
+//                computeTotal();
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
+//        cash.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (cash.getText().toString().trim().equalsIgnoreCase("")) {
+//                    _cash = 0;
+//                    cash.setText("0");
+//                } else {
+//                    _cash = Double.valueOf(cash.getText().toString());
+//                }
+//
+//                computeTotal();
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
+//    }
 
-            }
+//    private void computeTotal() {
+//        payment = _ar + _cash + _charge + _credit;
+//        totalPayment.setText(String.valueOf(payment));
+//        totalChange.setText(String.valueOf(payment - balance));
+//    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (ar.getText().toString().trim().equalsIgnoreCase("")) {
-                    _ar = 0;
-                    ar.setText("0");
-                } else {
-                    _ar = Double.valueOf(ar.getText().toString());
-                }
-
-                computeTotal();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        charge.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (charge.getText().toString().trim().equalsIgnoreCase("")) {
-                    _charge = 0;
-                    charge.setText("0");
-                } else {
-                    _charge = Double.valueOf(charge.getText().toString());
-                }
-
-                computeTotal();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        creditCard.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (creditCard.getText().toString().trim().equalsIgnoreCase("")) {
-                    _credit = 0;
-                    creditCard.setText("0");
-                } else {
-                    _credit = Double.valueOf(creditCard.getText().toString());
-                }
-
-                computeTotal();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        cash.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (cash.getText().toString().trim().equalsIgnoreCase("")) {
-                    _cash = 0;
-                    cash.setText("0");
-                } else {
-                    _cash = Double.valueOf(cash.getText().toString());
-                }
-
-                computeTotal();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-    }
-
-    private void computeTotal() {
-        payment = _ar + _cash + _charge + _credit;
-        totalPayment.setText(String.valueOf(payment));
-        totalChange.setText(String.valueOf(payment - balance));
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.checkout:
-                if (payment >= balance) {
-                    dismiss();
-                    paymentSuccess();
-                    savePayment();
-                    Toast.makeText(getContext(), "Payment accepted", Toast.LENGTH_SHORT).show();
-                } else {
-                    dismiss();
-                    paymentFailed();
-                    Toast.makeText(getContext(), "Payment not accepted", Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-    }
+//    @Override
+//    public void onClick(View v) {
+//        switch (v.getId()) {
+//            case R.id.checkout:
+//                if (payment >= balance) {
+//                    dismiss();
+//                    paymentSuccess();
+//                    savePayment();
+//                    Toast.makeText(getContext(), "Payment accepted", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    dismiss();
+//                    paymentFailed();
+//                    Toast.makeText(getContext(), "Payment not accepted", Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//        }
+//    }
 
     public abstract void paymentSuccess();
     public abstract void paymentFailed();
 
-    private void savePayment() {
-        double tempBalance = balance;
-        if (!creditCard.getText().toString().equalsIgnoreCase("0")) {
-            savePaymentToDb(tempBalance, "CREDIT CARD",
-                            "SINGLE", "RECEIPT-001",
-                            _credit, transactionNumber);
-            tempBalance = tempBalance - _credit;
-        }
+//    private void savePayment() {
+//        double tempBalance = balance;
+//        if (!creditCard.getText().toString().equalsIgnoreCase("0")) {
+//            savePaymentToDb(tempBalance, "CREDIT CARD",
+//                            "SINGLE", "RECEIPT-001",
+//                            _credit, transactionNumber);
+//            tempBalance = tempBalance - _credit;
+//        }
+//
+//        if (!cash.getText().toString().equalsIgnoreCase("0")) {
+//            savePaymentToDb(tempBalance, "CASH",
+//                    "SINGLE", "RECEIPT-001",
+//                    _cash, transactionNumber);
+//            tempBalance = tempBalance - _cash;
+//        }
+//
+//        if (!ar.getText().toString().equalsIgnoreCase("0")) {
+//            savePaymentToDb(tempBalance, "AR",
+//                    "SINGLE", "RECEIPT-001",
+//                    _ar, transactionNumber);
+//            tempBalance = tempBalance - _ar;
+//        }
+//
+//        if (!charge.getText().toString().equalsIgnoreCase("0")) {
+//            savePaymentToDb(tempBalance, "CHARGE",
+//                    "SINGLE", "RECEIPT-001",
+//                    _charge, transactionNumber);
+//            tempBalance = tempBalance - _charge;
+//        }
+//
+//    }
 
-        if (!cash.getText().toString().equalsIgnoreCase("0")) {
-            savePaymentToDb(tempBalance, "CASH",
-                    "SINGLE", "RECEIPT-001",
-                    _cash, transactionNumber);
-            tempBalance = tempBalance - _cash;
-        }
+//    private void savePaymentToDb(double balance, String paymentMethod,
+//                                 String paymentType, String receiptNumber,
+//                                 double tenderedAmount, String transactionNumber) {
+//        PaymentEntity payment = new PaymentEntity(receiptNumber, transactionNumber,
+//                                                paymentMethod, balance,
+//                                                tenderedAmount, paymentType);
+//        payment.save();
+//    }
 
-        if (!ar.getText().toString().equalsIgnoreCase("0")) {
-            savePaymentToDb(tempBalance, "AR",
-                    "SINGLE", "RECEIPT-001",
-                    _ar, transactionNumber);
-            tempBalance = tempBalance - _ar;
-        }
-
-        if (!charge.getText().toString().equalsIgnoreCase("0")) {
-            savePaymentToDb(tempBalance, "CHARGE",
-                    "SINGLE", "RECEIPT-001",
-                    _charge, transactionNumber);
-            tempBalance = tempBalance - _charge;
-        }
-
-    }
-
-    private void savePaymentToDb(double balance, String paymentMethod,
-                                 String paymentType, String receiptNumber,
-                                 double tenderedAmount, String transactionNumber) {
-        PaymentEntity payment = new PaymentEntity(receiptNumber, transactionNumber,
-                                                paymentMethod, balance,
-                                                tenderedAmount, paymentType);
-        payment.save();
-    }
+//    private void setPaymentSelection() {
+//        List<String> priceArray = new ArrayList<>();
+//        for (RoomRateMain rrm : priceList) {
+//            priceArray.add(String.format("%d - %s", rrm.getRatePrice().getAmount(), rrm.getRatePrice().getRoomRate().getRoomRate()));
+//        }
+//        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+//                priceArray);
+//        rateSpinner.setAdapter(rateSpinnerAdapter);
+//
+//        rateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                roomRateId = priceList.get(position).getRatePrice().getRoomRateId();
+//                roomRatePriecId = priceList.get(position).getRoomRatePriceId();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//    }
 }

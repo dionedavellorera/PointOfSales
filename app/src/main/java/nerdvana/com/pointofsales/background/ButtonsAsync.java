@@ -24,23 +24,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(100,"SAVE", "",1));
         buttonsModelList.add(new ButtonsModel(101,"VOID", "",2));
         buttonsModelList.add(new ButtonsModel(102,"PAY", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
-        buttonsModelList.add(new ButtonsModel(102,"TEST", "",3));
+        buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",4));
 
         Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
             @Override

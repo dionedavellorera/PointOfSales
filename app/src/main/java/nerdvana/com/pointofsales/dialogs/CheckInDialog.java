@@ -220,6 +220,8 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
                 child.getText().toString(),
                 ".12"
         ));
+
+
     }
 
 
