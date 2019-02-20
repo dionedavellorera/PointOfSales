@@ -3,7 +3,7 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WelcomeGuestRequest {
+public class WelcomeGuestRequest extends BaseRequest {
 //    room_id:1
 //    room_type_id:1
 //    room_rate_id:1
@@ -33,7 +33,6 @@ public class WelcomeGuestRequest {
     private String steward;
     private String checkIn;
     private String checkOut;
-    private String userId;
     private String posId;
     private String adult;
     private String child;
@@ -47,7 +46,6 @@ public class WelcomeGuestRequest {
                                String guestTypeId, String customer,
                                String plateumber, String steward,
                                String checkIn, String checkOut,
-                               String userId, String posId,
                                String adult, String child,
                                String tax) {
 
@@ -65,7 +63,7 @@ public class WelcomeGuestRequest {
         mapValue.put("checkIn", checkIn);
         mapValue.put("checkOut", checkOut);
         mapValue.put("user_id", userId);
-        mapValue.put("pos_id", posId);
+        mapValue.put("pos_id", machineNumber);
         mapValue.put("adult", adult);
         mapValue.put("child", child);
         mapValue.put("tax", tax);
@@ -82,8 +80,6 @@ public class WelcomeGuestRequest {
         this.steward = steward;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        this.userId = userId;
-        this.posId = posId;
         this.adult = adult;
         this.child = child;
         this.tax = tax;

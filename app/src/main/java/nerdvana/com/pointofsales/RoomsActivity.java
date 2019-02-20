@@ -135,6 +135,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     @Subscribe
     public void apiError(ApiError apiError) {
+        refreshRoom.setRefreshing(false);
         Toast.makeText(RoomsActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
     }
 

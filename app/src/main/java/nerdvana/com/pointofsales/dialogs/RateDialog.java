@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -34,6 +35,7 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
 
     private Context mContext;
 
+    private RoomRateImpl roomRateImpl;
 
     private RoomRatesAdapter roomRatesAdapter;
     private RecyclerView listRates;
@@ -41,6 +43,9 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
     private List<RoomRateMain> roomRateMainList;
     private List<RoomRateMain> filteredRoomRateList;
     private android.support.v7.widget.SearchView searchRate;
+    private Spinner qtySpinner;
+
+    private String qtySelected = "1";
     public RateDialog(@NonNull Context context, List<RoomRateMain> roomRateMainList) {
         super(context);
         this.roomRateMainList = roomRateMainList;
@@ -68,7 +73,27 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
         update = findViewById(R.id.update);
         update.setOnClickListener(this);
         rateSpinner = findViewById(R.id.rateSpinner);
+        qtySpinner = findViewById(R.id.qty);
         List<String> roomRates = new ArrayList<>();
+
+        roomRateImpl = new RoomRateImpl() {
+            @Override
+            public void clicked(RoomRateMain roomRateMain) {
+                rateChangeSuccess(roomRateMain, qtySelected);
+            }
+        };
+
+        qtySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                qtySelected = qtySpinner.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         for (RoomRateMain rrm : roomRateMainList) {
             roomRates.add(String.format(
                     "%s - %d",
@@ -104,18 +129,15 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
                     }
                 }
 
-
                 if (filteredRoomRateList.size() > 0) {
-                    roomRatesAdapter = new RoomRatesAdapter(filteredRoomRateList);
+                    roomRatesAdapter = new RoomRatesAdapter(filteredRoomRateList, roomRateImpl);
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                     linearLayoutManager.setReverseLayout(true);
                     linearLayoutManager.setStackFromEnd(true);
                     listRates.setLayoutManager(linearLayoutManager);
                     listRates.setAdapter(roomRatesAdapter);
-
-
                 } else {
-                    roomRatesAdapter = new RoomRatesAdapter(roomRateMainList);
+                    roomRatesAdapter = new RoomRatesAdapter(roomRateMainList, roomRateImpl);
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
                     linearLayoutManager.setReverseLayout(true);
                     linearLayoutManager.setStackFromEnd(true);
@@ -123,44 +145,55 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
                     listRates.setAdapter(roomRatesAdapter);
                 }
 
-
-//                if (timer != null) {
-//                    timer.cancel();
-//                }
-//                timer = new Timer();
-//                timer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//
-//
-//
-//                    }
-//                }, 1000); // 600ms delay before the timer executes the „run“ method from TimerTask
                 return false;
             }
         });
 
         setRateList();
+
+        setQuantitySpinner();
+
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.update:
-                rateChangeSuccess(selectedRate);
+                rateChangeSuccess(selectedRate, qtySelected);
                 break;
         }
     }
 
-    public abstract void rateChangeSuccess(RoomRateMain selectedRate);
+    public abstract void rateChangeSuccess(RoomRateMain selectedRate, String qty);
 
     private void setRateList() {
-        roomRatesAdapter = new RoomRatesAdapter(roomRateMainList);
+        roomRatesAdapter = new RoomRatesAdapter(roomRateMainList, roomRateImpl);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         listRates.setLayoutManager(linearLayoutManager);
         listRates.setAdapter(roomRatesAdapter);
+    }
+
+    public interface RoomRateImpl {
+        void clicked(RoomRateMain roomRateMain);
+    }
+
+    private void setQuantitySpinner() {
+        ArrayList<String> stringArray = new ArrayList<>();
+        stringArray.add("1");
+        stringArray.add("2");
+        stringArray.add("3");
+        stringArray.add("4");
+        stringArray.add("5");
+        stringArray.add("6");
+        stringArray.add("7");
+        stringArray.add("8");
+        stringArray.add("9");
+        stringArray.add("10");
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, stringArray);
+        qtySpinner.setAdapter(arrayAdapter);
     }
 
 }

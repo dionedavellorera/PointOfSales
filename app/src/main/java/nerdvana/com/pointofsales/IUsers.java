@@ -70,7 +70,7 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchPaymentResponse> sendFetchPaymentRequest(@FieldMap Map<String, String> params);
 
-    @POST("addRoomPrice")
+    @POST("addProduct")
     @FormUrlEncoded
     Call<AddRoomPriceResponse> sendAddRoomPriceRequest(@FieldMap Map<String, String> params);
 }

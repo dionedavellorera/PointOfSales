@@ -94,7 +94,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             Log.d("INSIDE_ADAPTER", cartItem.getName());
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
-            ((ProductsViewHolder)holder).quantity.setText("1"); //oki
+            ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
             ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getAmount()));
 //
 //            ((ProductsViewHolder)holder).name.setTextColor(Color.parseColor("#d3d3d3"));

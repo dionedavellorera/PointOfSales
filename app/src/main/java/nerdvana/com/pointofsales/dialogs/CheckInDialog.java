@@ -214,8 +214,6 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
                 steward.getText().toString().trim(),
                 "",
                 "",
-                "1",
-                SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                 adult.getText().toString(),
                 child.getText().toString(),
                 ".12"

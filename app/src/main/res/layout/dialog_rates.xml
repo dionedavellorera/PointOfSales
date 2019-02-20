@@ -4,11 +4,32 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <TextView
+        android:id="@+id/header"
+        android:padding="15dp"
+        android:textSize="18sp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ROOM RATE"/>
+
     <android.support.v7.widget.SearchView
+        android:layout_below="@id/header"
         android:id="@+id/searchRate"
         app:iconifiedByDefault="false"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
+    <Spinner
+        android:layout_alignParentRight="true"
+        android:spinnerMode="dialog"
+        android:layout_below="@id/header"
+        android:gravity="center"
+        android:layout_toRightOf="@id/searchRate"
+        android:id="@+id/qty"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"/>
 
     <android.support.v7.widget.RecyclerView
         android:clickable="true"

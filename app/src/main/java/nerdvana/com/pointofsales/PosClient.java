@@ -28,9 +28,9 @@ public class PosClient {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder().
                 addInterceptor(httpLoggingInterceptor)
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
+//                .connectTimeout(1, TimeUnit.MINUTES)
+//                .readTimeout(1, TimeUnit.MINUTES)
+//                .writeTimeout(1, TimeUnit.MINUTES)
                 .build();
 
         mRestAdapter = new Retrofit.Builder()

@@ -11,12 +11,14 @@ public class CartItemsModel {
     private boolean isProduct;
     private double amount;
     private int coreId;
+    private int quantity;
 
     public CartItemsModel(String controlNo, int roomId,
                           int productId, int roomTypeId,
                           int roomRateId, int roomRatePriceId,
                           String name, boolean isProduct,
-                          double amount, int coreId) {
+                          double amount, int coreId,
+                          int quantity) {
         this.controlNo = controlNo;
         this.roomId = roomId;
         this.productId = productId;
@@ -27,6 +29,11 @@ public class CartItemsModel {
         this.isProduct = isProduct;
         this.amount = amount;
         this.coreId = coreId;
+        this.quantity = quantity;
+    }
+
+    public int getQuantity() {
+        return quantity;
     }
 
     public int getCoreId() {

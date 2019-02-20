@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/rootView"
     android:clickable="true"
     android:focusable="true"
     android:background="?android:attr/activatedBackgroundIndicator"
@@ -7,7 +8,7 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
-        android:id="@+id/rootView"
+
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
