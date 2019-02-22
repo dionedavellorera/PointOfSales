@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:padding="10dp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/navyblue"
+        android:textSize="18sp"
+        android:gravity="center_vertical"
+        android:text="OPEN PRICE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="Old price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/oldPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="100.00"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New price"/>
+
+    <EditText
+        android:id="@+id/newPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="New price"/>
+
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SUBMIT"/>
+
+</LinearLayout>

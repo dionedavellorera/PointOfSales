@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             if (userModel.isLoggedIn()) { //post login
                 logout.setVisibility(View.VISIBLE);
                 user.setVisibility(View.VISIBLE);
-                user.setText(String.format("%s %s", getResources().getString(R.string.welcome_text), userModel.getUsername()));
+                user.setText(String.format("%s %s - %s", getResources().getString(R.string.welcome_text), userModel.getUsername(), userModel.getUserGroup()));
                 openFragment(R.id.leftFrame, postLoginLeftFrameFragment);
 
                 openFragment(R.id.rightFrame, postLoginRightFrameFragment);

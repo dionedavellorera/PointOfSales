@@ -1,6 +1,8 @@
 package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,31 +11,44 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApiError;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
+import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
+import nerdvana.com.pointofsales.dialogs.PluDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.BreadcrumbModel;
+import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -59,9 +74,16 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private List<ProductsModel> productsList;
     private List<ProductsModel> originalProductsList;
     private List<BreadcrumbModel> categoryClickedArray;
+    private Spinner qtySpinner;
 
+    private SwipeRefreshLayout refreshProducts;
     private TextView breadcrumb;
     private String breadcrumbString = "";
+
+    private String qtySelected = "1";
+
+    private SearchView search;
+
     public static RightFrameFragment newInstance() {
 
         RightFrameFragment rightFrameFragment = new RightFrameFragment();
@@ -91,6 +113,34 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
         setRoomsTableAdapter();
 
+
+        sendFetchProductsRequest();
+
+
+        refreshProducts.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                sendFetchProductsRequest();
+            }
+        });
+
+        setQuantitySpinner();
+
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (productsAdapter != null) {
+                    productsAdapter.getFilter().filter(s);
+                }
+                return false;
+            }
+        });
         return view;
     }
 
@@ -102,6 +152,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @SuppressLint("ClickableViewAccessibility")
     private void initializeViews(View view) {
+        search = view.findViewById(R.id.search);
+        qtySpinner = view.findViewById(R.id.qtySpinner);
         breadcrumb = view.findViewById(R.id.breadcrumb);
         listProducts = view.findViewById(R.id.listProducts);
         listTableRoomSelection = view.findViewById(R.id.listTableRoomSelection);
@@ -110,7 +162,21 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         bottomSheetHeader = view.findViewById(R.id.bottomSheetHeader);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         rightFrameConstraint = view.findViewById(R.id.rightFrameConstraint);
+        refreshProducts = view.findViewById(R.id.refreshProducts);
         breadcrumb.setText(getResources().getString(R.string.home_text));
+
+        qtySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                qtySelected = qtySpinner.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         breadcrumb.setOnTouchListener(new DrawableClickListener.LeftDrawableClickListener(breadcrumb) {
             @Override
@@ -129,7 +195,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                                     productsModel.getShortName(), productsModel.getProductsList(),
                                     productsModel.isSelected(), productsModel.isSerialNumberRequired(),
                                     productsModel.getLowStackCount(), productsModel.getProductStatus(),
-                                    productsModel.getProductId()));
+                                    productsModel.getProductId(),
+                                    productsModel.getMarkUp(),
+                                    productsModel.getIsPriceChanged()));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -219,8 +287,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         listProducts.setAdapter(productsAdapter);
         productsAdapter.notifyDataSetChanged();
 
-        //asynchronously add products to the list
-        new ProductsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
     }
 
 
@@ -285,8 +352,10 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         } else {
             //checkout/proceed to order
             //conditions are for breadcrumb purposes, dynamic product listing (unlimited categories)
+            ProductsModel tempProduct = productsList.get(position);
+            tempProduct.setQty(Integer.valueOf(qtySelected));
             if (categoryClickedArray.size() > 0) {
-                ProductsModel tempProduct = productsList.get(position);
+
                 if (tempProduct.getProductsList().size() != 0) {
                     categoryClickedArray.add(new BreadcrumbModel(tempProduct.getName(), position, new ArrayList<ProductsModel>(productsList)));
 
@@ -299,6 +368,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                     }
                     repopulateList(tempProduct.getProductsList());
                     productsAdapter.notifyDataSetChanged();
+
                 } else {
                     BusProvider.getInstance().post(productsList.get(position));
                     Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
@@ -324,6 +394,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         }
 
 
+        qtySpinner.setSelection(0, true);
+
     }
 
     private void repopulateList(List<ProductsModel> tempProduct) {
@@ -338,7 +410,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                             productsModel.getShortName(), productsModel.getProductsList(),
                             productsModel.isSelected(), productsModel.isSerialNumberRequired(),
                             productsModel.getLowStackCount(), productsModel.getProductStatus(),
-                            productsModel.getProductId()));
+                            productsModel.getProductId(),
+                            productsModel.getMarkUp(),
+                            productsModel.getIsPriceChanged()));
         }
     }
 
@@ -357,4 +431,66 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    private void sendFetchProductsRequest() {
+        BusProvider.getInstance().post(new FetchProductsRequest());
+    }
+
+    @Subscribe
+    public void onReceiveFetchProductsResponse(FetchProductsResponse fetchProductsResponse) {
+        refreshProducts.setRefreshing(false);
+        search.setQuery("", false);
+        new ProductsAsync(this, fetchProductsResponse).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void setQuantitySpinner() {
+        ArrayList<String> stringArray = new ArrayList<>();
+        stringArray.add("1");
+        stringArray.add("2");
+        stringArray.add("3");
+        stringArray.add("4");
+        stringArray.add("5");
+        stringArray.add("6");
+        stringArray.add("7");
+        stringArray.add("8");
+        stringArray.add("9");
+        stringArray.add("10");
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, stringArray);
+        qtySpinner.setAdapter(arrayAdapter);
+    }
+
+
+    @Subscribe
+    public void clickedButton(ButtonsModel clickedItem) {
+        switch (clickedItem.getId()) {
+
+            case 104:
+                PluDialog pluDialog = new PluDialog(getActivity());
+                if (!pluDialog.isShowing()) {
+                    pluDialog.show();
+                }
+                Toast.makeText(getContext(), "SHOW PLU", Toast.LENGTH_SHORT).show();
+
+
+
+        }
+
+    }
+
+
+    @Subscribe
+    public void apiErrorReceived(ApiError apiError) {
+        refreshProducts.setRefreshing(false);
+    }
 }

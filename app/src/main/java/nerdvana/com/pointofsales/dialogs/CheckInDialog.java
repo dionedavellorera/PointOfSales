@@ -216,7 +216,7 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
                 "",
                 adult.getText().toString(),
                 child.getText().toString(),
-                ".12"
+                SharedPreferenceManager.getString(context.getApplicationContext(), ApplicationConstants.TAX_RATE)
         ));
 
 

@@ -60,7 +60,11 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final CartItemsModel cartItem = cartItemsList.get(holder.getAdapterPosition());
 
         if(holder instanceof CheckoutAdapter.ProductsViewHolder){
+            if (!cartItem.isPosted()) {
 
+            } else {
+
+            }
 //            if (productsModel.getProductStatus() != ProductConstants.PENDING &&
 //                    productsModel.getProductStatus() != ProductConstants.VOID) {
 //                ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
@@ -84,18 +88,23 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
 
-//            ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    checkoutItemsContract.itemLongClicked(productsModel, holder.getAdapterPosition(), v);
-//                    return false;
-//                }
-//            });
+            ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    checkoutItemsContract.itemLongClicked(cartItem, holder.getAdapterPosition(), v);
+                    return false;
+                }
+            });
 
-            Log.d("INSIDE_ADAPTER", cartItem.getName());
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
-            ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getAmount()));
+            if (!cartItem.isPosted()) {
+                ((ProductsViewHolder)holder).price.setText(String.valueOf(((cartItem.getAmount() * (cartItem.getMarkUp() + 1))) * cartItem.getQuantity()));
+
+            } else {
+                ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getAmount()));
+            }
+
 //
 //            ((ProductsViewHolder)holder).name.setTextColor(Color.parseColor("#d3d3d3"));
 //            ((ProductsViewHolder)holder).quantity.setTextColor(Color.parseColor("#d3d3d3"));

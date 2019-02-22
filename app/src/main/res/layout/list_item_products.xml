@@ -18,17 +18,15 @@
             android:src="@drawable/ic_launcher_background"/>
 
         <TextView
+            app:autoSizeTextType="uniform"
             android:id="@+id/name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
             android:layout_below="@id/image"
-            android:layout_marginTop="-10dp"
-            android:layout_marginBottom="-10dp"
             android:ellipsize="end"
-            android:fontFamily="@font/amiri"
-            android:maxLines="1"
+            android:maxLines="2"
             android:padding="5dp"
-            android:text="Product Name"
+            android:text="Product Na43242343243242424242432424234234242424234237657575757567567567575675675treptoretreverotirei rpev reop teritop reit eme"
             android:textColor="#ffffff"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -38,10 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/name"
-            android:layout_marginTop="-10dp"
-            android:layout_marginBottom="-10dp"
             android:ellipsize="end"
-            android:fontFamily="@font/amiri"
             android:maxLines="1"
             android:padding="5dp"
             android:text="100.00"

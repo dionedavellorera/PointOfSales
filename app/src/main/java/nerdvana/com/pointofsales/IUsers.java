@@ -7,10 +7,12 @@ import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
+import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
@@ -73,4 +75,12 @@ public interface IUsers {
     @POST("addProduct")
     @FormUrlEncoded
     Call<AddRoomPriceResponse> sendAddRoomPriceRequest(@FieldMap Map<String, String> params);
+
+    @POST("fetchProducts")
+    @FormUrlEncoded
+    Call<FetchProductsResponse> sendFetchProductsRequest(@FieldMap Map<String, String> params);
+
+    @POST("login")
+    @FormUrlEncoded
+    Call<LoginResponse> sendLoginRequest(@FieldMap Map<String, String> params);
 }

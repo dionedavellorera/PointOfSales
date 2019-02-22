@@ -115,6 +115,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     @Subscribe
     public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
+        refreshRoom.setRefreshing(false);
         if (fetchRoomResponse.getResult().size() > 0) {
             new RoomsTablesAsync(this, fetchRoomResponse.getResult()).execute();
             setRoomFilter();

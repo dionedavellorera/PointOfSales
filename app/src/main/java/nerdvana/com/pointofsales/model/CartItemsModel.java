@@ -12,13 +12,16 @@ public class CartItemsModel {
     private double amount;
     private int coreId;
     private int quantity;
-
+    private boolean isPosted;
+    private Double markUp;
+    private int isPriceChanged;
     public CartItemsModel(String controlNo, int roomId,
                           int productId, int roomTypeId,
                           int roomRateId, int roomRatePriceId,
                           String name, boolean isProduct,
                           double amount, int coreId,
-                          int quantity) {
+                          int quantity, boolean isPosted,
+                          Double markUp, int isPriceChanged) {
         this.controlNo = controlNo;
         this.roomId = roomId;
         this.productId = productId;
@@ -30,6 +33,25 @@ public class CartItemsModel {
         this.amount = amount;
         this.coreId = coreId;
         this.quantity = quantity;
+        this.isPosted = isPosted;
+        this.markUp = markUp;
+        this.isPriceChanged = isPriceChanged;
+    }
+
+    public void setIsPriceChanged(int isPriceChanged) {
+        this.isPriceChanged = isPriceChanged;
+    }
+
+    public int getIsPriceChanged() {
+        return isPriceChanged;
+    }
+
+    public Double getMarkUp() {
+        return markUp;
+    }
+
+    public boolean isPosted() {
+        return isPosted;
     }
 
     public int getQuantity() {
@@ -74,5 +96,9 @@ public class CartItemsModel {
 
     public double getAmount() {
         return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 }

@@ -10,7 +10,7 @@
     <string name="table_text">Table</string>
     <string name="pullup_text">Swipe up to view</string>
     <string name="pulldown_text">Slide down to close</string>
-    <string name="welcome_text">Welcome, Have a good day</string>
+    <string name="welcome_text">WELCOME</string>
 
     <string name="error_no_space_selected">Please select a space where to place the order</string>
     <string name="title_activity_rooms">RoomsActivity</string>

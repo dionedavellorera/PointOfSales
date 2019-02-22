@@ -25,7 +25,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
+import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -97,90 +99,18 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.proceed:
                 if (validateLogin(username.getText().toString(), password.getText().toString())) {
-                    startActivity(new Intent(this, MainActivity.class));
-                    finish();
+
+                    sendLoginRequest(username.getText().toString(),
+                                    password.getText().toString());
+//                    startActivity(new Intent(this, MainActivity.class));
+//                    finish();
                 }
 //                else {
 //                    Toast.makeText(SetupActivity.this, "Machine number missing, please setup first", Toast.LENGTH_SHORT).show();
 //                }
                 break;
             case R.id.setup:
-                setupDialog = new Dialog(this);
-                setupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                setupDialog.setContentView(R.layout.dialog_setup);
-
-                final EditText ipAddress = setupDialog.findViewById(R.id.ipAddress);
-                final EditText branchName = setupDialog.findViewById(R.id.branchName);
-                final EditText branchCode = setupDialog.findViewById(R.id.branchCode);
-                final EditText serial = setupDialog.findViewById(R.id.serialNumber);
-                final Button proceed = setupDialog.findViewById(R.id.proceed);
-
-
-                if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST))) {
-                    ipAddress.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST));
-                    branchName.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH));
-                    branchCode.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE));
-                    serial.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.SERIAL_NUMBER));
-                }
-
-                proceed.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if (!TextUtils.isEmpty(ipAddress.getText().toString().trim()) &&
-                                !TextUtils.isEmpty(branchName.getText().toString().trim()) &&
-                                !TextUtils.isEmpty(branchCode.getText().toString().trim()) &&
-                                !TextUtils.isEmpty(serial.getText().toString().trim())) {
-
-                            if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
-                                    ipAddress.getText().toString(),
-                                    "api",
-                                    branchName.getText().toString(),
-                                    branchCode.getText().toString()))) {
-
-                                SharedPreferenceManager.saveString(SetupActivity.this,
-                                        ipAddress.getText().toString(),ApplicationConstants.HOST);
-                                SharedPreferenceManager.saveString(SetupActivity.this,
-                                        branchName.getText().toString(),ApplicationConstants.BRANCH);
-                                SharedPreferenceManager.saveString(SetupActivity.this,
-                                        branchCode.getText().toString(),ApplicationConstants.CODE);
-                                SharedPreferenceManager.saveString(SetupActivity.this,
-                                        serial.getText().toString(),ApplicationConstants.SERIAL_NUMBER);
-
-                                String apiBaseUrl = String.format("%s/%s/%s/%s/",
-                                        ipAddress.getText().toString(),
-                                        "api",
-                                        branchName.getText().toString(),
-                                        branchCode.getText().toString());
-                                SharedPreferenceManager.saveString(SetupActivity.this, apiBaseUrl, ApplicationConstants.API_BASE_URL);
-                                PosClient.changeApiBaseUrl(
-                                        apiBaseUrl
-                                );
-
-                                sendVerifyMachineRequest(serial.getText().toString().toUpperCase());
-
-                            } else {
-
-                                Toast.makeText(SetupActivity.this, "Please enter valid url", Toast.LENGTH_SHORT).show();
-
-                            }
-
-                        } else {
-
-                            Toast.makeText(SetupActivity.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
-
-                        }
-
-
-                    }
-                });
-
-                if (!setupDialog.isShowing()) {
-                    setupDialog.show();
-                    Window window = setupDialog.getWindow();
-                    window.setLayout((Utils.getDeviceWidth(SetupActivity.this) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
-                }
-
+                showSetupDialog();
                 break;
         }
     }
@@ -197,13 +127,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(SetupActivity.this, "Machine not yet registered", Toast.LENGTH_SHORT).show();
                 isValid = false;
             } else {
-                UserModel userModel = new UserModel(username,
-                        true,
-                        SystemConstants.SYS_ROOM,
-                        SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST),
-                        SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH),
-                        SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE));
-                SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 isValid = true;
             }
 
@@ -241,6 +164,13 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     public void machineVerificationResponse(VerifyMachineResponse verifyMachineResponse) {
         if (verifyMachineResponse.getStatus() == 1) { //success
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getTax()), ApplicationConstants.TAX_RATE);
+
             if (setupDialog != null) {
                 if (setupDialog.isShowing()) setupDialog.dismiss();
             }
@@ -251,5 +181,112 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     @Subscribe
     public void apiError(ApiError apiError) {
         Toast.makeText(SetupActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void showSetupDialog() {
+        setupDialog = new Dialog(this);
+        setupDialog.setCancelable(false);
+        setupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setupDialog.setContentView(R.layout.dialog_setup);
+
+        final EditText ipAddress = setupDialog.findViewById(R.id.ipAddress);
+        final EditText branchName = setupDialog.findViewById(R.id.branchName);
+        final EditText branchCode = setupDialog.findViewById(R.id.branchCode);
+        final EditText serial = setupDialog.findViewById(R.id.serialNumber);
+        final Button proceed = setupDialog.findViewById(R.id.proceed);
+
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST))) {
+            ipAddress.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST));
+            branchName.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH));
+            branchCode.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE));
+            serial.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.SERIAL_NUMBER));
+        }
+
+        proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (!TextUtils.isEmpty(ipAddress.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(branchName.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(branchCode.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(serial.getText().toString().trim())) {
+
+                    if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
+                            ipAddress.getText().toString(),
+                            "api",
+                            branchName.getText().toString(),
+                            branchCode.getText().toString()))) {
+
+                        SharedPreferenceManager.saveString(SetupActivity.this,
+                                ipAddress.getText().toString(),ApplicationConstants.HOST);
+                        SharedPreferenceManager.saveString(SetupActivity.this,
+                                branchName.getText().toString(),ApplicationConstants.BRANCH);
+                        SharedPreferenceManager.saveString(SetupActivity.this,
+                                branchCode.getText().toString(),ApplicationConstants.CODE);
+                        SharedPreferenceManager.saveString(SetupActivity.this,
+                                serial.getText().toString(),ApplicationConstants.SERIAL_NUMBER);
+
+                        String apiBaseUrl = String.format("%s/%s/%s/%s/",
+                                ipAddress.getText().toString(),
+                                "api",
+                                branchName.getText().toString(),
+                                branchCode.getText().toString());
+                        SharedPreferenceManager.saveString(SetupActivity.this, apiBaseUrl, ApplicationConstants.API_BASE_URL);
+                        PosClient.changeApiBaseUrl(
+                                apiBaseUrl
+                        );
+                        sendVerifyMachineRequest(serial.getText().toString().toUpperCase());
+                    } else {
+                        Toast.makeText(SetupActivity.this, "Please enter valid url", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+
+                    Toast.makeText(SetupActivity.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
+
+                }
+
+
+            }
+        });
+
+        if (!setupDialog.isShowing()) {
+            setupDialog.show();
+            Window window = setupDialog.getWindow();
+            window.setLayout((Utils.getDeviceWidth(SetupActivity.this) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    private void sendLoginRequest(String username, String password) {
+        BusProvider.getInstance().post(new LoginRequest(
+                username,
+                password
+        ));
+    }
+
+    @Subscribe
+    public void onReceiveLoginResponse(LoginResponse loginResponse) {
+        if (loginResponse.getStatus() == 0) {
+            //fail
+            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+        } else {
+            //success
+
+            UserModel userModel = new UserModel(loginResponse.getResult().get(0).getName(),
+                    true,
+                    SystemConstants.SYS_ROOM,
+                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST),
+                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH),
+                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE),
+                    String.valueOf(loginResponse.getResult().get(0).getId()),
+                    String.valueOf(loginResponse.getResult().get(0).getUserGroup().getUserGroup()),
+                    String.valueOf(loginResponse.getResult().get(0).getUserGroup().getId()));
+            SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+
+        }
     }
 }

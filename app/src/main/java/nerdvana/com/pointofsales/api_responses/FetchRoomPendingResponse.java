@@ -1245,7 +1245,7 @@ public class FetchRoomPendingResponse {
         private Integer roomTypeId;
         @SerializedName("room_rate_id")
         @Expose
-        private Integer roomRateId;
+        private Object roomRateId;
         @SerializedName("room_rate_price_id")
         @Expose
         private Integer roomRatePriceId;
@@ -1318,6 +1318,17 @@ public class FetchRoomPendingResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("product")
+        @Expose
+        private Product product;
+
+        public Product getProduct() {
+            return product;
+        }
+
+        public void setProduct(Product product) {
+            this.product = product;
+        }
 
         public Integer getId() {
             return id;
@@ -1359,7 +1370,7 @@ public class FetchRoomPendingResponse {
             this.roomTypeId = roomTypeId;
         }
 
-        public Integer getRoomRateId() {
+        public Object getRoomRateId() {
             return roomRateId;
         }
 
@@ -1561,5 +1572,240 @@ public class FetchRoomPendingResponse {
 
     }
 
+    public class Product {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("core_id")
+        @Expose
+        private Integer coreId;
+        @SerializedName("product")
+        @Expose
+        private String product;
+        @SerializedName("product_initial")
+        @Expose
+        private String productInitial;
+        @SerializedName("product_barcode")
+        @Expose
+        private String productBarcode;
+        @SerializedName("unit_id")
+        @Expose
+        private Integer unitId;
+        @SerializedName("description")
+        @Expose
+        private String description;
+        @SerializedName("procedure")
+        @Expose
+        private Object procedure;
+        @SerializedName("product_tags")
+        @Expose
+        private String productTags;
+        @SerializedName("qty")
+        @Expose
+        private Integer qty;
+        @SerializedName("min")
+        @Expose
+        private Integer min;
+        @SerializedName("image_file")
+        @Expose
+        private String imageFile;
+        @SerializedName("is_subtract")
+        @Expose
+        private Integer isSubtract;
+        @SerializedName("is_available")
+        @Expose
+        private Integer isAvailable;
+        @SerializedName("is_fixed_asset")
+        @Expose
+        private Integer isFixedAsset;
+        @SerializedName("is_raw")
+        @Expose
+        private Integer isRaw;
+        @SerializedName("flag")
+        @Expose
+        private Integer flag;
+        @SerializedName("created_by")
+        @Expose
+        private Object createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Integer getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(Integer coreId) {
+            this.coreId = coreId;
+        }
+
+        public String getProduct() {
+            return product;
+        }
+
+        public void setProduct(String product) {
+            this.product = product;
+        }
+
+        public String getProductInitial() {
+            return productInitial;
+        }
+
+        public void setProductInitial(String productInitial) {
+            this.productInitial = productInitial;
+        }
+
+        public String getProductBarcode() {
+            return productBarcode;
+        }
+
+        public void setProductBarcode(String productBarcode) {
+            this.productBarcode = productBarcode;
+        }
+
+        public Integer getUnitId() {
+            return unitId;
+        }
+
+        public void setUnitId(Integer unitId) {
+            this.unitId = unitId;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Object getProcedure() {
+            return procedure;
+        }
+
+        public void setProcedure(Object procedure) {
+            this.procedure = procedure;
+        }
+
+        public String getProductTags() {
+            return productTags;
+        }
+
+        public void setProductTags(String productTags) {
+            this.productTags = productTags;
+        }
+
+        public Integer getQty() {
+            return qty;
+        }
+
+        public void setQty(Integer qty) {
+            this.qty = qty;
+        }
+
+        public Integer getMin() {
+            return min;
+        }
+
+        public void setMin(Integer min) {
+            this.min = min;
+        }
+
+        public String getImageFile() {
+            return imageFile;
+        }
+
+        public void setImageFile(String imageFile) {
+            this.imageFile = imageFile;
+        }
+
+        public Integer getIsSubtract() {
+            return isSubtract;
+        }
+
+        public void setIsSubtract(Integer isSubtract) {
+            this.isSubtract = isSubtract;
+        }
+
+        public Integer getIsAvailable() {
+            return isAvailable;
+        }
+
+        public void setIsAvailable(Integer isAvailable) {
+            this.isAvailable = isAvailable;
+        }
+
+        public Integer getIsFixedAsset() {
+            return isFixedAsset;
+        }
+
+        public void setIsFixedAsset(Integer isFixedAsset) {
+            this.isFixedAsset = isFixedAsset;
+        }
+
+        public Integer getIsRaw() {
+            return isRaw;
+        }
+
+        public void setIsRaw(Integer isRaw) {
+            this.isRaw = isRaw;
+        }
+
+        public Integer getFlag() {
+            return flag;
+        }
+
+        public void setFlag(Integer flag) {
+            this.flag = flag;
+        }
+
+        public Object getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(Object createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+    }
 
 }

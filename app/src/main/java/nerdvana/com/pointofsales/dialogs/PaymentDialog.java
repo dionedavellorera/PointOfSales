@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -23,9 +25,12 @@ import java.util.List;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
+import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
+import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
+import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public abstract class PaymentDialog extends Dialog implements View.OnClickListener {
 
@@ -53,9 +58,13 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
 //    double _credit = 0;
 //    double _charge = 0;
 //    double _ar = 0;
+    private PaymentsAdapter paymentsAdapter;
+    private List<FetchPaymentResponse.Result> paymentList;
+    private RecyclerView listPayments;
 
-    public PaymentDialog(@NonNull Context context, String transactionNumber, double balance) {
+    public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList) {
         super(context);
+        this.paymentList = paymentList;
 //        this.transactionNumber = transactionNumber;
 //        this.balance = balance;
     }
@@ -73,6 +82,17 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
+        listPayments = findViewById(R.id.listPayments);
+
+
+        paymentsAdapter = new PaymentsAdapter(paymentList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        listPayments.setLayoutManager(linearLayoutManager);
+        listPayments.setAdapter(paymentsAdapter);
+        paymentsAdapter.notifyDataSetChanged();
+
 
 //        tilCash = findViewById(R.id.tilCash);
 //        cash = findViewById(R.id.inputCash);
