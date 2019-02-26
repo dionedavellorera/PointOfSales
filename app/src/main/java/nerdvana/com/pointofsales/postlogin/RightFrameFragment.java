@@ -197,7 +197,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                                     productsModel.getLowStackCount(), productsModel.getProductStatus(),
                                     productsModel.getProductId(),
                                     productsModel.getMarkUp(),
-                                    productsModel.getIsPriceChanged()));
+                                    productsModel.getIsPriceChanged(),
+                                    productsModel.getDepartment(),
+                                    productsModel.getUnitPrice()));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -338,11 +340,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     @Override
-    public void productClicked(int position) {
-
-//        Log.d("PRODUCTIDSHIT", String.valueOf(productsList.get(position).getProductId()));
-//        Log.d("PRODUCTIDSHIT", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_ROOM_TABLE));
-//        Log.d("PRODUCTIDSHIT", userModel.getSystemType());
+    public void productClicked(ProductsModel productsModel) {
 
         //checks if system is hotel / dine in and verifies if there is a selected area to put order
         if (TextUtils.isEmpty(selectedRoomNumber()) &&
@@ -352,43 +350,44 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         } else {
             //checkout/proceed to order
             //conditions are for breadcrumb purposes, dynamic product listing (unlimited categories)
-            ProductsModel tempProduct = productsList.get(position);
-            tempProduct.setQty(Integer.valueOf(qtySelected));
+//            ProductsModel tempProduct = productsList.get(position);
+            productsModel.setQty(Integer.valueOf(qtySelected));
             if (categoryClickedArray.size() > 0) {
 
-                if (tempProduct.getProductsList().size() != 0) {
-                    categoryClickedArray.add(new BreadcrumbModel(tempProduct.getName(), position, new ArrayList<ProductsModel>(productsList)));
-
-                    if (categoryClickedArray.size() < 1) {
-                        breadcrumbString += String.format("%s %s", "", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-                        breadcrumb.setText(breadcrumbString);
-                    } else {
-                        breadcrumbString += String.format(" %s %s", "»", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-                        breadcrumb.setText(breadcrumbString);
-                    }
-                    repopulateList(tempProduct.getProductsList());
+                if (productsModel.getProductsList().size() != 0) {
+//                    categoryClickedArray.add(new BreadcrumbModel(productsModel.getName(), position, new ArrayList<ProductsModel>(productsList)));
+//
+//                    if (categoryClickedArray.size() < 1) {
+//                        breadcrumbString += String.format("%s %s", "", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
+//                        breadcrumb.setText(breadcrumbString);
+//                    } else {
+//                        breadcrumbString += String.format(" %s %s", "»", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
+//                        breadcrumb.setText(breadcrumbString);
+//                    }
+                    repopulateList(productsModel.getProductsList());
                     productsAdapter.notifyDataSetChanged();
 
                 } else {
-                    BusProvider.getInstance().post(productsList.get(position));
-                    Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                    BusProvider.getInstance().post(productsModel);
+                    Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if (productsList.get(position).getProductsList().size() != 0) {
-                    if (categoryClickedArray.size() < 1) {
-                        breadcrumbString += String.format("%s %s", "", productsList.get(position).getName());
-                        breadcrumb.setText(breadcrumbString);
-                    } else {
-                        breadcrumbString += String.format(" %s %s", "»", productsList.get(position).getName());
-                        breadcrumb.setText(breadcrumbString);
-                    }
 
-                    categoryClickedArray.add(new BreadcrumbModel(productsList.get(position).getName(), position, productsList));
-                    repopulateList(productsList.get(position).getProductsList());
+                if (productsModel.getProductsList().size() != 0) {
+//                    if (categoryClickedArray.size() < 1) {
+//                        breadcrumbString += String.format("%s %s", "", productsList.get(position).getName());
+//                        breadcrumb.setText(breadcrumbString);
+//                    } else {
+//                        breadcrumbString += String.format(" %s %s", "»", productsList.get(position).getName());
+//                        breadcrumb.setText(breadcrumbString);
+//                    }
+//
+//                    categoryClickedArray.add(new BreadcrumbModel(productsList.get(position).getName(), position, productsList));
+                    repopulateList(productsModel.getProductsList());
                     productsAdapter.notifyDataSetChanged();
                 } else {
-                    BusProvider.getInstance().post(productsList.get(position));
-                    Toast.makeText(getContext(), productsList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                    BusProvider.getInstance().post(productsModel);
+                    Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -412,7 +411,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                             productsModel.getLowStackCount(), productsModel.getProductStatus(),
                             productsModel.getProductId(),
                             productsModel.getMarkUp(),
-                            productsModel.getIsPriceChanged()));
+                            productsModel.getIsPriceChanged(),
+                            productsModel.getDepartment(),
+                            productsModel.getUnitPrice()));
         }
     }
 

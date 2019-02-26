@@ -33,7 +33,6 @@ public class PaymentActivity extends AppCompatActivity {
 
         if (bundle != null) {
             transactionNumber = bundle.getString("transaction_number");
-            Log.d("TRANSNUMBER", transactionNumber);
         }
 
         if (TextUtils.isEmpty(transactionNumber)) {

@@ -41,6 +41,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView name;
         private TextView quantity;
         private TextView price;
+        private TextView totalPrice;
         private ConstraintLayout rootView;
 
         public ProductsViewHolder(@NonNull View itemView) {
@@ -48,6 +49,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             name = itemView.findViewById(R.id.name);
             quantity = itemView.findViewById(R.id.quantity);
             price = itemView.findViewById(R.id.price);
+            totalPrice = itemView.findViewById(R.id.totalPrice);
             rootView = itemView.findViewById(R.id.rootView);
         }
 
@@ -98,12 +100,14 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
-            if (!cartItem.isPosted()) {
-                ((ProductsViewHolder)holder).price.setText(String.valueOf(((cartItem.getAmount() * (cartItem.getMarkUp() + 1))) * cartItem.getQuantity()));
+//            if (!cartItem.isPosted()) {
+//                ((ProductsViewHolder)holder).price.setText(String.valueOf(((cartItem.getAmount() * (cartItem.getMarkUp() + 1))) * cartItem.getQuantity()));
+//
+//            } else {
+//            }
 
-            } else {
-                ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getAmount()));
-            }
+            ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
+            ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity()));
 
 //
 //            ((ProductsViewHolder)holder).name.setTextColor(Color.parseColor("#d3d3d3"));

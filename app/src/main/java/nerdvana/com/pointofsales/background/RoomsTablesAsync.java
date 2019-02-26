@@ -82,7 +82,7 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
                             String.valueOf(r.getCRoomStat()),
                             r.getStatus().getColor(),
-                            10000
+                            0
                     )
             );
         }

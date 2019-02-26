@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -26,13 +27,15 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
+import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
+import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
-public abstract class PaymentDialog extends Dialog implements View.OnClickListener {
+public abstract class PaymentDialog extends Dialog  {
 
 //    private String transactionNumber;
 //
@@ -61,7 +64,14 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
     private PaymentsAdapter paymentsAdapter;
     private List<FetchPaymentResponse.Result> paymentList;
     private RecyclerView listPayments;
-
+    private RecyclerView listPostedPayments;
+    private Button add;
+    private Button pay;
+    private EditText amountToPay;
+    private FetchPaymentResponse.Result paymentMethod = null;
+    private PaymentMethod paymentMethodImpl;
+    List<PostedPaymentsModel> postedPaymentList = new ArrayList<>();
+    PostedPaymentsAdapter postedPaymentsAdapter;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList) {
         super(context);
         this.paymentList = paymentList;
@@ -83,9 +93,43 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
         listPayments = findViewById(R.id.listPayments);
+        listPostedPayments = findViewById(R.id.listPostedPayments);
+        add = findViewById(R.id.add);
+        pay = findViewById(R.id.pay);
+        amountToPay = (EditText) findViewById(R.id.amount);
 
+        paymentMethodImpl = new PaymentMethod() {
+            @Override
+            public void clicked(int position) {
+                Log.d("TEST_CLICK", "YY");
+                paymentMethod = paymentList.get(position);
+            }
+        };
 
-        paymentsAdapter = new PaymentsAdapter(paymentList);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (paymentMethod == null) {
+                    Toast.makeText(getContext(), "Please select payment method", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    postedPaymentList.add(new PostedPaymentsModel(paymentMethod.getCoreId(), amountToPay.getText().toString(), paymentMethod.getPaymentType(), false));
+                    if (postedPaymentsAdapter != null) {
+                        postedPaymentsAdapter.notifyDataSetChanged();
+                    }
+                    paymentMethod = null;
+                }
+            }
+        });
+
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                paymentSuccess(postedPaymentList);
+            }
+        });
+
+        paymentsAdapter = new PaymentsAdapter(paymentList, paymentMethodImpl);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -94,207 +138,15 @@ public abstract class PaymentDialog extends Dialog implements View.OnClickListen
         paymentsAdapter.notifyDataSetChanged();
 
 
-//        tilCash = findViewById(R.id.tilCash);
-//        cash = findViewById(R.id.inputCash);
-//        tilCreditCard = findViewById(R.id.tilCreditCard);
-//        creditCard = findViewById(R.id.inputCreditCard);
-//        tilCharge = findViewById(R.id.tilCharge);
-//        charge = findViewById(R.id.inputCharge);
-//        tilAr = findViewById(R.id.tilAr);
-//        ar = findViewById(R.id.inputAr);
-//        totalChange = findViewById(R.id.totalChange);
-//        totalPayment = findViewById(R.id.totalPayment);
-//        balanceValue = findViewById(R.id.balanceValue);
-//        checkout = findViewById(R.id.checkout);
-//        checkout.setOnClickListener(this);
-//        addTextWatchers();
-//
-//        balanceValue.setText(String.valueOf(balance));
+        postedPaymentsAdapter = new PostedPaymentsAdapter(postedPaymentList);
+        listPostedPayments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        listPostedPayments.setAdapter(postedPaymentsAdapter);
     }
 
-//    private void addTextWatchers() {
-//        ar.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (ar.getText().toString().trim().equalsIgnoreCase("")) {
-//                    _ar = 0;
-//                    ar.setText("0");
-//                } else {
-//                    _ar = Double.valueOf(ar.getText().toString());
-//                }
-//
-//                computeTotal();
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-//        charge.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (charge.getText().toString().trim().equalsIgnoreCase("")) {
-//                    _charge = 0;
-//                    charge.setText("0");
-//                } else {
-//                    _charge = Double.valueOf(charge.getText().toString());
-//                }
-//
-//                computeTotal();
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-//        creditCard.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (creditCard.getText().toString().trim().equalsIgnoreCase("")) {
-//                    _credit = 0;
-//                    creditCard.setText("0");
-//                } else {
-//                    _credit = Double.valueOf(creditCard.getText().toString());
-//                }
-//
-//                computeTotal();
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-//        cash.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (cash.getText().toString().trim().equalsIgnoreCase("")) {
-//                    _cash = 0;
-//                    cash.setText("0");
-//                } else {
-//                    _cash = Double.valueOf(cash.getText().toString());
-//                }
-//
-//                computeTotal();
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-//    }
-
-//    private void computeTotal() {
-//        payment = _ar + _cash + _charge + _credit;
-//        totalPayment.setText(String.valueOf(payment));
-//        totalChange.setText(String.valueOf(payment - balance));
-//    }
-
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.checkout:
-//                if (payment >= balance) {
-//                    dismiss();
-//                    paymentSuccess();
-//                    savePayment();
-//                    Toast.makeText(getContext(), "Payment accepted", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    dismiss();
-//                    paymentFailed();
-//                    Toast.makeText(getContext(), "Payment not accepted", Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//        }
-//    }
-
-    public abstract void paymentSuccess();
+    public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList);
     public abstract void paymentFailed();
 
-//    private void savePayment() {
-//        double tempBalance = balance;
-//        if (!creditCard.getText().toString().equalsIgnoreCase("0")) {
-//            savePaymentToDb(tempBalance, "CREDIT CARD",
-//                            "SINGLE", "RECEIPT-001",
-//                            _credit, transactionNumber);
-//            tempBalance = tempBalance - _credit;
-//        }
-//
-//        if (!cash.getText().toString().equalsIgnoreCase("0")) {
-//            savePaymentToDb(tempBalance, "CASH",
-//                    "SINGLE", "RECEIPT-001",
-//                    _cash, transactionNumber);
-//            tempBalance = tempBalance - _cash;
-//        }
-//
-//        if (!ar.getText().toString().equalsIgnoreCase("0")) {
-//            savePaymentToDb(tempBalance, "AR",
-//                    "SINGLE", "RECEIPT-001",
-//                    _ar, transactionNumber);
-//            tempBalance = tempBalance - _ar;
-//        }
-//
-//        if (!charge.getText().toString().equalsIgnoreCase("0")) {
-//            savePaymentToDb(tempBalance, "CHARGE",
-//                    "SINGLE", "RECEIPT-001",
-//                    _charge, transactionNumber);
-//            tempBalance = tempBalance - _charge;
-//        }
-//
-//    }
-
-//    private void savePaymentToDb(double balance, String paymentMethod,
-//                                 String paymentType, String receiptNumber,
-//                                 double tenderedAmount, String transactionNumber) {
-//        PaymentEntity payment = new PaymentEntity(receiptNumber, transactionNumber,
-//                                                paymentMethod, balance,
-//                                                tenderedAmount, paymentType);
-//        payment.save();
-//    }
-
-//    private void setPaymentSelection() {
-//        List<String> priceArray = new ArrayList<>();
-//        for (RoomRateMain rrm : priceList) {
-//            priceArray.add(String.format("%d - %s", rrm.getRatePrice().getAmount(), rrm.getRatePrice().getRoomRate().getRoomRate()));
-//        }
-//        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
-//                priceArray);
-//        rateSpinner.setAdapter(rateSpinnerAdapter);
-//
-//        rateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                roomRateId = priceList.get(position).getRatePrice().getRoomRateId();
-//                roomRatePriecId = priceList.get(position).getRoomRatePriceId();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//    }
+    public interface PaymentMethod {
+        void clicked(int position);
+    }
 }

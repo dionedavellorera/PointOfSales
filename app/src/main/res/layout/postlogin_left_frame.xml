@@ -51,7 +51,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintGuide_percent="0.75"/>
+        app:layout_constraintGuide_percent="0.60"/>
 
     <!--//return here-->
     <android.support.constraint.Guideline
@@ -156,7 +156,7 @@
         android:layout_height="0dp"
         android:background="@color/lightgrey"
         android:padding="5dp"
-        android:text="12000.00"
+        android:text="0.00"
         android:textColor="@color/light"
         android:textSize="18sp"
         android:textStyle="bold"

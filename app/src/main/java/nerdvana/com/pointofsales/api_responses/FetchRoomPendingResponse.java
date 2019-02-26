@@ -1266,10 +1266,10 @@ public class FetchRoomPendingResponse {
         private Integer unitCost;
         @SerializedName("price")
         @Expose
-        private Integer price;
+        private Double price;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("discount")
         @Expose
         private Integer discount;
@@ -1426,19 +1426,19 @@ public class FetchRoomPendingResponse {
             this.unitCost = unitCost;
         }
 
-        public Integer getPrice() {
+        public Double getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(Double price) {
             this.price = price;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/rootView"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/paymentType"
+        android:text="test"
+        android:layout_weight="0.4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:gravity="right"
+        android:layout_weight="0.6"
+        android:id="@+id/paymentAmount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="1000.00"/>
+</LinearLayout>

@@ -61,7 +61,6 @@ public class RoomRatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ((RatesViewHolder)holder).name.setText(rateList.get(i).getRatePrice().getRoomRate().getRoomRate());
         ((RatesViewHolder)holder).amount.setText(String.valueOf(rateList.get(i).getRatePrice().getAmount()));
 
-
     }
 
 

@@ -9,4 +9,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <EditText
+        android:gravity="center"
+        android:hint="amount"
+        android:layout_below="@id/listPayments"
+        android:layout_toLeftOf="@id/add"
+        android:id="@+id/amount"
+        android:layout_width="150dp"
+        android:layout_height="45dp" />
+
+    <Button
+        android:layout_below="@id/listPayments"
+        android:id="@+id/add"
+        android:layout_toLeftOf="@id/pay"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="ADD"/>
+
+    <Button
+        android:layout_below="@id/listPayments"
+        android:id="@+id/pay"
+        android:layout_alignParentRight="true"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:text="PAY"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/add"
+        android:id="@+id/listPostedPayments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>

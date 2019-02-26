@@ -204,9 +204,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @SuppressLint("NewApi")
     private void showListMenu(View anchor) {
+        data = new ArrayList<HashMap<String, Object>>();
+
         final HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("title", "Logout");
         map.put("icon", R.drawable.ic_launcher_background);
+
         data.add(map);
 
         ListPopupWindow popupWindow = new ListPopupWindow(this);
@@ -214,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         ListAdapter adapter = new SimpleAdapter(
                 this,
                 data,
-                android.R.layout.activity_list_item, // You may want to use your own cool layout
+                android.R.layout.simple_list_item_1, // You may want to use your own cool layout
                 new String[] {"title", "icon"}, // These are just the keys that the data uses
                 new int[] {android.R.id.text1, android.R.id.icon}); // The view ids to map the data to
 
@@ -272,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 currentTransactionEntity.save();
 
-                Log.d("PUPU", String.valueOf(selected.getPrice().size()));
 
                 BusProvider.getInstance().post(new FragmentNotifierModel(selected));
 

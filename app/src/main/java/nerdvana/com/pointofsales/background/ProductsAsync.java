@@ -2,6 +2,10 @@ package nerdvana.com.pointofsales.background;
 
 import android.os.AsyncTask;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -32,10 +36,23 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
             } else {
                 images = new String[]{"https://images.summitmedia-digital.com/yummyph/images/2019/02/18/Starbucks-Milk-Tea-06.jpg"};
             }
+            DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            DateTime companyUpdatedAt = new DateTime(df.parseDateTime(r.getUpdatedAt()));
+            Double amount = r.getAmount();
+            if (r.getBranchPrice() != null) {
+                DateTime branchUpdatedAt = new DateTime(df.parseDateTime(r.getBranchPrice().getUpdatedAt()));
+                if (branchUpdatedAt.isAfter(companyUpdatedAt)) {
+                    amount = r.getBranchPrice().getAmount();
+                }
+            }
+
+            amount = ((amount * (r.getMarkUp() + 1)));
+
+
 
             productsModelList.add(new ProductsModel(
                     r.getProduct(),
-                    r.getPrice().getAmount(),
+                    amount,
                     0.00,
                     r.getIsAvailable() == 1 ? true : false,
                     images,
@@ -46,9 +63,11 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                     false,
                     0,
                     ProductConstants.PENDING,
-                    r.getId(),
-                    r.getPrice().getMarkUp(),
-                    0));
+                    r.getCoreId(),
+                    r.getMarkUp(),
+                    0,
+                    r.getBranchDepartments().size() > 0 ? r.getBranchDepartments().get(0).getBranchDepartment().getDepartment() : "",
+                    amount));
         }
 
 //        for (int i = 0; i < 20; i++) {

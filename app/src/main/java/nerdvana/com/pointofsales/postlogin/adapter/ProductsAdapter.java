@@ -52,7 +52,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     List<ProductsModel> filteredList = new ArrayList<>();
                     for (ProductsModel pm : productsModelList) {
                         if (pm.getName().toLowerCase().contains(charSting.toLowerCase()) ||
-                            String.valueOf(pm.getPrice()).contains(charSting.toLowerCase())) {
+                            String.valueOf(pm.getPrice()).contains(charSting.toLowerCase()) ||
+                            pm.getDepartment().toLowerCase().contains(charSting.toLowerCase())) {
                             filteredList.add(pm);
                         }
                     }
@@ -93,7 +94,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                productsContract.productClicked(i);
+                productsContract.productClicked(productsModel);
             }
         });
         ((ProductsViewHolder)holder).name.setText(productsModel.getName());

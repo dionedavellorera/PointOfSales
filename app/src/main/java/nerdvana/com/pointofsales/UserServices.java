@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales;
 
 import com.squareup.otto.Subscribe;
 
+import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
@@ -16,6 +17,7 @@ import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
+import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -154,6 +156,13 @@ public class UserServices extends BaseService {
     public void onReceiveLoginRequest(LoginRequest loginRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<LoginResponse> request = iUsers.sendLoginRequest(loginRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveAddPaymentRequest(AddPaymentRequest addPaymentRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<AddPaymentResponse> request = iUsers.sendAddPayment(addPaymentRequest.getMapValue());
         asyncRequest(request);
     }
 }
