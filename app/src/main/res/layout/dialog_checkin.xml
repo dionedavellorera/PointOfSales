@@ -40,16 +40,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:hint="steward"
+    <Spinner
         android:id="@+id/steward"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/plateNumber"/>
 
+    <Spinner
+        android:id="@+id/roomArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/steward"/>
 
     <android.support.design.widget.TextInputLayout
-        android:layout_below="@id/steward"
+        android:layout_below="@id/roomArea"
         android:id="@+id/tilAdult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -75,6 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </android.support.design.widget.TextInputLayout>
+
     <Button
         android:layout_below="@id/tilChild"
         android:id="@+id/checkin"

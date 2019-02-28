@@ -164,6 +164,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     public void machineVerificationResponse(VerifyMachineResponse verifyMachineResponse) {
         if (verifyMachineResponse.getStatus() == 1) { //success
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
+
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
@@ -283,6 +284,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     String.valueOf(loginResponse.getResult().get(0).getUserGroup().getUserGroup()),
                     String.valueOf(loginResponse.getResult().get(0).getUserGroup().getId()));
             SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
 
             startActivity(new Intent(this, MainActivity.class));
             finish();

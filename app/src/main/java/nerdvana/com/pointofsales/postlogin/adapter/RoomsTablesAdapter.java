@@ -64,24 +64,9 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
         ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
 
-
-        ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
-
-//        if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.CLEAN)) {
-//
-//        } else if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.DIRTY)) {
-//
-//        } else if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.OCCUPIED)) {
-//
-//        } else if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.DIRTY_WITH_LINEN)) {
-//
-//        } else if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.SOA)) {
-//
-//        } else {
-//            //return default color
-//            ((RoomsTablesAdapter.ProductsViewHolder)holder).rel.setBackgroundResource(R.color.colorWhite);
-//        }
-
+        if (!productsModel.isTakeOut()) {
+            ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
+        }
     }
 
 

@@ -23,11 +23,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
 import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
+import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.entities.CartEntity;
@@ -72,9 +74,14 @@ public abstract class PaymentDialog extends Dialog  {
     private PaymentMethod paymentMethodImpl;
     List<PostedPaymentsModel> postedPaymentList = new ArrayList<>();
     PostedPaymentsAdapter postedPaymentsAdapter;
-    public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList) {
+    private boolean isCheckout;
+
+    public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
+                         boolean isCheckout, List<PostedPaymentsModel> postedPaymentList) {
         super(context);
         this.paymentList = paymentList;
+        this.isCheckout = isCheckout;
+        this.postedPaymentList = postedPaymentList;
 //        this.transactionNumber = transactionNumber;
 //        this.balance = balance;
     }
@@ -98,13 +105,19 @@ public abstract class PaymentDialog extends Dialog  {
         pay = findViewById(R.id.pay);
         amountToPay = (EditText) findViewById(R.id.amount);
 
+
         paymentMethodImpl = new PaymentMethod() {
             @Override
             public void clicked(int position) {
-                Log.d("TEST_CLICK", "YY");
                 paymentMethod = paymentList.get(position);
             }
         };
+
+        if (isCheckout) {
+            pay.setText("CHECKOUT");
+        } else {
+            pay.setText("PAY");
+        }
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,4 +162,6 @@ public abstract class PaymentDialog extends Dialog  {
     public interface PaymentMethod {
         void clicked(int position);
     }
+
+
 }

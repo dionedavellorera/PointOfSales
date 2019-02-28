@@ -28,23 +28,35 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
         for (FetchRoomResponse.Result r : roomList) {
             List<RoomRateMain> roomRateMainList = new ArrayList<>();
             List<Integer> tempList = new ArrayList<>();
-            if ((r.getRoomRate().size() == 0 &&
-                    r.getType().getRoomRate().size() == 0 &&
-                    r.getType().getParent().getRoomRate().size() == 0)
-                    || r.getType().getFlag() == 0) {
-                continue;
-            }
+//            if ((r.getRoomRate().size() == 0 &&
+//                    r.getType().getRoomRate().size() == 0 &&
+//                    r.getType().getParent().getRoomRate().size() == 0)
+//                    || r.getType().getFlag() == 0) {
+//                isIncluded = true;
+//            }
+//            int counter = 0;
+//            if (r.getType() == null) {
+//                counter++;
+//            } else {
+//                if (r.getType().getParent() == null) {
+//                    counter++;
+//                } else {
+//                    if (r.getType().getParent().getRoomRate().size() == 0) {
+//                        counter++;
+//                    }
+//
+//                    if (r.getType().getFlag() == 0) {
+//                        counter++;
+//                    }
+//                }
+//            }
+//
+//            if (r.getRoomRate().size() == 0) {
+//                counter++;
+//            }
+//
+//            if (counter >= 2) continue;
 
-            if (r.getType().getParent() != null) {
-                for (RoomRateMain p : r.getType().getParent().getRoomRate()) {
-                    if (!tempList.contains(p.getRoomRatePriceId())) {
-                        roomRateMainList.add(p);
-                        tempList.add(p.getRoomRatePriceId());
-                    }
-
-
-                }
-            }
 
 
             for (RoomRateSub rateSub : r.getRoomRate()) {
@@ -54,15 +66,28 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                                     r.getRoomTypeId(),rateSub.getCreatedBy(),
                                     rateSub.getCreatedAt(), rateSub.getUpdatedAt(),
                                     rateSub.getDeletedAt(), rateSub.getRatePrice())
-                    );tempList.add(rateSub.getRoomRatePriceId());
+                    );
+                    tempList.add(rateSub.getRoomRatePriceId());
+                }
+            }
+
+            if (r.getType() != null) {
+
+                if (r.getType().getParent() != null) {
+                    for (RoomRateMain p : r.getType().getParent().getRoomRate()) {
+                        if (!tempList.contains(p.getRoomRatePriceId())) {
+                            roomRateMainList.add(p);
+                            tempList.add(p.getRoomRatePriceId());
+                        }
+                    }
                 }
 
 
-            }
-            for (RoomRateMain rateList : r.getType().getRoomRate()) {
-                if (!tempList.contains(rateList.getRoomRatePriceId())) {
-                    roomRateMainList.add(rateList);
-                    tempList.add(rateList.getRoomRatePriceId());
+                for (RoomRateMain rateList : r.getType().getRoomRate()) {
+                    if (!tempList.contains(rateList.getRoomRatePriceId())) {
+                        roomRateMainList.add(rateList);
+                        tempList.add(rateList.getRoomRatePriceId());
+                    }
                 }
             }
 
@@ -82,7 +107,10 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
                             String.valueOf(r.getCRoomStat()),
                             r.getStatus().getColor(),
-                            0
+                            0.00,
+                            false,
+                            ""
+
                     )
             );
         }

@@ -12,12 +12,17 @@ import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 public class AddPaymentRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public AddPaymentRequest(List<PostedPaymentsModel> addRateProductList, String roomId) {
+    public AddPaymentRequest(List<PostedPaymentsModel> addRateProductList,
+                             String roomId, String isAdv,
+                             String controlNumber) {
         mapValue = new HashMap<>();
         mapValue.put("post", GsonHelper.getGson().toJson(addRateProductList));
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("room_id", roomId);
+        mapValue.put("is_adv", isAdv);
+        mapValue.put("control_no", controlNumber);
+//        mapValue.put("control_number", isAdv);
     }
 
     public Map<String, String> getMapValue() {

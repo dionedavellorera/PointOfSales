@@ -15,12 +15,16 @@ public class ApplicationConstants {
     public static final String API_BASE_URL = "api_base_url";
 
     public static final String MACHINE_ID = "machine_id";
+    public static final String USER_ID = "user_id";
     public static final String BUSINESS_NAME = "business_name";
     public static final String TAXPAYERS_NAME = "taxpayers_name";
     public static final String TIN_NUMBER = "tin_number";
     public static final String BRANCH_ADDRESS = "branch_address";
     public static final String OR_INFO_DISPLAY = "or_info_display";
     public static final String TAX_RATE = "tax_rate";
+
+    public static final String ROOM_AREA_JSON = "room_area_json";
+    public static final String USER_JSON = "user_json";
 
 
 

@@ -51,9 +51,9 @@ public class FetchRoomPendingResponse {
         @Expose
         private Integer status;
 
-        @SerializedName("room")
-        @Expose
-        private Room room;
+//        @SerializedName("room")
+//        @Expose
+//        private Room room;
 
 //        @SerializedName("car")
 //        @Expose
@@ -81,13 +81,13 @@ public class FetchRoomPendingResponse {
             this.status = status;
         }
 
-        public Room getRoom() {
-            return room;
-        }
-
-        public void setRoom(Room room) {
-            this.room = room;
-        }
+//        public Room getRoom() {
+//            return room;
+//        }
+//
+//        public void setRoom(Room room) {
+//            this.room = room;
+//        }
 
 //        public List<Car_> getCar() {
 //            return car;
@@ -286,7 +286,12 @@ public class FetchRoomPendingResponse {
     }
 
     public class RoomTransaction {
-
+        @SerializedName("payments")
+        @Expose
+        private List<Payment> payments = null;
+        @SerializedName("is_soa")
+        @Expose
+        private Integer isSoa;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -374,6 +379,22 @@ public class FetchRoomPendingResponse {
         @SerializedName("post")
         @Expose
         private List<Post> post;
+
+        public List<Payment> getPayments() {
+            return payments;
+        }
+
+        public void setPayments(List<Payment> payments) {
+            this.payments = payments;
+        }
+
+        public Integer getIsSoa() {
+            return isSoa;
+        }
+
+        public void setIsSoa(Integer isSoa) {
+            this.isSoa = isSoa;
+        }
 
         public List<Post> getPost() {
             return post;
@@ -967,6 +988,11 @@ public class FetchRoomPendingResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("status")
+        @Expose
+        private String status;
+
+
 //        @SerializedName("car")
 //        @Expose
 //        private Car car;
@@ -982,6 +1008,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("rate_room")
         @Expose
         private RoomRateInner rateRoom;
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
 
         public Integer getId() {
             return id;
@@ -1808,4 +1842,151 @@ public class FetchRoomPendingResponse {
 
     }
 
+    public class Payment {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNo;
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("payment_type_id")
+        @Expose
+        private Integer paymentTypeId;
+        @SerializedName("payment_description")
+        @Expose
+        private String paymentDescription;
+        @SerializedName("collected_by")
+        @Expose
+        private Integer collectedBy;
+        @SerializedName("pos_id")
+        @Expose
+        private Integer posId;
+        @SerializedName("is_advance")
+        @Expose
+        private Integer isAdvance;
+        @SerializedName("void_by")
+        @Expose
+        private Object voidBy;
+        @SerializedName("void_at")
+        @Expose
+        private Object voidAt;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getControlNo() {
+            return controlNo;
+        }
+
+        public void setControlNo(String controlNo) {
+            this.controlNo = controlNo;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public Integer getPaymentTypeId() {
+            return paymentTypeId;
+        }
+
+        public void setPaymentTypeId(Integer paymentTypeId) {
+            this.paymentTypeId = paymentTypeId;
+        }
+
+        public String getPaymentDescription() {
+            return paymentDescription;
+        }
+
+        public void setPaymentDescription(String paymentDescription) {
+            this.paymentDescription = paymentDescription;
+        }
+
+        public Integer getCollectedBy() {
+            return collectedBy;
+        }
+
+        public void setCollectedBy(Integer collectedBy) {
+            this.collectedBy = collectedBy;
+        }
+
+        public Integer getPosId() {
+            return posId;
+        }
+
+        public void setPosId(Integer posId) {
+            this.posId = posId;
+        }
+
+        public Integer getIsAdvance() {
+            return isAdvance;
+        }
+
+        public void setIsAdvance(Integer isAdvance) {
+            this.isAdvance = isAdvance;
+        }
+
+        public Object getVoidBy() {
+            return voidBy;
+        }
+
+        public void setVoidBy(Object voidBy) {
+            this.voidBy = voidBy;
+        }
+
+        public Object getVoidAt() {
+            return voidAt;
+        }
+
+        public void setVoidAt(Object voidAt) {
+            this.voidAt = voidAt;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+    }
 }

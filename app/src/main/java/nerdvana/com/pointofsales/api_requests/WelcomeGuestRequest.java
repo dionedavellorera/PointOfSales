@@ -37,6 +37,7 @@ public class WelcomeGuestRequest extends BaseRequest {
     private String adult;
     private String child;
     private String tax;
+    private String roomAreaId;
 
     private Map<String, String> mapValue;
 
@@ -47,7 +48,7 @@ public class WelcomeGuestRequest extends BaseRequest {
                                String plateumber, String steward,
                                String checkIn, String checkOut,
                                String adult, String child,
-                               String tax) {
+                               String tax, String roomAreaId) {
 
         mapValue = new HashMap<>();
         mapValue.put("room_id", roomId);
@@ -67,6 +68,7 @@ public class WelcomeGuestRequest extends BaseRequest {
         mapValue.put("adult", adult);
         mapValue.put("child", child);
         mapValue.put("tax", tax);
+        mapValue.put("room_area_id", roomAreaId);
 
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;

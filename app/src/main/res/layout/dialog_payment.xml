@@ -34,8 +34,10 @@
         android:layout_height="wrap_content"
         android:text="PAY"/>
 
+
+
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@id/add"
+        android:layout_below="@id/pay"
         android:id="@+id/listPostedPayments"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

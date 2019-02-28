@@ -7,13 +7,19 @@ import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
@@ -85,7 +91,32 @@ public interface IUsers {
     @FormUrlEncoded
     Call<LoginResponse> sendLoginRequest(@FieldMap Map<String, String> params);
 
-    @POST("pay")
+    @POST("sendPayment")
     @FormUrlEncoded
     Call<AddPaymentResponse> sendAddPayment(@FieldMap Map<String, String> params);
+
+    @POST("soa")
+    @FormUrlEncoded
+    Call<PrintSoaResponse> printSoa(@FieldMap Map<String, String> params);
+
+    //fetchRoomArea
+    @POST("fetchRoomArea")
+    @FormUrlEncoded
+    Call<FetchRoomAreaResponse> fetchRoomArea(@FieldMap Map<String, String> params);
+
+    @POST("fetchOrderPending")
+    @FormUrlEncoded
+    Call<FetchOrderPendingResponse> fetchOrderPending(@FieldMap Map<String, String> params);
+
+    @POST("fetchOrderPendingViaControlNo")
+    @FormUrlEncoded
+    Call<FetchOrderPendingViaControlNoResponse> fetchOrderPendingViaControlNo(@FieldMap Map<String, String> params);
+
+    @POST("getOrder")
+    @FormUrlEncoded
+    Call<GetOrderResponse> getOrder(@FieldMap Map<String, String> params);
+
+    @POST("fetchUser")
+    @FormUrlEncoded
+    Call<FetchUserResponse> fetchUser(@FieldMap Map<String, String> params);
 }

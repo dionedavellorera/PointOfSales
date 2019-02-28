@@ -7,14 +7,20 @@ import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
+import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
+import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
+import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
+import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
+import nerdvana.com.pointofsales.api_requests.GetOrderRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
+import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
@@ -22,13 +28,19 @@ import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
@@ -163,6 +175,50 @@ public class UserServices extends BaseService {
     public void onReceiveAddPaymentRequest(AddPaymentRequest addPaymentRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<AddPaymentResponse> request = iUsers.sendAddPayment(addPaymentRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    //printSoa
+    @Subscribe
+    public void onReceiveAddPaymentRequest(PrintSoaRequest printSoaRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<PrintSoaResponse> request = iUsers.printSoa(printSoaRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveFetchRoomAreaRequest(FetchRoomAreaRequest fetchRoomAreaRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchRoomAreaResponse> request = iUsers.fetchRoomArea(fetchRoomAreaRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveFetchRoomPendingRequest(FetchOrderPendingRequest fetchOrderPendingRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchOrderPendingResponse> request = iUsers.fetchOrderPending(fetchOrderPendingRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+
+    @Subscribe
+    public void onReceiveFetchRoomPendingRequest(FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveGetOrderRequest(GetOrderRequest getOrderRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveFetchUserRequest(FetchUserRequest fetchUserRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchUserResponse> request = iUsers.fetchUser(fetchUserRequest.getMapValue());
         asyncRequest(request);
     }
 }

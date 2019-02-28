@@ -24,7 +24,8 @@ public class RoomTableModel {
     private String status; //clean, occupied, dirty, etc, etc => CRoom_Stat
     private String hexColor;
     private double amountSelected;
-
+    private boolean isTakeOut;
+    private String controlNo;
     public RoomTableModel(int roomId, int roomTypeId,
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,
@@ -32,7 +33,8 @@ public class RoomTableModel {
                           String name, List<RoomRateMain> roomRateMainList,
                           boolean isAvailable, String imageUrl,
                           String status, String hexColor,
-                          double amountSelected) {
+                          double amountSelected, boolean isTakeOut,
+                          String controlNo) {
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;
         this.roomType = roomType;
@@ -48,6 +50,16 @@ public class RoomTableModel {
         this.status = status;
         this.hexColor = hexColor;
         this.amountSelected = amountSelected;
+        this.isTakeOut = isTakeOut;
+        this.controlNo = controlNo;
+    }
+
+    public String getControlNo() {
+        return controlNo;
+    }
+
+    public boolean isTakeOut() {
+        return isTakeOut;
     }
 
     public double getAmountSelected() {

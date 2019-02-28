@@ -13,6 +13,7 @@ public class LoginRequest extends BaseRequest {
         mapValue.put("email", username);
         mapValue.put("password", password);
         mapValue.put("pos_id", machineNumber);
+
     }
 
     public Map<String, String> getMapValue() {

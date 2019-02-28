@@ -24,11 +24,13 @@ import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
+import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
-public class CheckInDialog extends Dialog implements View.OnClickListener{
+public abstract class CheckInDialog extends Dialog implements View.OnClickListener{
     private List<RoomRateMain> priceList;
     private RoomTableModel selectedRoom;
     private Spinner rateSpinner;
@@ -38,26 +40,33 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
 
     private EditText customer;
     private EditText plateNumber;
-    private EditText steward;
+    private Spinner steward;
     private EditText child;
     private EditText adult;
+    private Spinner roomArea;
 
     private Button checkin;
 
     private List<FetchCarResponse.Result> carList;
     private List<FetchVehicleResponse.Result> vehicleList;
     private List<FetchGuestTypeResponse.Result> guestTypeList;
-
+    private List<FetchRoomAreaResponse.Result> areaList;
     private Context context;
 
+    private int userId = 0;
     private int roomRateId = 0;
     private int roomRatePriecId = 0;
     private int carId = 0;
     private int vehicleId = 0;
     private int guestTypeId = 0;
+    private int areaId = 0;
+
+    private List<FetchUserResponse.Result> userList;
     public CheckInDialog(@NonNull Context context, RoomTableModel selectedRoom,
                          List<FetchCarResponse.Result> carList, List<FetchVehicleResponse.Result> vehicleList,
-                         List<FetchGuestTypeResponse.Result> guestTypeList) {
+                         List<FetchGuestTypeResponse.Result> guestTypeList,
+                         List<FetchUserResponse.Result> userList,
+                         List<FetchRoomAreaResponse.Result> areaList) {
         super(context);
         this.selectedRoom = selectedRoom;
         this.context = context;
@@ -65,6 +74,8 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
         this.carList = carList;
         this.vehicleList = vehicleList;
         this.guestTypeList = guestTypeList;
+        this.userList = userList;
+        this.areaList = areaList;
     }
 
     public CheckInDialog(@NonNull Context context, int themeResId) {
@@ -93,6 +104,8 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
         guestTypeSpinner = findViewById(R.id.spinnerGuestType);
         checkin = findViewById(R.id.checkin);
         checkin.setOnClickListener(this);
+        steward = findViewById(R.id.steward);
+        roomArea = findViewById(R.id.roomArea);
 
 
 
@@ -100,7 +113,54 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
         setCarSelection();
         setVehicleSelection();
         setGuestTypeSelection();
+        setUserSelection();
+        setRoomArea();
+    }
 
+    private void setRoomArea() {
+        List<String> areaArray = new ArrayList<>();
+        for (FetchRoomAreaResponse.Result area : areaList) {
+            areaArray.add(area.getRoomArea());
+        }
+        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                areaArray);
+        roomArea.setAdapter(rateSpinnerAdapter);
+
+        roomArea.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                areaId = areaList.get(position).getId();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void setUserSelection() {
+        List<String> userArray = new ArrayList<>();
+        for (FetchUserResponse.Result us : userList) {
+            userArray.add(us.getName());
+        }
+        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                userArray);
+        steward.setAdapter(rateSpinnerAdapter);
+
+        steward.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                userId = userList.get(position).getUserId();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void setPriceSelection() {
@@ -194,33 +254,37 @@ public class CheckInDialog extends Dialog implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.checkin:
-                welcomeGuestRequest();
+                successCheckIn(new WelcomeGuestRequest(
+                        String.valueOf(selectedRoom.getRoomId()),
+                        String.valueOf(selectedRoom.getRoomTypeId()),
+                        String.valueOf(roomRateId),
+                        String.valueOf(roomRatePriecId),
+                        String.valueOf(carId),
+                        String.valueOf(vehicleId),
+                        String.valueOf(guestTypeId),
+                        customer.getText().toString().trim(),
+                        plateNumber.getText().toString().trim(),
+                        String.valueOf(userId),
+                        "",
+                        "",
+                        adult.getText().toString(),
+                        child.getText().toString(),
+                        SharedPreferenceManager.getString(context.getApplicationContext(), ApplicationConstants.TAX_RATE),
+                        String.valueOf(areaId)
+                ));
+//                welcomeGuestRequest();
                 dismiss();
                 break;
         }
     }
 
     private void welcomeGuestRequest() {
-        BusProvider.getInstance().post(new WelcomeGuestRequest(
-                String.valueOf(selectedRoom.getRoomId()),
-                String.valueOf(selectedRoom.getRoomTypeId()),
-                String.valueOf(roomRateId),
-                String.valueOf(roomRatePriecId),
-                String.valueOf(carId),
-                String.valueOf(vehicleId),
-                String.valueOf(guestTypeId),
-                customer.getText().toString().trim(),
-                plateNumber.getText().toString().trim(),
-                steward.getText().toString().trim(),
-                "",
-                "",
-                adult.getText().toString(),
-                child.getText().toString(),
-                SharedPreferenceManager.getString(context.getApplicationContext(), ApplicationConstants.TAX_RATE)
-        ));
+//        BusProvider.getInstance().post();
 
 
     }
+
+    public abstract void successCheckIn(WelcomeGuestRequest welcomeGuestRequest);
 
 
 }

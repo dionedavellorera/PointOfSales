@@ -41,6 +41,15 @@
                     android:fontFamily="@font/amiri"/>
 
                 <Button
+                    android:layout_toLeftOf="@id/showMap"
+                    android:id="@+id/showTakeOuts"
+                    android:layout_margin="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TAKE OUT"
+                    android:fontFamily="@font/amiri"/>
+
+                <Button
                     android:layout_toLeftOf="@id/logout"
                     android:id="@+id/showMap"
                     android:layout_margin="5dp"

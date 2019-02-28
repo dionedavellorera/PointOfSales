@@ -51,7 +51,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintGuide_percent="0.60"/>
+        app:layout_constraintGuide_percent="0.65"/>
 
     <!--//return here-->
     <android.support.constraint.Guideline
@@ -85,6 +85,7 @@
         app:layout_constraintTop_toBottomOf="@id/guideTotal"/>
 
     <TextView
+        android:visibility="gone"
         android:textColor="@color/colorBlack"
         android:padding="5dp"
         android:id="@+id/subTotalLabel"
@@ -96,6 +97,7 @@
         app:layout_constraintTop_toBottomOf="@id/discountLabel"/>
 
     <TextView
+        android:visibility="gone"
         android:gravity="right"
         android:textColor="@color/colorBlack"
         android:padding="5dp"

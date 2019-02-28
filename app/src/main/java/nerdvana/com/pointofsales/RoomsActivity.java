@@ -57,7 +57,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         listTableRoomSelection = findViewById(R.id.listTableRoomSelection);
 
         setRoomsTableAdapter();
-
         sendRoomListRequest();
         setRoomFilter();
 
@@ -146,6 +145,8 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         allowedPosStatus.add("occupied");
         allowedPosStatus.add("soa");
         allowedPosStatus.add("clean");
+        allowedPosStatus.add("on-going rc with waiting guest");
+        allowedPosStatus.add("dirty with waiting guest");
         List<FilterOptionModel> filterOptionsList = new ArrayList<>();
         List<RoomStatusEntity> rse = RoomStatusEntity.listAll(RoomStatusEntity.class);
         filterOptionsList.add(new FilterOptionModel("ALL", true, 0));

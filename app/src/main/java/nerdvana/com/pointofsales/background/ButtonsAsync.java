@@ -23,9 +23,12 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         String[]images = {"", ""};
         buttonsModelList.add(new ButtonsModel(100,"SAVE", "",1));
         buttonsModelList.add(new ButtonsModel(101,"VOID", "",2));
-        buttonsModelList.add(new ButtonsModel(102,"PAY", "",3));
+        buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",3));
         buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",4));
         buttonsModelList.add(new ButtonsModel(104,"PLU INQUIRY", "",5));
+        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
+        buttonsModelList.add(new ButtonsModel(106,"SOA", "",7));
+        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",8));
 
         Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
             @Override

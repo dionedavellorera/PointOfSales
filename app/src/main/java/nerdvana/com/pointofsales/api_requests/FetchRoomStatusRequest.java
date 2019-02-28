@@ -8,6 +8,8 @@ public class FetchRoomStatusRequest extends BaseRequest {
     public FetchRoomStatusRequest() {
         mapValue = new HashMap<>();
         mapValue.put("machine_number", machineNumber);
+        mapValue.put("user_id", userId);
+        mapValue.put("pos_id", machineNumber);
     }
 
     public Map<String, String> getMapValue() {

@@ -28,6 +28,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
 import java.io.BufferedReader;
@@ -40,8 +41,12 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
+import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
@@ -68,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private Button logout;
     private Button showMap;
+    private Button showTakeOuts;
     private TextView user;
 
     private UserModel userModel;
@@ -91,7 +97,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         initializeFragments();
 
         decideViewToShow();
-
+        fetchRoomAreaRequest();
+        fetchUserListRequest();
         BusProvider.getInstance().post(new TestRequest("test"));
 
         requestRoomStatusList();
@@ -121,6 +128,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         showMap = findViewById(R.id.showMap);
         showMap.setOnClickListener(this);
         user = findViewById(R.id.user);
+        showTakeOuts = findViewById(R.id.showTakeOuts);
+        showTakeOuts.setOnClickListener(this);
     }
 
     private void initializeFragments() {
@@ -199,6 +208,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
                 startActivityForResult(roomSelectionIntent, 10);
             break;
+            case R.id.showTakeOuts:
+                Intent takeOutIntent = new Intent(this, TakeOutActivity.class);
+                startActivityForResult(takeOutIntent, 20);
+                break;
         }
     }
 
@@ -265,20 +278,22 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 10) {
-
-
                 RoomTableModel selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
 
-                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
-                CurrentTransactionEntity currentTransactionEntity = new
-                CurrentTransactionEntity( selected.getName(), selected.getAmountSelected());
-
-                currentTransactionEntity.save();
+//                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+//                CurrentTransactionEntity currentTransactionEntity = new
+//                CurrentTransactionEntity( selected.getName(), selected.getAmountSelected());
+//
+//                currentTransactionEntity.save();
 
 
                 BusProvider.getInstance().post(new FragmentNotifierModel(selected));
 
                 Toast.makeText(this, selected.getName() + " selected", Toast.LENGTH_SHORT).show();
+            } else if (requestCode == 20) {
+                RoomTableModel selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
+                Toast.makeText(getApplicationContext(), "ORDER SELECTED", Toast.LENGTH_SHORT).show();
+                BusProvider.getInstance().post(new FragmentNotifierModel(selected));
             }
         } else {
             Toast.makeText(this, "CANCELLED", Toast.LENGTH_SHORT).show();
@@ -338,6 +353,39 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         mHandler.postDelayed(mRunnable, 2000);
     }
+
+    private void fetchRoomAreaRequest() {
+        BusProvider.getInstance().post(new FetchRoomAreaRequest());
+    }
+
+    @Subscribe
+    public void onReceiveFetchRoomAreaResponse(FetchRoomAreaResponse fetchRoomAreaResponse) {
+        if (fetchRoomAreaResponse.getResult().size() > 0) {
+            SharedPreferenceManager.saveString(getApplicationContext(),
+                    GsonHelper.getGson().toJson(fetchRoomAreaResponse.getResult()),
+                    ApplicationConstants.ROOM_AREA_JSON);
+        }
+//        TypeToken<List<FetchRoomAreaResponse.Result>> token = new TypeToken<List<FetchRoomAreaResponse.Result>>() {};
+//        List<FetchRoomAreaResponse.Result> fre = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.ROOM_AREA_JSON), token.getType());
+//        for (FetchRoomAreaResponse.Result r : fre) {
+//            Log.d("TESTLOG", r.getRoomArea());
+//        }
+    }
+
+    private void fetchUserListRequest() {
+        BusProvider.getInstance().post(new FetchUserRequest());
+    }
+
+    @Subscribe
+    public void fetchUserResponse(FetchUserResponse fetchUserResponse) {
+        if (fetchUserResponse.getResult().size() > 0) {
+            SharedPreferenceManager.saveString(getApplicationContext(),
+                    GsonHelper.getGson().toJson(fetchUserResponse.getResult()),
+                    ApplicationConstants.USER_JSON);
+        }
+    }
+
+
 
 
 
