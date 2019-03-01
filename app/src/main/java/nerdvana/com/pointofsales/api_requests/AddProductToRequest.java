@@ -7,15 +7,17 @@ import java.util.Map;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 
-public class PrintSoaRequest extends BaseRequest {
+public class AddProductToRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
-    public PrintSoaRequest(String roomId, String controlNumber) {
+    public AddProductToRequest(ArrayList<AddRateProductModel> addRateProductList, String roomId,
+                               String roomAreaId, String controlNo) {
         mapValue = new HashMap<>();
-        mapValue.put("room_id", roomId);
-        mapValue.put("control_no", controlNumber);
+        mapValue.put("room_area_id", roomAreaId);
+        mapValue.put("control_no", controlNo);
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
+        mapValue.put("post", GsonHelper.getGson().toJson(addRateProductList));
     }
 
     public Map<String, String> getMapValue() {

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
 import nerdvana.com.pointofsales.api_requests.GetOrderRequest;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.background.FetchOrderPendingAsync;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
@@ -42,6 +44,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
 
     private FloatingActionButton fab;
 
+    private List<FetchRoomAreaResponse.Result> roomAreaList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,12 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         Toolbar toolbar = findViewById(R.id.toolbar);
         refreshRoom = findViewById(R.id.refreshRoom);
         listFilters = findViewById(R.id.listFilters);
+        roomAreaList = new ArrayList<>();
+
+        TypeToken<List<FetchRoomAreaResponse.Result>> areaToken = new TypeToken<List<FetchRoomAreaResponse.Result>>() {};
+        roomAreaList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.ROOM_AREA_JSON), areaToken.getType());
+
+
         listTableRoomSelection = findViewById(R.id.listTableRoomSelection);
         fab = findViewById(R.id.fab);
         setRoomsTableAdapter();
@@ -76,10 +85,10 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TakeOutCreateCustomerDialog takeout = new TakeOutCreateCustomerDialog(TakeOutActivity.this) {
+                TakeOutCreateCustomerDialog takeout = new TakeOutCreateCustomerDialog(TakeOutActivity.this, roomAreaList) {
                     @Override
-                    public void createSuccess(String customerName) {
-                        getOrderRequest(customerName);
+                    public void createSuccess(String customerName, int areaId) {
+                        getOrderRequest(customerName, String.valueOf(areaId));
                     }
                 };
 
@@ -153,14 +162,14 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         Toast.makeText(TakeOutActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
     }
 
-    private void getOrderRequest(String customerName) {
+    private void getOrderRequest(String customerName, String areaId) {
         refreshRoom.setRefreshing(true);
-        BusProvider.getInstance().post(new GetOrderRequest(customerName));
+        BusProvider.getInstance().post(new GetOrderRequest(customerName, areaId));
     }
 
     @Subscribe
     public void getOrderResponse(GetOrderResponse getOrderResponse) {
-        refreshRoom.setRefreshing(true);
+        refreshRoom.setRefreshing(false);
     }
 
 }

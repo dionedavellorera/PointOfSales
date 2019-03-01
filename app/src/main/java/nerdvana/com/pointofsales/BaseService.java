@@ -32,7 +32,6 @@ public class BaseService {
 //                } catch (Exception e) {
 //                    BusProvider.getInstance().post(new ApiError(e.getMessage()));
 //                }
-
             }
 
             @Override

@@ -28,6 +28,7 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
         for (FetchRoomResponse.Result r : roomList) {
             List<RoomRateMain> roomRateMainList = new ArrayList<>();
             List<Integer> tempList = new ArrayList<>();
+
 //            if ((r.getRoomRate().size() == 0 &&
 //                    r.getType().getRoomRate().size() == 0 &&
 //                    r.getType().getParent().getRoomRate().size() == 0)
@@ -90,6 +91,14 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                     }
                 }
             }
+            int unpostedOrderCount = 0;
+            if (r.getTransaction() != null) {
+                if (r.getTransaction().getTransaction() != null) {
+                    if (r.getTransaction().getTransaction().getPost().size() > 0) {
+                        unpostedOrderCount = r.getTransaction().getTransaction().getPost().size();
+                    }
+                }
+            }
 
             productsModelList.add(
                     new RoomTableModel (
@@ -98,7 +107,7 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             r.getType().getRoomType(),
                             0, //r.getType().getParent() == null ? 0 : r.getType().getParent().getId(),
                             "test parent", //r.getType().getParent() == null ? "NONE" : r.getType().getParent().getRoomType(),
-                            r.getArea().getId(),
+                            r.getRoomAreaId(),
                             r.getArea().getRoomArea(),
                             r.getStatus().getRoomStatus(),
                             r.getRoomNo(),
@@ -109,7 +118,8 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             r.getStatus().getColor(),
                             0.00,
                             false,
-                            ""
+                            "",
+                            unpostedOrderCount
 
                     )
             );

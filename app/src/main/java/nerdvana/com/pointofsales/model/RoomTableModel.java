@@ -26,6 +26,7 @@ public class RoomTableModel {
     private double amountSelected;
     private boolean isTakeOut;
     private String controlNo;
+    private int unpostedOrdersCount = 0;
     public RoomTableModel(int roomId, int roomTypeId,
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,
@@ -34,7 +35,7 @@ public class RoomTableModel {
                           boolean isAvailable, String imageUrl,
                           String status, String hexColor,
                           double amountSelected, boolean isTakeOut,
-                          String controlNo) {
+                          String controlNo, int unpostedOrdersCount) {
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;
         this.roomType = roomType;
@@ -52,6 +53,15 @@ public class RoomTableModel {
         this.amountSelected = amountSelected;
         this.isTakeOut = isTakeOut;
         this.controlNo = controlNo;
+        this.unpostedOrdersCount = unpostedOrdersCount;
+    }
+
+    public int getUnpostedOrdersCount() {
+        return unpostedOrdersCount;
+    }
+
+    public void setUnpostedOrdersCount(int unpostedOrdersCount) {
+        this.unpostedOrdersCount = unpostedOrdersCount;
     }
 
     public String getControlNo() {

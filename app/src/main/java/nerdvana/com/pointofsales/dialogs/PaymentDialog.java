@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -13,6 +14,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -99,6 +101,7 @@ public abstract class PaymentDialog extends Dialog  {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
+
         listPayments = findViewById(R.id.listPayments);
         listPostedPayments = findViewById(R.id.listPostedPayments);
         add = findViewById(R.id.add);
@@ -164,4 +167,14 @@ public abstract class PaymentDialog extends Dialog  {
     }
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Dialog dialog = this;
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
+    }
 }

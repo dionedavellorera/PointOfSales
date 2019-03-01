@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales;
 import com.squareup.otto.Subscribe;
 
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
+import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
@@ -24,6 +25,7 @@ import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
+import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -219,6 +221,13 @@ public class UserServices extends BaseService {
     public void onReceiveFetchUserRequest(FetchUserRequest fetchUserRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchUserResponse> request = iUsers.fetchUser(fetchUserRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveAddProductTo(AddProductToRequest addProductToRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<AddProductToResponse> request = iUsers.addProductTo(addProductToRequest.getMapValue());
         asyncRequest(request);
     }
 }

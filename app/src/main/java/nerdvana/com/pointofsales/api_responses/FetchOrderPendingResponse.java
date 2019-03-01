@@ -211,6 +211,12 @@ public class FetchOrderPendingResponse {
         @SerializedName("room_rate_price_id")
         @Expose
         private Object roomRatePriceId;
+        @SerializedName("category_id")
+        @Expose
+        private Object categoryId;
+        @SerializedName("department_id")
+        @Expose
+        private Object departmentId;
         @SerializedName("room_no")
         @Expose
         private Object roomNo;
@@ -231,16 +237,16 @@ public class FetchOrderPendingResponse {
         private Integer qty;
         @SerializedName("unit_cost")
         @Expose
-        private Integer unitCost;
+        private Double unitCost;
         @SerializedName("price")
         @Expose
-        private Integer price;
+        private Double price;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("tax_info")
         @Expose
         private String taxInfo;
@@ -252,13 +258,16 @@ public class FetchOrderPendingResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("room_area_id")
         @Expose
         private Integer roomAreaId;
         @SerializedName("pos_id")
         @Expose
         private Integer posId;
+        @SerializedName("is_posted")
+        @Expose
+        private Integer isPosted;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -343,6 +352,22 @@ public class FetchOrderPendingResponse {
             this.roomRatePriceId = roomRatePriceId;
         }
 
+        public Object getCategoryId() {
+            return categoryId;
+        }
+
+        public void setCategoryId(Object categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        public Object getDepartmentId() {
+            return departmentId;
+        }
+
+        public void setDepartmentId(Object departmentId) {
+            this.departmentId = departmentId;
+        }
+
         public Object getRoomNo() {
             return roomNo;
         }
@@ -391,35 +416,35 @@ public class FetchOrderPendingResponse {
             this.qty = qty;
         }
 
-        public Integer getUnitCost() {
+        public Double getUnitCost() {
             return unitCost;
         }
 
-        public void setUnitCost(Integer unitCost) {
+        public void setUnitCost(Double unitCost) {
             this.unitCost = unitCost;
         }
 
-        public Integer getPrice() {
+        public Double getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(Double price) {
             this.price = price;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
@@ -447,11 +472,11 @@ public class FetchOrderPendingResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 
@@ -469,6 +494,14 @@ public class FetchOrderPendingResponse {
 
         public void setPosId(Integer posId) {
             this.posId = posId;
+        }
+
+        public Integer getIsPosted() {
+            return isPosted;
+        }
+
+        public void setIsPosted(Integer isPosted) {
+            this.isPosted = isPosted;
         }
 
         public Integer getXSkip() {
@@ -562,7 +595,7 @@ public class FetchOrderPendingResponse {
         private String productInitial;
         @SerializedName("product_barcode")
         @Expose
-        private Object productBarcode;
+        private String productBarcode;
         @SerializedName("product_tags")
         @Expose
         private String productTags;
@@ -574,7 +607,7 @@ public class FetchOrderPendingResponse {
         private Integer min;
         @SerializedName("image_file")
         @Expose
-        private Object imageFile;
+        private String imageFile;
         @SerializedName("is_available")
         @Expose
         private Integer isAvailable;
@@ -584,6 +617,9 @@ public class FetchOrderPendingResponse {
         @SerializedName("is_raw")
         @Expose
         private Integer isRaw;
+        @SerializedName("is_promo")
+        @Expose
+        private Integer isPromo;
         @SerializedName("flag")
         @Expose
         private Integer flag;
@@ -592,10 +628,10 @@ public class FetchOrderPendingResponse {
         private Integer priceId;
         @SerializedName("amount")
         @Expose
-        private Integer amount;
+        private Double amount;
         @SerializedName("mark_up")
         @Expose
-        private Integer markUp;
+        private Double markUp;
         @SerializedName("created_by")
         @Expose
         private Integer createdBy;
@@ -641,11 +677,11 @@ public class FetchOrderPendingResponse {
             this.productInitial = productInitial;
         }
 
-        public Object getProductBarcode() {
+        public String getProductBarcode() {
             return productBarcode;
         }
 
-        public void setProductBarcode(Object productBarcode) {
+        public void setProductBarcode(String productBarcode) {
             this.productBarcode = productBarcode;
         }
 
@@ -673,11 +709,11 @@ public class FetchOrderPendingResponse {
             this.min = min;
         }
 
-        public Object getImageFile() {
+        public String getImageFile() {
             return imageFile;
         }
 
-        public void setImageFile(Object imageFile) {
+        public void setImageFile(String imageFile) {
             this.imageFile = imageFile;
         }
 
@@ -705,6 +741,14 @@ public class FetchOrderPendingResponse {
             this.isRaw = isRaw;
         }
 
+        public Integer getIsPromo() {
+            return isPromo;
+        }
+
+        public void setIsPromo(Integer isPromo) {
+            this.isPromo = isPromo;
+        }
+
         public Integer getFlag() {
             return flag;
         }
@@ -721,19 +765,19 @@ public class FetchOrderPendingResponse {
             this.priceId = priceId;
         }
 
-        public Integer getAmount() {
+        public Double getAmount() {
             return amount;
         }
 
-        public void setAmount(Integer amount) {
+        public void setAmount(Double amount) {
             this.amount = amount;
         }
 
-        public Integer getMarkUp() {
+        public Double getMarkUp() {
             return markUp;
         }
 
-        public void setMarkUp(Integer markUp) {
+        public void setMarkUp(Double markUp) {
             this.markUp = markUp;
         }
 
@@ -1154,21 +1198,21 @@ public class FetchOrderPendingResponse {
             this.deletedAt = deletedAt;
         }
 
-        public List<Post> getPost() {
-            return post;
-        }
-
-        public void setPost(List<Post> post) {
-            this.post = post;
-        }
-
-        public List<Payment> getPayments() {
-            return payments;
-        }
-
-        public void setPayments(List<Payment> payments) {
-            this.payments = payments;
-        }
+//        public List<Post> getPost() {
+//            return post;
+//        }
+//
+//        public void setPost(List<Post> post) {
+//            this.post = post;
+//        }
+//
+//        public List<Payment> getPayments() {
+//            return payments;
+//        }
+//
+//        public void setPayments(List<Payment> payments) {
+//            this.payments = payments;
+//        }
 
     }
 }

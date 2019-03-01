@@ -26,7 +26,6 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
 
         for (FetchOrderPendingResponse.Result r : roomList) {
 
-
             productsModelList.add(
                     new RoomTableModel (
                             r.getId(),
@@ -34,7 +33,7 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                             "",
                             0, //r.getType().getParent() == null ? 0 : r.getType().getParent().getId(),
                             "", //r.getType().getParent() == null ? "NONE" : r.getType().getParent().getRoomType(),
-                            0,
+                            r.getRoomAreaId() != null ? ((Number)r.getRoomAreaId()).intValue() : 0,
                             "",
                             "",
                             String.valueOf(r.getCustomerId()),
@@ -45,7 +44,8 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                             "",
                             0.00,
                             true,
-                            r.getControlNo()
+                            r.getControlNo(),
+                            0
 
                     )
             );

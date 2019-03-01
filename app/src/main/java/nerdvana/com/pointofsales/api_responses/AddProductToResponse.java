@@ -5,8 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class FetchOrderPendingViaControlNoResponse {
-
+public class AddProductToResponse {
     @SerializedName("result")
     @Expose
     private Result result;
@@ -40,157 +39,6 @@ public class FetchOrderPendingViaControlNoResponse {
     public void setMessage(String message) {
         this.message = message;
     }
-
-
-
-    public class Payment {
-
-        @SerializedName("id")
-        @Expose
-        private Integer id;
-        @SerializedName("control_no")
-        @Expose
-        private String controlNo;
-        @SerializedName("amount")
-        @Expose
-        private Integer amount;
-        @SerializedName("payment_type_id")
-        @Expose
-        private Integer paymentTypeId;
-        @SerializedName("payment_description")
-        @Expose
-        private String paymentDescription;
-        @SerializedName("collected_by")
-        @Expose
-        private Integer collectedBy;
-        @SerializedName("pos_id")
-        @Expose
-        private Integer posId;
-        @SerializedName("is_advance")
-        @Expose
-        private Integer isAdvance;
-        @SerializedName("void_by")
-        @Expose
-        private Object voidBy;
-        @SerializedName("void_at")
-        @Expose
-        private Object voidAt;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getControlNo() {
-            return controlNo;
-        }
-
-        public void setControlNo(String controlNo) {
-            this.controlNo = controlNo;
-        }
-
-        public Integer getAmount() {
-            return amount;
-        }
-
-        public void setAmount(Integer amount) {
-            this.amount = amount;
-        }
-
-        public Integer getPaymentTypeId() {
-            return paymentTypeId;
-        }
-
-        public void setPaymentTypeId(Integer paymentTypeId) {
-            this.paymentTypeId = paymentTypeId;
-        }
-
-        public String getPaymentDescription() {
-            return paymentDescription;
-        }
-
-        public void setPaymentDescription(String paymentDescription) {
-            this.paymentDescription = paymentDescription;
-        }
-
-        public Integer getCollectedBy() {
-            return collectedBy;
-        }
-
-        public void setCollectedBy(Integer collectedBy) {
-            this.collectedBy = collectedBy;
-        }
-
-        public Integer getPosId() {
-            return posId;
-        }
-
-        public void setPosId(Integer posId) {
-            this.posId = posId;
-        }
-
-        public Integer getIsAdvance() {
-            return isAdvance;
-        }
-
-        public void setIsAdvance(Integer isAdvance) {
-            this.isAdvance = isAdvance;
-        }
-
-        public Object getVoidBy() {
-            return voidBy;
-        }
-
-        public void setVoidBy(Object voidBy) {
-            this.voidBy = voidBy;
-        }
-
-        public Object getVoidAt() {
-            return voidAt;
-        }
-
-        public void setVoidAt(Object voidAt) {
-            this.voidAt = voidAt;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-
-    }
-
 
     public class Post {
 
@@ -582,6 +430,7 @@ public class FetchOrderPendingViaControlNoResponse {
 
     }
 
+
     public class Product {
 
         @SerializedName("id")
@@ -598,7 +447,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private String productInitial;
         @SerializedName("product_barcode")
         @Expose
-        private String productBarcode;
+        private Object productBarcode;
         @SerializedName("product_tags")
         @Expose
         private String productTags;
@@ -610,7 +459,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private Integer min;
         @SerializedName("image_file")
         @Expose
-        private String imageFile;
+        private Object imageFile;
         @SerializedName("is_available")
         @Expose
         private Integer isAvailable;
@@ -680,11 +529,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.productInitial = productInitial;
         }
 
-        public String getProductBarcode() {
+        public Object getProductBarcode() {
             return productBarcode;
         }
 
-        public void setProductBarcode(String productBarcode) {
+        public void setProductBarcode(Object productBarcode) {
             this.productBarcode = productBarcode;
         }
 
@@ -712,11 +561,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.min = min;
         }
 
-        public String getImageFile() {
+        public Object getImageFile() {
             return imageFile;
         }
 
-        public void setImageFile(String imageFile) {
+        public void setImageFile(Object imageFile) {
             this.imageFile = imageFile;
         }
 
@@ -818,6 +667,8 @@ public class FetchOrderPendingViaControlNoResponse {
 
     }
 
+
+
     public class Result {
 
         @SerializedName("id")
@@ -840,7 +691,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private Integer customerId;
         @SerializedName("payment_type_id")
         @Expose
-        private Integer paymentTypeId;
+        private Object paymentTypeId;
         @SerializedName("rc")
         @Expose
         private Integer rc;
@@ -882,7 +733,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private Integer isCheckout;
         @SerializedName("room_area_id")
         @Expose
-        private Object roomAreaId;
+        private Integer roomAreaId;
         @SerializedName("is_foc")
         @Expose
         private Integer isFoc;
@@ -927,7 +778,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private List<Post> post = null;
         @SerializedName("payments")
         @Expose
-        private List<Payment> payments = null;
+        private List<Object> payments = null;
 
         public Integer getId() {
             return id;
@@ -977,11 +828,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.customerId = customerId;
         }
 
-        public Integer getPaymentTypeId() {
+        public Object getPaymentTypeId() {
             return paymentTypeId;
         }
 
-        public void setPaymentTypeId(Integer paymentTypeId) {
+        public void setPaymentTypeId(Object paymentTypeId) {
             this.paymentTypeId = paymentTypeId;
         }
 
@@ -1089,11 +940,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.isCheckout = isCheckout;
         }
 
-        public Object getRoomAreaId() {
+        public Integer getRoomAreaId() {
             return roomAreaId;
         }
 
-        public void setRoomAreaId(Object roomAreaId) {
+        public void setRoomAreaId(Integer roomAreaId) {
             this.roomAreaId = roomAreaId;
         }
 
@@ -1209,11 +1060,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.post = post;
         }
 
-        public List<Payment> getPayments() {
+        public List<Object> getPayments() {
             return payments;
         }
 
-        public void setPayments(List<Payment> payments) {
+        public void setPayments(List<Object> payments) {
             this.payments = payments;
         }
 

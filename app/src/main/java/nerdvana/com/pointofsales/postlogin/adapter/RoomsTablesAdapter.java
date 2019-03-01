@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private ImageView imageUrl;
         private CardView rootView;
         private RelativeLayout rel;
+        private TextView orderCount;
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
@@ -47,6 +49,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             imageUrl = itemView.findViewById(R.id.image);
             rootView = itemView.findViewById(R.id.rootView);
             rel = itemView.findViewById(R.id.rel);
+            orderCount = itemView.findViewById(R.id.orderCount);
         }
     }
 
@@ -61,6 +64,14 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((ProductsViewHolder)holder).rel.setSelected(true);
             }
         });
+        Log.d("TEST", String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
+        if (roomTableModelList.get(i).getUnpostedOrdersCount() > 0) {
+            ((ProductsViewHolder) holder).orderCount.setVisibility(View.VISIBLE);
+            ((ProductsViewHolder) holder).orderCount.setText(String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
+        } else {
+            ((ProductsViewHolder) holder).orderCount.setVisibility(View.GONE);
+        }
+
         ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
         ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
 

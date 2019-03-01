@@ -42,6 +42,7 @@ import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
+import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
@@ -54,6 +55,7 @@ import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
+import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
@@ -386,11 +388,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void productsClicked(ProductsModel productsModel) {
         if (selectedRoom != null) {
-            if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                    currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
-                    currentRoomStatus.equalsIgnoreCase("32") ||
-                    currentRoomStatus.equalsIgnoreCase("4")) {
 
+            if (selectedRoom.isTakeOut()) {
                 cartItemList.add(new CartItemsModel(
                         "",
                         selectedRoom.getRoomId(),
@@ -408,12 +407,40 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         productsModel.getIsPriceChanged(),
                         productsModel.getUnitPrice()
                 ));
-
                 checkoutAdapter.notifyDataSetChanged();
                 listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
-
             } else {
-                Toast.makeText(getContext(), "Room not occupied", Toast.LENGTH_SHORT).show();
+
+                if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                        currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
+                        currentRoomStatus.equalsIgnoreCase("32") ||
+                        currentRoomStatus.equalsIgnoreCase("4")) {
+
+                    cartItemList.add(new CartItemsModel(
+                            "",
+                            selectedRoom.getRoomId(),
+                            productsModel.getProductId(),
+                            0,
+                            0,
+                            0,
+                            productsModel.getShortName(),
+                            true,
+                            productsModel.getPrice(),
+                            productsModel.getProductId(),
+                            productsModel.getQty(),
+                            false,
+                            productsModel.getMarkUp(),
+                            productsModel.getIsPriceChanged(),
+                            productsModel.getUnitPrice()
+                    ));
+
+                    checkoutAdapter.notifyDataSetChanged();
+                    listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
+
+                } else {
+                    Toast.makeText(getContext(), "Room not occupied", Toast.LENGTH_SHORT).show();
+                }
+//                                BusProvider.getInstance().post(new AddRoomPriceRequest(model, String.valueOf(selectedRoom.getRoomId())));
             }
         } else {
             Toast.makeText(getContext(), "Please select a room first", Toast.LENGTH_SHORT).show();
@@ -517,11 +544,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 106: //PRINT SOA
                 Log.d("TESTPRINT", currentRoomStatus);
-                if (currentRoomStatus.equalsIgnoreCase("2")) {
-                    printSoaRequest(String.valueOf(selectedRoom.getRoomId()));
-                } else {
-                    Toast.makeText(getContext(), "Room not occupied, cannot soa", Toast.LENGTH_SHORT).show();
+                if (selectedRoom != null) {
+                    if (selectedRoom.isTakeOut()) {
+                        printSoaRequest("", selectedRoom.getControlNo());
+                    } else {
+                        if (currentRoomStatus.equalsIgnoreCase("2") || currentRoomStatus.equalsIgnoreCase("17")) {
+                            printSoaRequest(String.valueOf(selectedRoom.getRoomId()), "");
+                        } else {
+                            Toast.makeText(getContext(), "Room not occupied, cannot soa", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
+
 
                 break;
             case 105: //CHECKOUT
@@ -536,7 +570,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         }
 
                         if (paymentsToPost.size() > 0) {
-                            postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()));
+                            if (selectedRoom.isTakeOut()) {
+                                postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
+                            } else {
+                                postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                            }
+
+
                         } else {
                             Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
                         }
@@ -550,16 +590,26 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                 };
                 if (selectedRoom != null) {
-                    if (currentRoomStatus.equalsIgnoreCase("2") ||
-                            currentRoomStatus.equalsIgnoreCase("17")) {
+
+                    if (selectedRoom.isTakeOut()) {
                         if (paymentTypeList.size() > 0) {
                             checkoutDialog.show();
                         } else {
                             Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Room not yet occupied, cant accept payment", Toast.LENGTH_SHORT).show();
+                        if (currentRoomStatus.equalsIgnoreCase("2") ||
+                                currentRoomStatus.equalsIgnoreCase("17")) {
+                            if (paymentTypeList.size() > 0) {
+                                checkoutDialog.show();
+                            } else {
+                                Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Room not yet occupied, cant accept payment", Toast.LENGTH_SHORT).show();
+                        }
                     }
+
                 } else {
                     Toast.makeText(getContext(), "No room selected", Toast.LENGTH_SHORT).show();
                 }
@@ -593,10 +643,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 100: //SAVE TRANSACTION:
                 if (selectedRoom != null) {
-                    if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                            currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
-                            selectedRoom.getStatus().equalsIgnoreCase("4") ||
-                            selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                    if (selectedRoom.isTakeOut()) {
+                        Log.d("ISTAKEOUT", "!");
+//                                BusProvider.getInstance().post(new AddProductToRequest(model, String.valueOf(selectedRoom.getRoomId())));
                         ArrayList<AddRateProductModel> model = new ArrayList<>();
 //                        model.add(new AddRateProductModel(productId, roomRatePriceId, quantity, tax));
                         for (CartItemsModel cim : cartItemList) {
@@ -612,14 +661,50 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             }
 
                         }
-                        if (model.size() > 0) {
+                        BusProvider.getInstance().post(new AddProductToRequest(model, String.valueOf(selectedRoom.getRoomId()),
+                                String.valueOf(selectedRoom.getAreaId()), selectedRoom.getControlNo()));
+
+//                        if (model.size() > 0) {
+//
+//                        } else {
+//                            Toast.makeText(getContext(), "No product for posting", Toast.LENGTH_SHORT).show();
+//                        }
+
+                    } else {
+                        Log.d("ISTAKEOUT", "@");
+                        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
+                                selectedRoom.getStatus().equalsIgnoreCase("4") ||
+                                selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                            ArrayList<AddRateProductModel> model = new ArrayList<>();
+//                        model.add(new AddRateProductModel(productId, roomRatePriceId, quantity, tax));
+                            for (CartItemsModel cim : cartItemList) {
+                                if (!cim.isPosted() && cim.isProduct()) {
+                                    model.add(new AddRateProductModel(
+                                            String.valueOf(cim.getProductId()),
+                                            "0",
+                                            String.valueOf(cim.getQuantity()),
+                                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                            String.valueOf(cim.getAmount()),
+                                            cim.getIsPriceChanged()
+                                    ));
+                                }
+
+                            }
+
                             BusProvider.getInstance().post(new AddRoomPriceRequest(model, String.valueOf(selectedRoom.getRoomId())));
-                        } else {
-                            Toast.makeText(getContext(), "No product for posting", Toast.LENGTH_SHORT).show();
+
+
+//                            if (model.size() > 0) {
+//
+//                            } else {
+//                                Toast.makeText(getContext(), "No product for posting", Toast.LENGTH_SHORT).show();
+//                            }
                         }
 
-
                     }
+
+
                 }
 //                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
 
@@ -661,41 +746,58 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if(!passwordDialog.isShowing()) passwordDialog.show();
                 break;
             case 102: //ADVANCE PAYMENT
-                PaymentDialog paymentDialog = new PaymentDialog(getActivity(), paymentTypeList, false, postedPaymentsList) {
-                    @Override
-                    public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit) {
-                        List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
-                        for (PostedPaymentsModel ppm : postedPaymentLit) {
-                            if (!ppm.isIs_posted()) {
-                                paymentsToPost.add(ppm);
-                            }
-                        }
 
-                        if (paymentsToPost.size() > 0) {
-                            postAdvancePayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()));
-                        } else {
-                            Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
-                        }
-
-                        dismiss();
-                    }
-
-                    @Override
-                    public void paymentFailed() {
-
-                    }
-                };
                 if (selectedRoom != null) {
-                    if (currentRoomStatus.equalsIgnoreCase("2") ||
-                            currentRoomStatus.equalsIgnoreCase("17")) {
+                    PaymentDialog paymentDialog = new PaymentDialog(getActivity(), paymentTypeList, false, postedPaymentsList) {
+                        @Override
+                        public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit) {
+                            List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                            for (PostedPaymentsModel ppm : postedPaymentLit) {
+                                if (!ppm.isIs_posted()) {
+                                    paymentsToPost.add(ppm);
+                                }
+                            }
+
+                            if (paymentsToPost.size() > 0) {
+                                if (selectedRoom.isTakeOut()) {
+                                    postAdvancePayment(paymentsToPost, "", selectedRoom.getControlNo());
+                                } else {
+                                    postAdvancePayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                                }
+
+                            } else {
+                                Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
+                            }
+
+                            dismiss();
+                        }
+
+                        @Override
+                        public void paymentFailed() {
+
+                        }
+                    };
+
+
+                    if (selectedRoom.isTakeOut()) {
                         if (paymentTypeList.size() > 0) {
                             paymentDialog.show();
                         } else {
                             Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "Room not yet occupied, cant accept payment", Toast.LENGTH_SHORT).show();
+                        if (currentRoomStatus.equalsIgnoreCase("2") ||
+                                currentRoomStatus.equalsIgnoreCase("17")) {
+                            if (paymentTypeList.size() > 0) {
+                                paymentDialog.show();
+                            } else {
+                                Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getContext(), "Room not yet occupied, cant accept payment", Toast.LENGTH_SHORT).show();
+                        }
                     }
+
                 } else {
                     Toast.makeText(getContext(), "No room selected", Toast.LENGTH_SHORT).show();
                 }
@@ -1145,31 +1247,40 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         paymentTypeList = fetchPaymentResponse.getResult();
     }
 
-    private void postAdvancePayment(List<PostedPaymentsModel> ppm, String roomId) {
-        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "1", ""));
+    private void postAdvancePayment(List<PostedPaymentsModel> ppm, String roomId, String controlNumber) {
+        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "1", controlNumber));
     }
 
-    private void postCheckoutPayment(List<PostedPaymentsModel> ppm, String roomId) {
-        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "0", ""));
+    private void postCheckoutPayment(List<PostedPaymentsModel> ppm, String roomId, String  controlNumber) {
+        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "0", controlNumber));
     }
 
     @Subscribe
     public void printSoaResponse(PrintSoaResponse printSoaResponse) {
         Toast.makeText(getContext(), "SOA PRINTING", Toast.LENGTH_SHORT).show();
         if (selectedRoom != null) {
-            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            if (selectedRoom.isTakeOut()) {
+                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+            } else {
+                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            }
+
         }
     }
 
     @Subscribe
     public void addPaymentResponse(AddPaymentResponse addPaymentResponse) {
         if (selectedRoom != null) {
-            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            if (selectedRoom.isTakeOut()) {
+                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+            } else {
+                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            }
         }
     }
 
-    private void printSoaRequest(String roomId) {
-        BusProvider.getInstance().post(new PrintSoaRequest(roomId));
+    private void printSoaRequest(String roomId, String controlNumber) {
+        BusProvider.getInstance().post(new PrintSoaRequest(roomId, controlNumber));
     }
 
     @Subscribe
@@ -1226,6 +1337,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             listCheckoutItems.setAdapter(checkoutAdapter);
             checkoutAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Subscribe
+    public void addProductToResponse(AddProductToResponse addProductToResponse) {
+        if (selectedRoom != null) {
+            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+        }
+
     }
 
 

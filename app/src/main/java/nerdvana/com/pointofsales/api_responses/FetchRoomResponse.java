@@ -1110,6 +1110,17 @@ public class FetchRoomResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("post")
+        @Expose
+        private List<Post> post;
+
+        public List<Post> getPost() {
+            return post;
+        }
+
+        public void setPost(List<Post> post) {
+            this.post = post;
+        }
 
         public Integer getId() {
             return id;
@@ -1570,6 +1581,385 @@ public class FetchRoomResponse {
         }
 
         public void setUpdatedAt(Object updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+    }
+
+    public class Post {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNo;
+        @SerializedName("room_id")
+        @Expose
+        private Integer roomId;
+        @SerializedName("product_id")
+        @Expose
+        private Integer productId;
+        @SerializedName("room_type_id")
+        @Expose
+        private Integer roomTypeId;
+        @SerializedName("room_rate_id")
+        @Expose
+        private Integer roomRateId;
+        @SerializedName("room_rate_price_id")
+        @Expose
+        private Integer roomRatePriceId;
+        @SerializedName("category_id")
+        @Expose
+        private Object categoryId;
+        @SerializedName("department_id")
+        @Expose
+        private Object departmentId;
+        @SerializedName("room_no")
+        @Expose
+        private String roomNo;
+        @SerializedName("room_type")
+        @Expose
+        private String roomType;
+        @SerializedName("room_rate")
+        @Expose
+        private String roomRate;
+        @SerializedName("category")
+        @Expose
+        private Object category;
+        @SerializedName("department")
+        @Expose
+        private Object department;
+        @SerializedName("qty")
+        @Expose
+        private Integer qty;
+        @SerializedName("unit_cost")
+        @Expose
+        private Integer unitCost;
+        @SerializedName("price")
+        @Expose
+        private Integer price;
+        @SerializedName("total")
+        @Expose
+        private Integer total;
+        @SerializedName("discount")
+        @Expose
+        private Integer discount;
+        @SerializedName("tax_info")
+        @Expose
+        private String taxInfo;
+        @SerializedName("vatable")
+        @Expose
+        private Double vatable;
+        @SerializedName("vat")
+        @Expose
+        private Double vat;
+        @SerializedName("vat_exempt")
+        @Expose
+        private Integer vatExempt;
+        @SerializedName("room_area_id")
+        @Expose
+        private Integer roomAreaId;
+        @SerializedName("pos_id")
+        @Expose
+        private Integer posId;
+        @SerializedName("is_posted")
+        @Expose
+        private Integer isPosted;
+        @SerializedName("xSkip")
+        @Expose
+        private Integer xSkip;
+        @SerializedName("user_id")
+        @Expose
+        private Integer userId;
+        @SerializedName("void")
+        @Expose
+        private Integer _void;
+        @SerializedName("voided_by")
+        @Expose
+        private Object voidedBy;
+        @SerializedName("is_open_price")
+        @Expose
+        private Integer isOpenPrice;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getControlNo() {
+            return controlNo;
+        }
+
+        public void setControlNo(String controlNo) {
+            this.controlNo = controlNo;
+        }
+
+        public Integer getRoomId() {
+            return roomId;
+        }
+
+        public void setRoomId(Integer roomId) {
+            this.roomId = roomId;
+        }
+
+        public Integer getProductId() {
+            return productId;
+        }
+
+        public void setProductId(Integer productId) {
+            this.productId = productId;
+        }
+
+        public Integer getRoomTypeId() {
+            return roomTypeId;
+        }
+
+        public void setRoomTypeId(Integer roomTypeId) {
+            this.roomTypeId = roomTypeId;
+        }
+
+        public Integer getRoomRateId() {
+            return roomRateId;
+        }
+
+        public void setRoomRateId(Integer roomRateId) {
+            this.roomRateId = roomRateId;
+        }
+
+        public Integer getRoomRatePriceId() {
+            return roomRatePriceId;
+        }
+
+        public void setRoomRatePriceId(Integer roomRatePriceId) {
+            this.roomRatePriceId = roomRatePriceId;
+        }
+
+        public Object getCategoryId() {
+            return categoryId;
+        }
+
+        public void setCategoryId(Object categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        public Object getDepartmentId() {
+            return departmentId;
+        }
+
+        public void setDepartmentId(Object departmentId) {
+            this.departmentId = departmentId;
+        }
+
+        public String getRoomNo() {
+            return roomNo;
+        }
+
+        public void setRoomNo(String roomNo) {
+            this.roomNo = roomNo;
+        }
+
+        public String getRoomType() {
+            return roomType;
+        }
+
+        public void setRoomType(String roomType) {
+            this.roomType = roomType;
+        }
+
+        public String getRoomRate() {
+            return roomRate;
+        }
+
+        public void setRoomRate(String roomRate) {
+            this.roomRate = roomRate;
+        }
+
+        public Object getCategory() {
+            return category;
+        }
+
+        public void setCategory(Object category) {
+            this.category = category;
+        }
+
+        public Object getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(Object department) {
+            this.department = department;
+        }
+
+        public Integer getQty() {
+            return qty;
+        }
+
+        public void setQty(Integer qty) {
+            this.qty = qty;
+        }
+
+        public Integer getUnitCost() {
+            return unitCost;
+        }
+
+        public void setUnitCost(Integer unitCost) {
+            this.unitCost = unitCost;
+        }
+
+        public Integer getPrice() {
+            return price;
+        }
+
+        public void setPrice(Integer price) {
+            this.price = price;
+        }
+
+        public Integer getTotal() {
+            return total;
+        }
+
+        public void setTotal(Integer total) {
+            this.total = total;
+        }
+
+        public Integer getDiscount() {
+            return discount;
+        }
+
+        public void setDiscount(Integer discount) {
+            this.discount = discount;
+        }
+
+        public String getTaxInfo() {
+            return taxInfo;
+        }
+
+        public void setTaxInfo(String taxInfo) {
+            this.taxInfo = taxInfo;
+        }
+
+        public Double getVatable() {
+            return vatable;
+        }
+
+        public void setVatable(Double vatable) {
+            this.vatable = vatable;
+        }
+
+        public Double getVat() {
+            return vat;
+        }
+
+        public void setVat(Double vat) {
+            this.vat = vat;
+        }
+
+        public Integer getVatExempt() {
+            return vatExempt;
+        }
+
+        public void setVatExempt(Integer vatExempt) {
+            this.vatExempt = vatExempt;
+        }
+
+        public Integer getRoomAreaId() {
+            return roomAreaId;
+        }
+
+        public void setRoomAreaId(Integer roomAreaId) {
+            this.roomAreaId = roomAreaId;
+        }
+
+        public Integer getPosId() {
+            return posId;
+        }
+
+        public void setPosId(Integer posId) {
+            this.posId = posId;
+        }
+
+        public Integer getIsPosted() {
+            return isPosted;
+        }
+
+        public void setIsPosted(Integer isPosted) {
+            this.isPosted = isPosted;
+        }
+
+        public Integer getXSkip() {
+            return xSkip;
+        }
+
+        public void setXSkip(Integer xSkip) {
+            this.xSkip = xSkip;
+        }
+
+        public Integer getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Integer userId) {
+            this.userId = userId;
+        }
+
+        public Integer getVoid() {
+            return _void;
+        }
+
+        public void setVoid(Integer _void) {
+            this._void = _void;
+        }
+
+        public Object getVoidedBy() {
+            return voidedBy;
+        }
+
+        public void setVoidedBy(Object voidedBy) {
+            this.voidedBy = voidedBy;
+        }
+
+        public Integer getIsOpenPrice() {
+            return isOpenPrice;
+        }
+
+        public void setIsOpenPrice(Integer isOpenPrice) {
+            this.isOpenPrice = isOpenPrice;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
             this.updatedAt = updatedAt;
         }
 

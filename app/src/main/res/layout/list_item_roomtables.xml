@@ -12,6 +12,9 @@
         android:id="@+id/rel"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+
         <ImageView
             android:visibility="gone"
             android:id="@+id/image"
@@ -66,6 +69,19 @@
                     android:textColor="@color/colorAccent" />
             </RelativeLayout>
         </android.support.v7.widget.CardView>
+
+        <TextView
+            android:visibility="visible"
+            android:id="@+id/orderCount"
+            android:maxLength="3"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            android:padding="3dp"
+            android:text="100"
+            android:background="@drawable/square_round"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

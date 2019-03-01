@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales;
 import java.util.Map;
 
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
+import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -119,4 +120,8 @@ public interface IUsers {
     @POST("fetchUser")
     @FormUrlEncoded
     Call<FetchUserResponse> fetchUser(@FieldMap Map<String, String> params);
+
+    @POST("addProductTo")
+    @FormUrlEncoded
+    Call<AddProductToResponse> addProductTo(@FieldMap Map<String, String> params);
 }

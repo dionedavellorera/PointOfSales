@@ -384,10 +384,4 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     ApplicationConstants.USER_JSON);
         }
     }
-
-
-
-
-
-
 }
