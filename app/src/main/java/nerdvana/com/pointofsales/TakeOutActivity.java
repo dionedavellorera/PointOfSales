@@ -50,6 +50,8 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_out);
+
+        setTitle("TAKE OUT");
         Toolbar toolbar = findViewById(R.id.toolbar);
         refreshRoom = findViewById(R.id.refreshRoom);
         listFilters = findViewById(R.id.listFilters);
@@ -89,6 +91,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
                     @Override
                     public void createSuccess(String customerName, int areaId) {
                         getOrderRequest(customerName, String.valueOf(areaId));
+                        dismiss();
                     }
                 };
 
@@ -149,7 +152,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
     }
 
     private void setRoomsTableAdapter() {
-        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this);
+        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, TakeOutActivity.this);
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(TakeOutActivity.this, 5));
         listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
@@ -170,6 +173,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
     @Subscribe
     public void getOrderResponse(GetOrderResponse getOrderResponse) {
         refreshRoom.setRefreshing(false);
+        fetchOrderPendingRequest();
     }
 
 }

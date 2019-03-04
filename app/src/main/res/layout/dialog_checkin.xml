@@ -1,91 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-    <Spinner
-        android:id="@+id/spinnerRates"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:orientation="vertical"
+         android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Spinner
-        android:layout_below="@id/spinnerRates"
-        android:id="@+id/spinnerGuestType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="RATES"
+            android:textStyle="italic"
+            android:padding="10dp"/>
 
-    <Spinner
-        android:layout_below="@+id/spinnerGuestType"
-        android:id="@+id/spinnerCar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
-    <Spinner
-        android:layout_below="@id/spinnerCar"
-        android:id="@+id/spinnerVehicle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <Spinner
+            android:id="@+id/spinnerRates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <EditText
-        android:layout_below="@id/spinnerVehicle"
-        android:id="@+id/customer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Customer"/>
 
-    <EditText
-        android:hint="Plate number"
-        android:layout_below="@id/customer"
-        android:id="@+id/plateNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GUEST TYPE"
+            android:textStyle="italic"
+            android:padding="10dp"/>
 
-    <Spinner
-        android:id="@+id/steward"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/plateNumber"/>
 
-    <Spinner
-        android:id="@+id/roomArea"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/steward"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_below="@id/roomArea"
-        android:id="@+id/tilAdult"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <Spinner
+            android:layout_below="@id/spinnerRates"
+            android:id="@+id/spinnerGuestType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CAR"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
+        <Spinner
+            android:layout_below="@+id/spinnerGuestType"
+            android:id="@+id/spinnerCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="VEHICLE"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
+
+        <Spinner
+            android:layout_below="@id/spinnerCar"
+            android:id="@+id/spinnerVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CUSTOMER"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
         <EditText
-            android:hint="Adult count"
-            android:id="@+id/adult"
-            android:inputType="number"
-            android:text="2"
+            android:layout_below="@id/spinnerVehicle"
+            android:id="@+id/customer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Customer"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PLATE NUMBER"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
+
+        <EditText
+            android:hint="Plate number"
+            android:layout_below="@id/customer"
+            android:id="@+id/plateNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-    </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_below="@id/tilAdult"
-        android:id="@+id/tilChild"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:hint="Child count"
-            android:id="@+id/child"
-            android:inputType="number"
-            android:text="0"
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:text="STEWARD"
+            android:textStyle="italic"
+            android:padding="10dp"/>
 
-    <Button
-        android:layout_below="@id/tilChild"
-        android:id="@+id/checkin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CHECK IN"
-        />
+        <Spinner
+            android:id="@+id/steward"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/plateNumber"/>
 
-</RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ROOM AREA"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
+        <Spinner
+            android:id="@+id/roomArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/steward"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GUEST COUNT"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_below="@id/roomArea"
+            android:id="@+id/tilAdult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:hint="Adult count"
+                android:id="@+id/adult"
+                android:inputType="number"
+                android:text="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_below="@id/tilAdult"
+            android:id="@+id/tilChild"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:hint="Child count"
+                android:id="@+id/child"
+                android:inputType="number"
+                android:text="0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:layout_below="@id/tilChild"
+            android:id="@+id/checkin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CHECK IN"
+            />
+
+    </LinearLayout>
+
+
+    </ScrollView>

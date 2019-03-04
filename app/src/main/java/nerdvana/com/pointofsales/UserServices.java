@@ -6,6 +6,7 @@ import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
+import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
@@ -28,6 +29,7 @@ import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
+import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -228,6 +230,13 @@ public class UserServices extends BaseService {
     public void onReceiveAddProductTo(AddProductToRequest addProductToRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<AddProductToResponse> request = iUsers.addProductTo(addProductToRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveCheckoutRequest(CheckOutRequest checkOutRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CheckOutResponse> request = iUsers.checkOut(checkOutRequest.getMapValue());
         asyncRequest(request);
     }
 }

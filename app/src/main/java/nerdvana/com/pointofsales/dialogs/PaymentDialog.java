@@ -72,18 +72,24 @@ public abstract class PaymentDialog extends Dialog  {
     private Button add;
     private Button pay;
     private EditText amountToPay;
+    private TextView displayTotalChange;
     private FetchPaymentResponse.Result paymentMethod = null;
     private PaymentMethod paymentMethodImpl;
     List<PostedPaymentsModel> postedPaymentList = new ArrayList<>();
     PostedPaymentsAdapter postedPaymentsAdapter;
     private boolean isCheckout;
-
+    private Double totalBalance;
+    private TextView displayTotalBalance;
+    private TextView displayTotalPayment;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
-                         boolean isCheckout, List<PostedPaymentsModel> postedPaymentList) {
+                         boolean isCheckout,
+                         List<PostedPaymentsModel> postedPaymentList,
+                         Double totalBalance) {
         super(context);
         this.paymentList = paymentList;
         this.isCheckout = isCheckout;
         this.postedPaymentList = postedPaymentList;
+        this.totalBalance = totalBalance;
 //        this.transactionNumber = transactionNumber;
 //        this.balance = balance;
     }
@@ -101,14 +107,16 @@ public abstract class PaymentDialog extends Dialog  {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
-
+        displayTotalBalance = findViewById(R.id.totalBalance);
+        displayTotalPayment = findViewById(R.id.totalPayment);
         listPayments = findViewById(R.id.listPayments);
         listPostedPayments = findViewById(R.id.listPostedPayments);
         add = findViewById(R.id.add);
         pay = findViewById(R.id.pay);
+        displayTotalChange = findViewById(R.id.totalChange);
         amountToPay = (EditText) findViewById(R.id.amount);
 
-
+        displayTotalBalance.setText(String.valueOf(totalBalance));
         paymentMethodImpl = new PaymentMethod() {
             @Override
             public void clicked(int position) {
@@ -135,6 +143,8 @@ public abstract class PaymentDialog extends Dialog  {
                     }
                     paymentMethod = null;
                 }
+
+                computeTotal();
             }
         });
 
@@ -144,6 +154,10 @@ public abstract class PaymentDialog extends Dialog  {
                 paymentSuccess(postedPaymentList);
             }
         });
+
+        //computeTotal()
+        computeTotal();
+
 
         paymentsAdapter = new PaymentsAdapter(paymentList, paymentMethodImpl);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -166,6 +180,18 @@ public abstract class PaymentDialog extends Dialog  {
         void clicked(int position);
     }
 
+    private void computeTotal() {
+        Double totalPayment = 0.00;
+        Double totalChange = 0.00;
+        for (PostedPaymentsModel ppm : postedPaymentList) {
+            totalPayment += Double.valueOf(ppm.getAmount());
+
+        }
+
+        totalChange = totalPayment - totalBalance;
+        displayTotalChange.setText(String.valueOf(totalChange));
+        displayTotalPayment.setText(String.valueOf(totalPayment));
+    }
 
     @Override
     protected void onStart() {

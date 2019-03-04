@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -287,4 +288,14 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
     public abstract void successCheckIn(WelcomeGuestRequest welcomeGuestRequest);
 
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Dialog dialog = this;
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
+    }
 }

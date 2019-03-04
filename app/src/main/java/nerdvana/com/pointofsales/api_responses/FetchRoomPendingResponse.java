@@ -327,19 +327,19 @@ public class FetchRoomPendingResponse {
         private Integer xPersonAmount;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("advance")
         @Expose
-        private Integer advance;
+        private Double advance;
         @SerializedName("tendered")
         @Expose
-        private Integer tendered;
+        private Double tendered;
         @SerializedName("change")
         @Expose
-        private Integer change;
+        private Double change;
         @SerializedName("vatable")
         @Expose
         private Double vatable;
@@ -492,43 +492,43 @@ public class FetchRoomPendingResponse {
             this.xPersonAmount = xPersonAmount;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getAdvance() {
+        public Double getAdvance() {
             return advance;
         }
 
-        public void setAdvance(Integer advance) {
+        public void setAdvance(Double advance) {
             this.advance = advance;
         }
 
-        public Integer getTendered() {
+        public Double getTendered() {
             return tendered;
         }
 
-        public void setTendered(Integer tendered) {
+        public void setTendered(Double tendered) {
             this.tendered = tendered;
         }
 
-        public Integer getChange() {
+        public Double getChange() {
             return change;
         }
 
-        public void setChange(Integer change) {
+        public void setChange(Double change) {
             this.change = change;
         }
 

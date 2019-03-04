@@ -46,6 +46,9 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms);
+
+        setTitle("ROOMS");
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         refreshRoom = findViewById(R.id.refreshRoom);
         listFilters = findViewById(R.id.listFilters);
@@ -92,7 +95,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     }
 
     private void setRoomsTableAdapter() {
-        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this);
+        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this);
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
         listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
@@ -167,7 +170,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     @Override
     public void filterSelected(int statusId) {
         if (statusId == 0) { //SHOW ALL
-            roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this);
+            roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this, RoomsActivity.this);
             listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
 //            listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
@@ -180,7 +183,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                     filteredRoomList.add(rtm);
                 }
             }
-            roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this);
+            roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this, RoomsActivity.this);
             listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
 

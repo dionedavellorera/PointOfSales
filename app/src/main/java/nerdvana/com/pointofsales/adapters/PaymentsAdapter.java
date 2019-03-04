@@ -58,12 +58,6 @@ public class PaymentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((PaymentTypeViewHolder) holder).name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    if (!v.isSelected()) {
-//                        v.setSelected(true);
-//                    } else {
-//                        v.setSelected(false);
-//                    }
-                    Log.d("TEST_CLICK", "CLICK INSIDE");
                     paymentMethod.clicked(i);
                 }
             });

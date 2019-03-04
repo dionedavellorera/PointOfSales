@@ -119,7 +119,9 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             0.00,
                             false,
                             "",
-                            unpostedOrderCount
+                            unpostedOrderCount,
+                            r.getStatus().getIsBlink() == 1 ? true : false,
+                            r.getStatus().getIsTimer() == 1 ? true : false
 
                     )
             );

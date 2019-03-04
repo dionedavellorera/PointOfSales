@@ -313,7 +313,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     private void setRoomsTableAdapter() {
-        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this);
+        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, getContext());
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(getContext(), 5));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
     }

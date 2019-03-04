@@ -45,6 +45,7 @@ import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
+import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
@@ -57,6 +58,7 @@ import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
@@ -143,6 +145,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private List<FetchVehicleResponse.Result> vehicleList;
     private List<FetchGuestTypeResponse.Result> guestTypeList;
     private RoomTableModel selectedRoom;
+
+    private double totalBalance = 0;
+
     public static LeftFrameFragment newInstance(SelectionContract selectionContract) {
         LeftFrameFragment.selectionContract = selectionContract;
         LeftFrameFragment leftFrameFragment = new LeftFrameFragment();
@@ -559,29 +564,61 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 105: //CHECKOUT
-                PaymentDialog checkoutDialog = new PaymentDialog(getActivity(), paymentTypeList, true, postedPaymentsList) {
+                PaymentDialog checkoutDialog = new PaymentDialog(getActivity(),
+                        paymentTypeList,
+                        true,
+                        postedPaymentsList,
+                        totalBalance) {
                     @Override
                     public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit) {
                         List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                        boolean isReadyForCheckOut = false;
+                        Double totalPayments = 0.00;
                         for (PostedPaymentsModel ppm : postedPaymentLit) {
                             if (!ppm.isIs_posted()) {
                                 paymentsToPost.add(ppm);
                             }
+
+                            totalPayments += Double.valueOf(ppm.getAmount());
                         }
 
-                        if (paymentsToPost.size() > 0) {
-                            if (selectedRoom.isTakeOut()) {
-                                postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
+                        if (totalPayments >= totalBalance) {
+                            if (paymentsToPost.size() > 0) {
+                                if (selectedRoom.isTakeOut()) {
+                                    postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
+                                } else {
+                                    postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                                }
                             } else {
-                                postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                                Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
                             }
 
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (selectedRoom.isTakeOut()) {
+                                        Log.d("CHECKOUT_LOG", "TAKEOUT_OFF");
+                                        checkoutRoom("",
+                                                selectedRoom.getControlNo());
+                                    } else {
+                                        Log.d("CHECKOUT_LOG", "ROOM_OFF");
+                                        checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                                "");
+                                    }
 
+
+                                }
+                            }, 500);
+
+
+
+                            dismiss();
                         } else {
-                            Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Payment is less than balance", Toast.LENGTH_SHORT).show();
                         }
 
-                        dismiss();
+
+
                     }
 
                     @Override
@@ -590,23 +627,26 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                 };
                 if (selectedRoom != null) {
-
                     if (selectedRoom.isTakeOut()) {
                         if (paymentTypeList.size() > 0) {
-                            checkoutDialog.show();
+                            if (currentRoomStatus.equalsIgnoreCase("1")) {
+                                checkoutDialog.show();
+                            } else {
+                                Toast.makeText(getContext(), "Please print soa before checking out", Toast.LENGTH_SHORT).show();
+                            }
+
                         } else {
                             Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        if (currentRoomStatus.equalsIgnoreCase("2") ||
-                                currentRoomStatus.equalsIgnoreCase("17")) {
+                        if (currentRoomStatus.equalsIgnoreCase("17")) {
                             if (paymentTypeList.size() > 0) {
                                 checkoutDialog.show();
                             } else {
                                 Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(getContext(), "Room not yet occupied, cant accept payment", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Please print soa before checking out", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -748,7 +788,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 102: //ADVANCE PAYMENT
 
                 if (selectedRoom != null) {
-                    PaymentDialog paymentDialog = new PaymentDialog(getActivity(), paymentTypeList, false, postedPaymentsList) {
+                    PaymentDialog paymentDialog = new PaymentDialog(getActivity(),
+                            paymentTypeList,
+                            false,
+                            postedPaymentsList,
+                            totalBalance) {
                         @Override
                         public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit) {
                             List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
@@ -1064,6 +1108,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         Double totalAmount = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
+            totalBalance = fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal();
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
                 if (r.getTransaction().getPayments().size() > 0) {
                     for(FetchRoomPendingResponse.Payment pym : r.getTransaction().getPayments()) {
@@ -1103,6 +1148,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
 
+        } else {
+            totalBalance = 0;
         }
 
         total.setText(String.valueOf(totalAmount));
@@ -1175,8 +1222,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
             }
         });
-        Window window = checkInDialog.getWindow();
-        window.setLayout((Utils.getDeviceWidth(getContext()) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
+//        Window window = checkInDialog.getWindow();
+//        window.setLayout((Utils.getDeviceWidth(getContext()) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     private void showCheckInDialog() {
@@ -1195,8 +1242,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
             }
         });
-        Window window = checkInDialog.getWindow();
-        window.setLayout((Utils.getDeviceWidth(getContext()) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
+//        Window window = checkInDialog.getWindow();
+//        window.setLayout((Utils.getDeviceWidth(getContext()) / 2), ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
 
@@ -1285,6 +1332,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
+        currentRoomStatus = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getIsSoa());
+        totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal();
         cartItemList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
         Double totalAmount = 0.00;
@@ -1325,9 +1374,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             }
 
-
-
-
             total.setText(String.valueOf(totalAmount));
             checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -1347,5 +1393,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     }
 
+    private void checkoutRoom(String roomId, String controlNumber) {
+        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber));
+    }
 
+    @Subscribe
+    public void checkoutResponse(CheckOutResponse checkOutResponse) {
+        clearCartItems();
+        defaultView();
+        Toast.makeText(getContext(), "checkout", Toast.LENGTH_SHORT).show();
+    }
 }

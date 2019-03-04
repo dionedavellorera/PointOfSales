@@ -45,7 +45,9 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                             0.00,
                             true,
                             r.getControlNo(),
-                            0
+                            0,
+                            r.getIsSoa() == 1 ? true : false,
+                            false
 
                     )
             );

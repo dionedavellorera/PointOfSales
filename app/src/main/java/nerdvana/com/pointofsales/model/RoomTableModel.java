@@ -27,6 +27,8 @@ public class RoomTableModel {
     private boolean isTakeOut;
     private String controlNo;
     private int unpostedOrdersCount = 0;
+    private boolean isBlink = false;
+    private boolean isTimer = false;
     public RoomTableModel(int roomId, int roomTypeId,
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,
@@ -35,7 +37,8 @@ public class RoomTableModel {
                           boolean isAvailable, String imageUrl,
                           String status, String hexColor,
                           double amountSelected, boolean isTakeOut,
-                          String controlNo, int unpostedOrdersCount) {
+                          String controlNo, int unpostedOrdersCount,
+                          boolean isBlink, boolean isTimer) {
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;
         this.roomType = roomType;
@@ -54,6 +57,16 @@ public class RoomTableModel {
         this.isTakeOut = isTakeOut;
         this.controlNo = controlNo;
         this.unpostedOrdersCount = unpostedOrdersCount;
+        this.isBlink = isBlink;
+        this.isTimer = isTimer;
+    }
+
+    public boolean isBlink() {
+        return isBlink;
+    }
+
+    public boolean isTimer() {
+        return isTimer;
     }
 
     public int getUnpostedOrdersCount() {

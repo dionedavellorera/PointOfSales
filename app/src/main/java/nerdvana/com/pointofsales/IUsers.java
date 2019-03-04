@@ -6,6 +6,7 @@ import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
+import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -124,4 +125,8 @@ public interface IUsers {
     @POST("addProductTo")
     @FormUrlEncoded
     Call<AddProductToResponse> addProductTo(@FieldMap Map<String, String> params);
+
+    @POST("checkOut")
+    @FormUrlEncoded
+    Call<CheckOutResponse> checkOut(@FieldMap Map<String, String> params);
 }

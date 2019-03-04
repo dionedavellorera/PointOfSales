@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -8,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,9 +27,16 @@ import nerdvana.com.pointofsales.model.RoomTableModel;
 public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<RoomTableModel> roomTableModelList;
     private SelectionContract selectionContract;
-    public RoomsTablesAdapter(List<RoomTableModel> roomTableModelList, SelectionContract selectionContract) {
+
+    private Animation animBlink;
+    private Context context;
+    public RoomsTablesAdapter(List<RoomTableModel> roomTableModelList, SelectionContract selectionContract,
+                              Context context) {
         this.roomTableModelList = roomTableModelList;
         this.selectionContract = selectionContract;
+        this.context = context;
+        animBlink = AnimationUtils.loadAnimation(context,
+                R.anim.blink);
     }
 
     @NonNull
@@ -64,7 +74,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((ProductsViewHolder)holder).rel.setSelected(true);
             }
         });
-        Log.d("TEST", String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
+
         if (roomTableModelList.get(i).getUnpostedOrdersCount() > 0) {
             ((ProductsViewHolder) holder).orderCount.setVisibility(View.VISIBLE);
             ((ProductsViewHolder) holder).orderCount.setText(String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
@@ -78,6 +88,14 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (!productsModel.isTakeOut()) {
             ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
         }
+
+        if (productsModel.isBlink()) {
+            ((ProductsViewHolder)holder).name.startAnimation(animBlink);
+        } else {
+            ((ProductsViewHolder)holder).name.clearAnimation();
+        }
+
+
     }
 
 
