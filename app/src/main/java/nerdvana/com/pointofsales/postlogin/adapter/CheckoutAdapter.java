@@ -67,26 +67,30 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } else {
 
             }
-//            if (productsModel.getProductStatus() != ProductConstants.PENDING &&
-//                    productsModel.getProductStatus() != ProductConstants.VOID) {
-//                ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
-//                        notifyItemChanged(i);
-//                    }
-//                });
-//            }
 
             ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-//                    checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
-//                    notifyItemChanged(i);
-
+                    checkoutItemsContract.itemSelected(cartItem, holder.getAdapterPosition());
+                    notifyItemChanged(i);
                 }
             });
+
+
+//            if (productsModel.getProductStatus() != ProductConstants.PENDING &&
+//                    productsModel.getProductStatus() != ProductConstants.VOID) {
+
+//            }
+
+//            ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+////                    checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
+////                    notifyItemChanged(i);
+//
+//                }
+//            });
 
 
 
@@ -109,15 +113,17 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
             ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity()));
 
-//
+
 //            ((ProductsViewHolder)holder).name.setTextColor(Color.parseColor("#d3d3d3"));
 //            ((ProductsViewHolder)holder).quantity.setTextColor(Color.parseColor("#d3d3d3"));
 //            ((ProductsViewHolder)holder).price.setTextColor(Color.parseColor("#d3d3d3"));
-//            if (productsModelList.get(holder.getAdapterPosition()).isSelected()) {
+            if (cartItem.isSelected()) {
+                ((ProductsViewHolder) holder).rootView.setSelected(true);
 //                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.highlight);
-//            } else {
+            } else {
+                ((ProductsViewHolder) holder).rootView.setSelected(false);
 //                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.navyblue);
-//            }
+            }
 //
 //            switch (productsModelList.get(holder.getAdapterPosition()).getProductStatus()) {
 //                case ProductConstants.DISABLED: //will only be used on product listing

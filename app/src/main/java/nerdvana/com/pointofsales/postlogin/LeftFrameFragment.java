@@ -77,6 +77,7 @@ import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmCheckInDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
+import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
@@ -93,10 +94,12 @@ import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
+import nerdvana.com.pointofsales.model.OrderSlipModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
+import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
@@ -122,6 +125,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private List<CartItemsModel> cartItemList;
     private List<FetchPaymentResponse.Result> paymentTypeList;
     private List<PostedPaymentsModel> postedPaymentsList;
+    private List<OrderSlipModel> orderSlipList;
 
     private RecyclerView listCheckoutItems;
     private RecyclerView listButtons;
@@ -179,6 +183,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         cartItemList = new ArrayList<>();
         paymentTypeList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
+        orderSlipList = new ArrayList<>();
     }
 
     @Nullable
@@ -410,7 +415,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         false,
                         productsModel.getMarkUp(),
                         productsModel.getIsPriceChanged(),
-                        productsModel.getUnitPrice()
+                        productsModel.getUnitPrice(),
+                        false,
+                        ""
                 ));
                 checkoutAdapter.notifyDataSetChanged();
                 listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
@@ -436,7 +443,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             false,
                             productsModel.getMarkUp(),
                             productsModel.getIsPriceChanged(),
-                            productsModel.getUnitPrice()
+                            productsModel.getUnitPrice(),
+                            false,
+                            ""
                     ));
 
                     checkoutAdapter.notifyDataSetChanged();
@@ -488,7 +497,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     @Override
-    public void itemSelected(ProductsModel itemSelected, int position) {
+    public void itemSelected(CartItemsModel itemSelected, int position) {
         itemSelected.setSelected(itemSelected.isSelected() ? false : true);
         checkoutAdapter.notifyItemChanged(position);
     }
@@ -505,7 +514,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         final OpenPriceDialog openPriceDialog = new OpenPriceDialog(getActivity(), itemSelected, position) {
                             @Override
                             public void openPriceChangeSuccess(Double newPrice, int position) {
-                                cartItemList.get(position).setAmount(newPrice);
+                                cartItemList.get(position).setUnitPrice(newPrice);
                                 cartItemList.get(position).setIsPriceChanged(1);
                                 if (checkoutAdapter != null) {
                                     checkoutAdapter.notifyItemRemoved(position);
@@ -537,6 +546,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 108: //show order slip form
+
+                Log.d("ORDERSLIP", String.valueOf(orderSlipList.size()));
+
+                OrderSlipDialog orderSlipDialog = new OrderSlipDialog(getActivity(), orderSlipList);
+                if (!orderSlipDialog.isShowing()) orderSlipDialog.show();
+                break;
             case 107: //CHECK IN - WAITING GUEST (DIRTY / RC)
                 if (selectedRoom.getStatus().equalsIgnoreCase("32") ||
                         selectedRoom.getStatus().equalsIgnoreCase("4") ||
@@ -699,17 +715,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         cim.getIsPriceChanged()
                                 ));
                             }
-
                         }
                         BusProvider.getInstance().post(new AddProductToRequest(model, String.valueOf(selectedRoom.getRoomId()),
-                                String.valueOf(selectedRoom.getAreaId()), selectedRoom.getControlNo()));
-
-//                        if (model.size() > 0) {
-//
-//                        } else {
-//                            Toast.makeText(getContext(), "No product for posting", Toast.LENGTH_SHORT).show();
-//                        }
-
+                                String.valueOf(selectedRoom.getAreaId()),
+                                selectedRoom.getControlNo(),
+                                new ArrayList<VoidProductModel>()));
                     } else {
                         Log.d("ISTAKEOUT", "@");
                         if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
@@ -756,25 +766,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                     @Override
                     public void passwordSuccess() {
-//                        ArrayList<Long> selectedIds = new ArrayList<>();
-//                        for (ProductsModel p : cartItemList) {
-//                            if (p.isSelected()) {
-//                                selectedIds.add(p.getProductId());
-//                            }
-//                        }
+                        if (cartItemList.size() < 1) {
+                            Toast.makeText(getContext(), "No items to void", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            ArrayList<VoidProductModel> model = new ArrayList<>();
+
+                            for (CartItemsModel cim : cartItemList) {
+                                if (cim.isSelected()) {
+                                    model.add(new VoidProductModel(
+                                        cim.getPostId()
+                                    ));
+                                }
+                            }
 //
-//
-//                        String tempTransId = getTableRecord().get(0).getTransactionId();
-//
-//                        for (CartEntity c : getCartRecord(tempTransId)) {
-//                            if (selectedIds.contains(c.getProductId())) {
-//                                c.setProductStatus(ProductConstants.VOID);
-//                                c.save();
-//                            }
-//                        }
-//
-//                        retrieveCartItems();
-//                        computeFromDb();
+                            BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                    String.valueOf(selectedRoom.getAreaId()),
+                                    selectedRoom.getControlNo(),
+                                    model));
+                        }
 
                     }
 
@@ -1104,6 +1114,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
         cartItemList = new ArrayList<>();
+        orderSlipList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
         Double totalAmount = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
@@ -1121,7 +1132,65 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                 }
 
-//                postedPaymentList.add(new PostedPaymentsModel(paymentMethod.getCoreId(), amountToPay.getText().toString(), paymentMethod.getPaymentType(), false));
+                if (r.getTransaction().getTrans().size() > 0) {
+                    for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
+                        List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
+                        for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
+                            List<OrderSlipModel.OrderSlipProduct> osp = new ArrayList<>();
+                            for (FetchRoomPendingResponse.PostTrans prod : osi.getPost()) {
+                                if (prod.getProductId() == 0) { //room
+                                    osp.add(
+                                            new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+                                                    "",
+                                                    "",
+                                                    "",
+                                                    String.valueOf(prod.getRoomTypeId()),
+                                                    "",
+                                                    String.valueOf(prod.getRoomRatePriceId()),
+                                                    prod.getRoomType(),
+                                                    prod.getRoomRate().toString(),
+                                                    String.valueOf(prod.getQty()),
+                                                    "",
+                                                    String.valueOf(prod.getPrice()),
+                                                    String.valueOf(prod.getTotal()),
+                                                    prod.getVoid() == 0 ? false : true));
+                                } else { //product
+                                    osp.add(
+                                            new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+                                                    String.valueOf(prod.getProduct().getId()),
+                                                    prod.getProduct().getProduct(),
+                                                    prod.getProduct().getProductInitial(),
+                                                    "",
+                                                    "",
+                                                    "",
+                                                    "",
+                                                    "",
+                                                    String.valueOf(prod.getQty()),
+                                                    String.valueOf(prod.getUnitCost()),
+                                                    String.valueOf(prod.getPrice()),
+                                                    String.valueOf(prod.getTotal()),
+                                                    prod.getVoid() == 0 ? false : true));
+                                }
+
+                            }
+                            OrderSlipModel.OrderSlipInfo slipInfoList =
+                                    new OrderSlipModel.OrderSlipInfo(String.valueOf(osi.getId()),
+                                            String.valueOf(osi.getPostOrderId()),
+                                            String.valueOf(osi.getPostTransId()),
+                                            osp);
+                            osiList.add(slipInfoList);
+                        }
+                        OrderSlipModel orderSlipModel = new OrderSlipModel(transPost.getControlNo(), osiList, String.valueOf(transPost.getId()));
+                        orderSlipList.add(orderSlipModel);
+
+
+                    }
+                }
+
+
+
+
+
                 for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
                     cartItemList.add(new CartItemsModel(
                             tpost.getControlNo(),
@@ -1138,7 +1207,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             true,
                             0.00,
                             0,
-                            tpost.getPrice()
+                            tpost.getPrice(),
+                            false,
+                            String.valueOf(tpost.getId())
                     ));
 
                     totalAmount += tpost.getTotal();
@@ -1332,10 +1403,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
+        Toast.makeText(getContext(), "FOP RESP", Toast.LENGTH_SHORT).show();
         currentRoomStatus = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getIsSoa());
         totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal();
         cartItemList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
+        orderSlipList = new ArrayList<>();
         Double totalAmount = 0.00;
         if (fetchOrderPendingViaControlNoResponse.getResult() != null) {
             if (fetchOrderPendingViaControlNoResponse.getResult().getPayments().size() > 0) {
@@ -1348,6 +1421,60 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     ));
                 }
             }
+            if (fetchOrderPendingViaControlNoResponse.getResult().getTrans().size() > 0) {
+                for (FetchOrderPendingViaControlNoResponse.Tran transPost : fetchOrderPendingViaControlNoResponse.getResult().getTrans()) {
+                    List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
+                    for (FetchOrderPendingViaControlNoResponse.Order osi : transPost.getOrder()) {
+                        List<OrderSlipModel.OrderSlipProduct> osp = new ArrayList<>();
+                        for (FetchOrderPendingViaControlNoResponse.Post prod : osi.getPost()) {
+                            if (prod.getProductId() == 0) { //room
+                                osp.add(
+                                        new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+                                                "",
+                                                "",
+                                                "",
+                                                String.valueOf(prod.getRoomTypeId()),
+                                                "",
+                                                String.valueOf(prod.getRoomRatePriceId()),
+                                                prod.getRoomType().toString(),
+                                                prod.getRoomRate().toString(),
+                                                String.valueOf(prod.getQty()),
+                                                "",
+                                                String.valueOf(prod.getPrice()),
+                                                String.valueOf(prod.getTotal()),
+                                                prod.getVoid() == 0 ? false : true));
+                            } else { //product
+                                osp.add(
+                                        new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+                                                String.valueOf(prod.getProduct().getId()),
+                                                prod.getProduct().getProduct(),
+                                                prod.getProduct().getProductInitial(),
+                                                "",
+                                                "",
+                                                "",
+                                                "",
+                                                "",
+                                                String.valueOf(prod.getQty()),
+                                                String.valueOf(prod.getUnitCost()),
+                                                String.valueOf(prod.getPrice()),
+                                                String.valueOf(prod.getTotal()),
+                                                prod.getVoid() == 0 ? false : true));
+                            }
+                        }
+                        OrderSlipModel.OrderSlipInfo slipInfoList =
+                                new OrderSlipModel.OrderSlipInfo(String.valueOf(osi.getId()),
+                                        String.valueOf(osi.getPostOrderId()),
+                                        String.valueOf(osi.getPostTransId()),
+                                        osp);
+                        osiList.add(slipInfoList);
+                    }
+                    OrderSlipModel orderSlipModel = new OrderSlipModel(transPost.getControlNo(), osiList, String.valueOf(transPost.getId()));
+                    orderSlipList.add(orderSlipModel);
+
+
+                }
+            }
+
 
             if (fetchOrderPendingViaControlNoResponse.getResult().getPost().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Post tpost : fetchOrderPendingViaControlNoResponse.getResult().getPost()) {
@@ -1366,7 +1493,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             true,
                             0.00,
                             0,
-                            tpost.getPrice()
+                            tpost.getPrice(),
+                            false,
+                            String.valueOf(tpost.getId())
                     ));
 
                     totalAmount += tpost.getTotal();

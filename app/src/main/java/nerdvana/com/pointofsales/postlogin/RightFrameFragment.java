@@ -58,6 +58,7 @@ import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
 
 public class RightFrameFragment extends Fragment implements AsyncContract, SelectionContract, ProductsContract{
     private View view;
+    private RoomTableModel selectedRoom;
     private boolean hasCollapsed = false;
     private boolean isValid = false;
     private RecyclerView listProducts;
@@ -321,7 +322,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @Override
     public void listClicked(RoomTableModel selectedItem) {
         Toast.makeText(getContext(), "SAVED", Toast.LENGTH_SHORT).show();
-        saveSelectedSpace(selectedItem.getName(), selectedItem.getAmountSelected());
+        selectedRoom = selectedItem;
+//        saveSelectedSpace(selectedItem.getName(), selectedItem.getAmountSelected());
 //        BusProvider.getInstance().post(new FragmentNotifierModel(selectedItem.getName()));
     }
 
@@ -341,20 +343,10 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @Override
     public void productClicked(ProductsModel productsModel) {
+        productsModel.setQty(Integer.valueOf(qtySelected));
+        if (categoryClickedArray.size() > 0) {
 
-        //checks if system is hotel / dine in and verifies if there is a selected area to put order
-        if (TextUtils.isEmpty(selectedRoomNumber()) &&
-                (userModel.getSystemType().equals("room") || userModel.getSystemType().equals("table"))) {
-            Toast.makeText(getContext(), getResources().getString(R.string.error_no_space_selected), Toast.LENGTH_SHORT).show();
-            pullUpBottomSheet();
-        } else {
-            //checkout/proceed to order
-            //conditions are for breadcrumb purposes, dynamic product listing (unlimited categories)
-//            ProductsModel tempProduct = productsList.get(position);
-            productsModel.setQty(Integer.valueOf(qtySelected));
-            if (categoryClickedArray.size() > 0) {
-
-                if (productsModel.getProductsList().size() != 0) {
+            if (productsModel.getProductsList().size() != 0) {
 //                    categoryClickedArray.add(new BreadcrumbModel(productsModel.getName(), position, new ArrayList<ProductsModel>(productsList)));
 //
 //                    if (categoryClickedArray.size() < 1) {
@@ -364,16 +356,16 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 //                        breadcrumbString += String.format(" %s %s", "»", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
 //                        breadcrumb.setText(breadcrumbString);
 //                    }
-                    repopulateList(productsModel.getProductsList());
-                    productsAdapter.notifyDataSetChanged();
+                repopulateList(productsModel.getProductsList());
+                productsAdapter.notifyDataSetChanged();
 
-                } else {
-                    BusProvider.getInstance().post(productsModel);
-                    Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
-                }
             } else {
+                BusProvider.getInstance().post(productsModel);
+                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
+            }
+        } else {
 
-                if (productsModel.getProductsList().size() != 0) {
+            if (productsModel.getProductsList().size() != 0) {
 //                    if (categoryClickedArray.size() < 1) {
 //                        breadcrumbString += String.format("%s %s", "", productsList.get(position).getName());
 //                        breadcrumb.setText(breadcrumbString);
@@ -383,15 +375,13 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 //                    }
 //
 //                    categoryClickedArray.add(new BreadcrumbModel(productsList.get(position).getName(), position, productsList));
-                    repopulateList(productsModel.getProductsList());
-                    productsAdapter.notifyDataSetChanged();
-                } else {
-                    BusProvider.getInstance().post(productsModel);
-                    Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
-                }
+                repopulateList(productsModel.getProductsList());
+                productsAdapter.notifyDataSetChanged();
+            } else {
+                BusProvider.getInstance().post(productsModel);
+                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
             }
         }
-
 
         qtySpinner.setSelection(0, true);
 

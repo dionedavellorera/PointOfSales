@@ -16,6 +16,8 @@ public class CartItemsModel {
     private Double markUp;
     private int isPriceChanged;
     private Double unitPrice;
+    private boolean isSelected;
+    private String postId;
     public CartItemsModel(String controlNo, int roomId,
                           int productId, int roomTypeId,
                           int roomRateId, int roomRatePriceId,
@@ -23,7 +25,8 @@ public class CartItemsModel {
                           double amount, int coreId,
                           int quantity, boolean isPosted,
                           Double markUp, int isPriceChanged,
-                          Double unitPrice) {
+                          Double unitPrice, boolean isSelected,
+                          String postId) {
         this.controlNo = controlNo;
         this.roomId = roomId;
         this.productId = productId;
@@ -39,6 +42,20 @@ public class CartItemsModel {
         this.markUp = markUp;
         this.isPriceChanged = isPriceChanged;
         this.unitPrice = unitPrice;
+        this.isSelected = isSelected;
+        this.postId = postId;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
     }
 
     public Double getUnitPrice() {

@@ -928,6 +928,17 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("payments")
         @Expose
         private List<Payment> payments = null;
+        @SerializedName("trans")
+        @Expose
+        private List<Tran> trans = null;
+
+        public List<Tran> getTrans() {
+            return trans;
+        }
+
+        public void setTrans(List<Tran> trans) {
+            this.trans = trans;
+        }
 
         public Integer getId() {
             return id;
@@ -1218,4 +1229,173 @@ public class FetchOrderPendingViaControlNoResponse {
         }
 
     }
+
+    public class Tran {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNo;
+        @SerializedName("created_by")
+        @Expose
+        private Integer createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+        @SerializedName("order")
+        @Expose
+        private List<Order> order = null;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getControlNo() {
+            return controlNo;
+        }
+
+        public void setControlNo(String controlNo) {
+            this.controlNo = controlNo;
+        }
+
+        public Integer getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(Integer createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        public List<Order> getOrder() {
+            return order;
+        }
+
+        public void setOrder(List<Order> order) {
+            this.order = order;
+        }
+
+    }
+
+    public class Order {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("post_order_id")
+        @Expose
+        private Integer postOrderId;
+        @SerializedName("post_trans_id")
+        @Expose
+        private Integer postTransId;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+        @SerializedName("post")
+        @Expose
+        private List<Post> post = null;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Integer getPostOrderId() {
+            return postOrderId;
+        }
+
+        public void setPostOrderId(Integer postOrderId) {
+            this.postOrderId = postOrderId;
+        }
+
+        public Integer getPostTransId() {
+            return postTransId;
+        }
+
+        public void setPostTransId(Integer postTransId) {
+            this.postTransId = postTransId;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        public List<Post> getPost() {
+            return post;
+        }
+
+        public void setPost(List<Post> post) {
+            this.post = post;
+        }
+
+    }
+
+
+
+
+
 }
