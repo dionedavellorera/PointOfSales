@@ -40,7 +40,7 @@ public class FetchPaymentResponse {
         this.message = message;
     }
 
-    public class Result {
+    public static class Result {
 
         @SerializedName("id")
         @Expose
@@ -66,6 +66,17 @@ public class FetchPaymentResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("image_file")
+        @Expose
+        private String image;
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
 
         public Integer getId() {
             return id;

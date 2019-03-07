@@ -285,7 +285,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     private void setProductAdapter() {
         //set products adapter with 5 columns (grid layout)
-        productsAdapter = new ProductsAdapter(productsList, this);
+        productsAdapter = new ProductsAdapter(productsList, this, getContext());
         listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
         listProducts.setAdapter(productsAdapter);
         productsAdapter.notifyDataSetChanged();
@@ -442,7 +442,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     public void onReceiveFetchProductsResponse(FetchProductsResponse fetchProductsResponse) {
         refreshProducts.setRefreshing(false);
         search.setQuery("", false);
-        new ProductsAsync(this, fetchProductsResponse).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new ProductsAsync(this, fetchProductsResponse, getContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void setQuantitySpinner() {

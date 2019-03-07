@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +40,8 @@ import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+
+import static android.view.View.GONE;
 
 public abstract class PaymentDialog extends Dialog  {
 
@@ -65,6 +69,12 @@ public abstract class PaymentDialog extends Dialog  {
 //    double _credit = 0;
 //    double _charge = 0;
 //    double _ar = 0;
+    private LinearLayout formCash;
+    private LinearLayout formCard;
+    private LinearLayout formOnline;
+    private LinearLayout formVoucher;
+    private LinearLayout formForex;
+
     private PaymentsAdapter paymentsAdapter;
     private List<FetchPaymentResponse.Result> paymentList;
     private RecyclerView listPayments;
@@ -107,6 +117,13 @@ public abstract class PaymentDialog extends Dialog  {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
+
+        formCash = findViewById(R.id.formCash);
+        formCard = findViewById(R.id.formCard);
+        formOnline = findViewById(R.id.formOnline);
+        formVoucher = findViewById(R.id.formGiftCheck);
+        formForex = findViewById(R.id.formForex);
+
         displayTotalBalance = findViewById(R.id.totalBalance);
         displayTotalPayment = findViewById(R.id.totalPayment);
         listPayments = findViewById(R.id.listPayments);
@@ -120,6 +137,19 @@ public abstract class PaymentDialog extends Dialog  {
         paymentMethodImpl = new PaymentMethod() {
             @Override
             public void clicked(int position) {
+                showForm(paymentList.get(position).getCoreId());
+
+//                if (paymentList.get(position).getCoreId().equalsIgnoreCase("1")) { //cash
+//
+//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("2")) { //card
+//
+//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("3")) { //online
+//
+//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("5")) { //voucher
+//
+//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("6")) { //forex
+//
+//                }
                 paymentMethod = paymentList.get(position);
             }
         };
@@ -163,7 +193,8 @@ public abstract class PaymentDialog extends Dialog  {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-        listPayments.setLayoutManager(linearLayoutManager);
+//        listPayments.setLayoutManager(linearLayoutManager);
+        listPayments.setLayoutManager(new GridLayoutManager(getContext(), LinearLayoutManager.VERTICAL));
         listPayments.setAdapter(paymentsAdapter);
         paymentsAdapter.notifyDataSetChanged();
 
@@ -201,6 +232,40 @@ public abstract class PaymentDialog extends Dialog  {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.MATCH_PARENT;
             dialog.getWindow().setLayout(width, height);
+        }
+    }
+
+    private void showForm(String coreId) {
+        if (coreId.equalsIgnoreCase("1")) { //cash
+            formCash.setVisibility(View.VISIBLE);
+            formCard.setVisibility(GONE);
+            formVoucher.setVisibility(GONE);
+            formOnline.setVisibility(GONE);
+            formForex.setVisibility(GONE);
+        } else if (coreId.equalsIgnoreCase("2")) { //card
+            formCash.setVisibility(GONE);
+            formCard.setVisibility(View.VISIBLE);
+            formVoucher.setVisibility(GONE);
+            formOnline.setVisibility(GONE);
+            formForex.setVisibility(GONE);
+        } else if (coreId.equalsIgnoreCase("3")) { //online
+            formCash.setVisibility(View.GONE);
+            formCard.setVisibility(GONE);
+            formVoucher.setVisibility(GONE);
+            formOnline.setVisibility(View.VISIBLE);
+            formForex.setVisibility(GONE);
+        } else if (coreId.equalsIgnoreCase("5")) { //voucher
+            formCash.setVisibility(View.GONE);
+            formCard.setVisibility(GONE);
+            formVoucher.setVisibility(View.VISIBLE);
+            formOnline.setVisibility(GONE);
+            formForex.setVisibility(GONE);
+        } else if (coreId.equalsIgnoreCase("6")) { //forex
+            formCash.setVisibility(View.GONE);
+            formCard.setVisibility(GONE);
+            formVoucher.setVisibility(GONE);
+            formOnline.setVisibility(GONE);
+            formForex.setVisibility(View.VISIBLE);
         }
     }
 }

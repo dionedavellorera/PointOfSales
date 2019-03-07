@@ -16,6 +16,8 @@ public class AddRoomPriceRequest extends BaseRequest {
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("post", GsonHelper.getGson().toJson(addRateProductList));
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
     }
 
     public Map<String, String> getMapValue() {

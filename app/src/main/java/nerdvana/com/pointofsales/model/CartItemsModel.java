@@ -18,6 +18,7 @@ public class CartItemsModel {
     private Double unitPrice;
     private boolean isSelected;
     private String postId;
+    private boolean forVoid;
     public CartItemsModel(String controlNo, int roomId,
                           int productId, int roomTypeId,
                           int roomRateId, int roomRatePriceId,
@@ -26,7 +27,7 @@ public class CartItemsModel {
                           int quantity, boolean isPosted,
                           Double markUp, int isPriceChanged,
                           Double unitPrice, boolean isSelected,
-                          String postId) {
+                          String postId, boolean forVoid) {
         this.controlNo = controlNo;
         this.roomId = roomId;
         this.productId = productId;
@@ -44,6 +45,15 @@ public class CartItemsModel {
         this.unitPrice = unitPrice;
         this.isSelected = isSelected;
         this.postId = postId;
+        this.forVoid = forVoid;
+    }
+
+    public boolean isForVoid() {
+        return forVoid;
+    }
+
+    public void setForVoid(boolean forVoid) {
+        this.forVoid = forVoid;
     }
 
     public String getPostId() {
@@ -80,6 +90,10 @@ public class CartItemsModel {
 
     public boolean isPosted() {
         return isPosted;
+    }
+
+    public void setPosted(boolean posted) {
+        isPosted = posted;
     }
 
     public int getQuantity() {
@@ -128,5 +142,9 @@ public class CartItemsModel {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

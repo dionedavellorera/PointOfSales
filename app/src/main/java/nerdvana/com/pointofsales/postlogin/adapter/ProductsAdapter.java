@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
@@ -25,9 +28,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<ProductsModel> productsModelList;
     private List<ProductsModel> productsFilteredList;
     private ProductsContract productsContract;
-    public ProductsAdapter(List<ProductsModel> productsModelList, ProductsContract productsContract) {
+    private Context context;
+    public ProductsAdapter(List<ProductsModel> productsModelList, ProductsContract productsContract, Context context) {
         this.productsModelList = new ArrayList<>(productsModelList);
-
+        this.context = context;
         this.productsContract = productsContract;
         productsFilteredList = new ArrayList<>(productsModelList);
 
@@ -98,7 +102,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
         ((ProductsViewHolder)holder).name.setText(productsModel.getName());
-        ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getPrice()));
+
+        ((ProductsViewHolder)holder).price.setText(
+                SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_SYMBOL_LEFT) + " " +
+                String.valueOf(productsModel.getPrice()) + " " +
+                        SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_SYMBOL_RIGHT));
         ImageLoader.loadImage(productsModel.getImageUrls()[0], ((ProductsViewHolder)holder).imageUrl);
     }
 

@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.background;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import org.joda.time.DateTime;
@@ -10,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.ProductConstants;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
@@ -19,9 +22,12 @@ import nerdvana.com.pointofsales.model.ProductsModel;
 public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsModel>> {
     private AsyncContract asyncContract;
     private FetchProductsResponse fetchProductsResponse;
-    public ProductsAsync(AsyncContract asyncContract, FetchProductsResponse fetchProductsResponse) {
+    private Context context;
+    public ProductsAsync(AsyncContract asyncContract, FetchProductsResponse fetchProductsResponse,
+                         Context context) {
         this.asyncContract = asyncContract;
         this.fetchProductsResponse = fetchProductsResponse;
+        this.context = context;
     }
 
     @Override
@@ -46,7 +52,7 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                 }
             }
 
-            amount = ((amount * (r.getMarkUp() + 1)));
+            amount = ((amount * (r.getMarkUp() + 1))) * Double.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_CURRENCY_VALUE));
 
 
 

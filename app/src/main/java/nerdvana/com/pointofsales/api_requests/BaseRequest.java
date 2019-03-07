@@ -7,4 +7,7 @@ public class BaseRequest {
     protected String machineNumber = SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID);
     protected String userId = SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID);
     protected String tax = SharedPreferenceManager.getString(null, ApplicationConstants.TAX_RATE);
+    protected String currencyId = SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_ID);
+    protected String currencyValue = SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE);
+
 }

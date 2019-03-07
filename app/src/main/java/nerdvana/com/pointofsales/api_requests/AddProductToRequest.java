@@ -22,9 +22,18 @@ public class AddProductToRequest extends BaseRequest {
         mapValue.put("post", GsonHelper.getGson().toJson(addRateProductList));
         mapValue.put("void", GsonHelper.getGson().toJson(voidList));
         mapValue.put("emp_id", "762");
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
     }
 
     public Map<String, String> getMapValue() {
         return mapValue;
+    }
+
+    @Override
+    public String toString() {
+        return "AddProductToRequest{" +
+                "mapValue=" + mapValue +
+                '}';
     }
 }

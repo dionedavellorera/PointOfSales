@@ -41,9 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
@@ -93,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        fetchDefaultCurrencyRequest();
+
         initializeViews();
         initializeFragments();
 
@@ -102,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         BusProvider.getInstance().post(new TestRequest("test"));
 
         requestRoomStatusList();
+
 //
 //        Log.d("TAG", "SERIAL: " + Build.SERIAL);
 //        Log.d("TAG","MODEL: " + Build.MODEL);
@@ -383,5 +388,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     GsonHelper.getGson().toJson(fetchUserResponse.getResult()),
                     ApplicationConstants.USER_JSON);
         }
+    }
+
+    private void fetchDefaultCurrencyRequest() {
+        BusProvider.getInstance().post(new FetchDefaultCurrencyRequest());
+    }
+
+    @Subscribe
+    public void fetchDefaultCurrencyRequest(FetchDefaultCurrenyResponse fetchDefaultCurrenyResponse) {
+        SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(fetchDefaultCurrenyResponse.getResult().getValue()) ,ApplicationConstants.DEFAULT_CURRENCY_VALUE);
+        SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(fetchDefaultCurrenyResponse.getResult().getId()) ,ApplicationConstants.DEFAULT_CURRENCY_ID);
+        SharedPreferenceManager.saveString(getApplicationContext(), fetchDefaultCurrenyResponse.getResult().getSymbolLeft() == null ? "" : fetchDefaultCurrenyResponse.getResult().getSymbolLeft() ,ApplicationConstants.DEFAULT_SYMBOL_LEFT);
+        SharedPreferenceManager.saveString(getApplicationContext(), fetchDefaultCurrenyResponse.getResult().getSymbolRight() == null ? "" : fetchDefaultCurrenyResponse.getResult().getSymbolRight().toString() ,ApplicationConstants.DEFAULT_SYMBOL_RIGHT);
+        SharedPreferenceManager.saveString(getApplicationContext(), fetchDefaultCurrenyResponse.getResult().getCountryCode() ,ApplicationConstants.COUNTRY_CODE);
     }
 }

@@ -72,7 +72,6 @@
             android:layout_height="match_parent"
             android:background="@drawable/gradientrightbg"/>
 
-
     </android.support.v4.widget.SwipeRefreshLayout>
 
 

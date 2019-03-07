@@ -19,6 +19,7 @@ public abstract class OpenPriceDialog extends Dialog {
     private TextView name;
     private TextView oldPrice;
     private EditText newPrice;
+    private EditText newQty;
     private Button submit;
     private CartItemsModel cartItemsModel;
     private int selectedItemPosition = 0;
@@ -39,25 +40,26 @@ public abstract class OpenPriceDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_openprice);
         name = findViewById(R.id.name);
         oldPrice = findViewById(R.id.oldPrice);
         newPrice = findViewById(R.id.newPrice);
+        newQty = findViewById(R.id.newQty);
         submit = findViewById(R.id.submit);
         name.setText(cartItemsModel.getName());
         oldPrice.setText(String.valueOf(cartItemsModel.getAmount()));
-
+        newPrice.setText(String.valueOf(cartItemsModel.getAmount()));
+        newQty.setText(String.valueOf(cartItemsModel.getQuantity()));
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(newPrice.getText().toString())) {
-                    openPriceChangeSuccess(Double.valueOf(newPrice.getText().toString()), selectedItemPosition);
+                    openPriceChangeSuccess(Integer.valueOf(newQty.getText().toString()), Double.valueOf(newPrice.getText().toString()), selectedItemPosition);
                 }
 
             }
         });
     }
 
-    public abstract void openPriceChangeSuccess(Double newPrice, int position);
+    public abstract void openPriceChangeSuccess(int quantity, Double newPrice, int position);
 }

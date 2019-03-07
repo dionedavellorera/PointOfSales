@@ -8,6 +8,7 @@ import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
@@ -129,4 +130,9 @@ public interface IUsers {
     @POST("checkOut")
     @FormUrlEncoded
     Call<CheckOutResponse> checkOut(@FieldMap Map<String, String> params);
+
+    //fetchDefaultCurrency
+    @POST("fetchDefaultCurrency")
+    @FormUrlEncoded
+    Call<FetchDefaultCurrenyResponse> fetchDefaultCurrency(@FieldMap Map<String, String> params);
 }

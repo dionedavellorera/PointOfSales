@@ -23,6 +23,12 @@ public class ApplicationConstants {
     public static final String OR_INFO_DISPLAY = "or_info_display";
     public static final String TAX_RATE = "tax_rate";
 
+    public static final String DEFAULT_CURRENCY_ID = "currency_id";
+    public static final String DEFAULT_CURRENCY_VALUE = "currency_value";
+    public static final String DEFAULT_SYMBOL_LEFT = "symbol_left";
+    public static final String DEFAULT_SYMBOL_RIGHT = "symbol_right";
+    public static final String COUNTRY_CODE = "country_code";
+
     public static final String ROOM_AREA_JSON = "room_area_json";
     public static final String USER_JSON = "user_json";
 
