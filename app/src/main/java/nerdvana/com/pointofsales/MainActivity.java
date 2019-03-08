@@ -41,10 +41,16 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
@@ -95,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fetchDefaultCurrencyRequest();
 
         initializeViews();
         initializeFragments();
@@ -106,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         BusProvider.getInstance().post(new TestRequest("test"));
 
         requestRoomStatusList();
-
+        fetchDefaultCurrencyRequest();
 //
 //        Log.d("TAG", "SERIAL: " + Build.SERIAL);
 //        Log.d("TAG","MODEL: " + Build.MODEL);
@@ -402,4 +407,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         SharedPreferenceManager.saveString(getApplicationContext(), fetchDefaultCurrenyResponse.getResult().getSymbolRight() == null ? "" : fetchDefaultCurrenyResponse.getResult().getSymbolRight().toString() ,ApplicationConstants.DEFAULT_SYMBOL_RIGHT);
         SharedPreferenceManager.saveString(getApplicationContext(), fetchDefaultCurrenyResponse.getResult().getCountryCode() ,ApplicationConstants.COUNTRY_CODE);
     }
+
+
 }

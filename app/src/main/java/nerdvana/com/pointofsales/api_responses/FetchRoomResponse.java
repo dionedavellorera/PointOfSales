@@ -749,7 +749,7 @@ public class FetchRoomResponse {
         private String plateNo;
         @SerializedName("steward")
         @Expose
-        private Object steward;
+        private Integer steward;
         @SerializedName("user_id")
         @Expose
         private Integer userId;
@@ -910,11 +910,11 @@ public class FetchRoomResponse {
             this.plateNo = plateNo;
         }
 
-        public Object getSteward() {
+        public Integer getSteward() {
             return steward;
         }
 
-        public void setSteward(Object steward) {
+        public void setSteward(Integer steward) {
             this.steward = steward;
         }
 
@@ -1038,42 +1038,51 @@ public class FetchRoomResponse {
         @SerializedName("guest_info_id")
         @Expose
         private Integer guestInfoId;
+        @SerializedName("employee_id")
+        @Expose
+        private Object employeeId;
+        @SerializedName("customer_id")
+        @Expose
+        private Integer customerId;
         @SerializedName("payment_type_id")
         @Expose
-        private Object paymentTypeId;
-        @SerializedName("rc")
-        @Expose
-        private Integer rc;
-        @SerializedName("fnb")
-        @Expose
-        private Integer fnb;
-        @SerializedName("oth")
-        @Expose
-        private Integer oth;
+        private Integer paymentTypeId;
         @SerializedName("ot_hours")
         @Expose
-        private Integer otHours;
+        private Double otHours;
         @SerializedName("ot_amount")
         @Expose
-        private Integer otAmount;
+        private Double otAmount;
         @SerializedName("xPerson_amount")
         @Expose
-        private Integer xPersonAmount;
+        private Double xPersonAmount;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("advance")
         @Expose
-        private Integer advance;
+        private Double advance;
         @SerializedName("tendered")
         @Expose
-        private Integer tendered;
+        private Double tendered;
         @SerializedName("change")
         @Expose
-        private Integer change;
+        private Double change;
+        @SerializedName("is_soa")
+        @Expose
+        private Integer isSoa;
+        @SerializedName("is_checkout")
+        @Expose
+        private Integer isCheckout;
+        @SerializedName("room_area_id")
+        @Expose
+        private Integer roomAreaId;
+        @SerializedName("is_foc")
+        @Expose
+        private Integer isFoc;
         @SerializedName("vatable")
         @Expose
         private Double vatable;
@@ -1082,7 +1091,13 @@ public class FetchRoomResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
+        @SerializedName("currency_id")
+        @Expose
+        private Integer currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -1112,15 +1127,7 @@ public class FetchRoomResponse {
         private Object deletedAt;
         @SerializedName("post")
         @Expose
-        private List<Post> post;
-
-        public List<Post> getPost() {
-            return post;
-        }
-
-        public void setPost(List<Post> post) {
-            this.post = post;
-        }
+        private List<Post> post = null;
 
         public Integer getId() {
             return id;
@@ -1154,100 +1161,124 @@ public class FetchRoomResponse {
             this.guestInfoId = guestInfoId;
         }
 
-        public Object getPaymentTypeId() {
+        public Object getEmployeeId() {
+            return employeeId;
+        }
+
+        public void setEmployeeId(Object employeeId) {
+            this.employeeId = employeeId;
+        }
+
+        public Integer getCustomerId() {
+            return customerId;
+        }
+
+        public void setCustomerId(Integer customerId) {
+            this.customerId = customerId;
+        }
+
+        public Integer getPaymentTypeId() {
             return paymentTypeId;
         }
 
-        public void setPaymentTypeId(Object paymentTypeId) {
+        public void setPaymentTypeId(Integer paymentTypeId) {
             this.paymentTypeId = paymentTypeId;
         }
 
-        public Integer getRc() {
-            return rc;
-        }
-
-        public void setRc(Integer rc) {
-            this.rc = rc;
-        }
-
-        public Integer getFnb() {
-            return fnb;
-        }
-
-        public void setFnb(Integer fnb) {
-            this.fnb = fnb;
-        }
-
-        public Integer getOth() {
-            return oth;
-        }
-
-        public void setOth(Integer oth) {
-            this.oth = oth;
-        }
-
-        public Integer getOtHours() {
+        public Double getOtHours() {
             return otHours;
         }
 
-        public void setOtHours(Integer otHours) {
+        public void setOtHours(Double otHours) {
             this.otHours = otHours;
         }
 
-        public Integer getOtAmount() {
+        public Double getOtAmount() {
             return otAmount;
         }
 
-        public void setOtAmount(Integer otAmount) {
+        public void setOtAmount(Double otAmount) {
             this.otAmount = otAmount;
         }
 
-        public Integer getXPersonAmount() {
+        public Double getXPersonAmount() {
             return xPersonAmount;
         }
 
-        public void setXPersonAmount(Integer xPersonAmount) {
+        public void setXPersonAmount(Double xPersonAmount) {
             this.xPersonAmount = xPersonAmount;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getAdvance() {
+        public Double getAdvance() {
             return advance;
         }
 
-        public void setAdvance(Integer advance) {
+        public void setAdvance(Double advance) {
             this.advance = advance;
         }
 
-        public Integer getTendered() {
+        public Double getTendered() {
             return tendered;
         }
 
-        public void setTendered(Integer tendered) {
+        public void setTendered(Double tendered) {
             this.tendered = tendered;
         }
 
-        public Integer getChange() {
+        public Double getChange() {
             return change;
         }
 
-        public void setChange(Integer change) {
+        public void setChange(Double change) {
             this.change = change;
+        }
+
+        public Integer getIsSoa() {
+            return isSoa;
+        }
+
+        public void setIsSoa(Integer isSoa) {
+            this.isSoa = isSoa;
+        }
+
+        public Integer getIsCheckout() {
+            return isCheckout;
+        }
+
+        public void setIsCheckout(Integer isCheckout) {
+            this.isCheckout = isCheckout;
+        }
+
+        public Integer getRoomAreaId() {
+            return roomAreaId;
+        }
+
+        public void setRoomAreaId(Integer roomAreaId) {
+            this.roomAreaId = roomAreaId;
+        }
+
+        public Integer getIsFoc() {
+            return isFoc;
+        }
+
+        public void setIsFoc(Integer isFoc) {
+            this.isFoc = isFoc;
         }
 
         public Double getVatable() {
@@ -1266,12 +1297,28 @@ public class FetchRoomResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
+        }
+
+        public Integer getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(Integer currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
         }
 
         public Integer getXSkip() {
@@ -1344,6 +1391,14 @@ public class FetchRoomResponse {
 
         public void setDeletedAt(Object deletedAt) {
             this.deletedAt = deletedAt;
+        }
+
+        public List<Post> getPost() {
+            return post;
+        }
+
+        public void setPost(List<Post> post) {
+            this.post = post;
         }
 
     }

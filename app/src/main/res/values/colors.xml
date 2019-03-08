@@ -19,4 +19,7 @@
     <color name="highlight">#474A52</color>
     <color name="navyblue">#212c40</color>
 
+    <color name="colorRed">#fe2e2e</color>
+    <color name="colorGreen">#00d110</color>
+
 </resources>

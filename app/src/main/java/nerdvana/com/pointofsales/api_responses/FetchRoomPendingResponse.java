@@ -1617,6 +1617,28 @@ public class FetchRoomPendingResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("currency_id")
+        @Expose
+        private Double currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
+
+        public Double getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(Double currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
+        }
 
         public Integer getId() {
             return id;

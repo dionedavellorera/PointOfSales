@@ -30,6 +30,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(106,"SOA", "",7));
         buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",8));
         buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",9));
+        buttonsModelList.add(new ButtonsModel(109,"FOC", "",10));
 
         Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
             @Override

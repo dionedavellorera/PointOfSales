@@ -92,13 +92,13 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                 }
             }
             int unpostedOrderCount = 0;
-            if (r.getTransaction() != null) {
-                if (r.getTransaction().getTransaction() != null) {
-                    if (r.getTransaction().getTransaction().getPost().size() > 0) {
-                        unpostedOrderCount = r.getTransaction().getTransaction().getPost().size();
-                    }
-                }
-            }
+//            if (r.getTransaction() != null) {
+//                if (r.getTransaction().getTransaction() != null) {
+//                    if (r.getTransaction().getTransaction().getPost().size() > 0) {
+//                        unpostedOrderCount = r.getTransaction().getTransaction().getPost().size();
+//                    }
+//                }
+//            }
 
             productsModelList.add(
                     new RoomTableModel (

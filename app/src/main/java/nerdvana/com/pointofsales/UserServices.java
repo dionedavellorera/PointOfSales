@@ -7,7 +7,10 @@ import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
+import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
@@ -31,7 +34,10 @@ import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -247,6 +253,27 @@ public class UserServices extends BaseService {
     public void onReceiveCheckoutRequest(FetchDefaultCurrencyRequest fetchDefaultCurrencyRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchDefaultCurrenyResponse> request = iUsers.fetchDefaultCurrency(fetchDefaultCurrencyRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveCheckoutRequest(FetchCurrencyExceptDefaultRequest fetchCurrencyExceptDefaultRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchCurrencyExceptDefaultResponse> request = iUsers.fetchCurrencyExceptDefault(fetchCurrencyExceptDefaultRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveFetchArOnline(FetchArOnlineRequest fetchArOnlineRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchArOnlineResponse> request = iUsers.fetchArOnline(fetchArOnlineRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onReceiveFetchArOnline(FetchCreditCardRequest fetchCreditCardRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchCreditCardResponse> request = iUsers.fetchCreditCard(fetchCreditCardRequest.getMapValue());
         asyncRequest(request);
     }
 }

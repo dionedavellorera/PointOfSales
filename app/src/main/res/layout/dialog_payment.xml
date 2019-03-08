@@ -49,60 +49,187 @@
         </LinearLayout>
 
         <LinearLayout
+            android:orientation="vertical"
             android:visibility="gone"
             android:id="@+id/formCard"
             android:layout_above="@id/add"
             android:layout_toRightOf="@id/cardPayments"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
+
+            <Spinner
+                android:layout_margin="10dp"
+                android:id="@+id/spinnerCreditCard"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="this is card"/>
+                android:layout_height="wrap_content"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Card number"
+                    android:id="@+id/cardNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Expiration"
+                    android:id="@+id/expiration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Authorization"
+                    android:id="@+id/authorization"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Remarks"
+                    android:id="@+id/remarks"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
+            android:orientation="vertical"
             android:visibility="gone"
             android:id="@+id/formOnline"
             android:layout_above="@id/add"
             android:layout_toRightOf="@id/cardPayments"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
+
+            <Spinner
+                android:layout_margin="10dp"
+                android:id="@+id/spinnerOnline"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="this is online"/>
+                android:layout_height="wrap_content"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Voucher code"
+                    android:id="@+id/voucherCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="Voucher amount"
+                    android:id="@+id/voucherAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
         </LinearLayout>
 
         <LinearLayout
+            android:orientation="vertical"
             android:visibility="gone"
             android:id="@+id/formGiftCheck"
             android:layout_above="@id/add"
             android:layout_toRightOf="@id/cardPayments"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="this is gift check"/>
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="GC code"
+                    android:id="@+id/gcCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="GC amount"
+                    android:id="@+id/gcAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
+            android:orientation="vertical"
             android:visibility="gone"
             android:id="@+id/formForex"
             android:layout_above="@id/add"
             android:layout_toRightOf="@id/cardPayments"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
+            <Spinner
+                android:layout_margin="10dp"
+                android:id="@+id/spinnerForex"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="this is forex"/>
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_margin="10dp"
+                android:id="@+id/forexRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:hint="forex amount"
+                    android:id="@+id/forexAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </android.support.design.widget.TextInputLayout>
+
+
+
         </LinearLayout>
 
 
 
+
         <Button
+            android:layout_margin="10dp"
             android:layout_alignParentBottom="true"
             android:id="@+id/add"
             android:layout_alignParentRight="true"
@@ -114,6 +241,7 @@
 
 
     <RelativeLayout
+        android:layout_margin="10dp"
         android:layout_weight="0.5"
         android:layout_width="0dp"
         android:layout_height="match_parent">
@@ -204,7 +332,8 @@
 
 
         <Button
-
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorRed"
             android:layout_alignParentBottom="true"
             android:id="@+id/pay"
             android:layout_alignParentRight="true"

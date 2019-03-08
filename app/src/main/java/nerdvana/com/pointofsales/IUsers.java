@@ -7,7 +7,10 @@ import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -135,4 +138,19 @@ public interface IUsers {
     @POST("fetchDefaultCurrency")
     @FormUrlEncoded
     Call<FetchDefaultCurrenyResponse> fetchDefaultCurrency(@FieldMap Map<String, String> params);
+
+    //fetchCurrencyExceptDefault
+    @POST("fetchCurrencyExceptDefault")
+    @FormUrlEncoded
+    Call<FetchCurrencyExceptDefaultResponse> fetchCurrencyExceptDefault(@FieldMap Map<String, String> params);
+
+    //fetchAROnline
+    @POST("fetchAROnline")
+    @FormUrlEncoded
+    Call<FetchArOnlineResponse> fetchArOnline(@FieldMap Map<String, String> params);
+
+    //fetchCreditCard
+    @POST("fetchCreditCard")
+    @FormUrlEncoded
+    Call<FetchCreditCardResponse> fetchCreditCard(@FieldMap Map<String, String> params);
 }
