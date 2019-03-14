@@ -3,7 +3,7 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WelcomeGuestRequest extends BaseRequest { 
+public class WelcomeGuestRequest extends BaseRequest {
     private String roomId;
     private String roomTypeId;
     private String roomRateId;
