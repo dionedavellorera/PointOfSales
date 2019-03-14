@@ -13,6 +13,8 @@ public class CheckInRequest extends BaseRequest {
         mapValue.put("pos_id", machineNumber);
         mapValue.put("room_rate_price_id", roomRatePriceId);
         mapValue.put("tax", tax);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
     }
 
     public Map<String, String> getMapValue() {

@@ -16,6 +16,9 @@ public class GetOrderRequest extends BaseRequest{
         mapValue.put("pos_id", machineNumber);
         mapValue.put("user_id", userId);
         mapValue.put("room_area_id", roomAreaId);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
+
 
     }
 

@@ -32,6 +32,25 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",9));
         buttonsModelList.add(new ButtonsModel(109,"FOC", "",10));
 
+
+
+
+
+//        buttonsModelList.add(new ButtonsModel(110,"VALIDATE SLIP", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"IN-TRANSIT", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"CALCULATOR", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"POST VOID", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"SPLIT BILL", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"TENDER DECLARATION", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"PROMO", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"CHARGE REDEMPTION", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"DISCOUNT EXCEMPT", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"SAFEKEEPING", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"ADJUSTMENT", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"REPRINT OR", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"VIEW RECEIPT", "",10));
+//        buttonsModelList.add(new ButtonsModel(110,"DEPOSIT RECALL", "",10));
+
         Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
             @Override
             public int compare(ButtonsModel o1, ButtonsModel o2) {

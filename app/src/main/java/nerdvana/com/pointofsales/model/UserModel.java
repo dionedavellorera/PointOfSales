@@ -61,4 +61,8 @@ public class UserModel {
     public String getSystemType() {
         return systemType;
     }
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
+    }
 }

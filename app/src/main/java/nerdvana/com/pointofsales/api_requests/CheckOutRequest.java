@@ -10,13 +10,14 @@ import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 public class CheckOutRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
-    public CheckOutRequest(String roomId, String controlNumber) {
+    public CheckOutRequest(String roomId, String controlNumber, String roomBoyId) {
         mapValue = new HashMap<>();
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("room_id", roomId);
         mapValue.put("control_no", controlNumber);
-    }
+        mapValue.put("emp_id", roomBoyId); //TODO
+     }
 
     public Map<String, String> getMapValue() {
         return mapValue;

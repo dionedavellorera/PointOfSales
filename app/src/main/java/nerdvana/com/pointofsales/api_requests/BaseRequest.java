@@ -9,5 +9,6 @@ public class BaseRequest {
     protected String tax = SharedPreferenceManager.getString(null, ApplicationConstants.TAX_RATE);
     protected String currencyId = SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE);
     protected String currencyValue = SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE);
+    protected String branchId = SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ID);
 
 }

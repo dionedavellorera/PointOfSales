@@ -171,6 +171,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
             SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getTax()), ApplicationConstants.TAX_RATE);
+            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getId()), ApplicationConstants.BRANCH_ID);
 
             if (setupDialog != null) {
                 if (setupDialog.isShowing()) setupDialog.dismiss();

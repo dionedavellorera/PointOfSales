@@ -85,7 +85,7 @@ public class FetchRoomResponse {
         @SerializedName("creator")
         @Expose
         private Creator creator;
-        @SerializedName("type")
+        @SerializedName("branch_type")
         @Expose
         private Type type;
         @SerializedName("status")
@@ -1094,7 +1094,7 @@ public class FetchRoomResponse {
         private Double vatExempt;
         @SerializedName("currency_id")
         @Expose
-        private Integer currencyId;
+        private String currencyId;
         @SerializedName("currency_value")
         @Expose
         private Double currencyValue;
@@ -1305,11 +1305,11 @@ public class FetchRoomResponse {
             this.vatExempt = vatExempt;
         }
 
-        public Integer getCurrencyId() {
+        public String getCurrencyId() {
             return currencyId;
         }
 
-        public void setCurrencyId(Integer currencyId) {
+        public void setCurrencyId(String currencyId) {
             this.currencyId = currencyId;
         }
 
@@ -1413,13 +1413,13 @@ public class FetchRoomResponse {
         private String roomRate;
         @SerializedName("minHr")
         @Expose
-        private Integer minHr;
+        private Double minHr;
         @SerializedName("maxHr")
         @Expose
-        private Integer maxHr;
+        private Double maxHr;
         @SerializedName("gracePeriod")
         @Expose
-        private Integer gracePeriod;
+        private Double gracePeriod;
         @SerializedName("is_promo")
         @Expose
         private Integer isPromo;
@@ -1455,27 +1455,27 @@ public class FetchRoomResponse {
             this.roomRate = roomRate;
         }
 
-        public Integer getMinHr() {
+        public Double getMinHr() {
             return minHr;
         }
 
-        public void setMinHr(Integer minHr) {
+        public void setMinHr(Double minHr) {
             this.minHr = minHr;
         }
 
-        public Integer getMaxHr() {
+        public Double getMaxHr() {
             return maxHr;
         }
 
-        public void setMaxHr(Integer maxHr) {
+        public void setMaxHr(Double maxHr) {
             this.maxHr = maxHr;
         }
 
-        public Integer getGracePeriod() {
+        public Double getGracePeriod() {
             return gracePeriod;
         }
 
-        public void setGracePeriod(Integer gracePeriod) {
+        public void setGracePeriod(Double gracePeriod) {
             this.gracePeriod = gracePeriod;
         }
 
@@ -1695,19 +1695,19 @@ public class FetchRoomResponse {
         private Object department;
         @SerializedName("qty")
         @Expose
-        private Integer qty;
+        private Double qty;
         @SerializedName("unit_cost")
         @Expose
-        private Integer unitCost;
+        private Double unitCost;
         @SerializedName("price")
         @Expose
-        private Integer price;
+        private Double price;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("tax_info")
         @Expose
         private String taxInfo;
@@ -1719,7 +1719,7 @@ public class FetchRoomResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("room_area_id")
         @Expose
         private Integer roomAreaId;
@@ -1866,43 +1866,43 @@ public class FetchRoomResponse {
             this.department = department;
         }
 
-        public Integer getQty() {
+        public Double getQty() {
             return qty;
         }
 
-        public void setQty(Integer qty) {
+        public void setQty(Double qty) {
             this.qty = qty;
         }
 
-        public Integer getUnitCost() {
+        public Double getUnitCost() {
             return unitCost;
         }
 
-        public void setUnitCost(Integer unitCost) {
+        public void setUnitCost(Double unitCost) {
             this.unitCost = unitCost;
         }
 
-        public Integer getPrice() {
+        public Double getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(Double price) {
             this.price = price;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
@@ -1930,11 +1930,11 @@ public class FetchRoomResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 

@@ -3,24 +3,7 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WelcomeGuestRequest extends BaseRequest {
-//    room_id:1
-//    room_type_id:1
-//    room_rate_id:1
-//    room_rate_price_id:1
-//    car_id:
-//    vehicle_id:1
-//    guest_type_id:1
-//    customer:Dione Dione
-//    plate_no:
-//    steward:
-//    checkIn:
-//    checkOut:
-//    user_id:1
-//    pos_id:1
-//    adult:2
-//    child:
-//    tax:12
+public class WelcomeGuestRequest extends BaseRequest { 
     private String roomId;
     private String roomTypeId;
     private String roomRateId;
@@ -69,6 +52,9 @@ public class WelcomeGuestRequest extends BaseRequest {
         mapValue.put("child", child);
         mapValue.put("tax", tax);
         mapValue.put("room_area_id", roomAreaId);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
+
 
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;

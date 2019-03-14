@@ -23,6 +23,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
+import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.GetOrderRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
@@ -50,6 +51,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
@@ -274,6 +276,14 @@ public class UserServices extends BaseService {
     public void onReceiveFetchArOnline(FetchCreditCardRequest fetchCreditCardRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchCreditCardResponse> request = iUsers.fetchCreditCard(fetchCreditCardRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    //focTransaction
+    @Subscribe
+    public void onReceiveFocRequest(FocRequest focRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FocResponse> request = iUsers.focTransaction(focRequest.getMapValue());
         asyncRequest(request);
     }
 }

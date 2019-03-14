@@ -8,6 +8,8 @@ public class FetchRoomPendingRequest extends BaseRequest{
     public FetchRoomPendingRequest(String roomId) {
         mapValue = new HashMap<>();
         mapValue.put("room_id", roomId);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
     }

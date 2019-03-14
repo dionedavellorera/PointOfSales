@@ -106,6 +106,8 @@ public abstract class PaymentDialog extends Dialog  {
     private EditText cardExpiration;
     private EditText authorization;
     private EditText remarks;
+    private EditText cardHoldersName;
+    private EditText creditCardAmount;
     private String cardTypeId;
 
 
@@ -169,11 +171,11 @@ public abstract class PaymentDialog extends Dialog  {
 
         spinnerCreditCard = (Spinner) findViewById(R.id.spinnerCreditCard);
         cardNumber = (EditText) findViewById(R.id.cardNumber);
+        cardHoldersName = (EditText) findViewById(R.id.cardHoldersName);
+        creditCardAmount = (EditText) findViewById(R.id.creditCardAmount);
         cardExpiration = (EditText) findViewById(R.id.expiration);
         authorization = (EditText) findViewById(R.id.authorization);
         remarks = (EditText) findViewById(R.id.remarks);
-
-
 
         setForexSpinner();
         setVoucherSpinner();
@@ -214,14 +216,6 @@ public abstract class PaymentDialog extends Dialog  {
                 } else {
 
                     if (paymentMethod.getCoreId().equalsIgnoreCase("1")) { //cash
-//                        Log.d("CASH_DATA", new PostedPaymentsModel(
-//                                paymentMethod.getCoreId(),
-//                                amountToPay.getText().toString(),
-//                                paymentMethod.getPaymentType(),
-//                                false,
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-//                                new JSONObject()).toString());
                         postedPaymentList.add(new PostedPaymentsModel(
                                 paymentMethod.getCoreId(),
                                 amountToPay.getText().toString(),
@@ -236,34 +230,22 @@ public abstract class PaymentDialog extends Dialog  {
                         try {
                             jsonObject.put("card_type_id", cardTypeId);
                             jsonObject.put("card_number", cardNumber.getText().toString());
+                            jsonObject.put("account_name", cardHoldersName.getText().toString());
                             jsonObject.put("card_expiration", cardExpiration.getText().toString());
                             jsonObject.put("authorization", authorization.getText().toString());
                             jsonObject.put("remarks", remarks.getText().toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        Log.d("CARD_DATA", new PostedPaymentsModel(
-//                                paymentMethod.getCoreId(),
-//                                forexAmount.getText().toString(),
-//                                paymentMethod.getPaymentType(),
-//                                false,
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-//                                jsonObject).toString());
-
                         postedPaymentList.add(new PostedPaymentsModel(
                                 paymentMethod.getCoreId(),
-                                "0.00",
+                                creditCardAmount.getText().toString(),
                                 paymentMethod.getPaymentType(),
                                 false,
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
                                 jsonObject));
-
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("3")) { //online
-//                        onlineId;
-//                        voucherCode.getText().toString()
-//                        voucherAmount.getText().toString()
                         JSONObject jsonObject = new JSONObject();
                         try {
                             jsonObject.put("online_payment_id", onlineId);
@@ -271,16 +253,6 @@ public abstract class PaymentDialog extends Dialog  {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        Log.d("ONLINE_DATA", new PostedPaymentsModel(
-//                                paymentMethod.getCoreId(),
-//                                voucherAmount.getText().toString(),
-//                                paymentMethod.getPaymentType(),
-//                                false,
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-//                                jsonObject).toString());
-
-
                         postedPaymentList.add(new PostedPaymentsModel(
                                 paymentMethod.getCoreId(),
                                 voucherAmount.getText().toString(),
@@ -291,23 +263,12 @@ public abstract class PaymentDialog extends Dialog  {
                                 jsonObject));
 
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("5")) { //voucher
-//                        gcCode.getText().toString();
-//                        gcAmount.getText().toString();
-
                         JSONObject jsonObject = new JSONObject();
                         try {
                             jsonObject.put("gc_code", gcCode.getText().toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-//                        Log.d("GIFT_CHECK_DATA", new PostedPaymentsModel(
-//                                paymentMethod.getCoreId(),
-//                                gcAmount.getText().toString(),
-//                                paymentMethod.getPaymentType(),
-//                                false,
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-//                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-//                                jsonObject).toString());
                         postedPaymentList.add(new PostedPaymentsModel(
                                 paymentMethod.getCoreId(),
                                 gcAmount.getText().toString(),
@@ -319,21 +280,6 @@ public abstract class PaymentDialog extends Dialog  {
 
 
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("6")) { //forex
-//                        JSONObject jsonObject = new JSONObject();
-//                        try {
-//                            jsonObject.put("testkey", "testval");
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                        Log.d("FOREX_DATA", new PostedPaymentsModel(
-//                                paymentMethod.getCoreId(),
-//                                forexAmount.getText().toString(),
-//                                paymentMethod.getPaymentType(),
-//                                false,
-//                                currencyId,
-//                                currencyValue,
-//                                new JSONObject()).toString());
-
                         postedPaymentList.add(new PostedPaymentsModel(
                                 paymentMethod.getCoreId(),
                                 forexAmount.getText().toString(),
@@ -361,19 +307,15 @@ public abstract class PaymentDialog extends Dialog  {
             }
         });
 
-        //computeTotal()
         computeTotal();
-
 
         paymentsAdapter = new PaymentsAdapter(paymentList, paymentMethodImpl);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-//        listPayments.setLayoutManager(linearLayoutManager);
         listPayments.setLayoutManager(new GridLayoutManager(getContext(), LinearLayoutManager.VERTICAL));
         listPayments.setAdapter(paymentsAdapter);
         paymentsAdapter.notifyDataSetChanged();
-
 
         postedPaymentsAdapter = new PostedPaymentsAdapter(postedPaymentList);
         listPostedPayments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

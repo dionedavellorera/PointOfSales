@@ -58,12 +58,14 @@ import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoReque
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
+import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -77,6 +79,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
@@ -86,6 +89,7 @@ import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmCheckInDialog;
+import nerdvana.com.pointofsales.dialogs.FocDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
 import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
@@ -120,6 +124,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private String currentRoomStatus = "";
     private int roomRateCount = 0;
     private double amountToPay = 0;
+
+    private Double discountPayment = 0.00;
+    private Double advancePayment = 0.00;
+
     List<Integer> roomRateCounter;
     private CheckInDialog checkInDialog;
 
@@ -604,12 +612,37 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 110:// NOT YET AVAILALBLE
+                Toast.makeText(getContext(), "FEATURE NOT YET AVAILABLE", Toast.LENGTH_SHORT).show();
+                break;
             case 109: //FOC
+                FocDialog focDialog = new FocDialog(getActivity(), postedPaymentsList) {
+                    @Override
+                    public void focSuccess() {
+                        dismiss();
+                        Toast.makeText(getContext(), "SUCC FOC", Toast.LENGTH_SHORT).show();
+                        focTransaction();
+                    }
+                };
+                if (selectedRoom != null) {
+                    if (selectedRoom.getStatus().equalsIgnoreCase("17")) {
+
+                        if (advancePayment != 0 || discountPayment != 0) {
+                            Toast.makeText(getContext(), "Please remove advance payment / discount", Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (!focDialog.isShowing()) focDialog.show();
+                        }
+
+
+                    } else {
+                        Toast.makeText(getContext(), "Room not soa", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "No room selected", Toast.LENGTH_SHORT).show();
+                }
                 break;
                 //
             case 108: //show order slip form
-
-                Log.d("ORDERSLIP", String.valueOf(orderSlipList.size()));
 
                 OrderSlipDialog orderSlipDialog = new OrderSlipDialog(getActivity(), orderSlipList);
                 if (selectedRoom != null) {
@@ -618,11 +651,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     } else {
                         Toast.makeText(getContext(), "Room not occupied / soa", Toast.LENGTH_SHORT).show();
                     }
-
                 } else {
                     Toast.makeText(getContext(), "No room selected", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
             case 107: //CHECK IN - WAITING GUEST (DIRTY / RC)
                 if (selectedRoom.getStatus().equalsIgnoreCase("32") ||
@@ -632,10 +663,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 } else {
                     Toast.makeText(getContext(), "Room already checked in", Toast.LENGTH_SHORT).show();
                 }
-
                 break;
             case 106: //PRINT SOA
-                Log.d("TESTPRINT", currentRoomStatus);
                 if (selectedRoom != null) {
                     if (selectedRoom.isTakeOut()) {
                         printSoaRequest("", selectedRoom.getControlNo());
@@ -672,41 +701,84 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             totalPayments += Double.valueOf(ppm.getAmount());
                         }
 
-                        if (totalPayments >= totalBalance) {
-                            if (paymentsToPost.size() > 0) {
-                                if (selectedRoom.isTakeOut()) {
-                                    postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
-                                } else {
-                                    postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
-                                }
+                        if (cartItemList.size() == 0) {
+                            //no order and prompt to cancel order, disregard all payments
+                            if (selectedRoom.isTakeOut()) {
+                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which){
+                                            case DialogInterface.BUTTON_POSITIVE:
+                                                checkoutRoom("",
+                                                        selectedRoom.getControlNo());
+                                                break;
+
+                                            case DialogInterface.BUTTON_NEGATIVE:
+                                                dismiss();
+                                                break;
+                                        }
+                                    }
+                                };
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
+                                        .setPositiveButton("Yes", dialogClickListener)
+                                        .setNegativeButton("No", dialogClickListener).show();
                             } else {
-                                Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
+
+                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which){
+                                            case DialogInterface.BUTTON_POSITIVE:
+                                                dismiss();
+                                                break;
+                                            case DialogInterface.BUTTON_NEGATIVE:
+                                                dismiss();
+                                                break;
+                                        }
+                                    }
+                                };
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
+                                        .setPositiveButton("Ok", dialogClickListener).show();
+
                             }
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (selectedRoom.isTakeOut()) {
-                                        Log.d("CHECKOUT_LOG", "TAKEOUT_OFF");
-                                        checkoutRoom("",
-                                                selectedRoom.getControlNo());
-                                    } else {
-                                        Log.d("CHECKOUT_LOG", "ROOM_OFF");
-                                        checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
-                                                "");
-                                    }
-
-
-                                }
-                            }, 500);
-
-
-
-                            dismiss();
                         } else {
-                            Toast.makeText(getContext(), "Payment is less than balance", Toast.LENGTH_SHORT).show();
-                        }
+                            if (totalPayments >= totalBalance) {
+                                if (paymentsToPost.size() > 0) {
+                                    if (selectedRoom.isTakeOut()) {
+                                        postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
+                                    } else {
+                                        postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                                    }
+                                } else {
+                                    Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
+                                }
 
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (selectedRoom.isTakeOut()) {
+                                            Log.d("CHECKOUT_LOG", "TAKEOUT_OFF");
+                                            checkoutRoom("",
+                                                    selectedRoom.getControlNo());
+                                        } else {
+                                            Log.d("CHECKOUT_LOG", "ROOM_OFF");
+                                            checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                                    "");
+                                        }
+
+
+                                    }
+                                }, 500);
+                                dismiss();
+                            } else {
+                                Toast.makeText(getContext(), "Payment is less than balance", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
 
                     }
@@ -1201,8 +1273,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         orderSlipList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
         Double totalAmount = 0.00;
+        discountPayment = 0.00;
+        advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
+
             totalBalance = fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal();
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
                 if (r.getTransaction().getPayments().size() > 0) {
@@ -1220,6 +1295,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
 
                 if (r.getTransaction().getTrans().size() > 0) {
+
+                    advancePayment = r.getTransaction().getAdvance();
+                    discountPayment = r.getTransaction().getDiscount();
+
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
                         List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
                         for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
@@ -1273,9 +1352,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     }
                 }
-
-
-
 
                 roomRateCounter = new ArrayList<>();
                 for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
@@ -1659,7 +1735,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void checkoutRoom(String roomId, String controlNumber) {
-        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber));
+        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, "1"));
     }
 
     @Subscribe
@@ -1721,6 +1797,26 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
 
+    private void focTransaction() {
+        BusProvider.getInstance().post(new FocRequest());
+    }
 
+    @Subscribe
+    public void focResponse(FocResponse focResponse) {
+
+    }
+
+
+    @Subscribe
+    public void checkinResponse(CheckInResponse checkInResponse) {
+        if (selectedRoom != null) {
+            if (selectedRoom.isTakeOut()) {
+                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+            } else {
+                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            }
+
+        }
+    }
 
 }

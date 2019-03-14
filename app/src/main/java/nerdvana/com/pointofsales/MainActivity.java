@@ -250,7 +250,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (data.get(position).get("title").toString().toLowerCase()) {
                     case "logout":
-                        SharedPreferenceManager.clearPreference(getApplicationContext());
+                        userModel.setLoggedIn(false);
+
+                        SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+
+
+//                        SharedPreferenceManager.clearPreference(getApplicationContext());
                         CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
 
 //                        openFragment(R.id.leftFrame, preLoginLeftFrameFragment);

@@ -13,6 +13,8 @@ public class FetchOrderPendingViaControlNoRequest extends BaseRequest {
     public FetchOrderPendingViaControlNoRequest(String controlNo) {
         mapValue = new HashMap<>();
         mapValue.put("control_no", controlNo);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
     }

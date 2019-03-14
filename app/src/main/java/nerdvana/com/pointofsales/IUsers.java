@@ -23,6 +23,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
@@ -153,4 +154,8 @@ public interface IUsers {
     @POST("fetchCreditCard")
     @FormUrlEncoded
     Call<FetchCreditCardResponse> fetchCreditCard(@FieldMap Map<String, String> params);
+
+    @POST("foc")
+    @FormUrlEncoded
+    Call<FocResponse> focTransaction(@FieldMap Map<String, String> params);
 }

@@ -1,12 +1,18 @@
 package nerdvana.com.pointofsales.api_requests;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class FetchVehicleRequest extends BaseRequest {
+import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.model.PostedPaymentsModel;
+
+public class FocRequest extends BaseRequest{
     private Map<String, String> mapValue;
-    public FetchVehicleRequest() {
+
+    public FocRequest() {
         mapValue = new HashMap<>();
+
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
         mapValue.put("user_id", userId);
@@ -16,4 +22,5 @@ public class FetchVehicleRequest extends BaseRequest {
     public Map<String, String> getMapValue() {
         return mapValue;
     }
+
 }
