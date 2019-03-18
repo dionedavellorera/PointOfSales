@@ -37,6 +37,11 @@ public class ApplicationConstants {
     public static final String CREDIT_CARD = "credit_card";
 
 
+    public static final String SELECTED_PRINTER = "selected_printer";
+    public static final String SELECTED_LANGUAGE = "selected_language";
+    public static final String SELECTED_PORT = "selected_port";
+
+
 
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 

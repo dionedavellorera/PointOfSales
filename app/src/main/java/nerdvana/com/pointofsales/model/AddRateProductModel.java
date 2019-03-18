@@ -9,16 +9,22 @@ public class AddRateProductModel {
     private String tax;
     private String price;
     private int is_price_changed;
-
+    private String product_initial;
     public AddRateProductModel(String product_id, String room_rate_price_id,
                                String qty, String tax,
-                               String price, int isPriceChanged) {
+                               String price, int isPriceChanged,
+                               String productInitial) {
         this.product_id = product_id;
         this.room_rate_price_id = room_rate_price_id;
         this.qty = qty;
         this.tax = tax;
         this.price = price;
         this.is_price_changed = isPriceChanged;
+        this.product_initial = productInitial;
+    }
+
+    public String getProduct_initial() {
+        return product_initial;
     }
 
     public void setIs_price_changed(int is_price_changed) {

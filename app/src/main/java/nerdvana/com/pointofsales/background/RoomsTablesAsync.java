@@ -118,7 +118,7 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             r.getStatus().getColor(),
                             0.00,
                             false,
-                            "",
+                            r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "",
                             unpostedOrderCount,
                             r.getStatus().getIsBlink() == 1 ? true : false,
                             r.getStatus().getIsTimer() == 1 ? true : false

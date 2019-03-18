@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,6 +29,9 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.printer.Printer;
+import com.epson.eposprint.Print;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
@@ -55,12 +59,15 @@ import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
+import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
+import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
+import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
@@ -286,6 +293,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         if (mHandler != null) { mHandler.removeCallbacks(mRunnable); }
 
+        try {
+            SPrinter.getPrinter().disconnect();
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -341,6 +354,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+
+        loadPrinter();
     }
 
     @Subscribe
@@ -413,5 +428,282 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         SharedPreferenceManager.saveString(getApplicationContext(), fetchDefaultCurrenyResponse.getResult().getCountryCode() ,ApplicationConstants.COUNTRY_CODE);
     }
 
+
+    //isBold || isUnderlined = Printer.FALSE, Printer.TRUE
+    //alignment =  Printer.ALIGN_LEFT, Printer.ALIGN_CENTER, Printer.ALIGN_RIGHT
+    @Subscribe
+    public void print(PrintModel printModel) {
+        //regionheader
+
+        addTextToPrinter(SPrinter.getPrinter(), "PANORAMA ENTERPRISE INC", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "ESCARPMENT ROAD BARANGAY BAGONG", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "671-9782", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "SERIAL NO: PC001LTR", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
+        addTextToPrinter(SPrinter.getPrinter(), "VAT REG TIN NO: " + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.TIN_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "PERMIT NO: FP082015-43A-0046941-00000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+        addTextToPrinter(SPrinter.getPrinter(), "MIN NO: 15080516005415409", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
+        addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+        //endregion
+
+        switch (printModel.getType()) {
+            case "SOA":
+                TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
+                List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
+
+//                PrintSoaResponse.Transaction booked = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Transaction.class);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "CASHIER",
+                        String.valueOf(bookedList.get(0).getUserId()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCreatedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                addPrinterSpace(1);
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "MACHINE NO",
+                        SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_ID),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "CHECKED-IN",
+                        bookedList.get(0).getCheckIn(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "CHECKED-OUT",
+                        "EK EK",
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "DURATION",
+                        "TO DO",
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                Double soaTotal = 0.00;
+                addTextToPrinter(SPrinter.getPrinter(), "SOA SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "QTY   Description                     Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                for (PrintSoaResponse.Post soaTrans : bookedList.get(0).getTransaction().getPost()) {
+
+                    String qty = "";
+
+                    qty += soaTrans.getQty();
+                    if (String.valueOf(soaTrans.getQty()).length() < 4) {
+                        for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                            qty += " ";
+                            soaTotal += Double.valueOf(soaTrans.getPrice());
+                        }
+                    }
+                    String item = "";
+                    if (soaTrans.getProduct() != null) {
+                        item =soaTrans.getProduct().getProductInitial();
+                    } else {
+                        item = soaTrans.getRoomRate().toString();
+                    }
+
+                    if (soaTrans.getVoid() == 0) {
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                qty+ " "+item,
+                                String.valueOf(soaTrans.getPrice())
+                                ,
+                                45,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                }
+
+                addTextToPrinter(SPrinter.getPrinter(), "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "   VAT EXEMPT",
+                        String.valueOf(bookedList.get(0).getTransaction().getVatExempt()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "   DISCOUNT",
+                        String.valueOf(bookedList.get(0).getTransaction().getDiscount()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "   ADVANCED DEPOSIT",
+                        String.valueOf(bookedList.get(0).getTransaction().getAdvance()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "AMOUNT DUE",
+                        String.valueOf(bookedList.get(0).getTransaction().getTotal()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        bookedList.get(0).getTransaction().getControlNo(),
+                        bookedList.get(0).getTransaction().getSoaCount(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+
+                break;
+            case "FO":
+                Double totalAmount = 0.00;
+                addTextToPrinter(SPrinter.getPrinter(), "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "QTY   Description                     Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                TypeToken<List<AddRateProductModel>> token = new TypeToken<List<AddRateProductModel>>() {};
+                List<AddRateProductModel> aprm = GsonHelper.getGson().fromJson(printModel.getData(), token.getType());
+                for (AddRateProductModel r : aprm) {
+                    String qty = "";
+
+                    qty += r.getQty();
+                    if (r.getQty().length() < 4) {
+                        for (int i = 0; i < 4 - r.getQty().length(); i++) {
+                            qty += " ";
+
+                        }
+                    }
+
+                    totalAmount += Double.valueOf(r.getPrice());
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(qty+ r.getProduct_initial(), r.getPrice(), 45, 2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
+                addTextToPrinter(SPrinter.getPrinter(), "TOTAL: " + String.valueOf(totalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                break;
+        }
+        try {
+
+            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
+
+            SPrinter.getPrinter().clearCommandBuffer();
+
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String twoColumns(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
+        String finalString = "";
+        float countPerColumn = maxTextCountPerLine / columns;
+
+        double column1Length =  Math.ceil(partOne.length() / (countPerColumn + 8));
+        double column2Length =  Math.ceil(partTwo.length() / countPerColumn);
+        for (int i = 0; i < column1Length; i++) {
+            if (i == column1Length - 1) {
+                String tmpLast = partOne.substring(
+                        i * (int)countPerColumn);
+                finalString += partOne.substring(
+                        i * (int)countPerColumn);
+                for (int j = 0; j < (countPerColumn -tmpLast.length())+ 8; j++) {
+                    finalString += " ";
+                }
+            } else {
+                finalString += partOne.substring(
+                        i * (int)countPerColumn,
+                        (i+1) * (int)countPerColumn) + "\n";
+            }
+        }
+
+        for (int i = 0; i < column2Length; i++) {
+            if (i == column2Length - 1) {
+                String tmpLast = partTwo.substring(
+                        i * (int)countPerColumn);
+
+                for (int j = 0; j < (countPerColumn - tmpLast.length()) - 7; j++) {
+                    finalString += " ";
+                }
+
+                finalString += tmpLast;
+
+            } else {
+                finalString += partTwo.substring(
+                        i * (int)countPerColumn,
+                        (i+1) * (int)countPerColumn) + "\n";
+            }
+        }
+        return finalString;
+    }
+
+    private void addTextToPrinter(Printer printer, String text,
+                                  int isBold, int isUnderlined,
+                                  int alignment, int feedLine,
+                                  int textSizeWidth, int textSizeHeight) {
+        StringBuilder textData = new StringBuilder();
+        try {
+            printer.addTextSize(textSizeWidth, textSizeHeight);
+            printer.addTextAlign(alignment);
+            printer.addTextStyle(Printer.PARAM_DEFAULT, isUnderlined, isBold, Printer.PARAM_DEFAULT);
+            printer.addTextSmooth(Printer.TRUE);
+            printer.addText(textData.toString());
+            textData.append(text);
+            printer.addText(textData.toString());
+            textData.delete(0, textData.length());
+            printer.addFeedLine(feedLine);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void loadPrinter() {
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT))) {
+            SPrinter printer = new SPrinter(
+                    Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_LANGUAGE)),
+                    getApplicationContext());
+
+            try {
+                SPrinter.getPrinter().connect(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+                SPrinter.getPrinter().beginTransaction();
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+
+//            try {
+//
+//            } catch (Epos2Exception e) {
+//                e.printStackTrace();
+//            }
+        }
+    }
+
+    private void addPrinterSpace(int count) {
+        try {
+            SPrinter.getPrinter().addFeedLine(count);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

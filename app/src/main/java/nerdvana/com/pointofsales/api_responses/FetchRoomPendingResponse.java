@@ -719,9 +719,9 @@ public class FetchRoomPendingResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
-        @SerializedName("status")
-        @Expose
-        private String status;
+//        @SerializedName("status")
+//        @Expose
+//        private String status;
 
 
 
@@ -741,13 +741,13 @@ public class FetchRoomPendingResponse {
         @Expose
         private RoomRateInner rateRoom;
 
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
+//        public String getStatus() {
+//            return status;
+//        }
+//
+//        public void setStatus(String status) {
+//            this.status = status;
+//        }
 
         public Integer getId() {
             return id;
@@ -2373,10 +2373,10 @@ public class FetchRoomPendingResponse {
         private Integer priceId;
         @SerializedName("amount")
         @Expose
-        private Integer amount;
+        private Double amount;
         @SerializedName("mark_up")
         @Expose
-        private Integer markUp;
+        private Double markUp;
         @SerializedName("created_by")
         @Expose
         private Integer createdBy;
@@ -2510,19 +2510,19 @@ public class FetchRoomPendingResponse {
             this.priceId = priceId;
         }
 
-        public Integer getAmount() {
+        public Double getAmount() {
             return amount;
         }
 
-        public void setAmount(Integer amount) {
+        public void setAmount(Double amount) {
             this.amount = amount;
         }
 
-        public Integer getMarkUp() {
+        public Double getMarkUp() {
             return markUp;
         }
 
-        public void setMarkUp(Integer markUp) {
+        public void setMarkUp(Double markUp) {
             this.markUp = markUp;
         }
 

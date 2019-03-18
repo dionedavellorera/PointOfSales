@@ -27,6 +27,9 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.epson.epos2.Epos2Exception;
+import com.epson.epos2.printer.Printer;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
@@ -38,8 +41,10 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
+import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.Utils;
@@ -95,6 +100,7 @@ import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
+import nerdvana.com.pointofsales.dialogs.SetupPrinterDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
@@ -110,6 +116,7 @@ import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.OrderSlipModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
+import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -612,8 +619,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
-            case 110:// NOT YET AVAILALBLE
-                Toast.makeText(getContext(), "FEATURE NOT YET AVAILABLE", Toast.LENGTH_SHORT).show();
+            case 110:// SETUP PRINTER
+                SetupPrinterDialog setupPrinterDialog = new SetupPrinterDialog(getActivity()) {
+                    @Override
+                    public void printerConnected() {
+                        loadPrinter();
+                    }
+                };
+                if (!setupPrinterDialog.isShowing()) {
+                    setupPrinterDialog.show();
+                }
                 break;
             case 109: //FOC
                 FocDialog focDialog = new FocDialog(getActivity(), postedPaymentsList) {
@@ -827,7 +842,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         qty,
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
                                         String.valueOf(selectedRoom.getRoomId()),
-                                        String.valueOf(selectedRate.getRatePrice().getAmount()));
+                                        String.valueOf(selectedRate.getRatePrice().getAmount()),
+                                        selectedRate.getRatePrice().getRoomRate().getRoomRate());
                                 this.dismiss();
                             }
                         };
@@ -859,7 +875,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         String.valueOf(cim.getQuantity()),
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
                                         String.valueOf(cim.getUnitPrice()),
-                                        cim.getIsPriceChanged()
+                                        cim.getIsPriceChanged(),
+                                        cim.getName()
                                 ));
                             }
 
@@ -869,6 +886,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 ));
                             }
                         }
+
+                        BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model)));
 
                         BusProvider.getInstance().post(new AddProductToRequest(model, String.valueOf(selectedRoom.getRoomId()),
                                 String.valueOf(selectedRoom.getAreaId()),
@@ -890,12 +909,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             String.valueOf(cim.getQuantity()),
                                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
                                             String.valueOf(cim.getUnitPrice()),
-                                            cim.getIsPriceChanged()
+                                            cim.getIsPriceChanged(),
+                                            cim.getName()
                                     ));
                                 }
                             }
 
-                            BusProvider.getInstance().post(new AddRoomPriceRequest(model, String.valueOf(selectedRoom.getRoomId())));
+                            BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model)));
+
+
+                            BusProvider.getInstance().post(new AddRoomPriceRequest(model, String.valueOf(selectedRoom.getRoomId()), new ArrayList<VoidProductModel>()));
 
 
 //                            if (model.size() > 0) {
@@ -932,11 +955,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     ));
                                 }
                             }
-//
-                            BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                    String.valueOf(selectedRoom.getAreaId()),
-                                    selectedRoom.getControlNo(),
-                                    model));
+
+                            if (selectedRoom != null) {
+                                if (selectedRoom.isTakeOut()) {
+                                    BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                            String.valueOf(selectedRoom.getAreaId()),
+                                            selectedRoom.getControlNo(),
+                                            model));
+                                } else {
+
+                                    BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                            model));
+
+                                }
+                            }
+
+
+
                         }
 
                     }
@@ -1538,10 +1573,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void addRateRequest(String productId, String roomRatePriceId,
                                 String quantity, String tax,
-                                String roomId, String amount) {
+                                String roomId, String amount,
+                                String roomRateDesc) {
         ArrayList<AddRateProductModel> model = new ArrayList<>();
-        model.add(new AddRateProductModel(productId, roomRatePriceId, quantity, tax, amount, 0));
-        BusProvider.getInstance().post(new AddRoomPriceRequest(model, roomId));
+        model.add(new AddRateProductModel(productId, roomRatePriceId, quantity, tax, amount, 0, roomRateDesc));
+        BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model)));
+        BusProvider.getInstance().post(new AddRoomPriceRequest(model, roomId, new ArrayList<VoidProductModel>()));
     }
 
     @Subscribe
@@ -1577,6 +1614,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void printSoaResponse(PrintSoaResponse printSoaResponse) {
+
+        BusProvider.getInstance().post(new PrintModel("",
+                selectedRoom.getName(),
+                "SOA",
+                GsonHelper.getGson().toJson(printSoaResponse.getResult().getBooked())
+                ));
+
         Toast.makeText(getContext(), "SOA PRINTING", Toast.LENGTH_SHORT).show();
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
@@ -1816,6 +1860,21 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
             }
 
+        }
+    }
+
+
+    private void loadPrinter() {
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT))) {
+            SPrinter printer = new SPrinter(
+                    Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE)),
+                    getContext());
+            try {
+                SPrinter.getPrinter().connect(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
