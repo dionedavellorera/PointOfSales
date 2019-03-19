@@ -5,6 +5,7 @@ import com.squareup.otto.Subscribe;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
+import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
@@ -33,6 +34,7 @@ import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -279,11 +281,17 @@ public class UserServices extends BaseService {
         asyncRequest(request);
     }
 
-    //focTransaction
     @Subscribe
     public void onReceiveFocRequest(FocRequest focRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FocResponse> request = iUsers.focTransaction(focRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onCheckGc(CheckGcRequest checkGcRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CheckGcResponse> request = iUsers.checkGc(checkGcRequest.getMapValue());
         asyncRequest(request);
     }
 }

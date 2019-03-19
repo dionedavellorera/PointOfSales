@@ -882,7 +882,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             if (cim.isForVoid()) {
                                 voidModel.add(new VoidProductModel(
-                                        cim.getPostId()
+                                        cim.getPostId(),
+                                        cim.getName(),
+                                        String.valueOf(cim.getAmount()),
+                                        String.valueOf(cim.getQuantity())
                                 ));
                             }
                         }
@@ -917,26 +920,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model)));
 
-
                             BusProvider.getInstance().post(new AddRoomPriceRequest(model, String.valueOf(selectedRoom.getRoomId()), new ArrayList<VoidProductModel>()));
 
-
-//                            if (model.size() > 0) {
-//
-//                            } else {
-//                                Toast.makeText(getContext(), "No product for posting", Toast.LENGTH_SHORT).show();
-//                            }
                         }
 
                     }
 
 
                 }
-//                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-
-
-//                saveTransaction();
-//                Toast.makeText(getContext(), "SAVE TRANS MADE", Toast.LENGTH_SHORT).show();
                 break;
             case 101: //VOID
                 final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
@@ -951,29 +942,28 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             for (CartItemsModel cim : cartItemList) {
                                 if (cim.isSelected()) {
                                     model.add(new VoidProductModel(
-                                        cim.getPostId()
+                                        cim.getPostId(),
+                                        cim.getName(),
+                                        String.valueOf(cim.getAmount()),
+                                        String.valueOf(cim.getQuantity())
                                     ));
                                 }
                             }
-
                             if (selectedRoom != null) {
+
                                 if (selectedRoom.isTakeOut()) {
+                                    BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
                                     BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             String.valueOf(selectedRoom.getAreaId()),
                                             selectedRoom.getControlNo(),
                                             model));
                                 } else {
-
+                                    BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
                                     BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             model));
-
                                 }
                             }
-
-
-
                         }
-
                     }
 
                     @Override
@@ -1286,7 +1276,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         if (selectedRoom != null) {
 
-//            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
 //            BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId())));
         }
 
@@ -1351,7 +1341,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                     prod.getRoomType(),
                                                     prod.getRoomRate().toString(),
                                                     String.valueOf(prod.getQty()),
-                                                    "",
+                                                    String.valueOf(prod.getPrice()),
                                                     String.valueOf(prod.getPrice()),
                                                     String.valueOf(prod.getTotal()),
                                                     prod.getVoid() == 0 ? false : true));
@@ -1499,7 +1489,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
                 BusProvider.getInstance().post(welcomeGuestRequest);
 
-                if (!status.equalsIgnoreCase("19") && !status.equalsIgnoreCase("3")) {
+
+
+                if (!status.equalsIgnoreCase("19") &&
+                        !status.equalsIgnoreCase("3") &&
+                        !status.equalsIgnoreCase("20")) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1853,6 +1847,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void checkinResponse(CheckInResponse checkInResponse) {
+        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHECKIN", GsonHelper.getGson().toJson(checkInResponse.getResult().getBooked())));
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
                 fetchOrderPendingViaControlNo(selectedRoom.getControlNo());

@@ -193,8 +193,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:hint="GC code"
-                    android:id="@+id/gcCode"
+                    android:hint="0001"
+                    android:id="@+id/voucherNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </android.support.design.widget.TextInputLayout>
@@ -205,12 +205,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
-                    android:hint="GC amount"
-                    android:id="@+id/gcAmount"
+                    android:text="1"
+                    android:hint="Quantity"
+                    android:id="@+id/voucherQuantity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </android.support.design.widget.TextInputLayout>
 
+            <Button
+                android:id="@+id/checkGc"
+                android:text="Check available gift check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GC to avail"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/listAvailedGcs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 

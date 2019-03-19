@@ -5,6 +5,7 @@ import java.util.Map;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -158,4 +159,8 @@ public interface IUsers {
     @POST("foc")
     @FormUrlEncoded
     Call<FocResponse> focTransaction(@FieldMap Map<String, String> params);
+
+    @POST("checkGc")
+    @FormUrlEncoded
+    Call<CheckGcResponse> checkGc(@FieldMap Map<String, String> params);
 }

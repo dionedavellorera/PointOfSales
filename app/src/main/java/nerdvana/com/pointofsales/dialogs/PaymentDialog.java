@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +27,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,13 +37,19 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.MainActivity;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
+import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
 import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
+import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
+import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
@@ -49,8 +58,12 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
+import nerdvana.com.pointofsales.model.AvailableGcModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.view.View.GONE;
 
@@ -65,6 +78,7 @@ public abstract class PaymentDialog extends Dialog  {
     private Spinner spinnerForex;
     private TextView forexRate;
 
+    private AvailableGcAdapter availableGcAdapter;
     private PaymentsAdapter paymentsAdapter;
     private List<FetchPaymentResponse.Result> paymentList;
     private List<FetchCreditCardResponse.Result> creditCardList;
@@ -97,8 +111,11 @@ public abstract class PaymentDialog extends Dialog  {
 
 
     //gift check
-    private EditText gcCode;
-    private EditText gcAmount;
+    private EditText voucherNumber;
+    private EditText voucherQuantity;
+    private Button checkGc;
+    private List<AvailableGcModel> gcList;
+    private RecyclerView listAvailedGcs;
 
     //credit card
     private Spinner spinnerCreditCard;
@@ -109,7 +126,7 @@ public abstract class PaymentDialog extends Dialog  {
     private EditText cardHoldersName;
     private EditText creditCardAmount;
     private String cardTypeId;
-
+    private Context act;
 
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
@@ -120,6 +137,7 @@ public abstract class PaymentDialog extends Dialog  {
                          List<FetchCreditCardResponse.Result> creditCardList,
                          List<FetchArOnlineResponse.Result> arOnlineList) {
         super(context);
+        this.act = context;
         this.paymentList = paymentList;
         this.isCheckout = isCheckout;
         this.postedPaymentList = postedPaymentList;
@@ -144,6 +162,7 @@ public abstract class PaymentDialog extends Dialog  {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_payment);
+        gcList = new ArrayList<>();
         spinnerForex = findViewById(R.id.spinnerForex);
         formCash = findViewById(R.id.formCash);
         formCard = findViewById(R.id.formCard);
@@ -165,8 +184,16 @@ public abstract class PaymentDialog extends Dialog  {
         voucherAmount = (EditText) findViewById(R.id.voucherAmount);
         spinnerOnline = (Spinner) findViewById(R.id.spinnerOnline);
 
-        gcCode = (EditText) findViewById(R.id.gcCode);
-        gcAmount = (EditText) findViewById(R.id.gcAmount);
+        listAvailedGcs = (RecyclerView) findViewById(R.id.listAvailedGcs);
+        voucherNumber = (EditText) findViewById(R.id.voucherNumber);
+        voucherQuantity = (EditText) findViewById(R.id.voucherQuantity);
+        checkGc = (Button) findViewById(R.id.checkGc);
+        checkGc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkGc(voucherNumber.getText().toString(), voucherQuantity.getText().toString());
+            }
+        });
 
 
         spinnerCreditCard = (Spinner) findViewById(R.id.spinnerCreditCard);
@@ -187,17 +214,6 @@ public abstract class PaymentDialog extends Dialog  {
             public void clicked(int position) {
                 showForm(paymentList.get(position).getCoreId());
 
-//                if (paymentList.get(position).getCoreId().equalsIgnoreCase("1")) { //cash
-//
-//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("2")) { //card
-//
-//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("3")) { //online
-//
-//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("5")) { //voucher
-//
-//                } else if (paymentList.get(position).getCoreId().equalsIgnoreCase("6")) { //forex
-//
-//                }
                 paymentMethod = paymentList.get(position);
             }
         };
@@ -263,20 +279,40 @@ public abstract class PaymentDialog extends Dialog  {
                                 jsonObject));
 
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("5")) { //voucher
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("gc_code", gcCode.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (gcList.size() > 0) {
+
+                            Double amount = 0.00;
+                            String gcCode = "";
+                            int index = 0;
+                            for (AvailableGcModel availableGcModel : gcList) {
+                                amount += Double.valueOf(availableGcModel.getAmount());
+                                if (index == gcList.size() - 1) {
+                                    gcCode += availableGcModel.getId();
+                                } else {
+                                    gcCode += availableGcModel.getId() + ",";
+                                }
+                                index++;
+                            }
+
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("gc_code", gcCode);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            postedPaymentList.add(new PostedPaymentsModel(
+                                    paymentMethod.getCoreId(),
+                                    String.valueOf(amount),
+                                    paymentMethod.getPaymentType(),
+                                    false,
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                    jsonObject));
+                        } else {
+                            Toast.makeText(getContext(),"No gc added", Toast.LENGTH_SHORT).show();
                         }
-                        postedPaymentList.add(new PostedPaymentsModel(
-                                paymentMethod.getCoreId(),
-                                gcAmount.getText().toString(),
-                                paymentMethod.getPaymentType(),
-                                false,
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                jsonObject));
+
 
 
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("6")) { //forex
@@ -320,6 +356,20 @@ public abstract class PaymentDialog extends Dialog  {
         postedPaymentsAdapter = new PostedPaymentsAdapter(postedPaymentList);
         listPostedPayments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         listPostedPayments.setAdapter(postedPaymentsAdapter);
+
+        AvailableGcDialog.Item item = new AvailableGcDialog.Item() {
+            @Override
+            public void remove(int position) {
+                gcList.remove(position);
+                availableGcAdapter.notifyDataSetChanged();
+            }
+        };
+//        gcList.add(new AvailableGcModel("12321", "321321", "132131", "!32131"));
+        availableGcAdapter = new AvailableGcAdapter(gcList, item);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        listAvailedGcs.setLayoutManager(llm);
+        listAvailedGcs.setAdapter(availableGcAdapter);
+        availableGcAdapter.notifyDataSetChanged();
     }
 
     public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList);
@@ -348,6 +398,7 @@ public abstract class PaymentDialog extends Dialog  {
     @Override
     protected void onStart() {
         super.onStart();
+        BusProvider.getInstance().register(this);
         Dialog dialog = this;
         if (dialog != null) {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -392,9 +443,12 @@ public abstract class PaymentDialog extends Dialog  {
 
     private void setForexSpinner() {
         List<String> forexArray = new ArrayList<>();
-        for (FetchCurrencyExceptDefaultResponse.Result curr : currencyList) {
-            forexArray.add(curr.getCurrency());
+        if (currencyList != null) {
+            for (FetchCurrencyExceptDefaultResponse.Result curr : currencyList) {
+                forexArray.add(curr.getCurrency());
+            }
         }
+
         CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                 forexArray);
         spinnerForex.setAdapter(rateSpinnerAdapter);
@@ -418,9 +472,12 @@ public abstract class PaymentDialog extends Dialog  {
 
     private void setVoucherSpinner() {
         List<String> onlineArray = new ArrayList<>();
-        for (FetchArOnlineResponse.Result ar : arOnlineList) {
-            onlineArray.add(ar.getArOnline());
+        if (arOnlineList != null) {
+            for (FetchArOnlineResponse.Result ar : arOnlineList) {
+                onlineArray.add(ar.getArOnline());
+            }
         }
+
         CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                 onlineArray);
         spinnerOnline.setAdapter(rateSpinnerAdapter);
@@ -441,9 +498,12 @@ public abstract class PaymentDialog extends Dialog  {
 
     private void setupCreditCardSpinner() {
         List<String> ccArray = new ArrayList<>();
-        for (FetchCreditCardResponse.Result cc : creditCardList) {
-            ccArray.add(cc.getCreditCard());
+        if (creditCardList != null) {
+            for (FetchCreditCardResponse.Result cc : creditCardList) {
+                ccArray.add(cc.getCreditCard());
+            }
         }
+
         CustomSpinnerAdapter cardSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                 ccArray);
         spinnerCreditCard.setAdapter(cardSpinnerAdapter);
@@ -461,4 +521,51 @@ public abstract class PaymentDialog extends Dialog  {
             }
         });
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    private void checkGc(String voucherNumber, String qty) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CheckGcResponse> request = iUsers.checkGc(new CheckGcRequest(voucherNumber, qty).getMapValue());
+        request.enqueue(new Callback<CheckGcResponse>() {
+            @Override
+            public void onResponse(Call<CheckGcResponse> call, Response<CheckGcResponse> response) {
+                AvailableGcDialog availableGcDialog = new AvailableGcDialog(act, response.body().getResult().getApprove()) {
+                    @Override
+                    public void proceed(List<AvailableGcModel> list) {
+                        for (AvailableGcModel availList : list) {
+                            boolean isValid = true;
+//                            for (AvailableGcModel myList : gcList) {
+//                                if (myList.getGcId().equalsIgnoreCase(availList.getGcId())) {
+//                                    isValid = false;
+//                                }
+//                            }
+//                            if (isValid) {
+//
+//                            }
+
+                            gcList.add(availList);
+
+                        }
+
+                        availableGcAdapter.notifyDataSetChanged();
+
+
+                    }
+                };
+                availableGcDialog.show();
+            }
+
+            @Override
+            public void onFailure(Call<CheckGcResponse> call, Throwable t) {
+//                Log.d("RESPORES", "FALSE");
+            }
+        });
+
+    }
+
 }

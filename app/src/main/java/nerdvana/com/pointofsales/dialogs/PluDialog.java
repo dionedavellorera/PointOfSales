@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.ViewGroup;
 
 import nerdvana.com.pointofsales.R;
 
@@ -25,5 +26,16 @@ public class PluDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_plu);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Dialog dialog = this;
+        if (dialog != null) {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
     }
 }

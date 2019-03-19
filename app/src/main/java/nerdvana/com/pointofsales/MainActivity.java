@@ -52,6 +52,7 @@ import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
@@ -70,6 +71,7 @@ import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
+import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
 import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
@@ -395,11 +397,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     GsonHelper.getGson().toJson(fetchRoomAreaResponse.getResult()),
                     ApplicationConstants.ROOM_AREA_JSON);
         }
-//        TypeToken<List<FetchRoomAreaResponse.Result>> token = new TypeToken<List<FetchRoomAreaResponse.Result>>() {};
-//        List<FetchRoomAreaResponse.Result> fre = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.ROOM_AREA_JSON), token.getType());
-//        for (FetchRoomAreaResponse.Result r : fre) {
-//            Log.d("TESTLOG", r.getRoomArea());
-//        }
     }
 
     private void fetchUserListRequest() {
@@ -434,7 +431,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void print(PrintModel printModel) {
         //regionheader
-
         addTextToPrinter(SPrinter.getPrinter(), "PANORAMA ENTERPRISE INC", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
         addTextToPrinter(SPrinter.getPrinter(), "ESCARPMENT ROAD BARANGAY BAGONG", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(SPrinter.getPrinter(), "ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -447,11 +443,100 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         //endregion
 
         switch (printModel.getType()) {
+            case "CHECKIN":
+
+                TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
+                List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
+                addTextToPrinter(SPrinter.getPrinter(), "CHECK IN RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "Room Type",
+                        checkinDetails.get(0).getRoomType(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "RATE DESC.",
+                        checkinDetails.get(0).getRoomRate(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "STARTING RATE",
+                        checkinDetails.get(0).getRateRoom().getRoomRate(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "DATE / TIME",
+                        checkinDetails.get(0).getCreatedAt(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "VEHICLY TYPE",
+                        "VEHICLE TYPE",
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "CAR MAKE",
+                        checkinDetails.get(0).getCar().getCarMake(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "PLATE NUMBER",
+                        checkinDetails.get(0).getPlateNo(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                break;
+            case "VOID":
+
+                TypeToken<List<VoidProductModel>> voidToken = new TypeToken<List<VoidProductModel>>() {};
+                List<VoidProductModel> voidList = GsonHelper.getGson().fromJson(printModel.getData(), voidToken.getType());
+
+                addTextToPrinter(SPrinter.getPrinter(), "VOID SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "QTY   Description                     Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                Double voidTotalAmount = 0.00;
+                for (VoidProductModel vpm : voidList) {
+
+                    String qty = "";
+
+                    qty += vpm.getQuantity();
+                    if (vpm.getQuantity().length() < 4) {
+                        for (int i = 0; i < 4 - vpm.getQuantity().length(); i++) {
+                            qty += " ";
+
+                        }
+                    }
+
+                    voidTotalAmount += Double.valueOf(vpm.getPrice());
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(qty+ vpm.getName(), vpm.getPrice(), 45, 2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                }
+
+                addTextToPrinter(SPrinter.getPrinter(), "TOTAL: " + String.valueOf(voidTotalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                break;
             case "SOA":
                 TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
                 List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
-
-//                PrintSoaResponse.Transaction booked = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Transaction.class);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "CASHIER",
@@ -491,7 +576,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                Double soaTotal = 0.00;
+//                Double soaTotal = 0.00;
                 addTextToPrinter(SPrinter.getPrinter(), "SOA SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(SPrinter.getPrinter(), "QTY   Description                     Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -504,7 +589,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     if (String.valueOf(soaTrans.getQty()).length() < 4) {
                         for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
                             qty += " ";
-                            soaTotal += Double.valueOf(soaTrans.getPrice());
                         }
                     }
                     String item = "";
@@ -684,8 +768,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     getApplicationContext());
 
             try {
-                SPrinter.getPrinter().connect(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
-                SPrinter.getPrinter().beginTransaction();
+                if (SPrinter.getPrinter() != null) {
+                    SPrinter.getPrinter().connect(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+                    SPrinter.getPrinter().beginTransaction();
+                }
+
             } catch (Epos2Exception e) {
                 e.printStackTrace();
             }
