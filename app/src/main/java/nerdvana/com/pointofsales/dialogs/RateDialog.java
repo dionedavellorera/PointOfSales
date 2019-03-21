@@ -96,7 +96,7 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
         });
         for (RoomRateMain rrm : roomRateMainList) {
             roomRates.add(String.format(
-                    "%s - %d",
+                    "%s - %f",
                     rrm.getRatePrice().getRoomRate().getRoomRate(),
                     rrm.getRatePrice().getAmount()));
         }

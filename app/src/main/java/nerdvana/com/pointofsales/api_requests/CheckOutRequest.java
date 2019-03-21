@@ -16,7 +16,8 @@ public class CheckOutRequest extends BaseRequest {
         mapValue.put("pos_id", machineNumber);
         mapValue.put("room_id", roomId);
         mapValue.put("control_no", controlNumber);
-        mapValue.put("emp_id", roomBoyId); //TODO
+        mapValue.put("emp_id", roomBoyId);
+        mapValue.put("branch_code", branchCode);
      }
 
     public Map<String, String> getMapValue() {

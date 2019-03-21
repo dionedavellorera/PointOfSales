@@ -28,6 +28,7 @@ import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
@@ -163,4 +164,8 @@ public interface IUsers {
     @POST("checkGc")
     @FormUrlEncoded
     Call<CheckGcResponse> checkGc(@FieldMap Map<String, String> params);
+
+    @POST("switchRoom")
+    @FormUrlEncoded
+    Call<SwitchRoomResponse> switchRoom(@FieldMap Map<String, String> params);
 }

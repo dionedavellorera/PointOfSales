@@ -4,44 +4,50 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
+        android:layout_weight="0.5"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.4">
+        android:layout_height="match_parent">
         <TextView
             android:gravity="center"
-            android:id="@+id/orderListLabel"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:id="@+id/orListLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:text="ORDER LIST"
-            android:padding="10dp"/>
-        <android.support.v7.widget.RecyclerView
-            android:layout_below="@id/orderListLabel"
-            android:id="@+id/listOrders"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:text="O.R. LIST"/>
 
-        </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listTransactions"
+            android:layout_below="@id/orListLabel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="@color/colorLtGrey"/>
 
     <RelativeLayout
-        android:layout_weight="0.6"
+        android:layout_weight="0.5"
         android:layout_width="0dp"
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
-            android:layout_above="@id/reprintFoodOrderSlip"
-            android:id="@+id/orderSlipProductsList"
+            android:layout_above="@id/reprintOr"
+            android:id="@+id/listTransactionDetails"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+
         <Button
-            android:id="@+id/reprintFoodOrderSlip"
+            android:layout_margin="10dp"
             android:layout_alignParentBottom="true"
+            android:id="@+id/reprintOr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="PRINT ORDER SLIP"/>
+            android:text="REPRINT OR"/>
+
+        <Button
+            android:layout_margin="10dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/postVoid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="POST VOID"/>
     </RelativeLayout>
 </LinearLayout>

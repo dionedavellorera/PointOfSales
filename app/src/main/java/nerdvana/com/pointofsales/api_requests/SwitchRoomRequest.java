@@ -8,12 +8,15 @@ import java.util.Map;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
+import nerdvana.com.pointofsales.model.VoidProductModel;
 
-public class AddPaymentRequest extends BaseRequest{
+public class SwitchRoomRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public AddPaymentRequest(List<PostedPaymentsModel> addRateProductList,
-                             String roomId, String isAdv,
+    public SwitchRoomRequest(ArrayList<AddRateProductModel> addRateProductList,
+                             String roomId,
+                             ArrayList<VoidProductModel> voidList,
+                             String remarks,
                              String controlNumber) {
         mapValue = new HashMap<>();
         mapValue.put("post", GsonHelper.getGson().toJson(addRateProductList));
@@ -21,7 +24,6 @@ public class AddPaymentRequest extends BaseRequest{
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
         mapValue.put("room_id", roomId);
-        mapValue.put("is_adv", isAdv);
         mapValue.put("control_no", controlNumber);
         mapValue.put("branch_code", branchCode);
 
@@ -34,7 +36,7 @@ public class AddPaymentRequest extends BaseRequest{
 
     @Override
     public String toString() {
-        return "AddPaymentRequest{" +
+        return "SwitchRoomRequest{" +
                 "mapValue=" + mapValue +
                 '}';
     }

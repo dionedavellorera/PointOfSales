@@ -2,7 +2,6 @@ package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +14,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,9 +37,7 @@ import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.background.ProductsAsync;
-import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
-import nerdvana.com.pointofsales.dialogs.PluDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
@@ -466,12 +461,6 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
 
-            case 104:
-                PluDialog pluDialog = new PluDialog(getActivity());
-                if (!pluDialog.isShowing()) {
-                    pluDialog.show();
-                }
-                Toast.makeText(getContext(), "SHOW PLU", Toast.LENGTH_SHORT).show();
 
 
 

@@ -6,7 +6,7 @@ import java.util.Map;
 public class CheckInRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
-    public CheckInRequest(String roomId, String roomRatePriceId) {
+    public CheckInRequest(String roomId, String roomRatePriceId, String remarks) {
         mapValue = new HashMap<>();
         mapValue.put("room_id", roomId);
         mapValue.put("user_id", userId);
@@ -15,6 +15,8 @@ public class CheckInRequest extends BaseRequest {
         mapValue.put("tax", tax);
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
+        mapValue.put("branch_code", branchCode);
+        mapValue.put("remarks", remarks);
     }
 
     public Map<String, String> getMapValue() {

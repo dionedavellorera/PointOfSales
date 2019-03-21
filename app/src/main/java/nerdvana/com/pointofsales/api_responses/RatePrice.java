@@ -16,7 +16,7 @@ public class RatePrice {
     private Integer currencyId;
     @SerializedName("amount")
     @Expose
-    private Integer amount;
+    private Double amount;
     @SerializedName("xPerson")
     @Expose
     private Integer xPerson;
@@ -66,11 +66,11 @@ public class RatePrice {
         this.currencyId = currencyId;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Integer amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

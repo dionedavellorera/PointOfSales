@@ -10,5 +10,6 @@ public class BaseRequest {
     protected String currencyId = SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE);
     protected String currencyValue = SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE);
     protected String branchId = SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ID);
+    protected String branchCode = SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_CODE);
 
 }

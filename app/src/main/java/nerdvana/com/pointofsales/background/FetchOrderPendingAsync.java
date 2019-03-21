@@ -42,12 +42,13 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                             "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
                             "",
                             "",
-                            0.00,
+                            r.getTotal(),
                             true,
                             r.getControlNo(),
                             0,
                             r.getIsSoa() == 1 ? true : false,
-                            false
+                            false,
+                            ""
 
                     )
             );

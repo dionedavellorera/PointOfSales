@@ -167,7 +167,7 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
     private void setPriceSelection() {
         List<String> priceArray = new ArrayList<>();
         for (RoomRateMain rrm : priceList) {
-            priceArray.add(String.format("%d - %s", rrm.getRatePrice().getAmount(), rrm.getRatePrice().getRoomRate().getRoomRate()));
+            priceArray.add(String.format("%f - %s", rrm.getRatePrice().getAmount(), rrm.getRatePrice().getRoomRate().getRoomRate()));
         }
         CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                 priceArray);

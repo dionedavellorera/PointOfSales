@@ -1576,6 +1576,180 @@ public class FetchRoomPendingResponse {
 
     }
 
+    public class InnerAr {
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("core_id")
+        @Expose
+        private Integer coreId;
+        @SerializedName("ar_online")
+        @Expose
+        private String arOnline;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Integer getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(Integer coreId) {
+            this.coreId = coreId;
+        }
+
+        public String getArOnline() {
+            return arOnline;
+        }
+
+        public void setArOnline(String arOnline) {
+            this.arOnline = arOnline;
+        }
+    }
+
+    public class OuterAr {
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("payment_id")
+        @Expose
+        private Integer paymentId;
+        @SerializedName("ar_online_id")
+        @Expose
+        private Integer arOnlineId;
+        @SerializedName("voucher_code")
+        @Expose
+        private String voucherCode;
+        @SerializedName("ar")
+        @Expose
+        private InnerAr innerAr;
+
+        public InnerAr getInnerAr() {
+            return innerAr;
+        }
+
+        public void setInnerAr(InnerAr innerAr) {
+            this.innerAr = innerAr;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Integer getPaymentId() {
+            return paymentId;
+        }
+
+        public void setPaymentId(Integer paymentId) {
+            this.paymentId = paymentId;
+        }
+
+        public Integer getArOnlineId() {
+            return arOnlineId;
+        }
+
+        public void setArOnlineId(Integer arOnlineId) {
+            this.arOnlineId = arOnlineId;
+        }
+
+        public String getVoucherCode() {
+            return voucherCode;
+        }
+
+        public void setVoucherCode(String voucherCode) {
+            this.voucherCode = voucherCode;
+        }
+    }
+
+    public class Currency {
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("country_code")
+        @Expose
+        private String countryCode;
+        @SerializedName("symbol_left")
+        @Expose
+        private String symbolLeft;
+        @SerializedName("symbol_right")
+        @Expose
+        private String symbolRight;
+        @SerializedName("value")
+        @Expose
+        private Integer value;
+        @SerializedName("flag")
+        @Expose
+        private Integer flag;
+        @SerializedName("is_default")
+        @Expose
+        private Integer isDefault;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+
+        public void setCountryCode(String countryCode) {
+            this.countryCode = countryCode;
+        }
+
+        public String getSymbolLeft() {
+            return symbolLeft;
+        }
+
+        public void setSymbolLeft(String symbolLeft) {
+            this.symbolLeft = symbolLeft;
+        }
+
+        public String getSymbolRight() {
+            return symbolRight;
+        }
+
+        public void setSymbolRight(String symbolRight) {
+            this.symbolRight = symbolRight;
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+
+        public void setValue(Integer value) {
+            this.value = value;
+        }
+
+        public Integer getFlag() {
+            return flag;
+        }
+
+        public void setFlag(Integer flag) {
+            this.flag = flag;
+        }
+
+        public Integer getIsDefault() {
+            return isDefault;
+        }
+
+        public void setIsDefault(Integer isDefault) {
+            this.isDefault = isDefault;
+        }
+    }
+
     public class Payment {
 
         @SerializedName("id")
@@ -1619,16 +1793,38 @@ public class FetchRoomPendingResponse {
         private Object deletedAt;
         @SerializedName("currency_id")
         @Expose
-        private Double currencyId;
+        private String currencyId;
         @SerializedName("currency_value")
         @Expose
         private Double currencyValue;
+        @SerializedName("ar")
+        @Expose
+        private OuterAr outerAr;
+        @SerializedName("currency")
+        @Expose
+        private Currency currency;
 
-        public Double getCurrencyId() {
+        public Currency getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(Currency currency) {
+            this.currency = currency;
+        }
+
+        public OuterAr getOuterAr() {
+            return outerAr;
+        }
+
+        public void setOuterAr(OuterAr outerAr) {
+            this.outerAr = outerAr;
+        }
+
+        public String getCurrencyId() {
             return currencyId;
         }
 
-        public void setCurrencyId(Double currencyId) {
+        public void setCurrencyId(String currencyId) {
             this.currencyId = currencyId;
         }
 

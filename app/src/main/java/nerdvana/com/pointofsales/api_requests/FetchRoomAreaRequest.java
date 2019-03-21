@@ -16,6 +16,7 @@ public class FetchRoomAreaRequest extends BaseRequest{
         mapValue.put("currency_value", currencyValue);
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
+        mapValue.put("branch_code", branchCode);
     }
 
     public Map<String, String> getMapValue() {

@@ -139,6 +139,7 @@ public abstract class PaymentDialog extends Dialog  {
         super(context);
         this.act = context;
         this.paymentList = paymentList;
+        paymentMethod = paymentList.get(0);
         this.isCheckout = isCheckout;
         this.postedPaymentList = postedPaymentList;
         this.totalBalance = totalBalance;
@@ -218,6 +219,8 @@ public abstract class PaymentDialog extends Dialog  {
             }
         };
 
+
+
         if (isCheckout) {
             pay.setText("CHECKOUT");
         } else {
@@ -239,7 +242,9 @@ public abstract class PaymentDialog extends Dialog  {
                                 false,
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                new JSONObject()));
+                                new JSONObject(),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("2")) { //card
 
                         JSONObject jsonObject = new JSONObject();
@@ -260,7 +265,8 @@ public abstract class PaymentDialog extends Dialog  {
                                 false,
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                jsonObject));
+                                jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("3")) { //online
                         JSONObject jsonObject = new JSONObject();
                         try {
@@ -276,7 +282,9 @@ public abstract class PaymentDialog extends Dialog  {
                                 false,
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                jsonObject));
+                                jsonObject,
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
 
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("5")) { //voucher
                         if (gcList.size() > 0) {
@@ -301,6 +309,15 @@ public abstract class PaymentDialog extends Dialog  {
                                 e.printStackTrace();
                             }
 
+//                            Log.d("TESTDATAGC", new PostedPaymentsModel(
+//                                    paymentMethod.getCoreId(),
+//                                    String.valueOf(amount),
+//                                    paymentMethod.getPaymentType(),
+//                                    false,
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+//                                    jsonObject).toString());
+
                             postedPaymentList.add(new PostedPaymentsModel(
                                     paymentMethod.getCoreId(),
                                     String.valueOf(amount),
@@ -308,7 +325,9 @@ public abstract class PaymentDialog extends Dialog  {
                                     false,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                    jsonObject));
+                                    jsonObject,
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
                         } else {
                             Toast.makeText(getContext(),"No gc added", Toast.LENGTH_SHORT).show();
                         }
@@ -323,7 +342,9 @@ public abstract class PaymentDialog extends Dialog  {
                                 false,
                                 currencyId,
                                 currencyValue,
-                                new JSONObject()));
+                                new JSONObject(),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
                     }
 
                     if (postedPaymentsAdapter != null) {
@@ -370,6 +391,8 @@ public abstract class PaymentDialog extends Dialog  {
         listAvailedGcs.setLayoutManager(llm);
         listAvailedGcs.setAdapter(availableGcAdapter);
         availableGcAdapter.notifyDataSetChanged();
+
+        showForm("1");
     }
 
     public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList);
@@ -539,19 +562,15 @@ public abstract class PaymentDialog extends Dialog  {
                     public void proceed(List<AvailableGcModel> list) {
                         for (AvailableGcModel availList : list) {
                             boolean isValid = true;
-//                            for (AvailableGcModel myList : gcList) {
-//                                if (myList.getGcId().equalsIgnoreCase(availList.getGcId())) {
-//                                    isValid = false;
-//                                }
-//                            }
-//                            if (isValid) {
-//
-//                            }
-
-                            gcList.add(availList);
-
+                            for (AvailableGcModel myList : gcList) {
+                                if (myList.getGcId().equalsIgnoreCase(availList.getGcId())) {
+                                    isValid = false;
+                                }
+                            }
+                            if (isValid) {
+                                gcList.add(availList);
+                            }
                         }
-
                         availableGcAdapter.notifyDataSetChanged();
 
 

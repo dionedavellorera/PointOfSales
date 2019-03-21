@@ -891,7 +891,519 @@ public class PrintSoaResponse {
 
     }
 
+    public class ToProduct {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("core_id")
+        @Expose
+        private String coreId;
+        @SerializedName("product")
+        @Expose
+        private String product;
+        @SerializedName("product_initial")
+        @Expose
+        private String productInitial;
+        @SerializedName("product_barcode")
+        @Expose
+        private String productBarcode;
+        @SerializedName("image_file")
+        @Expose
+        private String imageFile;
+        @SerializedName("is_promo")
+        @Expose
+        private String isPromo;
+        @SerializedName("amount")
+        @Expose
+        private String amount;
+        @SerializedName("mark_up")
+        @Expose
+        private String markUp;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(String coreId) {
+            this.coreId = coreId;
+        }
+
+        public String getProduct() {
+            return product;
+        }
+
+        public void setProduct(String product) {
+            this.product = product;
+        }
+
+        public String getProductInitial() {
+            return productInitial;
+        }
+
+        public void setProductInitial(String productInitial) {
+            this.productInitial = productInitial;
+        }
+
+        public String getProductBarcode() {
+            return productBarcode;
+        }
+
+        public void setProductBarcode(String productBarcode) {
+            this.productBarcode = productBarcode;
+        }
+
+        public String getImageFile() {
+            return imageFile;
+        }
+
+        public void setImageFile(String imageFile) {
+            this.imageFile = imageFile;
+        }
+
+        public String getIsPromo() {
+            return isPromo;
+        }
+
+        public void setIsPromo(String isPromo) {
+            this.isPromo = isPromo;
+        }
+
+        public String getAmount() {
+            return amount;
+        }
+
+        public void setAmount(String amount) {
+            this.amount = amount;
+        }
+
+        public String getMarkUp() {
+            return markUp;
+        }
+
+        public void setMarkUp(String markUp) {
+            this.markUp = markUp;
+        }
+    }
+
+    public class SoaToPost {
+        @SerializedName("control_no")
+        @Expose
+        private String controlNo;
+        @SerializedName("product_id")
+        @Expose
+        private String productId;
+        @SerializedName("category")
+        @Expose
+        private String category;
+        @SerializedName("department")
+        @Expose
+        private String department;
+        @SerializedName("qty")
+        @Expose
+        private String qty;
+        @SerializedName("unit_cost")
+        @Expose
+        private String unitCode;
+        @SerializedName("price")
+        @Expose
+        private String price;
+        @SerializedName("total")
+        @Expose
+        private String total;
+        @SerializedName("discount")
+        @Expose
+        private String discount;
+        @SerializedName("tax_info")
+        @Expose
+        private String taxInfo;
+        @SerializedName("vatable")
+        @Expose
+        private String vatable;
+        @SerializedName("vat")
+        @Expose
+        private String vat;
+        @SerializedName("vat_exempt")
+        @Expose
+        private String vatExempt;
+        @SerializedName("is_posted")
+        @Expose
+        private String isPosted;
+        @SerializedName("is_product_bundle")
+        @Expose
+        private String isProductBundle;
+        @SerializedName("void")
+        @Expose
+        private String voidd;
+        @SerializedName("voided_by")
+        @Expose
+        private String voidedBy;
+        @SerializedName("is_open_price")
+        @Expose
+        private String isOpenPrice;
+        @SerializedName("product")
+        @Expose
+        private ToProduct toProduct;
+
+        public ToProduct getToProduct() {
+            return toProduct;
+        }
+
+        public void setToProduct(ToProduct toProduct) {
+            this.toProduct = toProduct;
+        }
+
+        public String getControlNo() {
+            return controlNo;
+        }
+
+        public void setControlNo(String controlNo) {
+            this.controlNo = controlNo;
+        }
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public String getQty() {
+            return qty;
+        }
+
+        public void setQty(String qty) {
+            this.qty = qty;
+        }
+
+        public String getUnitCode() {
+            return unitCode;
+        }
+
+        public void setUnitCode(String unitCode) {
+            this.unitCode = unitCode;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public String getTotal() {
+            return total;
+        }
+
+        public void setTotal(String total) {
+            this.total = total;
+        }
+
+        public String getDiscount() {
+            return discount;
+        }
+
+        public void setDiscount(String discount) {
+            this.discount = discount;
+        }
+
+        public String getTaxInfo() {
+            return taxInfo;
+        }
+
+        public void setTaxInfo(String taxInfo) {
+            this.taxInfo = taxInfo;
+        }
+
+        public String getVatable() {
+            return vatable;
+        }
+
+        public void setVatable(String vatable) {
+            this.vatable = vatable;
+        }
+
+        public String getVat() {
+            return vat;
+        }
+
+        public void setVat(String vat) {
+            this.vat = vat;
+        }
+
+        public String getVatExempt() {
+            return vatExempt;
+        }
+
+        public void setVatExempt(String vatExempt) {
+            this.vatExempt = vatExempt;
+        }
+
+        public String getIsPosted() {
+            return isPosted;
+        }
+
+        public void setIsPosted(String isPosted) {
+            this.isPosted = isPosted;
+        }
+
+        public String getIsProductBundle() {
+            return isProductBundle;
+        }
+
+        public void setIsProductBundle(String isProductBundle) {
+            this.isProductBundle = isProductBundle;
+        }
+
+        public String getVoidd() {
+            return voidd;
+        }
+
+        public void setVoidd(String voidd) {
+            this.voidd = voidd;
+        }
+
+        public String getVoidedBy() {
+            return voidedBy;
+        }
+
+        public void setVoidedBy(String voidedBy) {
+            this.voidedBy = voidedBy;
+        }
+
+        public String getIsOpenPrice() {
+            return isOpenPrice;
+        }
+
+        public void setIsOpenPrice(String isOpenPrice) {
+            this.isOpenPrice = isOpenPrice;
+        }
+    }
+
     public class Result {
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNumber;
+        @SerializedName("discount")
+        @Expose
+        private String discount;
+        @SerializedName("total")
+        @Expose
+        private String total;
+        @SerializedName("advance")
+        @Expose
+        private String advance;
+        @SerializedName("tendered")
+        @Expose
+        private String tendered;
+        @SerializedName("change")
+        @Expose
+        private String change;
+        @SerializedName("is_soa")
+        @Expose
+        private String isSoa;
+        @SerializedName("soa_count")
+        @Expose
+        private String soaCount;
+        @SerializedName("is_foc")
+        @Expose
+        private String isFoc;
+        @SerializedName("vatable")
+        @Expose
+        private String vatable;
+        @SerializedName("vat")
+        @Expose
+        private String vat;
+        @SerializedName("vat_exempt")
+        @Expose
+        private String vatExempt;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private String currencyValue;
+        @SerializedName("pos_id")
+        @Expose
+        private String posId;
+        @SerializedName("void")
+        @Expose
+        private String voidd;
+        @SerializedName("post")
+        @Expose
+        private List<SoaToPost> toPostList;
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public List<SoaToPost> getToPostList() {
+            return toPostList;
+        }
+
+        public void setToPostList(List<SoaToPost> toPostList) {
+            this.toPostList = toPostList;
+        }
+
+        public String getControlNumber() {
+            return controlNumber;
+        }
+
+        public void setControlNumber(String controlNumber) {
+            this.controlNumber = controlNumber;
+        }
+
+        public String getDiscount() {
+            return discount;
+        }
+
+        public void setDiscount(String discount) {
+            this.discount = discount;
+        }
+
+        public String getTotal() {
+            return total;
+        }
+
+        public void setTotal(String total) {
+            this.total = total;
+        }
+
+        public String getAdvance() {
+            return advance;
+        }
+
+        public void setAdvance(String advance) {
+            this.advance = advance;
+        }
+
+        public String getTendered() {
+            return tendered;
+        }
+
+        public void setTendered(String tendered) {
+            this.tendered = tendered;
+        }
+
+        public String getChange() {
+            return change;
+        }
+
+        public void setChange(String change) {
+            this.change = change;
+        }
+
+        public String getIsSoa() {
+            return isSoa;
+        }
+
+        public void setIsSoa(String isSoa) {
+            this.isSoa = isSoa;
+        }
+
+        public String getSoaCount() {
+            return soaCount;
+        }
+
+        public void setSoaCount(String soaCount) {
+            this.soaCount = soaCount;
+        }
+
+        public String getIsFoc() {
+            return isFoc;
+        }
+
+        public void setIsFoc(String isFoc) {
+            this.isFoc = isFoc;
+        }
+
+        public String getVatable() {
+            return vatable;
+        }
+
+        public void setVatable(String vatable) {
+            this.vatable = vatable;
+        }
+
+        public String getVat() {
+            return vat;
+        }
+
+        public void setVat(String vat) {
+            this.vat = vat;
+        }
+
+        public String getVatExempt() {
+            return vatExempt;
+        }
+
+        public void setVatExempt(String vatExempt) {
+            this.vatExempt = vatExempt;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public String getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(String currencyValue) {
+            this.currencyValue = currencyValue;
+        }
+
+        public String getPosId() {
+            return posId;
+        }
+
+        public void setPosId(String posId) {
+            this.posId = posId;
+        }
+
+        public String getVoidd() {
+            return voidd;
+        }
+
+        public void setVoidd(String voidd) {
+            this.voidd = voidd;
+        }
 
         @SerializedName("booked")
         @Expose

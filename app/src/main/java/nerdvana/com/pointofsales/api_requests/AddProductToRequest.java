@@ -13,7 +13,7 @@ public class AddProductToRequest extends BaseRequest {
 
     public AddProductToRequest(ArrayList<AddRateProductModel> addRateProductList, String roomId,
                                String roomAreaId, String controlNo,
-                               ArrayList<VoidProductModel> voidList) {
+                               ArrayList<VoidProductModel> voidList, String remarks) {
         mapValue = new HashMap<>();
         mapValue.put("room_area_id", roomAreaId);
         mapValue.put("control_no", controlNo);
@@ -24,6 +24,8 @@ public class AddProductToRequest extends BaseRequest {
         mapValue.put("emp_id", "762");
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
+        mapValue.put("remarks", remarks);
+        mapValue.put("branch_code", branchCode);
     }
 
     public Map<String, String> getMapValue() {

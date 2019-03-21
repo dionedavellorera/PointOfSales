@@ -3,9 +3,14 @@ package nerdvana.com.pointofsales.background;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.RoomConstants;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.RatePrice;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
@@ -29,46 +34,20 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
             List<RoomRateMain> roomRateMainList = new ArrayList<>();
             List<Integer> tempList = new ArrayList<>();
 
-//            if ((r.getRoomRate().size() == 0 &&
-//                    r.getType().getRoomRate().size() == 0 &&
-//                    r.getType().getParent().getRoomRate().size() == 0)
-//                    || r.getType().getFlag() == 0) {
-//                isIncluded = true;
-//            }
-//            int counter = 0;
-//            if (r.getType() == null) {
-//                counter++;
-//            } else {
-//                if (r.getType().getParent() == null) {
-//                    counter++;
-//                } else {
-//                    if (r.getType().getParent().getRoomRate().size() == 0) {
-//                        counter++;
-//                    }
-//
-//                    if (r.getType().getFlag() == 0) {
-//                        counter++;
-//                    }
-//                }
-//            }
-//
-//            if (r.getRoomRate().size() == 0) {
-//                counter++;
-//            }
-//
-//            if (counter >= 2) continue;
-
 
 
             for (RoomRateSub rateSub : r.getRoomRate()) {
                 if (!tempList.contains(rateSub.getRoomRatePriceId())) {
-                    roomRateMainList.add(
-                            new RoomRateMain(rateSub.getId(), rateSub.getRoomRatePriceId(),
-                                    r.getRoomTypeId(),rateSub.getCreatedBy(),
-                                    rateSub.getCreatedAt(), rateSub.getUpdatedAt(),
-                                    rateSub.getDeletedAt(), rateSub.getRatePrice())
-                    );
-                    tempList.add(rateSub.getRoomRatePriceId());
+                    if (rateSub.getRatePrice() != null) {
+                        roomRateMainList.add(
+                                new RoomRateMain(rateSub.getId(), rateSub.getRoomRatePriceId(),
+                                        r.getRoomTypeId(),rateSub.getCreatedBy(),
+                                        rateSub.getCreatedAt(), rateSub.getUpdatedAt(),
+                                        rateSub.getDeletedAt(), rateSub.getRatePrice())
+                        );
+                        tempList.add(rateSub.getRoomRatePriceId());
+                    }
+
                 }
             }
 
@@ -83,22 +62,35 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                     }
                 }
 
-
-                for (RoomRateMain rateList : r.getType().getRoomRate()) {
-                    if (!tempList.contains(rateList.getRoomRatePriceId())) {
-                        roomRateMainList.add(rateList);
-                        tempList.add(rateList.getRoomRatePriceId());
+                if (r.getType().getRoomRate().size() > 0) {
+                    for (RoomRateMain rateList : r.getType().getRoomRate()) {
+                        if (!tempList.contains(rateList.getRoomRatePriceId())) {
+                            roomRateMainList.add(rateList);
+                            tempList.add(rateList.getRoomRatePriceId());
+                        }
                     }
                 }
+
             }
             int unpostedOrderCount = 0;
-//            if (r.getTransaction() != null) {
-//                if (r.getTransaction().getTransaction() != null) {
-//                    if (r.getTransaction().getTransaction().getPost().size() > 0) {
-//                        unpostedOrderCount = r.getTransaction().getTransaction().getPost().size();
-//                    }
-//                }
-//            }
+
+            Double amountSelected = 0.00;
+            String checkoutExpected = "";
+            if (String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                    String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.SOA)) {
+
+
+                DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                DateTime jodatime = dtf.parseDateTime(r.getTransaction().getExpectedCheckOut());
+                DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+
+                amountSelected = r.getTransaction().getTransaction().getTotal();
+                checkoutExpected = dtfOut.print(jodatime);
+
+            } else {
+                amountSelected = 0.00;
+                checkoutExpected = "--";
+            }
 
             productsModelList.add(
                     new RoomTableModel (
@@ -116,12 +108,13 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
                             String.valueOf(r.getCRoomStat()),
                             r.getStatus().getColor(),
-                            0.00,
+                            amountSelected,
                             false,
                             r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "",
                             unpostedOrderCount,
                             r.getStatus().getIsBlink() == 1 ? true : false,
-                            r.getStatus().getIsTimer() == 1 ? true : false
+                            r.getStatus().getIsTimer() == 1 ? true : false,
+                            checkoutExpected
 
                     )
             );

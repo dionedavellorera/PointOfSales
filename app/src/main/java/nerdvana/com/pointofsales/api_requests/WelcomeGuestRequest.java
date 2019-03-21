@@ -55,6 +55,9 @@ public class WelcomeGuestRequest extends BaseRequest {
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
 
+        mapValue.put("branch_code", branchCode);
+        mapValue.put("branch_id", branchId);
+
 
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;

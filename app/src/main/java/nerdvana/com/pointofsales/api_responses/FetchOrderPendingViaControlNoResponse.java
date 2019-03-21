@@ -42,6 +42,87 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
 
+    public class Currency {
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("country_code")
+        @Expose
+        private String countryCode;
+        @SerializedName("symbol_left")
+        @Expose
+        private String symbolLeft;
+        @SerializedName("symbol_right")
+        @Expose
+        private String symbolRight;
+        @SerializedName("value")
+        @Expose
+        private Integer value;
+        @SerializedName("flag")
+        @Expose
+        private Integer flag;
+        @SerializedName("is_default")
+        @Expose
+        private Integer isDefault;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+
+        public void setCountryCode(String countryCode) {
+            this.countryCode = countryCode;
+        }
+
+        public String getSymbolLeft() {
+            return symbolLeft;
+        }
+
+        public void setSymbolLeft(String symbolLeft) {
+            this.symbolLeft = symbolLeft;
+        }
+
+        public String getSymbolRight() {
+            return symbolRight;
+        }
+
+        public void setSymbolRight(String symbolRight) {
+            this.symbolRight = symbolRight;
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+
+        public void setValue(Integer value) {
+            this.value = value;
+        }
+
+        public Integer getFlag() {
+            return flag;
+        }
+
+        public void setFlag(Integer flag) {
+            this.flag = flag;
+        }
+
+        public Integer getIsDefault() {
+            return isDefault;
+        }
+
+        public void setIsDefault(Integer isDefault) {
+            this.isDefault = isDefault;
+        }
+    }
+
+
 
     public class Payment {
 
@@ -90,6 +171,17 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("currency_value")
         @Expose
         private Double currencyValue;
+        @SerializedName("currency")
+        @Expose
+        private Currency currency;
+
+        public Currency getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(Currency currency) {
+            this.currency = currency;
+        }
 
         public Double getCurrencyId() {
             return currencyId;

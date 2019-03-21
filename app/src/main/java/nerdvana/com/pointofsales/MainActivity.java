@@ -443,6 +443,98 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         //endregion
 
         switch (printModel.getType()) {
+            case "SOA-TO":
+                PrintSoaResponse.Result toList = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Result.class)
+                        ;
+//
+//
+                addTextToPrinter(SPrinter.getPrinter(), toList.getCreatedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                addPrinterSpace(1);
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "MACHINE NO",
+                        SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_ID),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//
+                addTextToPrinter(SPrinter.getPrinter(), "SOA-TAKE OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "QTY   Description                     Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                for (PrintSoaResponse.SoaToPost soaTrans : toList.getToPostList()) {
+
+                    String qty = "";
+
+                    qty += soaTrans.getQty();
+                    if (String.valueOf(soaTrans.getQty()).length() < 4) {
+                        for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                            qty += " ";
+                        }
+                    }
+                    String item = "";
+                    item =soaTrans.getToProduct().getProductInitial();
+
+                    if (soaTrans.getVoidd().equalsIgnoreCase("0")) {
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                qty+ " "+item,
+                                String.valueOf(soaTrans.getTotal())
+                                ,
+                                45,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                }
+//
+                addTextToPrinter(SPrinter.getPrinter(), "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "   VAT EXEMPT",
+                        String.valueOf(toList.getVatExempt()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "   DISCOUNT",
+                        String.valueOf(toList.getDiscount()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "   ADVANCED DEPOSIT",
+                        String.valueOf(toList.getAdvance()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "AMOUNT DUE",
+                        String.valueOf(toList.getTotal()),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+                addPrinterSpace(1);
+//
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        toList.getControlNumber(),
+                        toList.getSoaCount(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+                addPrinterSpace(1);
+//
+                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+
+                break;
+
+
             case "CHECKIN":
 
                 TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
@@ -534,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 break;
-            case "SOA":
+            case "SOA-ROOM":
                 TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
                 List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
 
@@ -771,6 +863,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (SPrinter.getPrinter() != null) {
                     SPrinter.getPrinter().connect(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
                     SPrinter.getPrinter().beginTransaction();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Printer", Toast.LENGTH_SHORT).show();
                 }
 
             } catch (Epos2Exception e) {

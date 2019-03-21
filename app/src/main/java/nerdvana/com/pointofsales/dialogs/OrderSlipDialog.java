@@ -9,26 +9,37 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.adapters.OrderSlipAdapter;
 import nerdvana.com.pointofsales.adapters.OrderSlipProductsAdapter;
 import nerdvana.com.pointofsales.adapters.RoomRatesAdapter;
+import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.OrderSlipModel;
+import nerdvana.com.pointofsales.model.PrintModel;
 
 public class OrderSlipDialog extends Dialog {
     private List<OrderSlipModel> orderList;
     private RecyclerView ordersList;
     private OrderSlipAdapter orderSlipAdapter;
     private RecyclerView orderSlipProductsList;
-    public OrderSlipDialog(@NonNull Context context, List<OrderSlipModel> orderList) {
+    private Button reprintFoodOrderSlip;
+    List<OrderSlipModel.OrderSlipProduct> tempOsp;
+    private String roomNumber;
+    public OrderSlipDialog(@NonNull Context context, List<OrderSlipModel> orderList, String roomNumber) {
         super(context);
         this.orderList = orderList;
+        this.roomNumber = roomNumber;
     }
 
     public OrderSlipDialog(@NonNull Context context, int themeResId) {
@@ -44,13 +55,14 @@ public class OrderSlipDialog extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_order_slip);
+        tempOsp = new ArrayList<>();
         ordersList = findViewById(R.id.listOrders);
         orderSlipProductsList = findViewById(R.id.orderSlipProductsList);
-
+        reprintFoodOrderSlip = findViewById(R.id.reprintFoodOrderSlip);
         OrderSlip orderSlip = new OrderSlip() {
             @Override
             public void clicked(List<OrderSlipModel.OrderSlipInfo> orderSlipInfo) {
-                List<OrderSlipModel.OrderSlipProduct> tempOsp = new ArrayList<>();
+                tempOsp = new ArrayList<>();
                 for (OrderSlipModel.OrderSlipInfo osi : orderSlipInfo) {
                     tempOsp.addAll(osi.getOrderSlipProductList());
                 }
@@ -84,6 +96,32 @@ public class OrderSlipDialog extends Dialog {
         ordersList.setLayoutManager(linearLayoutManager);
         ordersList.setAdapter(orderSlipAdapter);
         orderSlipAdapter.notifyDataSetChanged();
+
+
+        reprintFoodOrderSlip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<AddRateProductModel> reprintList = new ArrayList<>();
+                for (OrderSlipModel.OrderSlipProduct osp : tempOsp) {
+                    reprintList.add(new AddRateProductModel(
+                        osp.getProductId(),
+                            osp.getRoomRatePriceId(),
+                            osp.getQuantity(),
+                            "",
+                            osp.getPrice(),
+                            0,
+                            osp.getProductInitial()
+                    ));
+                }
+
+                if (reprintList.size() > 0) {
+                    BusProvider.getInstance().post(
+                            new PrintModel("",
+                                    !TextUtils.isEmpty(roomNumber) ? roomNumber : "",
+                                    "FO", GsonHelper.getGson().toJson(reprintList)));
+                }
+            }
+        });
     }
 
     @Override
@@ -100,4 +138,5 @@ public class OrderSlipDialog extends Dialog {
     public interface OrderSlip {
         void clicked(List<OrderSlipModel.OrderSlipInfo> orderSlipInfo);
     }
+
 }

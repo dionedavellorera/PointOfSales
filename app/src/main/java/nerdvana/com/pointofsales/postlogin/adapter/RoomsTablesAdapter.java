@@ -47,6 +47,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     static class ProductsViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
+        private TextView timer;
         private TextView price;
         private ImageView imageUrl;
         private CardView rootView;
@@ -55,7 +56,8 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
-            price = itemView.findViewById(R.id.price);
+            timer = itemView.findViewById(R.id.timer);
+            price = itemView.findViewById(R.id.roomPrice);
             imageUrl = itemView.findViewById(R.id.image);
             rootView = itemView.findViewById(R.id.rootView);
             rel = itemView.findViewById(R.id.rel);
@@ -94,6 +96,10 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             ((ProductsViewHolder)holder).name.clearAnimation();
         }
+
+        ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
+        ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getAmountSelected()));
+
 
 
     }
