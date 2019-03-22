@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class RatePrice {
 
+
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -138,4 +139,18 @@ public class RatePrice {
         this.roomRate = roomRate;
     }
 
+    public RatePrice(Integer id, Integer roomRateId, Integer currencyId, Double amount, Integer xPerson, Integer perHour, Integer flag, Integer createdBy, String createdAt, String updatedAt, Object deletedAt, RoomRateInner roomRate) {
+        this.id = id;
+        this.roomRateId = roomRateId;
+        this.currencyId = currencyId;
+        this.amount = amount;
+        this.xPerson = xPerson;
+        this.perHour = perHour;
+        this.flag = flag;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+        this.roomRate = roomRate;
+    }
 }

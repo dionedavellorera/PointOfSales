@@ -52,7 +52,7 @@ public abstract class SwitchRoomDialog extends Dialog {
     private String quantity = "1";
 
     private List<OwnRoomModel> ownRoomModelList;
-
+    private List<RoomRateMain> selectedRoomRateLists;
     private Context context;
 
     private String currentRoomNumber;
@@ -75,6 +75,7 @@ public abstract class SwitchRoomDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_switch_room);
+        selectedRoomRateLists = new ArrayList<>();
 
         ownRoomModelList = new ArrayList<>();
         sendRoomListRequest();
@@ -86,7 +87,6 @@ public abstract class SwitchRoomDialog extends Dialog {
                     case "roomstables":
                         List<String> temp = new ArrayList<>();
                         for (RoomTableModel rtm : new ArrayList<RoomTableModel>(list)) {
-
                             if (rtm.getStatus().equalsIgnoreCase(RoomConstants.CLEAN) && !currentRoomNumber.equalsIgnoreCase(rtm.getName())) {
                                 ownRoomModelList.add(new OwnRoomModel(
                                         String.valueOf(rtm.getRoomId()),
@@ -123,7 +123,9 @@ public abstract class SwitchRoomDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(roomRatePriceId) && !TextUtils.isEmpty(roomId)) {
-                    switchRoomConfirm(roomRatePriceId, quantity, roomRateAmount, roomRateName, roomId);
+                    switchRoomConfirm(roomRatePriceId, quantity,
+                            roomRateAmount, roomRateName,
+                            roomId, selectedRoomRateLists);
                     dismiss();
                 } else {
                     Toast.makeText(context, "No room / rate available", Toast.LENGTH_SHORT).show();
@@ -154,7 +156,7 @@ public abstract class SwitchRoomDialog extends Dialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, final int position, long id) {
                 roomId = ownRoomModelList.get(position).getRoomId();
-
+                selectedRoomRateLists = ownRoomModelList.get(position).getPriceList();
 
                 List<String> temp = new ArrayList<>();
 
@@ -194,7 +196,10 @@ public abstract class SwitchRoomDialog extends Dialog {
 
     }
 
-    public abstract void switchRoomConfirm(String roomRatePriceId, String qty, String price, String rateName, String roomId);
+    public abstract void switchRoomConfirm(
+            String roomRatePriceId, String qty,
+            String price, String rateName,
+            String roomId, List<RoomRateMain> roomRateMainList);
 
     @Override
     protected void onStart() {

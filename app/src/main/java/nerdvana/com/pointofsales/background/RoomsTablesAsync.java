@@ -79,13 +79,22 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
             if (String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.OCCUPIED) ||
                     String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.SOA)) {
 
+                if (r.getTransaction() != null) {
+                    if (r.getTransaction().getExpectedCheckOut() != null) {
+                        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                        DateTime jodatime = dtf.parseDateTime(r.getTransaction().getExpectedCheckOut());
+                        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
 
-                DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                DateTime jodatime = dtf.parseDateTime(r.getTransaction().getExpectedCheckOut());
-                DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+                        amountSelected = r.getTransaction().getTransaction().getTotal();
+                        checkoutExpected = dtfOut.print(jodatime);
+                    } else {
+                        checkoutExpected = "";
+                    }
+                } else {
+                    checkoutExpected = "";
+                }
 
-                amountSelected = r.getTransaction().getTransaction().getTotal();
-                checkoutExpected = dtfOut.print(jodatime);
+
 
             } else {
                 amountSelected = 0.00;

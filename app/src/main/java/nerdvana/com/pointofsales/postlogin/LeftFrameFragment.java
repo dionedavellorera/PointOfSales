@@ -33,6 +33,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -62,6 +65,7 @@ import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
+import nerdvana.com.pointofsales.api_requests.FetchRoomViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
 import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
@@ -83,11 +87,17 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResp
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.api_responses.RatePrice;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
+import nerdvana.com.pointofsales.api_responses.RoomRateMainViaId;
+import nerdvana.com.pointofsales.api_responses.RoomRateSub;
+import nerdvana.com.pointofsales.api_responses.RoomRateSubViaId;
+import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 //import nerdvana.com.pointofsales.background.CheckoutItemsAsync;
 import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
@@ -148,6 +158,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private TextView total;
     private TextView discount;
     private TextView tax;
+    private TextView deposit;
     private TextView subTotal;
     private TextView header;
     private TextView noItems;
@@ -186,6 +197,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private double totalBalance = 0;
 
+
+    private List<RoomRateMain> roomRateMainListFromSwitch;
+
     public static LeftFrameFragment newInstance(SelectionContract selectionContract) {
         LeftFrameFragment.selectionContract = selectionContract;
         LeftFrameFragment leftFrameFragment = new LeftFrameFragment();
@@ -197,6 +211,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         total = view.findViewById(R.id.totalValue);
         discount = view.findViewById(R.id.discountValue);
         tax = view.findViewById(R.id.taxValue);
+        deposit = view.findViewById(R.id.depositValue);
         subTotal = view.findViewById(R.id.subTotalValue);
 
         listCheckoutItems = view.findViewById(R.id.listCheckoutItems);
@@ -218,6 +233,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         paymentTypeList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
         orderSlipList = new ArrayList<>();
+        roomRateMainListFromSwitch = new ArrayList<>();
     }
 
     @Nullable
@@ -332,6 +348,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             total.setText("0.00");
             discount.setText("0.00");
+            deposit.setText("0.00");
             tax.setText("0.00");
             subTotal.setText("0.00");
 
@@ -624,39 +641,59 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
             case 114://SWITCH ROOM
-                SwitchRoomDialog switchRoomDialog = new SwitchRoomDialog(getActivity(), selectedRoom.getName()) {
-                    @Override
-                    public void switchRoomConfirm(final String roomRatePriceId, final String qty,
-                                                  final String price, final String rateName,
-                                                  final String roomId) {
-                        ConfirmWithRemarksDialog cfrmDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                            @Override
-                            public void save(String remarks) {
-                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                if (selectedRoom != null) {
+                    SwitchRoomDialog switchRoomDialog = new SwitchRoomDialog(getActivity(), selectedRoom.getName()) {
+                        @Override
+                        public void switchRoomConfirm(final String roomRatePriceId, final String qty,
+                                                      final String price, final String rateName,
+                                                      final String roomId, List<RoomRateMain> roomRateMainList) {
+                            ConfirmWithRemarksDialog cfrmDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                @Override
+                                public void save(String remarks) {
+//                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                                    final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
 
-                                for (CartItemsModel cim : cartItemList) {
-                                    if (!cim.isProduct()) {
-                                        voidModel.add(new VoidProductModel(
-                                                cim.getPostId(),
-                                                cim.getName(),
-                                                String.valueOf(cim.getAmount()),
-                                                String.valueOf(cim.getQuantity())
-                                        ));
+                                    for (CartItemsModel cim : cartItemList) {
+                                        if (!cim.isProduct()) {
+                                            voidModel.add(new VoidProductModel(
+                                                    cim.getPostId(),
+                                                    cim.getName(),
+                                                    String.valueOf(cim.getAmount()),
+                                                    String.valueOf(cim.getQuantity())
+                                            ));
+                                        }
                                     }
-                                }
+//
+//                                model.add(
+//                                        new AddRateProductModel(
+//                                        "0",
+//                                        roomRatePriceId,
+//                                        qty,
+//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+//                                        price,
+//                                        0,
+//                                        rateName
+//                                ));
 
-                                model.add(
-                                        new AddRateProductModel(
-                                        "0",
-                                        roomRatePriceId,
-                                        qty,
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                        price,
-                                        0,
-                                        rateName
-                                ));
+//                                    Log.d("TESDATAT", new SwitchRoomRequest(
+//                                            String.valueOf(selectedRoom.getRoomId()),
+//                                            roomRatePriceId,
+//                                            remarks,
+//                                            roomId,
+//                                            "658",
+//                                            voidModel
+//                                    ).toString());
 
+                                    BusProvider.getInstance().post(
+                                            new SwitchRoomRequest(
+                                                    String.valueOf(selectedRoom.getRoomId()),
+                                                    roomRatePriceId,
+                                                    remarks,
+                                                    roomId,
+                                                    "658",
+                                                    voidModel
+                                            )
+                                    );
 
 //                                BusProvider.getInstance().post(new SwitchRoomRequest(
 //                                        model,
@@ -664,16 +701,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                                        voidModel,
 //                                        remarks
 //                                ));
-                                //new switch room api call with almost same params
+                                    //new switch room api call with almost same params
 
 
-                            }
-                        };
+                                }
+                            };
 
-                        if (!cfrmDialog.isShowing()) cfrmDialog.show();
-                    }
-                };
-                if (selectedRoom != null) {
+                            if (!cfrmDialog.isShowing()) cfrmDialog.show();
+                        }
+                    };
+
                     if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
                             currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
                         if (!switchRoomDialog.isShowing()) {
@@ -685,6 +722,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 } else {
                     Toast.makeText(getContext(), "No room selected", Toast.LENGTH_SHORT).show();
                 }
+
 
                 break;
             case 113://POST VOID
@@ -793,7 +831,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         printSoaRequest("", selectedRoom.getControlNo());
                     } else {
                         if (currentRoomStatus.equalsIgnoreCase("2") || currentRoomStatus.equalsIgnoreCase("17")) {
-                            printSoaRequest(String.valueOf(selectedRoom.getRoomId()), "");
+                            boolean isValid = false;
+
+                            for (CartItemsModel cim : cartItemList) {
+                                if (!cim.isProduct()) {
+                                    isValid = true;
+                                }
+                            }
+
+                            if (isValid) {
+                                printSoaRequest(String.valueOf(selectedRoom.getRoomId()), "");
+                            } else {
+                                Toast.makeText(getContext(), "CANNOT SOA, NO ROOM RATE PLEASE ADD ROOM RATE", Toast.LENGTH_SHORT).show();
+                            }
+
                         } else {
                             Toast.makeText(getContext(), "Room not occupied, cannot soa", Toast.LENGTH_SHORT).show();
                         }
@@ -926,7 +977,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     } else {
                         if (currentRoomStatus.equalsIgnoreCase("17")) {
                             if (paymentTypeList.size() > 0) {
-                                checkoutDialog.show();
+
+                                boolean isValid = false;
+
+                                for (CartItemsModel cim : cartItemList) {
+                                    if (!cim.isProduct()) {
+                                        isValid = true;
+                                    }
+                                }
+
+                                if (isValid) {
+                                    checkoutDialog.show();
+                                } else {
+                                    Toast.makeText(getContext(), "NO ROOM RATE FOUND, PLEASE ADD TO PROCEED", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
                                 Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
                             }
@@ -1065,64 +1129,74 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
                 break;
             case 101: //VOID
-                final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
-                    @Override
-                    public void passwordSuccess() {
-                        if (cartItemList.size() < 1) {
-                            Toast.makeText(getContext(), "No items to void", Toast.LENGTH_SHORT).show();
-                        } else {
+                if (selectedRoom != null) {
 
-                            final ArrayList<VoidProductModel> model = new ArrayList<>();
+                    if (cartItemList.size() < 1) {
+                        Toast.makeText(getContext(), "No items to void", Toast.LENGTH_SHORT).show();
+                    } else {
 
-                            for (CartItemsModel cim : cartItemList) {
-                                if (cim.isSelected()) {
-                                    model.add(new VoidProductModel(
-                                        cim.getPostId(),
-                                        cim.getName(),
-                                        String.valueOf(cim.getAmount()),
-                                        String.valueOf(cim.getQuantity())
-                                    ));
+                        final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                            @Override
+                            public void passwordSuccess() {
+
+                                final ArrayList<VoidProductModel> model = new ArrayList<>();
+
+                                for (CartItemsModel cim : cartItemList) {
+                                    if (cim.isSelected()) {
+                                        model.add(new VoidProductModel(
+                                                cim.getPostId(),
+                                                cim.getName(),
+                                                String.valueOf(cim.getAmount()),
+                                                String.valueOf(cim.getQuantity())
+                                        ));
+                                    }
+                                }
+                                if (selectedRoom != null) {
+
+                                    if (selectedRoom.isTakeOut()) {
+                                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                            @Override
+                                            public void save(String remarks) {
+                                                BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
+                                                BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                                        String.valueOf(selectedRoom.getAreaId()),
+                                                        selectedRoom.getControlNo(),
+                                                        model,
+                                                        remarks));
+                                            }
+                                        };
+                                        confirmWithRemarksDialog.show();
+
+                                    } else {
+
+                                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                            @Override
+                                            public void save(String remarks) {
+                                                BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
+                                                BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                                        model, remarks));
+                                            }
+                                        };
+                                        confirmWithRemarksDialog.show();
+
+                                    }
                                 }
                             }
-                            if (selectedRoom != null) {
 
-                                if (selectedRoom.isTakeOut()) {
-                                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                        @Override
-                                        public void save(String remarks) {
-                                            BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
-                                            BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                                    String.valueOf(selectedRoom.getAreaId()),
-                                                    selectedRoom.getControlNo(),
-                                                    model,
-                                                    remarks));
-                                        }
-                                    };
-                                    confirmWithRemarksDialog.show();
+                            @Override
+                            public void passwordFailed() {
 
-                                } else {
-
-                                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                        @Override
-                                        public void save(String remarks) {
-                                            BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
-                                            BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                                    model, remarks));
-                                        }
-                                    };
-                                    confirmWithRemarksDialog.show();
-
-                                }
                             }
-                        }
-                    }
-
-                    @Override
-                    public void passwordFailed() {
+                        };
+                        if(!passwordDialog.isShowing()) passwordDialog.show();
 
                     }
-                };
-                if(!passwordDialog.isShowing()) passwordDialog.show();
+
+
+                } else {
+                    Toast.makeText(getContext(), "No room selected", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
             case 102: //ADVANCE PAYMENT
 
@@ -1492,7 +1566,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     advancePayment = r.getTransaction().getAdvance();
                     discountPayment = r.getTransaction().getDiscount();
-
+                    discount.setText(String.valueOf(discountPayment));
+                    tax.setText(String.valueOf(r.getTransaction().getVat()));
+                    deposit.setText(String.valueOf(r.getTransaction().getAdvance()));
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
                         List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
                         for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
@@ -1852,7 +1928,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
-        Toast.makeText(getContext(), "FOP RESP", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "FOP RESP", Toast.LENGTH_SHORT).show();
         currentRoomStatus = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getIsSoa());
         totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal();
         cartItemList = new ArrayList<>();
@@ -1861,6 +1937,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         Double totalAmount = 0.00;
         if (fetchOrderPendingViaControlNoResponse.getResult() != null) {
 
+            discount.setText(String.valueOf(discount));
+            tax.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getVat()));
+            deposit.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance()));
 
             if (fetchOrderPendingViaControlNoResponse.getResult().getPayments().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : fetchOrderPendingViaControlNoResponse.getResult().getPayments()) {
@@ -2084,4 +2163,164 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
+    @Subscribe
+    public void switchRoomResponse(SwitchRoomResponse switchRoomResponse) {
+        Toast.makeText(getContext(),"SWITCH ROOM SUCCESS", Toast.LENGTH_SHORT).show();
+
+        if (switchRoomResponse.getResults() != null) {
+            if (switchRoomResponse.getResults().getBooked().size() > 0) {
+                fetchRoomViaIdRequest(String.valueOf(switchRoomResponse.getResults().getBooked().get(0).getRoomId()));
+            }
+
+        }
+
+    }
+
+    private void fetchRoomViaIdRequest(String roomId) {
+        BusProvider.getInstance().post(new FetchRoomViaIdRequest(roomId));
+    }
+
+    @Subscribe
+    public void fetchRoomViaIdResponse(FetchRoomViaIdResponse r) {
+
+        Toast.makeText(getContext(),"FETCH ROOM VIA ID SUCCSS", Toast.LENGTH_SHORT).show();
+
+
+        List<RoomRateMainViaId> roomRateMainList = new ArrayList<>();
+        List<Integer> tempList = new ArrayList<>();
+
+
+
+        if (r.getResult().getRoomRate().size() > 0) {
+            for (RoomRateSubViaId rateSub : r.getResult().getRoomRate()) {
+                if (!tempList.contains(rateSub.getRoomRatePriceId())) {
+                    if (rateSub.getRatePrice() != null) {
+                        roomRateMainList.add(
+                                new RoomRateMainViaId(
+                                        rateSub.getId(), rateSub.getRoomRatePriceId(),
+                                        r.getResult().getRoomTypeId(),rateSub.getCreatedBy(),
+                                        rateSub.getCreatedAt(), rateSub.getUpdatedAt(),
+                                        rateSub.getDeletedAt(), rateSub.getRatePrice())
+                        );
+                        tempList.add(rateSub.getRoomRatePriceId());
+                    }
+
+                }
+            }
+        }
+
+
+        if (r.getResult().getType() != null) {
+
+            if (r.getResult().getType().getParent() != null) {
+                if (r.getResult().getType().getParent().getRoomRate().size() > 0) {
+                    for (RoomRateMainViaId p : r.getResult().getType().getParent().getRoomRate()) {
+                        if (!tempList.contains(p.getRoomRatePriceId())) {
+                            roomRateMainList.add(p);
+                            tempList.add(p.getRoomRatePriceId());
+                        }
+                    }
+                }
+
+            }
+
+            if (r.getResult().getType().getRoomRate().size() > 0) {
+                for (RoomRateMainViaId rateList : r.getResult().getType().getRoomRate()) {
+                    if (!tempList.contains(rateList.getRoomRatePriceId())) {
+                        roomRateMainList.add(rateList);
+                        tempList.add(rateList.getRoomRatePriceId());
+                    }
+                }
+            }
+
+        }
+
+        Double amountSelected = 0.00;
+        String checkoutExpected = "";
+        if (String.valueOf(r.getResult().getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                String.valueOf(r.getResult().getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.SOA)) {
+
+            if (r.getResult().getTransaction() != null) {
+                if (r.getResult().getTransaction().getExpectedCheckOut() != null) {
+                    DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                    DateTime jodatime = dtf.parseDateTime(r.getResult().getTransaction().getExpectedCheckOut());
+                    DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+
+                    amountSelected = r.getResult().getTransaction().getTransaction().getTotal();
+                    checkoutExpected = dtfOut.print(jodatime);
+                } else {
+                    checkoutExpected = "";
+                }
+            } else {
+                checkoutExpected = "";
+            }
+
+
+
+        } else {
+            amountSelected = 0.00;
+            checkoutExpected = "--";
+        }
+//        Integer id, Integer roomRatePriceId,
+//                Integer roomTypeId, Integer createdBy,
+//                String createdAt, String updatedAt,
+//                Object deletedAt, RatePrice ratePrice
+        List<RoomRateMain> mYList=  new ArrayList<>();
+        for (RoomRateMainViaId rrm : roomRateMainList) {
+            RatePrice ratePrice = new RatePrice(
+                    rrm.getRatePrice().getId(),
+                    rrm.getRatePrice().getRoomRateId(),
+                    rrm.getRatePrice().getCurrencyId(),
+                    rrm.getRatePrice().getAmount(),
+                    rrm.getRatePrice().getXPerson(),
+                    rrm.getRatePrice().getPerHour(),
+                    rrm.getRatePrice().getFlag(),
+                    rrm.getRatePrice().getCreatedBy(),
+                    rrm.getRatePrice().getCreatedAt(),
+                    rrm.getRatePrice().getUpdatedAt(),
+                    "",
+                    rrm.getRatePrice().getRoomRate()
+            );
+            mYList.add(new RoomRateMain(
+                    rrm.getId(),
+                    rrm.getRoomRatePriceId(),
+                    rrm.getRoomTypeId(),
+                    rrm.getCreatedBy(),
+                    rrm.getCreatedAt(),
+                    rrm.getUpdatedAt(),
+                    rrm.getDeletedAt(),
+                    ratePrice
+
+            ));
+
+        }
+
+
+        selectedRoom = new RoomTableModel (
+                r.getResult().getId(),
+                r.getResult().getRoomTypeId(),
+                r.getResult().getType().getRoomType(),
+                0, //r.getType().getParent() == null ? 0 : r.getType().getParent().getId(),
+                "test parent", //r.getType().getParent() == null ? "NONE" : r.getType().getParent().getRoomType(),
+                r.getResult().getRoomAreaId(),
+                r.getResult().getArea().getRoomArea(),
+                r.getResult().getStatus().getRoomStatus(),
+                r.getResult().getRoomNo(),
+                mYList,
+                true,
+                "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
+                String.valueOf(r.getResult().getCRoomStat()),
+                r.getResult().getStatus().getColor(),
+                amountSelected,
+                false,
+                r.getResult().getTransaction() != null ? r.getResult().getTransaction().getTransaction().getControlNo() : "",
+                0,
+                r.getResult().getStatus().getIsBlink() == 1 ? true : false,
+                r.getResult().getStatus().getIsTimer() == 1 ? true : false,
+                checkoutExpected
+        );
+
+        currentRoomStatus = selectedRoom.getStatus();
+        setView(selectedRoom.getName());
+    }
 }

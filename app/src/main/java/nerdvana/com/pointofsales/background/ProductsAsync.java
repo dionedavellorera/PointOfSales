@@ -53,8 +53,12 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
             }
 
             amount = ((amount * (r.getMarkUp() + 1))) * Double.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_CURRENCY_VALUE));
-
-
+            String branchDepartment = "";
+            if (r.getBranchDepartments().size() > 0) {
+                if (r.getBranchDepartments().get(0).getBranchDepartment() != null) {
+                    branchDepartment = r.getBranchDepartments().get(0).getBranchDepartment().getDepartment();
+                }
+            }
 
             productsModelList.add(new ProductsModel(
                     r.getProduct(),
@@ -72,7 +76,7 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                     r.getCoreId(),
                     r.getMarkUp(),
                     0,
-                    r.getBranchDepartments().size() > 0 ? r.getBranchDepartments().get(0).getBranchDepartment().getDepartment() : "",
+                    branchDepartment,
                     amount));
         }
 

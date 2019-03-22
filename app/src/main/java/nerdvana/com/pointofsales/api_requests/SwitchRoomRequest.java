@@ -13,21 +13,23 @@ import nerdvana.com.pointofsales.model.VoidProductModel;
 public class SwitchRoomRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public SwitchRoomRequest(ArrayList<AddRateProductModel> addRateProductList,
-                             String roomId,
-                             ArrayList<VoidProductModel> voidList,
-                             String remarks,
-                             String controlNumber) {
+    public SwitchRoomRequest(String roomId, String roomRatePriceId,
+                             String remarks, String roomTransferId, String empId,
+                             ArrayList<VoidProductModel> voidModel) {
         mapValue = new HashMap<>();
-        mapValue.put("post", GsonHelper.getGson().toJson(addRateProductList));
-        mapValue.put("user_id", userId);
+        mapValue.put("room_id", roomId);
+        mapValue.put("room_rate_price_id", roomRatePriceId);
+        mapValue.put("remarks", remarks);
+        mapValue.put("room_transfer_id", roomTransferId);
+        mapValue.put("emp_id", empId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
-        mapValue.put("room_id", roomId);
-        mapValue.put("control_no", controlNumber);
         mapValue.put("branch_code", branchCode);
-
-
+        mapValue.put("void", GsonHelper.getGson().toJson(voidModel));
+        mapValue.put("tax", tax);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
+        mapValue.put("user_id", userId);
     }
 
     public Map<String, String> getMapValue() {

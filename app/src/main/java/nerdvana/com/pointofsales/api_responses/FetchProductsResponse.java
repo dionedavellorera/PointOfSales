@@ -86,10 +86,10 @@ public class FetchProductsResponse {
         private BranchPrice branchPrice;
         @SerializedName("branch_categories")
         @Expose
-        private List<BranchCategory> branchCategories = null;
+        private List<BranchCategory> branchCategories;
         @SerializedName("branch_departments")
         @Expose
-        private List<BranchDepartment> branchDepartments = null;
+        private List<BranchDepartment> branchDepartments;
 
         public Integer getId() {
             return id;

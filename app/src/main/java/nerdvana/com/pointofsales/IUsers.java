@@ -22,6 +22,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
@@ -168,4 +169,8 @@ public interface IUsers {
     @POST("switchRoom")
     @FormUrlEncoded
     Call<SwitchRoomResponse> switchRoom(@FieldMap Map<String, String> params);
+
+    @POST("fetchRoomViaId")
+    @FormUrlEncoded
+    Call<FetchRoomViaIdResponse> fetchRoomViaId(@FieldMap Map<String, String> params);
 }

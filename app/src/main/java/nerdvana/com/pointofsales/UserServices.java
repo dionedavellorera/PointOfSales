@@ -22,6 +22,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
+import nerdvana.com.pointofsales.api_requests.FetchRoomViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
 import nerdvana.com.pointofsales.api_requests.FocRequest;
@@ -52,6 +53,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
@@ -302,6 +304,13 @@ public class UserServices extends BaseService {
     public void onCheckGc(SwitchRoomRequest switchRoomRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<SwitchRoomResponse> request = iUsers.switchRoom(switchRoomRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onCheckGc(FetchRoomViaIdRequest fetchRoomViaIdRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchRoomViaIdResponse> request = iUsers.fetchRoomViaId(fetchRoomViaIdRequest.getMapValue());
         asyncRequest(request);
     }
 }

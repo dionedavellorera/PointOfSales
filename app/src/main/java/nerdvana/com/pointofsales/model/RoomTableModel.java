@@ -64,6 +64,8 @@ public class RoomTableModel {
         this.expectedCheckout = expectedCheckout;
     }
 
+
+
     public String getExpectedCheckout() {
         return expectedCheckout;
     }
