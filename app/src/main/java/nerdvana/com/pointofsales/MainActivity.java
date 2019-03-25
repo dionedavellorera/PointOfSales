@@ -62,6 +62,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
+import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
@@ -69,6 +70,7 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
@@ -80,7 +82,7 @@ import nerdvana.com.pointofsales.requests.TestRequest;
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
 
     public static String roomNumber;
-
+    private Loading loadingInterface;
     private SelectionContract centralInterface;
 
     private LeftFrameFragment preLoginLeftFrameFragment;
@@ -99,13 +101,31 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private boolean doubleBackToExitPressedOnce;
     private Handler mHandler = new Handler();
-
+    private DialogProgressBar dialogProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        dialogProgressBar = new DialogProgressBar(MainActivity.this);
+
+
+        loadingInterface = new Loading() {
+            @Override
+            public void show(boolean willShow) {
+                if (willShow) {
+                    if (dialogProgressBar != null) {
+                        if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
+                    }
+                } else {
+                    if (dialogProgressBar != null) {
+                        if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
+                    }
+                }
+            }
+        };
+
 
         android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -121,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         requestRoomStatusList();
         fetchDefaultCurrencyRequest();
-//
+
+//        dialogProgressBar.show();
 //        Log.d("TAG", "SERIAL: " + Build.SERIAL);
 //        Log.d("TAG","MODEL: " + Build.MODEL);
 //        Log.d("TAG","ID: " + Build.ID);
@@ -156,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         preLoginLeftFrameFragment = LeftFrameFragment.newInstance();
         preLoginRightFrameFragment = RightFrameFragment.newInstance(this);
 
-        postLoginLeftFrameFragment = nerdvana.com.pointofsales.postlogin.LeftFrameFragment.newInstance(centralInterface);
+        postLoginLeftFrameFragment = nerdvana.com.pointofsales.postlogin.LeftFrameFragment.newInstance(centralInterface, loadingInterface);
         postLoginRightFrameFragment = nerdvana.com.pointofsales.postlogin.RightFrameFragment.newInstance();
     }
 
@@ -871,11 +892,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 e.printStackTrace();
             }
 
-//            try {
-//
-//            } catch (Epos2Exception e) {
-//                e.printStackTrace();
-//            }
         }
     }
 
@@ -886,5 +902,27 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             e.printStackTrace();
         }
     }
+
+    public interface Loading {
+        void show(boolean willShow);
+    }
+
+//    @Subscribe
+//    public void onReceiveLoading(ProgressBarModel progressBarModel) {
+//        Toast.makeText(getApplicationContext(), "SHOW NOW", Toast.LENGTH_SHORT).show();
+//        dialogProgressBar.show();
+//    }
+//        if (progressBarModel.isWillStart()) {
+//            if (dialogProgressBar != null) {
+//                if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
+//            }
+//        } else {
+//            if (dialogProgressBar != null) {
+//                if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
+//            }
+//        }
+//    }
+
+
 
 }

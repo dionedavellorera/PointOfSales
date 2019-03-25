@@ -11,61 +11,65 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:layout_alignParentLeft="true"
-                    android:text="te"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:gravity="center_vertical"
                     android:id="@+id/user"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical"
+                    android:text="te"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <Button
-                    android:visibility="gone"
-                    android:layout_toLeftOf="@id/showMap"
                     android:id="@+id/showTables"
-                    android:layout_margin="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TABLES"
-                    android:fontFamily="@font/amiri"/>
-
-                <Button
+                    android:layout_margin="5dp"
                     android:layout_toLeftOf="@id/showMap"
+                    android:background="@color/colorAccent"
+                    android:text="TABLES"
+                    android:visibility="gone" />
+
+
+                <Button
                     android:id="@+id/showTakeOuts"
-                    android:layout_margin="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TAKE OUT"
-                    android:fontFamily="@font/amiri"/>
+                    android:layout_margin="5dp"
+                    android:layout_toLeftOf="@id/showMap"
+                    android:background="@color/colorAccent"
+                    android:text="TAKE ORDER" />
 
                 <Button
-                    android:layout_toLeftOf="@id/logout"
                     android:id="@+id/showMap"
-                    android:layout_margin="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ROOMS"
-                    android:fontFamily="@font/amiri"/>
+                    android:layout_margin="5dp"
+                    android:layout_toLeftOf="@id/logout"
+                    android:background="@color/colorAccent"
+                    android:text="ROOMS" />
 
                 <Button
+
                     android:id="@+id/logout"
-                    android:layout_margin="5dp"
-                    android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="LOGOUT"
-                    android:fontFamily="@font/amiri"/>
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="5dp"
+                    android:background="@color/colorAccent"
+                    android:text="LOGOUT" />
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

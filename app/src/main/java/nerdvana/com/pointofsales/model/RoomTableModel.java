@@ -30,6 +30,7 @@ public class RoomTableModel {
     private boolean isBlink = false;
     private boolean isTimer = false;
     private String expectedCheckout;
+    private String otHours;
     public RoomTableModel(int roomId, int roomTypeId,
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,
@@ -40,7 +41,7 @@ public class RoomTableModel {
                           double amountSelected, boolean isTakeOut,
                           String controlNo, int unpostedOrdersCount,
                           boolean isBlink, boolean isTimer,
-                          String expectedCheckout) {
+                          String expectedCheckout, String otHours) {
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;
         this.roomType = roomType;
@@ -62,9 +63,12 @@ public class RoomTableModel {
         this.isBlink = isBlink;
         this.isTimer = isTimer;
         this.expectedCheckout = expectedCheckout;
+        this.otHours = otHours;
     }
 
-
+    public String getOtHours() {
+        return otHours;
+    }
 
     public String getExpectedCheckout() {
         return expectedCheckout;

@@ -22,6 +22,8 @@ public class GetOrderRequest extends BaseRequest{
         mapValue.put("branch_code", branchCode);
         mapValue.put("branch_id", branchId);
 
+        mapValue.put("tax", tax);
+
 
     }
 

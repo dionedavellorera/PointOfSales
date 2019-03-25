@@ -47,15 +47,15 @@ public class WelcomeGuestRequest extends BaseRequest {
         mapValue.put("checkIn", checkIn);
         mapValue.put("checkOut", checkOut);
         mapValue.put("user_id", userId);
-        mapValue.put("pos_id", machineNumber);
         mapValue.put("adult", adult);
         mapValue.put("child", child);
         mapValue.put("tax", tax);
         mapValue.put("room_area_id", roomAreaId);
-        mapValue.put("currency_id", currencyId);
-        mapValue.put("currency_value", currencyValue);
         mapValue.put("remarks", "");
 
+        mapValue.put("pos_id", machineNumber);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
         mapValue.put("branch_code", branchCode);
         mapValue.put("branch_id", branchId);
 

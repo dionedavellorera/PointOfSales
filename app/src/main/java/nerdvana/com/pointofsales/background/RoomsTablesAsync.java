@@ -101,6 +101,11 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                 checkoutExpected = "--";
             }
 
+            String otHours = "";
+            if (r.getTransaction() != null) {
+                otHours = String.valueOf(r.getTransaction().getTransaction().getOtHours());
+            }
+
             productsModelList.add(
                     new RoomTableModel (
                             r.getId(),
@@ -123,7 +128,9 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             unpostedOrderCount,
                             r.getStatus().getIsBlink() == 1 ? true : false,
                             r.getStatus().getIsTimer() == 1 ? true : false,
-                            checkoutExpected
+                            checkoutExpected,
+                            otHours
+
 
                     )
             );

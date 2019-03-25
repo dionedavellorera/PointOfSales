@@ -12,7 +12,8 @@
 
     
     <android.support.v7.widget.SearchView
-        android:background="#ffffff"
+        app:searchIcon="@color/colorWhite"
+        android:background="@color/colorSecondary"
         app:iconifiedByDefault="false"
         android:id="@+id/search"
         android:layout_width="0dp"
@@ -23,14 +24,15 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <TextView
+        android:drawableTint="@color/colorWhite"
         android:id="@+id/breadcrumb"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
+        android:background="@color/colorSecondary"
         android:drawableLeft="@mipmap/baseline_home_black_24"
         android:drawablePadding="10dp"
-        android:fontFamily="@font/amiri"
         android:gravity="center_vertical"
+        android:textColor="@color/colorWhite"
         android:paddingLeft="20dp"
         android:paddingTop="5dp"
         android:paddingRight="10dp"
@@ -48,13 +50,14 @@
         android:layout_height="match_parent" />
 
     <Spinner
+        android:background="@color/colorSecondary"
         android:spinnerMode="dialog"
         app:layout_constraintTop_toBottomOf="@id/search"
         app:layout_constraintLeft_toRightOf="@id/guideEightyy"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/qtySpinner"
         android:layout_width="0dp"
-        android:layout_height="45dp"/>
+        android:layout_height="39dp"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refreshProducts"
@@ -69,8 +72,7 @@
             android:layout_margin="3dp"
             android:id="@+id/listProducts"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/gradientrightbg"/>
+            android:layout_height="match_parent"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -100,6 +100,7 @@ public class FetchRoomViaIdResponse {
         @Expose
         private List<RoomRateSubViaId> roomRate = null;
 
+
         public Integer getId() {
             return id;
         }
@@ -796,6 +797,8 @@ public class FetchRoomViaIdResponse {
         @Expose
         private RateRoom rateRoom;
 
+
+
         public Integer getId() {
             return id;
         }
@@ -1054,7 +1057,7 @@ public class FetchRoomViaIdResponse {
         private Integer paymentTypeId;
         @SerializedName("ot_hours")
         @Expose
-        private Double otHours;
+        private String otHours;
         @SerializedName("ot_amount")
         @Expose
         private Double otAmount;
@@ -1190,11 +1193,11 @@ public class FetchRoomViaIdResponse {
             this.paymentTypeId = paymentTypeId;
         }
 
-        public Double getOtHours() {
+        public String getOtHours() {
             return otHours;
         }
 
-        public void setOtHours(Double otHours) {
+        public void setOtHours(String otHours) {
             this.otHours = otHours;
         }
 

@@ -18,6 +18,7 @@
         android:text="No items selected"/>
 
     <TextView
+        android:gravity="center_vertical"
         android:id="@+id/header"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -25,10 +26,10 @@
         android:padding="10dp"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:background="@color/lightgrey"
-        android:textColor="@color/light"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="86dp"
         android:text="TABLE 1"/>
     <android.support.v7.widget.RecyclerView
         android:textColor="@color/light"
@@ -39,7 +40,7 @@
         app:layout_constraintBottom_toTopOf="@id/guideTotal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/navyblue"/>
+        android:background="@color/colorList"/>
 
     <android.support.constraint.Guideline
         app:layout_constraintTop_toTopOf="parent"
@@ -51,7 +52,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        app:layout_constraintGuide_percent="0.65"/>
+        app:layout_constraintGuide_percent="0.75"/>
 
     <!--//return here-->
     <android.support.constraint.Guideline
@@ -62,7 +63,8 @@
         app:layout_constraintGuide_percent="0.5"/>
 
     <TextView
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         android:id="@+id/discountLabel"
         android:text="Discount"
         android:layout_width="0dp"
@@ -74,7 +76,8 @@
 
     <TextView
         android:gravity="right"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         android:id="@+id/discountValue"
         android:text="500.00"
         android:padding="5dp"
@@ -86,7 +89,8 @@
 
     <TextView
         android:visibility="gone"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         android:padding="5dp"
         android:id="@+id/subTotalLabel"
         android:layout_width="0dp"
@@ -99,7 +103,8 @@
     <TextView
         android:visibility="gone"
         android:gravity="right"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         android:padding="5dp"
         android:id="@+id/subTotalValue"
         android:layout_width="0dp"
@@ -115,7 +120,8 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="VAT (12%)"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideFifty"
         app:layout_constraintTop_toBottomOf="@id/subTotalLabel"/>
@@ -127,7 +133,8 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="0.12"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/guideFifty"
         app:layout_constraintTop_toBottomOf="@id/subTotalLabel"/>
@@ -138,7 +145,8 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="Deposit"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideFifty"
         app:layout_constraintTop_toBottomOf="@id/taxLabel"/>
@@ -150,7 +158,8 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:text="0.00"
-        android:textColor="@color/colorBlack"
+        android:background="@color/colorSecondary"
+        android:textColor="@color/colorWhite"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/guideFifty"
         app:layout_constraintTop_toBottomOf="@id/taxValue"/>
@@ -164,7 +173,7 @@
         android:id="@+id/totalLabel"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/lightgrey"
+        android:background="@color/colorPrimary"
         android:padding="5dp"
         android:text="TOTAL"
         android:textColor="@color/light"
@@ -181,10 +190,10 @@
         android:id="@+id/totalValue"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/lightgrey"
+        android:background="@color/colorPrimary"
         android:padding="5dp"
         android:text="0.00"
-        android:textColor="@color/light"
+        android:textColor="@color/colorWhite"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintRight_toRightOf="parent"

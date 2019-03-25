@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.R;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
@@ -48,4 +50,16 @@ public abstract class ConfirmWithRemarksDialog extends Dialog {
     }
 
     public abstract void save(String remarks);
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        BusProvider.getInstance().register(this);
+        Dialog dialog = this;
+        if (dialog != null) {
+//            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            dialog.getWindow().setLayout(300, height);
+        }
+    }
 }

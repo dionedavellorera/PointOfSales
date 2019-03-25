@@ -100,6 +100,25 @@ public class FetchRoomResponse {
         @SerializedName("room_rate")
         @Expose
         private List<RoomRateSub> roomRate = null;
+        @SerializedName("ot_hours")
+        @Expose
+        private String otHours;
+
+        public Integer getcRoomStat() {
+            return cRoomStat;
+        }
+
+        public void setcRoomStat(Integer cRoomStat) {
+            this.cRoomStat = cRoomStat;
+        }
+
+        public String getOtHours() {
+            return otHours;
+        }
+
+        public void setOtHours(String otHours) {
+            this.otHours = otHours;
+        }
 
         public Integer getId() {
             return id;

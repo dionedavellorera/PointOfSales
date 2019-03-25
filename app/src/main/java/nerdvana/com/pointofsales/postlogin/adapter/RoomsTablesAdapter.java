@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,7 +85,12 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((ProductsViewHolder) holder).orderCount.setVisibility(View.GONE);
         }
 
-        ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
+        if (productsModel.getOtHours().equalsIgnoreCase("0.0") || TextUtils.isEmpty(productsModel.getOtHours())) {
+            ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
+        } else {
+            ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName() + "\n(OT:" + productsModel.getOtHours()+")");
+        }
+
         ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
 
         if (!productsModel.isTakeOut()) {
@@ -96,6 +102,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             ((ProductsViewHolder)holder).name.clearAnimation();
         }
+
 
         ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
         ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getAmountSelected()));

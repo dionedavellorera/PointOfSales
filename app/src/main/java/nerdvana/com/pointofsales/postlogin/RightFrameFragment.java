@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.background.ProductsAsync;
@@ -149,6 +151,12 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @SuppressLint("ClickableViewAccessibility")
     private void initializeViews(View view) {
         search = view.findViewById(R.id.search);
+
+        SearchView searchView = (SearchView) view.findViewById(R.id.search);
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+
         qtySpinner = view.findViewById(R.id.qtySpinner);
         breadcrumb = view.findViewById(R.id.breadcrumb);
         listProducts = view.findViewById(R.id.listProducts);
@@ -452,8 +460,10 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         stringArray.add("8");
         stringArray.add("9");
         stringArray.add("10");
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, stringArray);
-        qtySpinner.setAdapter(arrayAdapter);
+        CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                stringArray);
+//        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, stringArray);
+        qtySpinner.setAdapter(customSpinnerAdapter);
     }
 
 

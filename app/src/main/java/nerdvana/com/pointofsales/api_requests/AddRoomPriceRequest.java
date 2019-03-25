@@ -14,7 +14,7 @@ public class AddRoomPriceRequest extends BaseRequest {
     public AddRoomPriceRequest(ArrayList<AddRateProductModel> addRateProductList,
                                String roomId,
                                ArrayList<VoidProductModel> voidList,
-                               String remarks) {
+                               String remarks, String managerId) {
         mapValue = new HashMap<>();
         mapValue.put("room_id", roomId);
         mapValue.put("user_id", userId);
@@ -23,7 +23,7 @@ public class AddRoomPriceRequest extends BaseRequest {
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
         mapValue.put("void", GsonHelper.getGson().toJson(voidList));
-        mapValue.put("emp_id", "762");
+        mapValue.put("emp_id", managerId);
         mapValue.put("remarks", remarks);
         mapValue.put("branch_code", branchCode);
 

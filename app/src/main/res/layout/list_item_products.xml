@@ -3,11 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="3dp"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="10dp"
     android:layout_margin="3dp"
     android:id="@+id/rootView">
     <RelativeLayout
-        android:background="@drawable/itembg"
+        android:background="@color/colorList"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
@@ -27,7 +28,6 @@
             android:maxLines="2"
             android:padding="5dp"
             android:text="Product Na43242343243242424242432424234234242424234237657575757567567567575675675treptoretreverotirei rpev reop teritop reit eme"
-            android:textColor="#ffffff"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -39,8 +39,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="5dp"
-            android:text="100.00"
-            android:textColor="#ffffff" />
+            android:text="100.00"/>
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
