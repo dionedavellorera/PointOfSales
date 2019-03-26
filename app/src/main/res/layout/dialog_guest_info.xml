@@ -1,145 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_weight="0.5"
-        android:layout_width="0dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include layout="@layout/partial_header" android:id="@+id/header" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:layout_margin="10dp"
-            android:id="@+id/guestInfoTitle"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="GUEST INFORMATION"/>
-
-        <ScrollView
-            android:layout_below="@id/guestInfoTitle"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
             android:layout_height="match_parent">
+            <TextView
+                android:layout_margin="10dp"
+                android:id="@+id/guestInfoTitle"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GUEST INFORMATION"/>
 
+            <ScrollView
+                android:layout_below="@id/guestInfoTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM NUMBER"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM TYPE"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="RATE DESCRIPTION"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="RATE AMOUNT"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="DATE AND TIME"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="VEHICLE TYPE"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CAR MAKE"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PLATE NUMBER"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM BOY"/>
+
+                    <TextView
+                        android:layout_margin="5dp"
+                        android:textSize="14sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REMARKS"/>
+                </LinearLayout>
+
+            </ScrollView>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_margin="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <TextView
-                    android:layout_margin="5dp"
+                    android:id="@+id/checkinTimeLabel"
+                    android:layout_margin="10dp"
                     android:textSize="14sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ROOM NUMBER"/>
+                    android:text="CHECK IN TIME"/>
+                <TextView
+                    android:drawableRight="@mipmap/baseline_add_circle_outline_black_24"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="03:00 PM"/>
 
                 <TextView
-                    android:layout_margin="5dp"
+                    android:layout_margin="10dp"
                     android:textSize="14sp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ROOM TYPE"/>
-
+                    android:text="WAKE UP CALL"/>
                 <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
+                    android:drawableRight="@mipmap/baseline_add_circle_outline_black_24"
+                    android:layout_margin="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RATE DESCRIPTION"/>
+                    android:text="08:00 PM"/>
 
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
+                <Button
+                    android:id="@+id/updateGuestInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="RATE AMOUNT"/>
-
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="DATE AND TIME"/>
-
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="VEHICLE TYPE"/>
-
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CAR MAKE"/>
-
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="PLATE NUMBER"/>
-
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="ROOM BOY"/>
-
-                <TextView
-                    android:layout_margin="5dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="REMARKS"/>
+                    android:text="UPDATE GUEST INFO"/>
             </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
 
-        </ScrollView>
-    </RelativeLayout>
+</RelativeLayout>
 
-    <RelativeLayout
-        android:layout_weight="0.5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/checkinTimeLabel"
-                android:layout_margin="10dp"
-                android:textSize="14sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CHECK IN TIME"/>
-            <TextView
-                android:drawableRight="@mipmap/baseline_add_circle_outline_black_24"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="03:00 PM"/>
-
-            <TextView
-                android:layout_margin="10dp"
-                android:textSize="14sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="WAKE UP CALL"/>
-            <TextView
-                android:drawableRight="@mipmap/baseline_add_circle_outline_black_24"
-                android:layout_margin="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="08:00 PM"/>
-
-            <Button
-                android:id="@+id/updateGuestInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="UPDATE GUEST INFO"/>
-        </LinearLayout>
-    </RelativeLayout>
-</LinearLayout>

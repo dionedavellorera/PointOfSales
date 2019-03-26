@@ -15,7 +15,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
-public abstract class FocDialog extends Dialog {
+public abstract class FocDialog extends BaseDialog {
     private List<PostedPaymentsModel> postedPaymentsModelList;
     private EditText customerName;
     private TextView totalValue;
@@ -39,8 +39,8 @@ public abstract class FocDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_foc);
-
+//        setContentView(R.layout.dialog_foc);
+        setDialogLayout(R.layout.dialog_foc, "FREE OF CHARGE TRANSACTION");
         customerName = findViewById(R.id.customerName);
         totalValue = findViewById(R.id.totalValue);
         submit = findViewById(R.id.submit);

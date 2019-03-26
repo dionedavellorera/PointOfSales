@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import nerdvana.com.pointofsales.R;
 
-public class TransactionsDialog extends Dialog {
+public class TransactionsDialog extends BaseDialog {
     private Boolean isViewing;
 
     private RecyclerView listTransaction;
@@ -36,7 +36,8 @@ public class TransactionsDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_transactions);
+//        setContentView(R.layout.dialog_transactions);
+        setDialogLayout(R.layout.dialog_transactions, "TRANSACTIONS");
         listTransaction = findViewById(R.id.listTransactions);
         listTransactionDetails = findViewById(R.id.listTransactionDetails);
 

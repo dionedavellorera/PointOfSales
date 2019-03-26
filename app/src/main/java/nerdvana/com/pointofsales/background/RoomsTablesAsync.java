@@ -103,9 +103,21 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
 
             String otHours = "";
             if (r.getTransaction() != null) {
-                otHours = String.valueOf(r.getTransaction().getTransaction().getOtHours());
+                if (r.getTransaction().getTransaction() != null) {
+                    if (r.getTransaction().getTransaction().getOtHours() != null) {
+                        otHours = String.valueOf(r.getTransaction().getTransaction().getOtHours());
+                    }
+                }
             }
 
+            String controlNumber = "";
+            if (r.getTransaction() != null) {
+                if (r.getTransaction().getTransaction() != null) {
+                    if (r.getTransaction().getTransaction().getControlNo() != null) {
+                        controlNumber = r.getTransaction().getTransaction().getControlNo();
+                    }
+                }
+            }
             productsModelList.add(
                     new RoomTableModel (
                             r.getId(),
@@ -124,7 +136,7 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             r.getStatus().getColor(),
                             amountSelected,
                             false,
-                            r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "",
+                            controlNumber,
                             unpostedOrderCount,
                             r.getStatus().getIsBlink() == 1 ? true : false,
                             r.getStatus().getIsTimer() == 1 ? true : false,

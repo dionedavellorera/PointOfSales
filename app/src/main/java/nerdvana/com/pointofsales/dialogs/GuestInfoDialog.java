@@ -12,7 +12,7 @@ import android.widget.Button;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.R;
 
-public class GuestInfoDialog extends Dialog {
+public class GuestInfoDialog extends BaseDialog {
     private Button updateGuestInfo;
 
     public GuestInfoDialog(@NonNull Context context) {
@@ -30,7 +30,8 @@ public class GuestInfoDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_guest_info);
+//        setContentView(R.layout.dialog_guest_info);
+        setDialogLayout(R.layout.dialog_guest_info, "GUEST INFO");
 
         updateGuestInfo = findViewById(R.id.updateGuestInfo);
 

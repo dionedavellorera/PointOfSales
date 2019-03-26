@@ -62,6 +62,7 @@ import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
+import nerdvana.com.pointofsales.api_requests.FetchNationalityRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
@@ -83,6 +84,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
@@ -106,6 +108,7 @@ import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmCheckInDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
+import nerdvana.com.pointofsales.dialogs.DiscountDialog;
 import nerdvana.com.pointofsales.dialogs.FocDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
@@ -143,6 +146,9 @@ import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
+
+    private FetchRoomPendingResponse.Result fetchRoomPendingResult = null;
+
     private View view;
     private String currentRoomStatus = "";
     private int roomRateCount = 0;
@@ -158,7 +164,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private TextView total;
     private TextView discount;
-    private TextView tax;
     private TextView deposit;
     private TextView subTotal;
     private TextView header;
@@ -168,6 +173,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     private List<FetchCreditCardResponse.Result> creditCardList;
     private List<FetchArOnlineResponse.Result> arOnlineList;
+    private List<FetchNationalityResponse.Result> nationalityList;
     private List<CartItemsModel> cartItemList;
     private List<FetchPaymentResponse.Result> paymentTypeList;
     private List<PostedPaymentsModel> postedPaymentsList;
@@ -212,7 +218,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         roomRateCounter = new ArrayList<>();
         total = view.findViewById(R.id.totalValue);
         discount = view.findViewById(R.id.discountValue);
-        tax = view.findViewById(R.id.taxValue);
         deposit = view.findViewById(R.id.depositValue);
         subTotal = view.findViewById(R.id.subTotalValue);
 
@@ -248,6 +253,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         fetchArOnlineRequest();
+        fetchNationalityRequest();
         fetchCreditCardRequest();
         fetchCurrencyExceptDefaultRequest();
 
@@ -354,7 +360,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             total.setText("0.00");
             discount.setText("0.00");
             deposit.setText("0.00");
-            tax.setText("0.00");
+//            tax.setText("0.00");
             subTotal.setText("0.00");
 
 
@@ -645,6 +651,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 115://DISCOUNT
+                DiscountDialog discountDialog = new DiscountDialog(getActivity());
+
+                if (!discountDialog.isShowing()) discountDialog.show();
+                break;
             case 114://SWITCH ROOM
                 if (selectedRoom != null) {
                     SwitchRoomDialog switchRoomDialog = new SwitchRoomDialog(getActivity(), selectedRoom.getName()) {
@@ -804,13 +815,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
                 break;
             case 107: //CHECK IN - WAITING GUEST (DIRTY / RC)
-                if (selectedRoom.getStatus().equalsIgnoreCase("32") ||
-                        selectedRoom.getStatus().equalsIgnoreCase("4") ||
-                        selectedRoom.getStatus().equalsIgnoreCase("59")) {
-                    showCheckInDialog();
+                if (selectedRoom != null) {
+                    if (selectedRoom.getStatus().equalsIgnoreCase("32") ||
+                            selectedRoom.getStatus().equalsIgnoreCase("4") ||
+                            selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                        showCheckInDialog();
+                    } else {
+                        Utils.showDialogMessage((MainActivity)getContext(), "Room already checked-in", "Information");
+                    }
                 } else {
-                    Utils.showDialogMessage((MainActivity)getContext(), "Room already checked-in", "Information");
+                    Utils.showDialogMessage((MainActivity)getContext(), "No room selected", "Information");
                 }
+
                 break;
             case 106: //PRINT SOA
                 if (selectedRoom != null) {
@@ -836,6 +852,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             Utils.showDialogMessage((MainActivity)getContext(), "Please SOA room first", "Information");
                         }
                     }
+                } else {
+                    Utils.showDialogMessage((MainActivity)getContext(), "No room selected", "Information");
                 }
 
 
@@ -1518,7 +1536,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void guestWelcomeResponse(WelcomeGuestResponse welcomeGuestResponse) {
 
         if (selectedRoom != null) {
-
             fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
 //            BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId())));
         }
@@ -1529,7 +1546,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
 
-//        BusProvider.getInstance().post(new ProgressBarModel(true));
 
         showLoading();
     }
@@ -1560,15 +1576,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
-
-            totalBalance = fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal();
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
                 if (r.getTransaction().getPayments().size() > 0) {
                     for(FetchRoomPendingResponse.Payment pym : r.getTransaction().getPayments()) {
 
                         String paymentDescription = "";
-
-
                         if (pym.getPaymentTypeId() == 5) {
                             if (pym.getOuterAr() != null) {
                                 paymentDescription = pym.getPaymentDescription() + " - " + pym.getOuterAr().getInnerAr().getArOnline() + "(" + pym.getOuterAr().getVoucherCode() +")";
@@ -1597,10 +1609,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (r.getTransaction().getTrans().size() > 0) {
 
+                    totalBalance = fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
+                            fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
+                            fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount();
+
+
+
                     advancePayment = r.getTransaction().getAdvance();
                     discountPayment = r.getTransaction().getDiscount();
+                    subTotal.setText(String.valueOf(totalBalance));
+
+                    total.setText(String.valueOf(totalBalance - (advancePayment + discountPayment)));
                     discount.setText(String.valueOf(discountPayment));
-                    tax.setText(String.valueOf(r.getTransaction().getVat()));
+//                    tax.setText(String.valueOf(r.getTransaction().getVat()));
                     deposit.setText(String.valueOf(r.getTransaction().getAdvance()));
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
                         List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
@@ -1715,7 +1736,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             totalBalance = 0;
         }
 
-        total.setText(String.valueOf(totalAmount));
+
         checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 //        linearLayoutManager.setReverseLayout(true);
@@ -1726,9 +1747,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         if (fetchRoomPendingResponse.getResult() != null) {
+            fetchRoomPendingResult = fetchRoomPendingResponse.getResult();
             switch (fetchRoomPendingResponse.getResult().getStatus()) {
                 case 3: //dirty
-                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                    showGuestInfoDialog(
+                            String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
                     break;
                 case 19:
                     showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
@@ -1762,14 +1785,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void showGuestInfoDialog(final String status) {
-//        checkInDialog = new CheckInDialog(getActivity(), selectedRoom, carList, vehicleList, guestTypeList);
-        checkInDialog = new CheckInDialog(getActivity(), selectedRoom, carList, vehicleList, guestTypeList, userList, roomAreaList) {
+        fetchRoomPendingResult = null;
+        checkInDialog = new CheckInDialog(getActivity(), selectedRoom, carList,
+                vehicleList, guestTypeList,
+                userList, roomAreaList,
+                nationalityList,
+                fetchRoomPendingResult) {
             @Override
             public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
                 BusProvider.getInstance().post(welcomeGuestRequest);
-
-
-                if (status.equalsIgnoreCase("20")) {
+                if (!status.equalsIgnoreCase("19") &&
+                        !status.equalsIgnoreCase("3") &&
+                        !status.equalsIgnoreCase("20")) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1785,32 +1812,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
 
 
-
                         }
                     }, 500);
-                } else {
-                    if (!status.equalsIgnoreCase("19") &&
-                            !status.equalsIgnoreCase("3")) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                    @Override
-                                    public void save(String remarks) {
-                                        BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-                                                welcomeGuestRequest.getRoomRatePriceId(),
-                                                remarks));
-                                        dismiss();
-                                    }
-                                };
-                                if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
 
 
-                            }
-                        }, 500);
-
-
-                    }
                 }
 
 
@@ -1831,26 +1836,30 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void showCheckInDialog() {
-//        checkInDialog = new CheckInDialog(getActivity(), selectedRoom, carList, vehicleList, guestTypeList);
-        checkInDialog = new CheckInDialog(getActivity(), selectedRoom, carList, vehicleList, guestTypeList, userList, roomAreaList) {
-            @Override
-            public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
-                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                    @Override
-                    public void save(String remarks) {
-                        BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-                                welcomeGuestRequest.getRoomRatePriceId(),
-                                remarks));
-                    }
-                };
+        if (fetchRoomPendingResult != null) {
+            checkInDialog = new CheckInDialog(getActivity(), selectedRoom,
+                    carList, vehicleList,
+                    guestTypeList, userList,
+                    roomAreaList, nationalityList, fetchRoomPendingResult) {
+                @Override
+                public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
+                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                        @Override
+                        public void save(String remarks) {
+                            BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+                                    welcomeGuestRequest.getRoomRatePriceId(),
+                                    remarks));
+                        }
+                    };
 
-                confirmWithRemarksDialog.show();
+                    confirmWithRemarksDialog.show();
 
-            }
-        };
-        if (!checkInDialog.isShowing()) checkInDialog.show();
-
-
+                }
+            };
+            if (!checkInDialog.isShowing()) checkInDialog.show();
+        } else {
+            Utils.showDialogMessage((MainActivity)getContext(), "Fetch room pending result is null", "Information");
+        }
 
         checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
@@ -1859,11 +1868,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
         });
 
-    }
-
-    @Subscribe
-    public void onReceiveWelcomeGuestResponse(WelcomeGuestResponse welcomeGuestResponse) {
-//        CartEntity myCart = new CartEntity();
     }
 
     private void addRateRequest(String productId, String roomRatePriceId,
@@ -1978,17 +1982,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
 //        Toast.makeText(getContext(), "FOP RESP", Toast.LENGTH_SHORT).show();
         currentRoomStatus = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getIsSoa());
-        totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal();
+        totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal() - (fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount());
         cartItemList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
         orderSlipList = new ArrayList<>();
         Double totalAmount = 0.00;
         if (fetchOrderPendingViaControlNoResponse.getResult() != null) {
-
             discount.setText(String.valueOf(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
-            tax.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getVat()));
+            subTotal.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal()));
             deposit.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance()));
-
+            total.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
             if (fetchOrderPendingViaControlNoResponse.getResult().getPayments().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : fetchOrderPendingViaControlNoResponse.getResult().getPayments()) {
                     postedPaymentsList.add(new PostedPaymentsModel(
@@ -2091,7 +2094,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             }
 
-            total.setText(String.valueOf(totalAmount));
+
             checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 //            linearLayoutManager.setReverseLayout(true);
@@ -2139,6 +2142,21 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
+    private void fetchNationalityRequest() {
+        BusProvider.getInstance().post(new FetchNationalityRequest());
+    }
+
+    @Subscribe
+    public void fetchNationalityResponse(FetchNationalityResponse fetchNationalityResponse) {
+        if (fetchNationalityResponse.getResult().size() > 0) {
+            SharedPreferenceManager.saveString(getContext(),
+                    GsonHelper.getGson().toJson(fetchNationalityResponse.getResult()),
+                    ApplicationConstants.NATIONALITY_JSON);
+            TypeToken<List<FetchNationalityResponse.Result>> nationalityToken = new TypeToken<List<FetchNationalityResponse.Result>>() {};
+            nationalityList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.NATIONALITY_JSON), nationalityToken.getType());
+        }
+    }
+
     private void fetchArOnlineRequest() {
         BusProvider.getInstance().post(new FetchArOnlineRequest());
     }
@@ -2146,7 +2164,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchArOnlineResponse(FetchArOnlineResponse fetchArOnlineResponse) {
         if (fetchArOnlineResponse.getResult().size() > 0) {
-            Log.d("CCARD", "AR ONLINE");
             SharedPreferenceManager.saveString(getContext(),
                     GsonHelper.getGson().toJson(fetchArOnlineResponse.getResult()),
                     ApplicationConstants.AR_ONLINE);

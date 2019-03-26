@@ -37,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public abstract class SwitchRoomDialog extends Dialog {
+public abstract class SwitchRoomDialog extends BaseDialog {
 
     private AsyncContract asyncContract;
     private Button switchRoom;
@@ -74,7 +74,8 @@ public abstract class SwitchRoomDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_switch_room);
+//        setContentView(R.layout.dialog_switch_room);
+        setDialogLayout(R.layout.dialog_switch_room, "SWITCH ROOM");
         selectedRoomRateLists = new ArrayList<>();
 
         ownRoomModelList = new ArrayList<>();

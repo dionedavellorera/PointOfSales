@@ -1,6 +1,6 @@
 package nerdvana.com.pointofsales.model;
 
-public class ButtonsModel {
+public class ButtonsModel implements Comparable<ButtonsModel>{
     private int id;
     private String name;
     private String imageUrl;
@@ -26,6 +26,16 @@ public class ButtonsModel {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    @Override
+    public int compareTo(ButtonsModel o) {
+        if (position > o.getPosition()) {
+            return 1;
+        } else if (position < o.getPosition()) {
+            return -1;
+        }
+        return 0;
     }
 
     //100 = SAVE

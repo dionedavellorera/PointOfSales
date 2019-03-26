@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
+    <include layout="@layout/partial_header" />
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
-         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +42,6 @@
 
 
         <Spinner
-            android:layout_below="@id/spinnerRates"
             android:id="@+id/spinnerGuestType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -48,7 +55,6 @@
 
 
         <Spinner
-            android:layout_below="@+id/spinnerGuestType"
             android:id="@+id/spinnerCar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -64,7 +70,6 @@
 
 
         <Spinner
-            android:layout_below="@id/spinnerCar"
             android:id="@+id/spinnerVehicle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -79,7 +84,6 @@
 
 
         <EditText
-            android:layout_below="@id/spinnerVehicle"
             android:id="@+id/customer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,7 +101,6 @@
 
         <EditText
             android:hint="Plate number"
-            android:layout_below="@id/customer"
             android:id="@+id/plateNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -112,8 +115,7 @@
         <Spinner
             android:id="@+id/steward"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/plateNumber"/>
+            android:layout_height="wrap_content"/>
 
 
         <TextView
@@ -127,8 +129,20 @@
         <Spinner
             android:id="@+id/roomArea"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/steward"/>
+            android:text="NATIONALITY"
+            android:textStyle="italic"
+            android:padding="10dp"/>
+
+
+        <Spinner
+            android:id="@+id/spinnerNationalirt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -139,7 +153,6 @@
 
 
         <android.support.design.widget.TextInputLayout
-            android:layout_below="@id/roomArea"
             android:id="@+id/tilAdult"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -153,7 +166,6 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:layout_below="@id/tilAdult"
             android:id="@+id/tilChild"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -167,14 +179,15 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:layout_below="@id/tilChild"
             android:id="@+id/checkin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="CHECK IN"
             />
-
     </LinearLayout>
 
 
+
     </ScrollView>
+</LinearLayout>
+

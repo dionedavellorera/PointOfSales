@@ -55,9 +55,7 @@ public class FetchRoomPendingResponse {
 //        @Expose
 //        private Room room;
 
-//        @SerializedName("car")
-//        @Expose
-//        private List<Car_> car = null;
+
 //        @SerializedName("vehicle")
 //        @Expose
 //        private List<Vehicle> vehicle = null;
@@ -89,13 +87,6 @@ public class FetchRoomPendingResponse {
 //            this.room = room;
 //        }
 
-//        public List<Car_> getCar() {
-//            return car;
-//        }
-//
-//        public void setCar(List<Car_> car) {
-//            this.car = car;
-//        }
 
 //        public List<Vehicle> getVehicle() {
 //            return vehicle;
@@ -321,10 +312,10 @@ public class FetchRoomPendingResponse {
         private Integer otHours;
         @SerializedName("ot_amount")
         @Expose
-        private Integer otAmount;
+        private Double otAmount;
         @SerializedName("xPerson_amount")
         @Expose
-        private Integer xPersonAmount;
+        private Double xPersonAmount;
         @SerializedName("discount")
         @Expose
         private Double discount;
@@ -487,19 +478,19 @@ public class FetchRoomPendingResponse {
             this.otHours = otHours;
         }
 
-        public Integer getOtAmount() {
+        public Double getOtAmount() {
             return otAmount;
         }
 
-        public void setOtAmount(Integer otAmount) {
+        public void setOtAmount(Double otAmount) {
             this.otAmount = otAmount;
         }
 
-        public Integer getXPersonAmount() {
+        public Double getXPersonAmount() {
             return xPersonAmount;
         }
 
-        public void setXPersonAmount(Integer xPersonAmount) {
+        public void setXPersonAmount(Double xPersonAmount) {
             this.xPersonAmount = xPersonAmount;
         }
 
@@ -725,12 +716,12 @@ public class FetchRoomPendingResponse {
 
 
 
-//        @SerializedName("car")
-//        @Expose
-//        private Car car;
-//        @SerializedName("guest_type")
-//        @Expose
-//        private GuestType guestType;
+        @SerializedName("car")
+        @Expose
+        private Car car;
+        @SerializedName("guest_type")
+        @Expose
+        private GuestType guestType;
         @SerializedName("transaction")
         @Expose
         private RoomTransaction transaction;
@@ -740,6 +731,9 @@ public class FetchRoomPendingResponse {
         @SerializedName("rate_room")
         @Expose
         private RoomRateInner rateRoom;
+        @SerializedName("branch_nationality")
+        @Expose
+        private BranchNationality branchNationality;
 
 //        public String getStatus() {
 //            return status;
@@ -748,6 +742,15 @@ public class FetchRoomPendingResponse {
 //        public void setStatus(String status) {
 //            this.status = status;
 //        }
+
+
+        public BranchNationality getBranchNationality() {
+            return branchNationality;
+        }
+
+        public void setBranchNationality(BranchNationality branchNationality) {
+            this.branchNationality = branchNationality;
+        }
 
         public Integer getId() {
             return id;
@@ -949,21 +952,20 @@ public class FetchRoomPendingResponse {
             this.deletedAt = deletedAt;
         }
 
-//        public Car getCar() {
-//            return car;
-//        }
-//
-//        public void setCar(Car car) {
-//            this.car = car;
-//        }
-//
-//        public GuestType getGuestType() {
-//            return guestType;
-//        }
-//
-//        public void setGuestType(GuestType guestType) {
-//            this.guestType = guestType;
-//        }
+        public Car getCar() {
+            return car;
+        }
+
+        public void setCar(Car car) {
+            this.car = car;
+        }
+        public GuestType getGuestType() {
+            return guestType;
+        }
+
+        public void setGuestType(GuestType guestType) {
+            this.guestType = guestType;
+        }
 
         public RoomTransaction getTransaction() {
             return transaction;
@@ -989,6 +991,67 @@ public class FetchRoomPendingResponse {
             this.rateRoom = rateRoom;
         }
 
+    }
+
+    public class GuestType {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("guest_type")
+        @Expose
+        private String guestType;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getGuestType() {
+            return guestType;
+        }
+
+        public void setGuestType(String guestType) {
+            this.guestType = guestType;
+        }
+    }
+
+    public class BranchNationality {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("core_id")
+        @Expose
+        private String coreId;
+        @SerializedName("nationality")
+        @Expose
+        private String nationality;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(String coreId) {
+            this.coreId = coreId;
+        }
+
+        public String getNationality() {
+            return nationality;
+        }
+
+        public void setNationality(String nationality) {
+            this.nationality = nationality;
+        }
     }
 
 
@@ -1667,6 +1730,31 @@ public class FetchRoomPendingResponse {
 
         public void setVoucherCode(String voucherCode) {
             this.voucherCode = voucherCode;
+        }
+    }
+
+    public class Car {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("car_make")
+        @Expose
+        private String carMake;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getCarMake() {
+            return carMake;
+        }
+
+        public void setCarMake(String carMake) {
+            this.carMake = carMake;
         }
     }
 

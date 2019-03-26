@@ -5,15 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:padding="10dp"
-        android:textColor="@color/colorWhite"
-        android:background="@color/navyblue"
-        android:textSize="18sp"
-        android:gravity="center_vertical"
-        android:text="OPEN PRICE"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/partial_header"/>
 
 
     <TextView

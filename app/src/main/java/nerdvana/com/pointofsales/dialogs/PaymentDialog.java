@@ -67,7 +67,7 @@ import retrofit2.Response;
 
 import static android.view.View.GONE;
 
-public abstract class PaymentDialog extends Dialog  {
+public abstract class PaymentDialog extends BaseDialog  {
 
     private LinearLayout formCash;
     private LinearLayout formCard;
@@ -162,7 +162,8 @@ public abstract class PaymentDialog extends Dialog  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.dialog_payment);
+//        setContentView(R.layout.dialog_payment);
+        setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
         gcList = new ArrayList<>();
         spinnerForex = findViewById(R.id.spinnerForex);
         formCash = findViewById(R.id.formCash);

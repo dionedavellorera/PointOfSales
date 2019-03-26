@@ -23,22 +23,19 @@
         <item name="android:windowNoTitle">true</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-
-        <!-- Set this to true if you want Full Screen without status bar -->
         <item name="android:windowFullscreen">true</item>
-
         <item name="android:windowIsFloating">false</item>
-
-        <!-- This is important! Don't forget to set window background -->
         <item name="android:windowBackground">@color/colorWhite</item>
-
-        <!-- Additionally if you want animations when dialog opening -->
-        <!--<item name="android:windowEnterAnimation">@anim/slide_up</item>-->
-        <!--<item name="android:windowExitAnimation">@anim/slide_down</item>-->
     </style>
 
-    <style name="MyProgressBarCircular" parent="@style/Widget.AppCompat.ProgressBar">
-        <item name="android:indeterminateTint">#b71c1c</item>
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <!-- Gets rid of the search icon -->
+        <item name="searchIcon">@mipmap/outline_search_white_24</item>
+        <!-- Gets rid of the "underline" in the text -->
+        <item name="queryBackground">@color/colorSecondary</item>
+        <!-- Gets rid of the search icon when the SearchView is expanded -->
+        <item name="searchHintIcon">@null</item>
+        <!-- The hint text that appears when the user has not typed anything -->
+        <item name="queryHint">Search product here</item>
     </style>
-
 </resources>

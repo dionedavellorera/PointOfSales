@@ -14,6 +14,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
@@ -173,4 +174,9 @@ public interface IUsers {
     @POST("fetchRoomViaId")
     @FormUrlEncoded
     Call<FetchRoomViaIdResponse> fetchRoomViaId(@FieldMap Map<String, String> params);
+
+    //fetchNationality
+    @POST("fetchNationality")
+    @FormUrlEncoded
+    Call<FetchNationalityResponse> fetchNationality(@FieldMap Map<String, String> params);
 }

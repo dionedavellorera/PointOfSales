@@ -25,7 +25,7 @@ import nerdvana.com.pointofsales.adapters.OrderSlipAdapter;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
 
-public abstract class AvailableGcDialog extends Dialog {
+public abstract class AvailableGcDialog extends BaseDialog {
     private Item item;
     private AvailableGcAdapter availableGcAdapter;
     private List<AvailableGcModel> list;
@@ -50,7 +50,8 @@ public abstract class AvailableGcDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_available_gc);
+//        setContentView(R.layout.dialog_available_gc);
+        setDialogLayout(R.layout.dialog_available_gc, "AVAIALBLE GC/s");
         ok = (Button) findViewById(R.id.ok);
         listAvailableGc = (RecyclerView) findViewById(R.id.listAvailableGc);
         list = new ArrayList<>();

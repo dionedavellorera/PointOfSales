@@ -1,383 +1,393 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:background="@color/colorWhite"
-    android:orientation="horizontal"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
-    <RelativeLayout
-        android:layout_weight="0.5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent">
 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
+    <include layout="@layout/partial_header" android:id="@+id/header" />
+
+    <LinearLayout
+        android:layout_below="@id/header"
+        android:background="@color/colorWhite"
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
         <RelativeLayout
-            android:background="@color/colorLtGrey"
-            android:id="@+id/cardPayments"
-            android:layout_above="@id/add"
-            android:layout_width="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
             android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
 
-                android:id="@+id/listPayments"
+
+            <RelativeLayout
+                android:background="@color/colorLtGrey"
+                android:id="@+id/cardPayments"
+                android:layout_above="@id/add"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
+                <android.support.v7.widget.RecyclerView
+
+                    android:id="@+id/listPayments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+            </RelativeLayout>
+
+
+
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/formCash"
+                android:layout_above="@id/add"
+                android:layout_toRightOf="@id/cardPayments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <android.support.design.widget.TextInputLayout
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:gravity="center"
+                        android:hint="amount"
+                        android:layout_toLeftOf="@id/add"
+                        android:id="@+id/amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/formCard"
+                android:layout_above="@id/add"
+                android:layout_toRightOf="@id/cardPayments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Spinner
+                    android:layout_margin="10dp"
+                    android:id="@+id/spinnerCreditCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Card number"
+                        android:id="@+id/cardNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Cardholder's name"
+                        android:id="@+id/cardHoldersName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Expiration"
+                        android:id="@+id/expiration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Authorization"
+                        android:id="@+id/authorization"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Amount"
+                        android:id="@+id/creditCardAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Remarks"
+                        android:id="@+id/remarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/formOnline"
+                android:layout_above="@id/add"
+                android:layout_toRightOf="@id/cardPayments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Spinner
+                    android:layout_margin="10dp"
+                    android:id="@+id/spinnerOnline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Voucher code"
+                        android:id="@+id/voucherCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="Voucher amount"
+                        android:id="@+id/voucherAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/formGiftCheck"
+                android:layout_above="@id/add"
+                android:layout_toRightOf="@id/cardPayments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="0001"
+                        android:id="@+id/voucherNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:text="1"
+                        android:hint="Quantity"
+                        android:id="@+id/voucherQuantity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/checkGc"
+                    android:text="Check available gift check"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="GC to avail"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/listAvailedGcs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/formForex"
+                android:layout_above="@id/add"
+                android:layout_toRightOf="@id/cardPayments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <Spinner
+                    android:layout_margin="10dp"
+                    android:id="@+id/spinnerForex"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_margin="10dp"
+                    android:id="@+id/forexRate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:hint="forex amount"
+                        android:id="@+id/forexAmount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+
+
+            </LinearLayout>
+
+
+
+
+            <Button
+                android:layout_margin="10dp"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/add"
+                android:layout_alignParentRight="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADD"/>
+
         </RelativeLayout>
 
 
-
-
-        <LinearLayout
-            android:visibility="gone"
-            android:id="@+id/formCash"
-            android:layout_above="@id/add"
-            android:layout_toRightOf="@id/cardPayments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.design.widget.TextInputLayout
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:gravity="center"
-                    android:hint="amount"
-                    android:layout_toLeftOf="@id/add"
-                    android:id="@+id/amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/formCard"
-            android:layout_above="@id/add"
-            android:layout_toRightOf="@id/cardPayments"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
             android:layout_height="match_parent">
 
-            <Spinner
-                android:layout_margin="10dp"
-                android:id="@+id/spinnerCreditCard"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Card number"
-                    android:id="@+id/cardNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Cardholder's name"
-                    android:id="@+id/cardHoldersName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Expiration"
-                    android:id="@+id/expiration"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Authorization"
-                    android:id="@+id/authorization"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Amount"
-                    android:id="@+id/creditCardAmount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Remarks"
-                    android:id="@+id/remarks"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/formOnline"
-            android:layout_above="@id/add"
-            android:layout_toRightOf="@id/cardPayments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Spinner
-                android:layout_margin="10dp"
-                android:id="@+id/spinnerOnline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Voucher code"
-                    android:id="@+id/voucherCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="Voucher amount"
-                    android:id="@+id/voucherAmount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/formGiftCheck"
-            android:layout_above="@id/add"
-            android:layout_toRightOf="@id/cardPayments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:hint="0001"
-                    android:id="@+id/voucherNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:text="1"
-                    android:hint="Quantity"
-                    android:id="@+id/voucherQuantity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/checkGc"
-                android:text="Check available gift check"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GC to avail"/>
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/listAvailedGcs"
+                android:layout_above="@id/linTotals"
+                android:id="@+id/listPostedPayments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:id="@+id/formForex"
-            android:layout_above="@id/add"
-            android:layout_toRightOf="@id/cardPayments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <Spinner
-                android:layout_margin="10dp"
-                android:id="@+id/spinnerForex"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:layout_margin="10dp"
-                android:id="@+id/forexRate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <android.support.design.widget.TextInputLayout
-                android:layout_margin="10dp"
-                android:layout_gravity="center"
+            <LinearLayout
+                android:id="@+id/linTotals"
+                android:layout_above="@id/linTendered"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
-                    android:hint="forex amount"
-                    android:id="@+id/forexAmount"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_weight="0.5"
+                    android:id="@+id/displayTotal"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:layout_above="@id/pay"
+                    android:text="TOTAL"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
-            </android.support.design.widget.TextInputLayout>
+
+                <TextView
+                    android:text="total"
+                    android:id="@+id/totalBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linTendered"
+                android:layout_above="@id/linChange"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="0.5"
+                    android:id="@+id/displayAmountTendered"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:layout_above="@id/pay"
+                    android:text="TENDERED"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:text="payemtn"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/totalBalance"
+                    android:id="@+id/totalPayment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
 
-
-        </LinearLayout>
-
-
-
-
-        <Button
-            android:layout_margin="10dp"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/add"
-            android:layout_alignParentRight="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ADD"/>
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_margin="10dp"
-        android:layout_weight="0.5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_above="@id/linTotals"
-            android:id="@+id/listPostedPayments"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-        <LinearLayout
-            android:id="@+id/linTotals"
-            android:layout_above="@id/linTendered"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="0.5"
-                android:id="@+id/displayTotal"
-                android:padding="10dp"
-                android:textSize="18sp"
+            <LinearLayout
+                android:id="@+id/linChange"
                 android:layout_above="@id/pay"
-                android:text="TOTAL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="0.5"
+                    android:id="@+id/displayChange"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:layout_above="@id/pay"
+                    android:text="CHANGE"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-            <TextView
-                android:text="total"
-                android:id="@+id/totalBalance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:text="change"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/totalBalance"
+                    android:id="@+id/totalChange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-        </LinearLayout>
+            </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linTendered"
-            android:layout_above="@id/linChange"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="0.5"
-                android:id="@+id/displayAmountTendered"
-                android:padding="10dp"
-                android:textSize="18sp"
-                android:layout_above="@id/pay"
-                android:text="TENDERED"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
 
-            <TextView
-                android:text="payemtn"
+
+            <Button
+                android:textColor="@color/colorWhite"
+                android:background="@color/colorRed"
                 android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@id/totalBalance"
-                android:id="@+id/totalPayment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/linChange"
-            android:layout_above="@id/pay"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_weight="0.5"
-                android:id="@+id/displayChange"
-                android:padding="10dp"
-                android:textSize="18sp"
-                android:layout_above="@id/pay"
-                android:text="CHANGE"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:text="change"
-                android:layout_alignParentBottom="true"
-                android:layout_toLeftOf="@id/totalBalance"
-                android:id="@+id/totalChange"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
+                android:id="@+id/pay"
+                android:layout_alignParentRight="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PAY"/>
+        </RelativeLayout>
 
 
-
-        <Button
-            android:textColor="@color/colorWhite"
-            android:background="@color/colorRed"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/pay"
-            android:layout_alignParentRight="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PAY"/>
-    </RelativeLayout>
+    </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

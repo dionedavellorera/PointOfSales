@@ -33,42 +33,45 @@
                     android:textStyle="bold" />
 
                 <Button
+                    android:padding="5dp"
                     android:id="@+id/showTables"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_toLeftOf="@id/showMap"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/button_selector_top"
                     android:text="TABLES"
                     android:visibility="gone" />
 
 
                 <Button
+                    android:padding="5dp"
                     android:id="@+id/showTakeOuts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_toLeftOf="@id/showMap"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/button_selector_top"
                     android:text="TAKE ORDER" />
 
                 <Button
+                    android:padding="5dp"
                     android:id="@+id/showMap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:layout_toLeftOf="@id/logout"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/button_selector_top"
                     android:text="ROOMS" />
 
                 <Button
-
+                    android:padding="5dp"
                     android:id="@+id/logout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_margin="5dp"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/button_selector_top"
                     android:text="LOGOUT" />
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>

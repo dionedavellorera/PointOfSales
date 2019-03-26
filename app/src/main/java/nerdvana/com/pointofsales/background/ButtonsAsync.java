@@ -25,16 +25,17 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(101,"VOID", "",2));
         buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",3));
         buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",4));
-        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
-        buttonsModelList.add(new ButtonsModel(106,"SOA", "",7));
-        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",8));
-        buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",9));
-        buttonsModelList.add(new ButtonsModel(109,"FOC", "",10));
+        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",5));
+        buttonsModelList.add(new ButtonsModel(106,"SOA", "",6));
+        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",7));
+        buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",8));
+        buttonsModelList.add(new ButtonsModel(109,"FOC", "",9));
         buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",10));
-        buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",10));
-        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",10));
-        buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",10));
-        buttonsModelList.add(new ButtonsModel(114,"SWITCH ROOM", "",10));
+        buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",11));
+        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",12));
+        buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",13));
+        buttonsModelList.add(new ButtonsModel(114,"SWITCH ROOM", "",14));
+        buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",15));
 
 //        buttonsModelList.add(new ButtonsModel(110,"VALIDATE SLIP", "",10));
 //        buttonsModelList.add(new ButtonsModel(110,"IN-TRANSIT", "",10));
@@ -51,12 +52,14 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
 //        buttonsModelList.add(new ButtonsModel(110,"VIEW RECEIPT", "",10));
 //        buttonsModelList.add(new ButtonsModel(110,"DEPOSIT RECALL", "",10));
 
-        Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
-            @Override
-            public int compare(ButtonsModel o1, ButtonsModel o2) {
-                return String.valueOf(o1.getPosition()).compareTo(String.valueOf(o2.getPosition()));
-            }
-        });
+        Collections.sort(buttonsModelList);
+
+//        Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
+//            @Override
+//            public int compare(ButtonsModel o1, ButtonsModel o2) {
+//                return String.valueOf(o1.getPosition()).compareTo(String.valueOf(o2.getPosition()));
+//            }
+//        });
         return buttonsModelList;
     }
 

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import nerdvana.com.pointofsales.model.ProgressBarModel;
 import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
@@ -31,12 +32,14 @@ public class BaseService {
                     BusProvider.getInstance().post(response.body());
                 } catch (Exception e) {
                     BusProvider.getInstance().post(new ApiError(e.getMessage()));
+                    BusProvider.getInstance().post(new ProgressBarModel(false, e.getMessage()));
                 }
             }
 
             @Override
             public void onFailure(Call<T> call, Throwable t) {
-//                BusProvider.getInstance().post(new SendWeatherEventError(t.getLocalizedMessage()));
+                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
+                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
             }
         });
 

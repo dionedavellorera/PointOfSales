@@ -24,7 +24,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public abstract class PasswordDialog extends Dialog implements View.OnClickListener {
+public abstract class PasswordDialog extends BaseDialog implements View.OnClickListener {
     private EditText username;
     private EditText password;
     private Button proceed;
@@ -45,7 +45,8 @@ public abstract class PasswordDialog extends Dialog implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_password);
+//        setContentView(R.layout.dialog_password);
+        setDialogLayout(R.layout.dialog_password, "ADMIN PASSWORD");
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         proceed = findViewById(R.id.proceed);

@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         setContentView(R.layout.activity_main);
         dialogProgressBar = new DialogProgressBar(MainActivity.this);
-
+        dialogProgressBar.setCancelable(false);
 
         loadingInterface = new Loading() {
             @Override
@@ -907,21 +907,17 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         void show(boolean willShow);
     }
 
-//    @Subscribe
-//    public void onReceiveLoading(ProgressBarModel progressBarModel) {
-//        Toast.makeText(getApplicationContext(), "SHOW NOW", Toast.LENGTH_SHORT).show();
-//        dialogProgressBar.show();
-//    }
-//        if (progressBarModel.isWillStart()) {
-//            if (dialogProgressBar != null) {
-//                if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
-//            }
-//        } else {
-//            if (dialogProgressBar != null) {
-//                if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
-//            }
-//        }
-//    }
+    @Subscribe
+    public void onReceiveLoading(ProgressBarModel progressBarModel) {
+        if (!progressBarModel.isWillStart()) {
+            if (dialogProgressBar != null) {
+                if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
+            }
+        }
+
+        Utils.showDialogMessage(MainActivity.this, progressBarModel.getMessage(), "ERROR");
+    }
+
 
 
 

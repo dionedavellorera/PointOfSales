@@ -28,7 +28,7 @@ import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.OrderSlipModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 
-public class OrderSlipDialog extends Dialog {
+public class OrderSlipDialog extends BaseDialog {
     private List<OrderSlipModel> orderList;
     private RecyclerView ordersList;
     private OrderSlipAdapter orderSlipAdapter;
@@ -54,7 +54,8 @@ public class OrderSlipDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.dialog_order_slip);
+//        setContentView(R.layout.dialog_order_slip);
+        setDialogLayout(R.layout.dialog_order_slip, "ORDER SLIP");
         tempOsp = new ArrayList<>();
         ordersList = findViewById(R.id.listOrders);
         orderSlipProductsList = findViewById(R.id.orderSlipProductsList);

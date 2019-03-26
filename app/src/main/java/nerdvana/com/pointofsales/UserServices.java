@@ -14,6 +14,7 @@ import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
+import nerdvana.com.pointofsales.api_requests.FetchNationalityRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
@@ -45,6 +46,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
@@ -311,6 +313,13 @@ public class UserServices extends BaseService {
     public void onCheckGc(FetchRoomViaIdRequest fetchRoomViaIdRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchRoomViaIdResponse> request = iUsers.fetchRoomViaId(fetchRoomViaIdRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void onCheckGc(FetchNationalityRequest fetchNationalityRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchNationalityResponse> request = iUsers.fetchNationality(fetchNationalityRequest.getMapValue());
         asyncRequest(request);
     }
 }

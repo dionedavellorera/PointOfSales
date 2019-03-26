@@ -65,8 +65,8 @@
     <TextView
         android:background="@color/colorSecondary"
         android:textColor="@color/colorWhite"
-        android:id="@+id/discountLabel"
-        android:text="Discount"
+        android:id="@+id/subTotalLabel"
+        android:text="Sub total"
         android:layout_width="0dp"
         android:padding="5dp"
         android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
         android:gravity="right"
         android:background="@color/colorSecondary"
         android:textColor="@color/colorWhite"
-        android:id="@+id/discountValue"
+        android:id="@+id/subTotalValue"
         android:text="500.00"
         android:padding="5dp"
         android:layout_width="0dp"
@@ -88,56 +88,32 @@
         app:layout_constraintTop_toBottomOf="@id/guideTotal"/>
 
     <TextView
-        android:visibility="gone"
+        android:visibility="visible"
         android:background="@color/colorSecondary"
         android:textColor="@color/colorWhite"
         android:padding="5dp"
-        android:id="@+id/subTotalLabel"
+        android:id="@+id/discountLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Sub total"
+        android:text="Discount"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideFifty"
-        app:layout_constraintTop_toBottomOf="@id/discountLabel"/>
+        app:layout_constraintTop_toBottomOf="@id/subTotalLabel"/>
 
     <TextView
-        android:visibility="gone"
+        android:visibility="visible"
         android:gravity="right"
         android:background="@color/colorSecondary"
         android:textColor="@color/colorWhite"
         android:padding="5dp"
-        android:id="@+id/subTotalValue"
+        android:id="@+id/discountValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="1000.00"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/guideFifty"
-        app:layout_constraintTop_toBottomOf="@id/discountLabel"/>
+        app:layout_constraintTop_toBottomOf="@id/subTotalValue"/>
 
-    <TextView
-        android:id="@+id/taxLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="VAT (12%)"
-        android:background="@color/colorSecondary"
-        android:textColor="@color/colorWhite"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/guideFifty"
-        app:layout_constraintTop_toBottomOf="@id/subTotalLabel"/>
-
-    <TextView
-        android:gravity="right"
-        android:id="@+id/taxValue"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="0.12"
-        android:background="@color/colorSecondary"
-        android:textColor="@color/colorWhite"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/guideFifty"
-        app:layout_constraintTop_toBottomOf="@id/subTotalLabel"/>
 
     <TextView
         android:id="@+id/depositLabel"
@@ -149,7 +125,7 @@
         android:textColor="@color/colorWhite"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/guideFifty"
-        app:layout_constraintTop_toBottomOf="@id/taxLabel"/>
+        app:layout_constraintTop_toBottomOf="@id/discountLabel"/>
 
     <TextView
         android:gravity="right"
@@ -162,7 +138,7 @@
         android:textColor="@color/colorWhite"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toRightOf="@id/guideFifty"
-        app:layout_constraintTop_toBottomOf="@id/taxValue"/>
+        app:layout_constraintTop_toBottomOf="@id/discountValue"/>
 
 
 

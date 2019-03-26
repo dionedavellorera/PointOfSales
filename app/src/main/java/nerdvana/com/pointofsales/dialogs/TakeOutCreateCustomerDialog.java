@@ -18,7 +18,7 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 
-public abstract class TakeOutCreateCustomerDialog extends Dialog {
+public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
     private EditText name;
     private Button create;
     private Spinner roomAreaSpinner;
@@ -43,7 +43,8 @@ public abstract class TakeOutCreateCustomerDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_take_out_create_customer);
+//        setContentView(R.layout.dialog_take_out_create_customer);
+        setDialogLayout(R.layout.dialog_take_out_create_customer, "CUSTOMER INFO");
         roomAreaSpinner = findViewById(R.id.roomArea);
         name = findViewById(R.id.name);
         create = findViewById(R.id.create);

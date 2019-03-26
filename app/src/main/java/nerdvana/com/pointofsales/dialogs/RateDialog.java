@@ -27,7 +27,7 @@ import nerdvana.com.pointofsales.adapters.RoomRatesAdapter;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
-public abstract class RateDialog extends Dialog implements View.OnClickListener {
+public abstract class RateDialog extends BaseDialog implements View.OnClickListener {
     private Timer timer;
     private Button update;
     private Spinner rateSpinner;
@@ -65,8 +65,8 @@ public abstract class RateDialog extends Dialog implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.dialog_rates);
-
+//        setContentView(R.layout.dialog_rates);
+        setDialogLayout(R.layout.dialog_rates, "ADD RATE");
 
         listRates = findViewById(R.id.listRates);
         searchRate = findViewById(R.id.searchRate);

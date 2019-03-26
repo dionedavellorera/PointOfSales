@@ -4,10 +4,14 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <include layout="@layout/partial_header"
+            android:id="@+id/headerLayout"/>
+
         <LinearLayout
+            android:layout_below="@+id/headerLayout"
             android:layout_margin="5dp"
             android:id="@+id/rowPrinter"
             android:layout_width="match_parent"

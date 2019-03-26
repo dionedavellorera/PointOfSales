@@ -4,15 +4,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/header"
-        android:padding="15dp"
-        android:textSize="18sp"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ROOM RATE"/>
+    <include layout="@layout/partial_header"
+        android:id="@+id/header"/>
 
     <android.support.v7.widget.SearchView
         android:layout_below="@id/header"

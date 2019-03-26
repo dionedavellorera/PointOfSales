@@ -15,7 +15,7 @@ import nerdvana.com.pointofsales.R;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
-public abstract class ConfirmWithRemarksDialog extends Dialog {
+public abstract class ConfirmWithRemarksDialog extends BaseDialog {
 
     private EditText remarks;
     private Button save;
@@ -35,8 +35,8 @@ public abstract class ConfirmWithRemarksDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_confirm);
-
+//        setContentView(R.layout.dialog_confirm);
+        setDialogLayout(R.layout.dialog_confirm, "CONFIRM");
         remarks = findViewById(R.id.remarks);
         save = findViewById(R.id.save);
 

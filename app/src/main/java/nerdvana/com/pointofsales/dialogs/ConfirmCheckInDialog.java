@@ -11,7 +11,7 @@ import android.widget.Button;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
-public abstract class ConfirmCheckInDialog extends Dialog {
+public abstract class ConfirmCheckInDialog extends BaseDialog {
 
     private Button confirm;
     private RoomTableModel selectedRoom;
@@ -31,8 +31,8 @@ public abstract class ConfirmCheckInDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_confirm_checkin);
-
+//        setContentView(R.layout.dialog_confirm_checkin);
+        setDialogLayout(R.layout.dialog_confirm_checkin, "CONFIRM CHECK IN");
         confirm = findViewById(R.id.confirm);
 
         confirm.setOnClickListener(new View.OnClickListener() {

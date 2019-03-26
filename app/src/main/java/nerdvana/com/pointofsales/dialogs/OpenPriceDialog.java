@@ -15,7 +15,7 @@ import android.widget.TextView;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 
-public abstract class OpenPriceDialog extends Dialog {
+public abstract class OpenPriceDialog extends BaseDialog {
     private TextView name;
     private TextView oldPrice;
     private EditText newPrice;
@@ -40,7 +40,8 @@ public abstract class OpenPriceDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_openprice);
+//        setContentView(R.layout.dialog_openprice);
+        setDialogLayout(R.layout.dialog_openprice, "OPEN PRICE");
         name = findViewById(R.id.name);
         oldPrice = findViewById(R.id.oldPrice);
         newPrice = findViewById(R.id.newPrice);

@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -134,7 +137,10 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
             @Override
             public boolean onQueryTextChange(String s) {
                 if (productsAdapter != null) {
-                    productsAdapter.getFilter().filter(s);
+                    if (productsList.size() > 0) {
+                        productsAdapter.getFilter().filter(s);
+                    }
+
                 }
                 return false;
             }
@@ -152,10 +158,13 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private void initializeViews(View view) {
         search = view.findViewById(R.id.search);
 
-        SearchView searchView = (SearchView) view.findViewById(R.id.search);
-        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        EditText searchEditText = (EditText) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
         searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+//
+//        ImageView searchIcon = search.findViewById(android.support.v7.appcompat.R.drawable.search_icon);
+//        searchIcon.setColorFilter(Color.WHITE);
+
 
         qtySpinner = view.findViewById(R.id.qtySpinner);
         breadcrumb = view.findViewById(R.id.breadcrumb);

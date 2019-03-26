@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -25,19 +26,22 @@ import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
+import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
-public abstract class CheckInDialog extends Dialog implements View.OnClickListener{
+public abstract class CheckInDialog extends BaseDialog implements View.OnClickListener{
     private List<RoomRateMain> priceList;
     private RoomTableModel selectedRoom;
     private Spinner rateSpinner;
     private Spinner vehicleSpinner;
     private Spinner carSpinner;
     private Spinner guestTypeSpinner;
+    private Spinner spinnerNationalirt;
 
     private EditText customer;
     private EditText plateNumber;
@@ -52,6 +56,7 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
     private List<FetchVehicleResponse.Result> vehicleList;
     private List<FetchGuestTypeResponse.Result> guestTypeList;
     private List<FetchRoomAreaResponse.Result> areaList;
+    private List<FetchNationalityResponse.Result> nationalityList;
     private Context context;
 
     private int userId = 0;
@@ -61,13 +66,17 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
     private int vehicleId = 0;
     private int guestTypeId = 0;
     private int areaId = 0;
+    private int nationalityId = 0;
 
+    private FetchRoomPendingResponse.Result fetchRoomPendingResult;
     private List<FetchUserResponse.Result> userList;
     public CheckInDialog(@NonNull Context context, RoomTableModel selectedRoom,
                          List<FetchCarResponse.Result> carList, List<FetchVehicleResponse.Result> vehicleList,
                          List<FetchGuestTypeResponse.Result> guestTypeList,
                          List<FetchUserResponse.Result> userList,
-                         List<FetchRoomAreaResponse.Result> areaList) {
+                         List<FetchRoomAreaResponse.Result> areaList,
+                         List<FetchNationalityResponse.Result> nationalityList,
+                         FetchRoomPendingResponse.Result fetchRoomPendingResult) {
         super(context);
         this.selectedRoom = selectedRoom;
         this.context = context;
@@ -77,6 +86,8 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
         this.guestTypeList = guestTypeList;
         this.userList = userList;
         this.areaList = areaList;
+        this.nationalityList = nationalityList;
+        this.fetchRoomPendingResult = fetchRoomPendingResult;
     }
 
     public CheckInDialog(@NonNull Context context, int themeResId) {
@@ -92,7 +103,7 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.dialog_checkin);
+        setDialogLayout(R.layout.dialog_checkin, "GUEST INFO");
 
         child = findViewById(R.id.child);
         adult = findViewById(R.id.adult);
@@ -103,6 +114,7 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
         vehicleSpinner = findViewById(R.id.spinnerVehicle);
         carSpinner = findViewById(R.id.spinnerCar);
         guestTypeSpinner = findViewById(R.id.spinnerGuestType);
+        spinnerNationalirt = findViewById(R.id.spinnerNationalirt);
         checkin = findViewById(R.id.checkin);
         checkin.setOnClickListener(this);
         steward = findViewById(R.id.steward);
@@ -116,6 +128,103 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
         setGuestTypeSelection();
         setUserSelection();
         setRoomArea();
+        setNationality();
+
+        setSelectedFields();
+    }
+
+    private void setSelectedFields() {
+        if (fetchRoomPendingResult != null) {
+            List<String> nationalityArray = new ArrayList<>();
+            nationalityArray.add(fetchRoomPendingResult.getBooked().get(0).getBranchNationality().getNationality());
+            CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                    nationalityArray);
+            spinnerNationalirt.setAdapter(rateSpinnerAdapter);
+
+            List<String> carArray = new ArrayList<>();
+            carArray.add(fetchRoomPendingResult.getBooked().get(0).getCar().getCarMake());
+            CustomSpinnerAdapter carSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                    carArray);
+            carSpinner.setAdapter(carSpinnerAdapter);
+
+            List<String> guestTypeArray = new ArrayList<>();
+            guestTypeArray.add(fetchRoomPendingResult.getBooked().get(0).getGuestType().getGuestType());
+            CustomSpinnerAdapter guestTypeAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                    guestTypeArray);
+            guestTypeSpinner.setAdapter(guestTypeAdapter);
+
+            plateNumber.setEnabled(false);
+            plateNumber.setText(fetchRoomPendingResult.getBooked().get(0).getPlateNo());
+
+            adult.setEnabled(false);
+            adult.setText(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getAdult()));
+
+            child.setEnabled(false);
+            child.setText(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getChild()));
+
+            List<String> userArray = new ArrayList<>();
+            for (FetchUserResponse.Result res : userList) {
+                if (res.getUsername().equalsIgnoreCase(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getSteward()))) {
+                    userArray.add(res.getName());
+                    break;
+                }
+            }
+
+
+
+            CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                    userArray);
+            steward.setAdapter(userAdapter);
+
+
+
+
+            List<String> vehicleArray = new ArrayList<>();
+
+
+            for (FetchVehicleResponse.Result res : vehicleList) {
+                if (res.getId() == fetchRoomPendingResult.getBooked().get(0).getVehicleId()) {
+                    vehicleArray.add(res.getVehicle());
+                    break;
+                }
+            }
+            CustomSpinnerAdapter vehicleSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                    vehicleArray);
+            vehicleSpinner.setAdapter(vehicleSpinnerAdapter);
+
+            for (int i = 0; i < priceList.size(); i++) {
+                if (fetchRoomPendingResult.getBooked().get(0).getRoomRatePriceId() == priceList.get(i).getRoomRatePriceId()) {
+                    rateSpinner.setSelection(i, true);
+                    roomRateId = priceList.get(i).getRatePrice().getRoomRateId();
+                    roomRatePriecId = priceList.get(i).getRoomRatePriceId();
+                    break;
+                }
+            }
+
+        }
+    }
+
+    private void setNationality() {
+        List<String> nationalityArray = new ArrayList<>();
+        for (FetchNationalityResponse.Result nationality : nationalityList) {
+            nationalityArray.add(nationality.getNationality());
+        }
+        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                nationalityArray);
+        spinnerNationalirt.setAdapter(rateSpinnerAdapter);
+
+        spinnerNationalirt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                nationalityId = nationalityList.get(position).getCoreId();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void setRoomArea() {
@@ -185,6 +294,11 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
 
             }
         });
+
+        if (fetchRoomPendingResult != null) {
+//            fetchRoomPendingResult.getBooked().get(0).getroo
+//            rateSpinner.setSelection();
+        }
     }
 
     private void setCarSelection() {
@@ -271,7 +385,8 @@ public abstract class CheckInDialog extends Dialog implements View.OnClickListen
                         adult.getText().toString(),
                         child.getText().toString(),
                         SharedPreferenceManager.getString(context.getApplicationContext(), ApplicationConstants.TAX_RATE),
-                        String.valueOf(areaId)
+                        String.valueOf(areaId),
+                        String.valueOf(nationalityId)
                 ));
 //                welcomeGuestRequest();
                 dismiss();

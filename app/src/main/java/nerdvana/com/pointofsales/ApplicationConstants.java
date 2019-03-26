@@ -35,6 +35,7 @@ public class ApplicationConstants {
     public static final String USER_JSON = "user_json";
     public static final String CURRENCY_JSON = "currency_json";
     public static final String AR_ONLINE = "ar_online";
+    public static final String NATIONALITY_JSON = "nationality";
     public static final String CREDIT_CARD = "credit_card";
 
 

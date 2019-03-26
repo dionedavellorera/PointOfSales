@@ -32,7 +32,7 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.model.SpnModelsItem;
 
-public abstract class SetupPrinterDialog extends Dialog {
+public abstract class SetupPrinterDialog extends BaseDialog {
 
     private Spinner printerSelection;
     private Spinner languageSelection;
@@ -60,7 +60,8 @@ public abstract class SetupPrinterDialog extends Dialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_setup_printer);
+//        setContentView(R.layout.dialog_setup_printer);
+        setDialogLayout(R.layout.dialog_setup_printer, "PRINTER SETUP");
 
         printerSelection = findViewById(R.id.spinnerPrinter);
         languageSelection = findViewById(R.id.spinnerLanguage);

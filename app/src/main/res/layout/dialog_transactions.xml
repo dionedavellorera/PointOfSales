@@ -1,53 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="horizontal"
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_weight="0.5"
-        android:layout_width="0dp"
+    <include layout="@layout/partial_header"
+        android:id="@+id/headerLayout"/>
+
+    <LinearLayout
+        android:layout_below="@id/headerLayout"
+        android:orientation="horizontal"
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:gravity="center"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:id="@+id/orListLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="O.R. LIST"/>
+        <RelativeLayout
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <TextView
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:id="@+id/orListLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="O.R. LIST"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/listTransactions"
-            android:layout_below="@id/orListLabel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/listTransactions"
+                android:layout_below="@id/orListLabel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_weight="0.5"
-        android:layout_width="0dp"
-        android:layout_height="match_parent">
-        <android.support.v7.widget.RecyclerView
-            android:layout_above="@id/reprintOr"
-            android:id="@+id/listTransactionDetails"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <RelativeLayout
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:layout_above="@id/reprintOr"
+                android:id="@+id/listTransactionDetails"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-        <Button
-            android:layout_margin="10dp"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/reprintOr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="REPRINT OR"/>
+            <Button
+                android:layout_margin="10dp"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/reprintOr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="REPRINT OR"/>
 
-        <Button
-            android:layout_margin="10dp"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/postVoid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="POST VOID"/>
-    </RelativeLayout>
-</LinearLayout>
+            <Button
+                android:layout_margin="10dp"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/postVoid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="POST VOID"/>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>
+
+
