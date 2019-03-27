@@ -66,6 +66,7 @@ public class PaymentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     paymentMethod.clicked(i);
                 }
             });
+
             ((PaymentTypeViewHolder) holder).description.setText(paymentList.get(i).getPaymentType());
 //            holder.description.sette
             ImageLoader.loadImage("http://192.168.1.90/pos/uploads/icon/" +paymentList.get(i).getImage(), ((PaymentTypeViewHolder) holder).name);

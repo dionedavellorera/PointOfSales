@@ -1150,6 +1150,28 @@ public class FetchRoomPendingResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+        @SerializedName("department")
+        @Expose
+        private String department;
+        @SerializedName("discounts")
+        @Expose
+        private List<Discount> discounts;
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public List<Discount> getDiscounts() {
+            return discounts;
+        }
+
+        public void setDiscounts(List<Discount> discounts) {
+            this.discounts = discounts;
+        }
 
         public Product getProduct() {
             return product;
@@ -1400,6 +1422,86 @@ public class FetchRoomPendingResponse {
         }
 
 
+    }
+
+    public class Discount {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("discount_posting_id")
+        @Expose
+        private String discountPostingId;
+        @SerializedName("post_trans_id")
+        @Expose
+        private String postTransId;
+        @SerializedName("discount_id")
+        @Expose
+        private String discountId;
+        @SerializedName("discount_percentage")
+        @Expose
+        private String discountPercentage;
+        @SerializedName("discount_amount")
+        @Expose
+        private String discountAmount;
+        @SerializedName("emp_id")
+        @Expose
+        private String empId;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getDiscountPostingId() {
+            return discountPostingId;
+        }
+
+        public void setDiscountPostingId(String discountPostingId) {
+            this.discountPostingId = discountPostingId;
+        }
+
+        public String getPostTransId() {
+            return postTransId;
+        }
+
+        public void setPostTransId(String postTransId) {
+            this.postTransId = postTransId;
+        }
+
+        public String getDiscountId() {
+            return discountId;
+        }
+
+        public void setDiscountId(String discountId) {
+            this.discountId = discountId;
+        }
+
+        public String getDiscountPercentage() {
+            return discountPercentage;
+        }
+
+        public void setDiscountPercentage(String discountPercentage) {
+            this.discountPercentage = discountPercentage;
+        }
+
+        public String getDiscountAmount() {
+            return discountAmount;
+        }
+
+        public void setDiscountAmount(String discountAmount) {
+            this.discountAmount = discountAmount;
+        }
+
+        public String getEmpId() {
+            return empId;
+        }
+
+        public void setEmpId(String empId) {
+            this.empId = empId;
+        }
     }
 
     public class Product {

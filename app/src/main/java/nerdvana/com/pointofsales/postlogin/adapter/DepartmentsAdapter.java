@@ -45,7 +45,7 @@ public class DepartmentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final DepartmentsModel productsModel = roomTableModelList.get(i);
 
         ((DepartmentsAdapter.DepartmentsViewHolder)holder).name.setText(productsModel.getName());
-//        ImageLoader.loadImage(productsModel.getImageUrl(), ((DepartmentsAdapter.DepartmentsViewHolder)holder).imageUrl);
+//        ImageLoader.loadImage(productsModel.getImageUrl(), ((DepartmentsAdapter.DiscProductsViewHolder)holder).imageUrl);
     }
 
 

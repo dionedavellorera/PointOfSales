@@ -22,14 +22,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
@@ -60,7 +58,6 @@ import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
-import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchNationalityRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
@@ -82,7 +79,6 @@ import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
-import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
@@ -97,7 +93,6 @@ import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.RatePrice;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.api_responses.RoomRateMainViaId;
-import nerdvana.com.pointofsales.api_responses.RoomRateSub;
 import nerdvana.com.pointofsales.api_responses.RoomRateSubViaId;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
@@ -106,9 +101,9 @@ import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
-import nerdvana.com.pointofsales.dialogs.ConfirmCheckInDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
-import nerdvana.com.pointofsales.dialogs.DiscountDialog;
+import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
+import nerdvana.com.pointofsales.dialogs.ManualDiscountDialog;
 import nerdvana.com.pointofsales.dialogs.FocDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
@@ -136,7 +131,6 @@ import nerdvana.com.pointofsales.model.OrderSlipModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
-import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
@@ -652,9 +646,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
             case 115://DISCOUNT
-                DiscountDialog discountDialog = new DiscountDialog(getActivity());
 
-                if (!discountDialog.isShowing()) discountDialog.show();
+                //fetchRoomPendingResult
+
+                if (selectedRoom != null) {
+                    if (selectedRoom.isTakeOut()) {
+
+                    } else {
+                        DiscountSelectionDialog discountSelectionDialog = new DiscountSelectionDialog(getContext(), getActivity(), fetchRoomPendingResult );
+
+                        if (!discountSelectionDialog.isShowing()) discountSelectionDialog.show();
+                    }
+
+
+                } else {
+                    Utils.showDialogMessage((MainActivity)getContext(), "No room selected", "Information");
+                }
+
                 break;
             case 114://SWITCH ROOM
                 if (selectedRoom != null) {
@@ -954,7 +962,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 dismiss();
                             } else {
 
-                                Utils.showDialogMessage((MainActivity)getContext(), "Payment is less than balance", "Warning");
+                                Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
                             }
                         }
 
@@ -1592,6 +1600,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         }
 
 
+                        String symbolLeft = "";
+                        String symbolRight = "";
+
+                        if (pym.getCurrency() != null) {
+                            if (pym.getCurrency().getSymbolLeft() != null) {
+                                symbolLeft = pym.getCurrency().getSymbolLeft();
+                            }
+
+
+                            if (pym.getCurrency().getSymbolRight() != null) {
+                                symbolRight = pym.getCurrency().getSymbolRight();
+                            }
+                        }
 
                         postedPaymentsList.add(new PostedPaymentsModel(
                                 String.valueOf(pym.getPaymentTypeId()),
@@ -1601,8 +1622,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 String.valueOf(pym.getCurrencyId()),
                                 String.valueOf(pym.getCurrencyValue()),
                                 new JSONObject(),
-                                pym.getCurrency().getSymbolLeft() == null ? "" : pym.getCurrency().getSymbolLeft(),
-                                pym.getCurrency().getSymbolRight() == null ? "" : pym.getCurrency().getSymbolRight()
+                                symbolLeft,
+                                symbolRight
                         ));
                     }
                 }
@@ -1858,7 +1879,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             };
             if (!checkInDialog.isShowing()) checkInDialog.show();
         } else {
-            Utils.showDialogMessage((MainActivity)getContext(), "Fetch room pending result is null", "Information");
+            Utils.showDialogMessage(getActivity(), "Fetch room pending result is null", "Information");
         }
 
         checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -1994,6 +2015,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             total.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
             if (fetchOrderPendingViaControlNoResponse.getResult().getPayments().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : fetchOrderPendingViaControlNoResponse.getResult().getPayments()) {
+
+                    String symbolLeft = "";
+                    String symbolRight = "";
+
+                    if (pym.getCurrency() != null) {
+                        if (pym.getCurrency().getSymbolLeft() != null) {
+                            symbolLeft = pym.getCurrency().getSymbolLeft();
+                        }
+
+
+                        if (pym.getCurrency().getSymbolRight() != null) {
+                            symbolRight = pym.getCurrency().getSymbolRight();
+                        }
+                    }
+
+
                     postedPaymentsList.add(new PostedPaymentsModel(
                             String.valueOf(pym.getPaymentTypeId()),
                             String.valueOf(pym.getAmount()),
@@ -2002,8 +2039,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             String.valueOf(pym.getCurrencyId()),
                             String.valueOf(pym.getCurrencyValue()),
                             new JSONObject(),
-                            pym.getCurrency().getSymbolLeft() == null ? "" : pym.getCurrency().getSymbolLeft(),
-                            pym.getCurrency().getSymbolRight() == null ? "" : pym.getCurrency().getSymbolRight()
+                            symbolLeft,
+                            symbolRight
                     ));
                 }
             }
