@@ -46,6 +46,7 @@ import java.util.List;
 
 
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
@@ -54,6 +55,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         decideViewToShow();
         fetchRoomAreaRequest();
         fetchUserListRequest();
+        fetchCompanyUserRequest();
         BusProvider.getInstance().post(new TestRequest("test"));
 
         requestRoomStatusList();
@@ -918,6 +921,22 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         Utils.showDialogMessage(MainActivity.this, progressBarModel.getMessage(), "ERROR");
     }
 
+
+    private void fetchCompanyUserRequest() {
+        BusProvider.getInstance().post(new FetchCompanyUserRequest());
+    }
+
+    @Subscribe
+    public void fetchCompanyUserRequest(FetchCompanyUserResponse fetchCompanyUserResponse) {
+        if (fetchCompanyUserResponse.getResult().size() > 0) {
+            SharedPreferenceManager.saveString(getApplicationContext(),
+                    GsonHelper.getGson().toJson(fetchCompanyUserResponse.getResult()),
+                    ApplicationConstants.COMPANY_USER);
+        }
+
+        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
+
+    }
 
 
 

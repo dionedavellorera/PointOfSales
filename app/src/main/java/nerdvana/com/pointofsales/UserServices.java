@@ -10,9 +10,12 @@ import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
+import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
+import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
+import nerdvana.com.pointofsales.api_requests.FetchDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchNationalityRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
@@ -42,9 +45,12 @@ import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -322,4 +328,27 @@ public class UserServices extends BaseService {
         Call<FetchNationalityResponse> request = iUsers.fetchNationality(fetchNationalityRequest.getMapValue());
         asyncRequest(request);
     }
+
+    @Subscribe
+    public void fetchDenomination(FetchDenominationRequest fetchDenominationRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchDenominationResponse> request = iUsers.fetchDenomination(fetchDenominationRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void fetchDenomination(FetchDiscountRequest fetchDiscountRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchDiscountResponse> request = iUsers.fetchDiscount(fetchDiscountRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+
+    @Subscribe
+    public void fetchCompanyUser(FetchCompanyUserRequest fetchCompanyUserRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchCompanyUserResponse> request = iUsers.fetchCompanyUser(fetchCompanyUserRequest.getMapValue());
+        asyncRequest(request);
+    }
+
 }

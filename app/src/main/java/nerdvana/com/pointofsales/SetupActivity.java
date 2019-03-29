@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales;
 
 import android.app.ActionBar;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +12,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,8 @@ import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
+import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
+import nerdvana.com.pointofsales.dialogs.SetupDialog;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.model.UserModel;
 import okhttp3.ResponseBody;
@@ -38,21 +43,29 @@ import retrofit2.Response;
 
 public class SetupActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Dialog setupDialog;
+    private DialogProgressBar dialogProgressBar;
 
-    private View view;
     private Button proceed;
-    private Button setup;
+    private ImageView setup;
     private EditText username;
     private EditText password;
     private TextView loginLabel;
-    private static PreloginContract preloginContract;
 
     private UserModel userModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+
+
+        InputMethodManager imm = (InputMethodManager)getBaseContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.RESULT_HIDDEN,InputMethodManager.RESULT_HIDDEN);
+
+
+        dialogProgressBar = new DialogProgressBar(SetupActivity.this);
+        dialogProgressBar.setCancelable(false);
+
         loginLabel = findViewById(R.id.loginLabel);
         proceed = findViewById(R.id.proceed);
         proceed.setOnClickListener(this);
@@ -78,6 +91,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 //                "FINGERPRINT: "+Build.FINGERPRINT + "\n" +
 //                "Version Code: " + Build.VERSION.RELEASE + "\n");
 
+
+        PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
+
+
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
 
         if (userModel != null) {
@@ -86,7 +103,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
 
-                PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
+
 
 
             }
@@ -102,12 +119,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
                     sendLoginRequest(username.getText().toString(),
                                     password.getText().toString());
-//                    startActivity(new Intent(this, MainActivity.class));
-//                    finish();
                 }
-//                else {
-//                    Toast.makeText(SetupActivity.this, "Machine number missing, please setup first", Toast.LENGTH_SHORT).show();
-//                }
                 break;
             case R.id.setup:
                 showSetupDialog();
@@ -124,14 +136,18 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         if (!TextUtils.isEmpty(username.trim()) && !TextUtils.isEmpty(password.trim())) {
             userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
             if (TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.MACHINE_ID))) {
-                Toast.makeText(SetupActivity.this, "Machine not yet registered", Toast.LENGTH_SHORT).show();
+
+                Utils.showDialogMessage(SetupActivity.this, "Machine not yet registered","Information");
+
                 isValid = false;
             } else {
                 isValid = true;
             }
 
         } else {
-            Toast.makeText(SetupActivity.this, "Please enter username and password", Toast.LENGTH_SHORT).show();
+
+            Utils.showDialogMessage(SetupActivity.this, "Please enter username and password to proceed","Information");
+
         }
         return isValid;
     }
@@ -148,111 +164,21 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         BusProvider.getInstance().register(this);
     }
 
-    private void sendVerifyMachineRequest(String productKey) {
-        VerifyMachineRequest request = new VerifyMachineRequest(
-                productKey,
-                Build.ID,
-                Build.SERIAL,
-                Build.MODEL,
-                Build.MANUFACTURER,
-                Build.BOARD
-                );
-        BusProvider.getInstance().post(request);
-    }
 
-    @Subscribe
-    public void machineVerificationResponse(VerifyMachineResponse verifyMachineResponse) {
-        if (verifyMachineResponse.getStatus() == 1) { //success
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
-
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getInfo().getTax()), ApplicationConstants.TAX_RATE);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getId()), ApplicationConstants.BRANCH_ID);
-            SharedPreferenceManager.saveString(getApplicationContext(), String.valueOf(verifyMachineResponse.getBranch().getBranchCode()), ApplicationConstants.BRANCH_CODE);
-
-            if (setupDialog != null) {
-                if (setupDialog.isShowing()) setupDialog.dismiss();
-            }
-        }
-        Toast.makeText(getApplicationContext(), verifyMachineResponse.getMesage(), Toast.LENGTH_SHORT).show();
-    }
 
     @Subscribe
     public void apiError(ApiError apiError) {
-        Toast.makeText(SetupActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
+
+        dismissProgress();
+
+        Utils.showDialogMessage(SetupActivity.this, apiError.message(),"ERROR");
     }
 
     private void showSetupDialog() {
-        setupDialog = new Dialog(this);
-        setupDialog.setCancelable(false);
-        setupDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setupDialog.setContentView(R.layout.dialog_setup);
 
-        final EditText ipAddress = setupDialog.findViewById(R.id.ipAddress);
-        final EditText branchName = setupDialog.findViewById(R.id.branchName);
-        final EditText branchCode = setupDialog.findViewById(R.id.branchCode);
-        final EditText serial = setupDialog.findViewById(R.id.serialNumber);
-        final Button proceed = setupDialog.findViewById(R.id.proceed);
+        SetupDialog setupDialog = new SetupDialog(SetupActivity.this);
 
 
-        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST))) {
-            ipAddress.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST));
-            branchName.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH));
-            branchCode.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE));
-            serial.setText(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.SERIAL_NUMBER));
-        }
-
-        proceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!TextUtils.isEmpty(ipAddress.getText().toString().trim()) &&
-                        !TextUtils.isEmpty(branchName.getText().toString().trim()) &&
-                        !TextUtils.isEmpty(branchCode.getText().toString().trim()) &&
-                        !TextUtils.isEmpty(serial.getText().toString().trim())) {
-
-                    if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
-                            ipAddress.getText().toString(),
-                            "api",
-                            branchName.getText().toString(),
-                            branchCode.getText().toString()))) {
-
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                ipAddress.getText().toString(),ApplicationConstants.HOST);
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                branchName.getText().toString(),ApplicationConstants.BRANCH);
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                branchCode.getText().toString(),ApplicationConstants.CODE);
-                        SharedPreferenceManager.saveString(SetupActivity.this,
-                                serial.getText().toString(),ApplicationConstants.SERIAL_NUMBER);
-
-                        String apiBaseUrl = String.format("%s/%s/%s/%s/",
-                                ipAddress.getText().toString(),
-                                "api",
-                                branchName.getText().toString(),
-                                branchCode.getText().toString());
-                        SharedPreferenceManager.saveString(SetupActivity.this, apiBaseUrl, ApplicationConstants.API_BASE_URL);
-                        PosClient.changeApiBaseUrl(
-                                apiBaseUrl
-                        );
-                        sendVerifyMachineRequest(serial.getText().toString().toUpperCase());
-                    } else {
-                        Toast.makeText(SetupActivity.this, "Please enter valid url", Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-
-                    Toast.makeText(SetupActivity.this, "Please fill up all fields", Toast.LENGTH_SHORT).show();
-
-                }
-
-
-            }
-        });
 
         if (!setupDialog.isShowing()) {
             setupDialog.show();
@@ -262,6 +188,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void sendLoginRequest(String username, String password) {
+        showPRogress();
         BusProvider.getInstance().post(new LoginRequest(
                 username,
                 password
@@ -270,9 +197,11 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     @Subscribe
     public void onReceiveLoginResponse(LoginResponse loginResponse) {
+        dismissProgress();
         if (loginResponse.getStatus() == 0) {
             //fail
-            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+            Utils.showDialogMessage(SetupActivity.this, loginResponse.getMessage(),"Information");
+//            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
         } else {
             //success
 
@@ -291,6 +220,18 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             startActivity(new Intent(this, MainActivity.class));
             finish();
 
+        }
+    }
+
+    private void showPRogress() {
+        if (dialogProgressBar != null) {
+            if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
+        }
+    }
+
+    private void dismissProgress() {
+        if (dialogProgressBar != null) {
+            if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
         }
     }
 }

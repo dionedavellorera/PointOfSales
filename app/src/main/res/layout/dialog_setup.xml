@@ -5,18 +5,10 @@
     android:layout_height="match_parent">
 
 
-    <TextView
-        android:padding="10dp"
-        android:textColor="@color/colorWhite"
-        android:background="@color/navyblue"
-        android:textSize="18sp"
-        android:gravity="center_vertical"
-        android:text="SETUP"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <include layout="@layout/partial_header" />
 
     <android.support.design.widget.TextInputLayout
-        android:padding="3dp"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
@@ -30,7 +22,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:padding="3dp"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
@@ -44,7 +36,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:padding="3dp"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
@@ -58,7 +50,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:padding="3dp"
+        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
@@ -72,7 +64,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:background="@drawable/button_selector"
         android:id="@+id/proceed"
         android:layout_width="match_parent"

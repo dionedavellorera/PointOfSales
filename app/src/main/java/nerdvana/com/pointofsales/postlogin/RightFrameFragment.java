@@ -480,9 +480,6 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
 
-
-
-
         }
 
     }

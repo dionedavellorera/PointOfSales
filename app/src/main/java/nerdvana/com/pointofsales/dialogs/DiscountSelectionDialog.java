@@ -42,11 +42,8 @@ public class DiscountSelectionDialog extends BaseDialog implements ButtonsContra
                 "MANUAL",
                 "http://www.twentyonepilots.com/sites/g/files/g2000004896/f/styles/media_gallery_large/public/Sample-image10-highres.jpg?itok=-UQ2667f",
                 1));
-        buttonsModelList.add(new ButtonsModel(101,"SWIPE", "",2));
+        buttonsModelList.add(new ButtonsModel(101,"SELECTION", "",2));
         buttonsModelList.add(new ButtonsModel(102,"CARD", "",3));
-        buttonsModelList.add(new ButtonsModel(103,"SENIOR", "",4));
-        buttonsModelList.add(new ButtonsModel(104,"PWD", "",5));
-
 
         ButtonsAdapter buttonsAdapter = new ButtonsAdapter(buttonsModelList, this);
         listDiscounts.setLayoutManager(new GridLayoutManager(getContext(),4,  GridLayoutManager.VERTICAL, false));
@@ -67,6 +64,11 @@ public class DiscountSelectionDialog extends BaseDialog implements ButtonsContra
                     Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
                 }
 
+                break;
+            case 101:
+                SelectionDiscountDialog selectionDiscountDialog = new SelectionDiscountDialog(activity);
+
+                if (!selectionDiscountDialog.isShowing()) selectionDiscountDialog.show();
                 break;
         }
     }

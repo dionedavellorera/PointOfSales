@@ -91,9 +91,11 @@ public class DiscountListModel {
         this.department = department;
     }
 
-    public DiscountListModel(String department, List<DiscountProduct> discountProductList, List<FetchRoomPendingResponse.Discount> discountList) {
+    public DiscountListModel(String department, List<DiscountProduct> discountProductList,
+                             List<FetchRoomPendingResponse.Discount> discountList) {
         this.department = department;
         this.discountProductList = discountProductList;
         this.discountList = discountList;
     }
+
 }

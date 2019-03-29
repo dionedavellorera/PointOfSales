@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class DiscountProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int i) {
         ((DiscProductsViewHolder)holder).header.setText(productsList.get(i).getName());
 
         if (productsList.get(i).isChecked()) {
@@ -45,14 +46,13 @@ public class DiscountProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
         } else {
             ((DiscProductsViewHolder)holder).header.setChecked(false);
         }
-//        ((RoomRatesAdapter.DiscProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
+
+//        ((DiscProductsViewHolder)holder).header.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //            @Override
-//            public void onClick(View v) {
-//                roomRateImpl.clicked(rateList.get(i));
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                productsList.get(i).setChecked(isChecked);
 //            }
 //        });
-//        ((RoomRatesAdapter.DiscProductsViewHolder)holder).name.setText(rateList.get(i).getRatePrice().getRoomRate().getRoomRate());
-//        ((RoomRatesAdapter.DiscProductsViewHolder)holder).amount.setText(String.valueOf(rateList.get(i).getRatePrice().getAmount()));
 
     }
 

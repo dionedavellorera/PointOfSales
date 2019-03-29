@@ -25,4 +25,12 @@ public class CheckInRequest extends BaseRequest {
     public Map<String, String> getMapValue() {
         return mapValue;
     }
+
+
+    @Override
+    public String toString() {
+        return "CheckInRequest{" +
+                "mapValue=" + mapValue +
+                '}';
+    }
 }

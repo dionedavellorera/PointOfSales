@@ -8,11 +8,15 @@ import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.DiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -179,4 +183,20 @@ public interface IUsers {
     @POST("fetchNationality")
     @FormUrlEncoded
     Call<FetchNationalityResponse> fetchNationality(@FieldMap Map<String, String> params);
+
+    @POST("sendDiscount")
+    @FormUrlEncoded
+    Call<DiscountResponse> sendDiscount(@FieldMap Map<String, String> params);
+
+    @POST("fetchCashDenomination")
+    @FormUrlEncoded
+    Call<FetchDenominationResponse> fetchDenomination(@FieldMap Map<String, String> params);
+
+    @POST("fetchDiscount")
+    @FormUrlEncoded
+    Call<FetchDiscountResponse> fetchDiscount(@FieldMap Map<String, String> params);
+
+    @POST("fetchCompanyUser")
+    @FormUrlEncoded
+    Call<FetchCompanyUserResponse> fetchCompanyUser(@FieldMap Map<String, String> params);
 }

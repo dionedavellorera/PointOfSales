@@ -14,4 +14,9 @@
         <item>10</item>
     </integer-array>
 
+    <string-array name="https">
+        <item>http://</item>
+        <item>https://</item>
+    </string-array>
+
 </resources>

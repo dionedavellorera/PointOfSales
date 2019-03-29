@@ -1092,7 +1092,7 @@ public class FetchRoomPendingResponse {
         private Integer qty;
         @SerializedName("unit_cost")
         @Expose
-        private Integer unitCost;
+        private Double unitCost;
         @SerializedName("price")
         @Expose
         private Double price;
@@ -1101,7 +1101,7 @@ public class FetchRoomPendingResponse {
         private Double total;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("tax_info")
         @Expose
         private String taxInfo;
@@ -1113,7 +1113,7 @@ public class FetchRoomPendingResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("room_area_id")
         @Expose
         private Integer roomAreaId;
@@ -1269,11 +1269,11 @@ public class FetchRoomPendingResponse {
             this.qty = qty;
         }
 
-        public Integer getUnitCost() {
+        public Double getUnitCost() {
             return unitCost;
         }
 
-        public void setUnitCost(Integer unitCost) {
+        public void setUnitCost(Double unitCost) {
             this.unitCost = unitCost;
         }
 
@@ -1293,11 +1293,11 @@ public class FetchRoomPendingResponse {
             this.total = total;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
@@ -1325,11 +1325,11 @@ public class FetchRoomPendingResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 
@@ -1875,7 +1875,7 @@ public class FetchRoomPendingResponse {
         private String symbolRight;
         @SerializedName("value")
         @Expose
-        private Integer value;
+        private Double value;
         @SerializedName("flag")
         @Expose
         private Integer flag;
@@ -1915,11 +1915,11 @@ public class FetchRoomPendingResponse {
             this.symbolRight = symbolRight;
         }
 
-        public Integer getValue() {
+        public Double getValue() {
             return value;
         }
 
-        public void setValue(Integer value) {
+        public void setValue(Double value) {
             this.value = value;
         }
 
@@ -2353,16 +2353,16 @@ public class FetchRoomPendingResponse {
         private Integer qty;
         @SerializedName("unit_cost")
         @Expose
-        private Integer unitCost;
+        private Double unitCost;
         @SerializedName("price")
         @Expose
-        private Integer price;
+        private Double price;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("tax_info")
         @Expose
         private String taxInfo;
@@ -2374,7 +2374,7 @@ public class FetchRoomPendingResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("room_area_id")
         @Expose
         private Integer roomAreaId;
@@ -2548,35 +2548,35 @@ public class FetchRoomPendingResponse {
             this.qty = qty;
         }
 
-        public Integer getUnitCost() {
+        public Double getUnitCost() {
             return unitCost;
         }
 
-        public void setUnitCost(Integer unitCost) {
+        public void setUnitCost(Double unitCost) {
             this.unitCost = unitCost;
         }
 
-        public Integer getPrice() {
+        public Double getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(Double price) {
             this.price = price;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
@@ -2604,11 +2604,11 @@ public class FetchRoomPendingResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 

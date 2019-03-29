@@ -6,9 +6,82 @@
     <include layout="@layout/partial_header"
         android:id="@+id/header"/>
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
+        android:padding="10dp"
+        android:id="@+id/optionHeader"
         android:layout_below="@id/header"
+        android:textSize="17sp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorSecondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DISCOUNT OPTIONS"/>
+
+    <RadioGroup
+        android:padding="10dp"
+        android:layout_below="@id/optionHeader"
+        android:id="@+id/discountOptionGroup"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/radioAmount"
+            android:checked="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount"/>
+        <RadioButton
+            android:id="@+id/radioPerecentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Percentage"/>
+    </RadioGroup>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_margin="10dp"
+        android:id="@+id/tilAmount"
+        android:layout_below="@id/discountOptionGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/inputAmount"
+            android:hint="1000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:padding="10dp"
+        android:id="@+id/remarksHeader"
+        android:layout_below="@id/tilAmount"
+        android:textSize="17sp"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorSecondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REMARKS"/>
+
+    <EditText
+        android:layout_margin="10dp"
+        android:layout_below="@id/remarksHeader"
+        android:id="@+id/inputReason"
+        android:hint="REMARKS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/inputReason"
         android:id="@+id/listPosts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSave"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/baseline_check_white_24"/>
 </RelativeLayout>

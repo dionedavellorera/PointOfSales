@@ -101,6 +101,7 @@ import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
+import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
 import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
 import nerdvana.com.pointofsales.dialogs.ManualDiscountDialog;
@@ -356,7 +357,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             deposit.setText("0.00");
 //            tax.setText("0.00");
             subTotal.setText("0.00");
-
+            selectedRoom = null;
 
         }
     }
@@ -645,6 +646,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 118:// SAFEKEEPING
+                CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING");
+                if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+                break;
+            case 117: //CUTOFF
+                CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CUTOFF");
+                if (!cutOffDialog.isShowing()) cutOffDialog.show();
+                break;
+            case 116: //cancel selected room / TO
+                defaultView();
+                clearCartItems();
+                break;
             case 115://DISCOUNT
 
                 //fetchRoomPendingResult
@@ -1824,6 +1837,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
                                 @Override
                                 public void save(String remarks) {
+
+//                                    Log.d("CHECKINDATA", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+//                                            welcomeGuestRequest.getRoomRatePriceId(),
+//                                            remarks).toString());
+
                                     BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
                                             welcomeGuestRequest.getRoomRatePriceId(),
                                             remarks));

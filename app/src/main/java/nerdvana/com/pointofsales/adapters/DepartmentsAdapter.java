@@ -36,39 +36,54 @@ public class DepartmentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new DepartmentsViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_dc_department, viewGroup, false));
+        return new DepartmentsViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_dc_department, viewGroup, false), checkBoxItem);
     }
 
 
-
-    static class DepartmentsViewHolder extends RecyclerView.ViewHolder {
+    static class DepartmentsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public CheckBox header;
         public RecyclerView discountProductsList;
-        public DepartmentsViewHolder(@NonNull View itemView) {
+        public ManualDiscountDialog.CheckBoxItem checkBoxItem;
+        public DepartmentsViewHolder(@NonNull View itemView, final ManualDiscountDialog.CheckBoxItem checkBoxItem) {
             super(itemView);
             header = itemView.findViewById(R.id.header);
             discountProductsList = itemView.findViewById(R.id.discountProductsList);
+            this.checkBoxItem = checkBoxItem;
+
+
+            itemView.setOnClickListener(this);
+
+            header.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    checkBoxItem.isChecked(getAdapterPosition(), isChecked);
+                }
+            });
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.header:
+                    break;
+            }
         }
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
-        ((DepartmentsViewHolder)holder).header.setText(discountList.get(holder.getAdapterPosition()).getDepartment());
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int i) {
+        ((DepartmentsViewHolder)holder).header.setText(discountList.get(i).getDepartment());
 
-        ((DepartmentsViewHolder)holder).header.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                checkBoxItem.isChecked(holder.getAdapterPosition(), isChecked);
-            }
-        });
+//        DiscountProductsAdapter discountProductsAdapter = new DiscountProductsAdapter(discountList.get(i).getDiscountProductList());
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+//        linearLayoutManager.setInitialPrefetchItemCount(discountList.get(i).getDiscountProductList().size());
+//        ((DepartmentsAdapter.DepartmentsViewHolder)holder).discountProductsList.setLayoutManager(linearLayoutManager);
+//        ((DepartmentsAdapter.DepartmentsViewHolder)holder).discountProductsList.setAdapter(discountProductsAdapter);
+//
+//        ((DepartmentsViewHolder) holder).discountProductsList.setRecycledViewPool(viewPool);
 
-        DiscountProductsAdapter discountProductsAdapter = new DiscountProductsAdapter(discountList.get(holder.getAdapterPosition()).getDiscountProductList());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
-        ((DepartmentsAdapter.DepartmentsViewHolder)holder).discountProductsList.setLayoutManager(linearLayoutManager);
-        ((DepartmentsAdapter.DepartmentsViewHolder)holder).discountProductsList.setAdapter(discountProductsAdapter);
-
-        ((DepartmentsViewHolder) holder).discountProductsList.setRecycledViewPool(viewPool);
+//        discountProductsAdapter.setHasStableIds(true);
 
 //        ((RoomRatesAdapter.DiscProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
 //            @Override
