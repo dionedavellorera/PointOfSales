@@ -35,6 +35,10 @@ import com.epson.eposprint.Print;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,9 +63,11 @@ import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
+import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
@@ -71,6 +77,7 @@ import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
+import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
@@ -86,6 +93,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public static String roomNumber;
     private Loading loadingInterface;
     private SelectionContract centralInterface;
+
+    RoomTableModel selected;
 
     private LeftFrameFragment preLoginLeftFrameFragment;
     private RightFrameFragment preLoginRightFrameFragment;
@@ -332,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             if (requestCode == 10) {
-                RoomTableModel selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
+                selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
 
 //                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
 //                CurrentTransactionEntity currentTransactionEntity = new
@@ -467,6 +476,205 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         //endregion
 
         switch (printModel.getType()) {
+            case "PRINT_RECEIPT":
+                Log.d("PRINT_RECEIPT", "TEST");
+                FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
+                        ;
+
+                if (toList1 != null) {
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "CASHIER",
+                            String.valueOf(toList1.getCashier().getName())
+                            ,
+                            45,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "ROOM BOY",
+                            String.valueOf(toList1.getGuestInfo().getRoomBoy().getName())
+                            ,
+                            45,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "CHECK IN",
+                            convertDateToReadableDate(toList1.getGuestInfo().getCheckIn())
+                            ,
+                            45,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "CHECK OUT",
+                            convertDateToReadableDate(toList1.getGuestInfo().getCheckIn())
+                            ,
+                            45,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "RECEIPT NO",
+                            toList1.getControlNo(),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "MACHINE NO",
+                            SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_ID),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
+
+                        String qty = "";
+
+                        qty += soaTrans.getQty();
+                        if (String.valueOf(soaTrans.getQty()).length() < 4) {
+                            for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                                qty += " ";
+                            }
+                        }
+                        String item = "";
+
+                        if (soaTrans.getProductId() == 0) {
+                            item =soaTrans.getRoomRate().toString();
+                        } else {
+                            item =soaTrans.getProduct().getProductInitial();
+                        }
+
+
+                        if (soaTrans.getVoid() == 0) {
+                            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                    qty+ " "+item,
+                                    String.valueOf(soaTrans.getTotal())
+                                    ,
+                                    45,
+                                    2),
+                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        }
+                    }
+//
+                    addTextToPrinter(SPrinter.getPrinter(), "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "   VAT EXEMPT",
+                            String.valueOf(toList1.getVatExempt()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "   DISCOUNT",
+                            String.valueOf(toList1.getDiscount()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "   ADVANCED DEPOSIT",
+                            String.valueOf(toList1.getAdvance()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "AMOUNT DUE",
+                            String.valueOf(toList1.getTotal()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "TENDERED",
+                            String.valueOf(toList1.getTendered()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "CHANGE",
+                            String.valueOf(toList1.getChange()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "VATable sales",
+                            String.valueOf(toList1.getVatable()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "VAT-EXEMPT SALES",
+                            String.valueOf(toList1.getVatExemptSales()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            "12% VAT",
+                            String.valueOf(toList1.getVat()),
+                            45,
+                            2)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                }
+
+
+
+
+                break;
+            case "DEPOSIT":
+                TypeToken<List<PostedPaymentsModel>> depositToken = new TypeToken<List<PostedPaymentsModel>>() {};
+                List<PostedPaymentsModel> depositDetails = GsonHelper.getGson().fromJson(printModel.getData(), depositToken.getType());
+
+
+                addTextToPrinter(SPrinter.getPrinter(), "DEPOSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "MACHINE NO",
+                        SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_ID),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "ROOM TYPE",
+                        printModel.getRoomType(),
+                        45,
+                        2)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "TYPE                                    Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                Double total = 0.00;
+                for (PostedPaymentsModel ppm : depositDetails) {
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                            ppm.getPayment_description(),
+                            ppm.getAmount(),
+                            45,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    total += Double.valueOf(ppm.getAmount());
+                }
+
+
+                addTextToPrinter(SPrinter.getPrinter(), "TOTAL: " + String.valueOf(total), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
+
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+
+
+                break;
             case "SOA-TO":
                 PrintSoaResponse.Result toList = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Result.class)
                         ;
@@ -553,7 +761,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //
                 addPrinterSpace(1);
 //
-                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+//                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
 
 
                 break;
@@ -563,58 +776,87 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
                 List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
-                addTextToPrinter(SPrinter.getPrinter(), "CHECK IN RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
 
+//                DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+//                DateTime jodatime = dtf.parseDateTime(checkinDetails.get(0).getCreatedAt());
+//                DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+//
+//
+//                String createdAtDate;
+//                createdAtDate = dtfOut.print(jodatime);
+
+//                checkinDetails.get(0).getVehicleId()
+//                checkinDetails.get(0).getRoomRatePriceId()
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
-                        "Room Type",
-                        checkinDetails.get(0).getRoomType(),
+                        "ROOM TYPE",
+                        checkinDetails.get(0).getRoomType().toUpperCase(),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "RATE DESC.",
-                        checkinDetails.get(0).getRoomRate(),
+                        checkinDetails.get(0).getRoomRate().toUpperCase(),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "STARTING RATE",
-                        checkinDetails.get(0).getRateRoom().getRoomRate(),
+                        roomRatePrice(String.valueOf(checkinDetails.get(0).getRoomRatePriceId())),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "DATE / TIME",
-                        checkinDetails.get(0).getCreatedAt(),
+                        convertDateToReadableDate(checkinDetails.get(0).getCreatedAt()),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
-                        "VEHICLY TYPE",
                         "VEHICLE TYPE",
+                        fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId())).toUpperCase(),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "CAR MAKE",
-                        checkinDetails.get(0).getCar().getCarMake(),
+                        checkinDetails.get(0).getCar().getCarMake().toUpperCase(),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "PLATE NUMBER",
-                        checkinDetails.get(0).getPlateNo(),
+                        checkinDetails.get(0).getPlateNo().toUpperCase(),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+
+                addTextToPrinter(SPrinter.getPrinter(),
+                        "ROOM BOY:  " + getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+//                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                        "ROOM BOY",
+//                        getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),
+//                        45,
+//                        2)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 break;
             case "VOID":
@@ -647,6 +889,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 addTextToPrinter(SPrinter.getPrinter(), "TOTAL: " + String.valueOf(voidTotalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 break;
@@ -672,7 +915,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "CHECKED-IN",
-                        bookedList.get(0).getCheckIn(),
+                        convertDateToReadableDate(bookedList.get(0).getCreatedAt()),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -693,7 +936,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 //                Double soaTotal = 0.00;
-                addTextToPrinter(SPrinter.getPrinter(), "SOA SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(SPrinter.getPrinter(), "QTY   Description                     Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(SPrinter.getPrinter(), "------------------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -767,7 +1010,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 addPrinterSpace(1);
 
-                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+//                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
 
                 break;
@@ -798,6 +1046,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 addTextToPrinter(SPrinter.getPrinter(), "TOTAL: " + String.valueOf(totalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
                 addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 break;
         }
@@ -938,6 +1192,62 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     }
 
+    private String fetchVehicleFromId(String vehicleId) {
+        TypeToken<List<FetchVehicleResponse.Result>> vehicleToken = new TypeToken<List<FetchVehicleResponse.Result>>() {};
+        List<FetchVehicleResponse.Result> vehicleList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.VEHICLE_JSON), vehicleToken.getType());
+        String result = "N/A";
+
+        for (FetchVehicleResponse.Result res : vehicleList) {
+            if (String.valueOf(res.getId()).equals(vehicleId)) {
+                result = res.getVehicle();
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private String roomRatePrice(String roomRatePriceId) {
+        String rateDisplay = "";
+
+        if (selected != null) {
+            for (int i = 0; i < selected.getPrice().size(); i++) {
+                if (roomRatePriceId.equalsIgnoreCase(String.valueOf(selected.getPrice().get(i).getRoomRatePriceId()))) {
+                    rateDisplay = String.valueOf(selected.getPrice().get(i).getRatePrice().getAmount());
+                    break;
+                }
+            }
+        }
+
+        return rateDisplay;
+    }
+
+    private String convertDateToReadableDate(String createdAt) {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime jodatime = dtf.parseDateTime(createdAt);
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
 
 
+        String createdAtDate;
+        createdAtDate = dtfOut.print(jodatime);
+
+        return createdAtDate.toUpperCase();
+
+    }
+
+    private String getUserInfo(String userId) {
+
+        TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
+        List<FetchCompanyUserResponse.Result> vehicleList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.COMPANY_USER), companyUser.getType());
+        String result = "N/A";
+
+        for (FetchCompanyUserResponse.Result res : vehicleList) {
+            if (String.valueOf(res.getUserId()).equals(userId)) {
+                result = res.getName();
+                break;
+            }
+        }
+
+        return result;
+    }
 }

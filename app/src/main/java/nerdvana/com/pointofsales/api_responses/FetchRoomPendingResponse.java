@@ -339,7 +339,7 @@ public class FetchRoomPendingResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -550,11 +550,11 @@ public class FetchRoomPendingResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 

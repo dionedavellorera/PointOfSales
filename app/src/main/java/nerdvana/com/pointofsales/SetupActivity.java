@@ -92,7 +92,10 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 //                "Version Code: " + Build.VERSION.RELEASE + "\n");
 
 
-        PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL))) {
+            PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
+        }
+
 
 
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);

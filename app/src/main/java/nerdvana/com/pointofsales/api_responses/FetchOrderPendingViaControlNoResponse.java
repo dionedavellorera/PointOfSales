@@ -57,7 +57,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private String symbolRight;
         @SerializedName("value")
         @Expose
-        private Integer value;
+        private Double value;
         @SerializedName("flag")
         @Expose
         private Integer flag;
@@ -97,11 +97,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.symbolRight = symbolRight;
         }
 
-        public Integer getValue() {
+        public Double getValue() {
             return value;
         }
 
-        public void setValue(Integer value) {
+        public void setValue(Double value) {
             this.value = value;
         }
 
@@ -134,7 +134,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private String controlNo;
         @SerializedName("amount")
         @Expose
-        private Integer amount;
+        private Double amount;
         @SerializedName("payment_type_id")
         @Expose
         private Integer paymentTypeId;
@@ -167,7 +167,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private Object deletedAt;
         @SerializedName("currency_id")
         @Expose
-        private Double currencyId;
+        private String currencyId;
         @SerializedName("currency_value")
         @Expose
         private Double currencyValue;
@@ -183,11 +183,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.currency = currency;
         }
 
-        public Double getCurrencyId() {
+        public String getCurrencyId() {
             return currencyId;
         }
 
-        public void setCurrencyId(Double currencyId) {
+        public void setCurrencyId(String currencyId) {
             this.currencyId = currencyId;
         }
 
@@ -215,11 +215,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.controlNo = controlNo;
         }
 
-        public Integer getAmount() {
+        public Double getAmount() {
             return amount;
         }
 
-        public void setAmount(Integer amount) {
+        public void setAmount(Double amount) {
             this.amount = amount;
         }
 
@@ -932,8 +932,403 @@ public class FetchOrderPendingViaControlNoResponse {
 
     }
 
-    public class Result {
+    public class Cashier {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("username")
+        @Expose
+        private String username;
+        @SerializedName("email")
+        @Expose
+        private String email;
+        @SerializedName("role_id")
+        @Expose
+        private String roleId;
+        @SerializedName("group_id")
+        @Expose
+        private String groupId;
 
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getRoleId() {
+            return roleId;
+        }
+
+        public void setRoleId(String roleId) {
+            this.roleId = roleId;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+    }
+
+    public class Discounts {
+        @SerializedName("discount_type")
+        @Expose
+        private String discountType;
+        @SerializedName("discount_amount")
+        @Expose
+        private Double discountAmount;
+
+        public String getDiscountType() {
+            return discountType;
+        }
+
+        public void setDiscountType(String discountType) {
+            this.discountType = discountType;
+        }
+
+        public Double getDiscountAmount() {
+            return discountAmount;
+        }
+
+        public void setDiscountAmount(Double discountAmount) {
+            this.discountAmount = discountAmount;
+        }
+    }
+
+
+    public class RoomBoy {
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("username")
+        @Expose
+        private String username;
+        @SerializedName("email")
+        @Expose
+        private String email;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+    }
+
+    public class GuestInfo {
+        @SerializedName("room_id")
+        @Expose
+        private String roomId;
+        @SerializedName("room_type")
+        @Expose
+        private String roomType;
+        @SerializedName("room_rate")
+        @Expose
+        private String roomRate;
+        @SerializedName("room_rate_price_id")
+        @Expose
+        private String roomRatePriceId;
+        @SerializedName("car_id")
+        @Expose
+        private String carId;
+        @SerializedName("vehicle_id")
+        @Expose
+        private String vehicleId;
+        @SerializedName("guest_type_id")
+        @Expose
+        private String guestTypeId;
+        @SerializedName("customer_id")
+        @Expose
+        private String customerId;
+        @SerializedName("nationality_id")
+        @Expose
+        private String nationalityId;
+        @SerializedName("room_no")
+        @Expose
+        private String roomNo;
+        @SerializedName("adult")
+        @Expose
+        private String adult;
+        @SerializedName("child")
+        @Expose
+        private String child;
+        @SerializedName("plate_no")
+        @Expose
+        private String plateNo;
+        @SerializedName("steward")
+        @Expose
+        private String steward;
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+        @SerializedName("checkOut_by")
+        @Expose
+        private String checkOutBy;
+        @SerializedName("checkIn")
+        @Expose
+        private String checkIn;
+        @SerializedName("wake_up_call")
+        @Expose
+        private String wakeUpCall;
+        @SerializedName("expected_checkOut")
+        @Expose
+        private String expectedCheckout;
+        @SerializedName("outCheck_by")
+        @Expose
+        private String outCheckBy;
+        @SerializedName("checkOut")
+        @Expose
+        private String checkOut;
+        @SerializedName("room_boy")
+        @Expose
+        private RoomBoy roomBoy;
+
+        public String getRoomId() {
+            return roomId;
+        }
+
+        public void setRoomId(String roomId) {
+            this.roomId = roomId;
+        }
+
+        public String getRoomType() {
+            return roomType;
+        }
+
+        public void setRoomType(String roomType) {
+            this.roomType = roomType;
+        }
+
+        public String getAdult() {
+            return adult;
+        }
+
+        public void setAdult(String adult) {
+            this.adult = adult;
+        }
+
+        public String getChild() {
+            return child;
+        }
+
+        public void setChild(String child) {
+            this.child = child;
+        }
+
+        public String getPlateNo() {
+            return plateNo;
+        }
+
+        public void setPlateNo(String plateNo) {
+            this.plateNo = plateNo;
+        }
+
+        public String getSteward() {
+            return steward;
+        }
+
+        public void setSteward(String steward) {
+            this.steward = steward;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public String getCheckOutBy() {
+            return checkOutBy;
+        }
+
+        public void setCheckOutBy(String checkOutBy) {
+            this.checkOutBy = checkOutBy;
+        }
+
+        public String getCheckIn() {
+            return checkIn;
+        }
+
+        public void setCheckIn(String checkIn) {
+            this.checkIn = checkIn;
+        }
+
+        public String getWakeUpCall() {
+            return wakeUpCall;
+        }
+
+        public void setWakeUpCall(String wakeUpCall) {
+            this.wakeUpCall = wakeUpCall;
+        }
+
+        public String getExpectedCheckout() {
+            return expectedCheckout;
+        }
+
+        public void setExpectedCheckout(String expectedCheckout) {
+            this.expectedCheckout = expectedCheckout;
+        }
+
+        public String getOutCheckBy() {
+            return outCheckBy;
+        }
+
+        public void setOutCheckBy(String outCheckBy) {
+            this.outCheckBy = outCheckBy;
+        }
+
+        public String getCheckOut() {
+            return checkOut;
+        }
+
+        public void setCheckOut(String checkOut) {
+            this.checkOut = checkOut;
+        }
+
+        public RoomBoy getRoomBoy() {
+            return roomBoy;
+        }
+
+        public void setRoomBoy(RoomBoy roomBoy) {
+            this.roomBoy = roomBoy;
+        }
+
+        public String getRoomRate() {
+            return roomRate;
+        }
+
+        public void setRoomRate(String roomRate) {
+            this.roomRate = roomRate;
+        }
+
+        public String getRoomRatePriceId() {
+            return roomRatePriceId;
+        }
+
+        public void setRoomRatePriceId(String roomRatePriceId) {
+            this.roomRatePriceId = roomRatePriceId;
+        }
+
+        public String getCarId() {
+            return carId;
+        }
+
+        public void setCarId(String carId) {
+            this.carId = carId;
+        }
+
+        public String getVehicleId() {
+            return vehicleId;
+        }
+
+        public void setVehicleId(String vehicleId) {
+            this.vehicleId = vehicleId;
+        }
+
+        public String getGuestTypeId() {
+            return guestTypeId;
+        }
+
+        public void setGuestTypeId(String guestTypeId) {
+            this.guestTypeId = guestTypeId;
+        }
+
+        public String getCustomerId() {
+            return customerId;
+        }
+
+        public void setCustomerId(String customerId) {
+            this.customerId = customerId;
+        }
+
+        public String getNationalityId() {
+            return nationalityId;
+        }
+
+        public void setNationalityId(String nationalityId) {
+            this.nationalityId = nationalityId;
+        }
+
+        public String getRoomNo() {
+            return roomNo;
+        }
+
+        public void setRoomNo(String roomNo) {
+            this.roomNo = roomNo;
+        }
+    }
+
+    public class Result {
+        @SerializedName("guest_info")
+        @Expose
+        private GuestInfo guestInfo;
+        @SerializedName("discounts")
+        @Expose
+        private List<Discounts> discountsList;
+        @SerializedName("cashier")
+        @Expose
+        private Cashier cashier;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -957,22 +1352,22 @@ public class FetchOrderPendingViaControlNoResponse {
         private Integer paymentTypeId;
         @SerializedName("rc")
         @Expose
-        private Integer rc;
+        private Double rc;
         @SerializedName("fnb")
         @Expose
-        private Integer fnb;
+        private Double fnb;
         @SerializedName("oth")
         @Expose
-        private Integer oth;
+        private Double oth;
         @SerializedName("ot_hours")
         @Expose
-        private Integer otHours;
+        private Double otHours;
         @SerializedName("ot_amount")
         @Expose
-        private Integer otAmount;
+        private Double otAmount;
         @SerializedName("xPerson_amount")
         @Expose
-        private Integer xPersonAmount;
+        private Double xPersonAmount;
         @SerializedName("discount")
         @Expose
         private Double discount;
@@ -1008,7 +1403,7 @@ public class FetchOrderPendingViaControlNoResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -1045,6 +1440,65 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+        @SerializedName("vat_exempt_sales")
+        @Expose
+        private Double vatExemptSales;
+
+        public Double getVatExemptSales() {
+            return vatExemptSales;
+        }
+
+        public void setVatExemptSales(Double vatExemptSales) {
+            this.vatExemptSales = vatExemptSales;
+        }
+
+        public GuestInfo getGuestInfo() {
+            return guestInfo;
+        }
+
+        public void setGuestInfo(GuestInfo guestInfo) {
+            this.guestInfo = guestInfo;
+        }
+
+        public List<Discounts> getDiscountsList() {
+            return discountsList;
+        }
+
+        public void setDiscountsList(List<Discounts> discountsList) {
+            this.discountsList = discountsList;
+        }
+
+        public Cashier getCashier() {
+            return cashier;
+        }
+
+        public void setCashier(Cashier cashier) {
+            this.cashier = cashier;
+        }
+
+        public Double getxPersonAmount() {
+            return xPersonAmount;
+        }
+
+        public void setxPersonAmount(Double xPersonAmount) {
+            this.xPersonAmount = xPersonAmount;
+        }
+
+        public Integer getxSkip() {
+            return xSkip;
+        }
+
+        public void setxSkip(Integer xSkip) {
+            this.xSkip = xSkip;
+        }
+
+        public Integer get_void() {
+            return _void;
+        }
+
+        public void set_void(Integer _void) {
+            this._void = _void;
+        }
 
         public List<Tran> getTrans() {
             return trans;
@@ -1110,51 +1564,51 @@ public class FetchOrderPendingViaControlNoResponse {
             this.paymentTypeId = paymentTypeId;
         }
 
-        public Integer getRc() {
+        public Double getRc() {
             return rc;
         }
 
-        public void setRc(Integer rc) {
+        public void setRc(Double rc) {
             this.rc = rc;
         }
 
-        public Integer getFnb() {
+        public Double getFnb() {
             return fnb;
         }
 
-        public void setFnb(Integer fnb) {
+        public void setFnb(Double fnb) {
             this.fnb = fnb;
         }
 
-        public Integer getOth() {
+        public Double getOth() {
             return oth;
         }
 
-        public void setOth(Integer oth) {
+        public void setOth(Double oth) {
             this.oth = oth;
         }
 
-        public Integer getOtHours() {
+        public Double getOtHours() {
             return otHours;
         }
 
-        public void setOtHours(Integer otHours) {
+        public void setOtHours(Double otHours) {
             this.otHours = otHours;
         }
 
-        public Integer getOtAmount() {
+        public Double getOtAmount() {
             return otAmount;
         }
 
-        public void setOtAmount(Integer otAmount) {
+        public void setOtAmount(Double otAmount) {
             this.otAmount = otAmount;
         }
 
-        public Integer getXPersonAmount() {
+        public Double getXPersonAmount() {
             return xPersonAmount;
         }
 
-        public void setXPersonAmount(Integer xPersonAmount) {
+        public void setXPersonAmount(Double xPersonAmount) {
             this.xPersonAmount = xPersonAmount;
         }
 
@@ -1246,11 +1700,11 @@ public class FetchOrderPendingViaControlNoResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 

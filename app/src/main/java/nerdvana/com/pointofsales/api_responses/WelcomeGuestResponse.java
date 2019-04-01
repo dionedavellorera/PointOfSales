@@ -78,16 +78,16 @@ public class WelcomeGuestResponse {
         private Integer qty;
         @SerializedName("unit_cost")
         @Expose
-        private Integer unitCost;
+        private Double unitCost;
         @SerializedName("price")
         @Expose
-        private Integer price;
+        private Double price;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("tax_info")
         @Expose
         private String taxInfo;
@@ -99,7 +99,7 @@ public class WelcomeGuestResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("room_area_id")
         @Expose
         private Integer roomAreaId;
@@ -222,35 +222,35 @@ public class WelcomeGuestResponse {
             this.qty = qty;
         }
 
-        public Integer getUnitCost() {
+        public Double getUnitCost() {
             return unitCost;
         }
 
-        public void setUnitCost(Integer unitCost) {
+        public void setUnitCost(Double unitCost) {
             this.unitCost = unitCost;
         }
 
-        public Integer getPrice() {
+        public Double getPrice() {
             return price;
         }
 
-        public void setPrice(Integer price) {
+        public void setPrice(Double price) {
             this.price = price;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
@@ -278,11 +278,11 @@ public class WelcomeGuestResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 
@@ -1719,37 +1719,37 @@ public class WelcomeGuestResponse {
         private Object paymentTypeId;
         @SerializedName("rc")
         @Expose
-        private Integer rc;
+        private Double rc;
         @SerializedName("fnb")
         @Expose
-        private Integer fnb;
+        private double fnb;
         @SerializedName("oth")
         @Expose
-        private Integer oth;
+        private Double oth;
         @SerializedName("ot_hours")
         @Expose
-        private Integer otHours;
+        private Double otHours;
         @SerializedName("ot_amount")
         @Expose
-        private Integer otAmount;
+        private Double otAmount;
         @SerializedName("xPerson_amount")
         @Expose
-        private Integer xPersonAmount;
+        private Double xPersonAmount;
         @SerializedName("discount")
         @Expose
-        private Integer discount;
+        private Double discount;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("advance")
         @Expose
-        private Integer advance;
+        private Double advance;
         @SerializedName("tendered")
         @Expose
-        private Integer tendered;
+        private Double tendered;
         @SerializedName("change")
         @Expose
-        private Integer change;
+        private Double change;
         @SerializedName("vatable")
         @Expose
         private Double vatable;
@@ -1758,7 +1758,7 @@ public class WelcomeGuestResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -1830,91 +1830,91 @@ public class WelcomeGuestResponse {
             this.paymentTypeId = paymentTypeId;
         }
 
-        public Integer getRc() {
+        public Double getRc() {
             return rc;
         }
 
-        public void setRc(Integer rc) {
+        public void setRc(Double rc) {
             this.rc = rc;
         }
 
-        public Integer getFnb() {
+        public Double getFnb() {
             return fnb;
         }
 
-        public void setFnb(Integer fnb) {
+        public void setFnb(Double fnb) {
             this.fnb = fnb;
         }
 
-        public Integer getOth() {
+        public Double getOth() {
             return oth;
         }
 
-        public void setOth(Integer oth) {
+        public void setOth(Double oth) {
             this.oth = oth;
         }
 
-        public Integer getOtHours() {
+        public Double getOtHours() {
             return otHours;
         }
 
-        public void setOtHours(Integer otHours) {
+        public void setOtHours(Double otHours) {
             this.otHours = otHours;
         }
 
-        public Integer getOtAmount() {
+        public Double getOtAmount() {
             return otAmount;
         }
 
-        public void setOtAmount(Integer otAmount) {
+        public void setOtAmount(Double otAmount) {
             this.otAmount = otAmount;
         }
 
-        public Integer getXPersonAmount() {
+        public Double getXPersonAmount() {
             return xPersonAmount;
         }
 
-        public void setXPersonAmount(Integer xPersonAmount) {
+        public void setXPersonAmount(Double xPersonAmount) {
             this.xPersonAmount = xPersonAmount;
         }
 
-        public Integer getDiscount() {
+        public Double getDiscount() {
             return discount;
         }
 
-        public void setDiscount(Integer discount) {
+        public void setDiscount(Double discount) {
             this.discount = discount;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getAdvance() {
+        public Double getAdvance() {
             return advance;
         }
 
-        public void setAdvance(Integer advance) {
+        public void setAdvance(Double advance) {
             this.advance = advance;
         }
 
-        public Integer getTendered() {
+        public Double getTendered() {
             return tendered;
         }
 
-        public void setTendered(Integer tendered) {
+        public void setTendered(Double tendered) {
             this.tendered = tendered;
         }
 
-        public Integer getChange() {
+        public Double getChange() {
             return change;
         }
 
-        public void setChange(Integer change) {
+        public void setChange(Double change) {
             this.change = change;
         }
 
@@ -1934,11 +1934,11 @@ public class WelcomeGuestResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 

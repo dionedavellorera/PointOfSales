@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
@@ -42,7 +43,9 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.MainActivity;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
 import nerdvana.com.pointofsales.SPrinter;
@@ -138,6 +141,9 @@ import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
@@ -246,7 +252,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
-
         fetchArOnlineRequest();
         fetchNationalityRequest();
         fetchCreditCardRequest();
@@ -287,6 +292,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         fetchVehicleRequest();
         fetchGuestTypeRequest();
         fetchPaymentTypeRequest();
+
+
         return view;
     }
 
@@ -1280,6 +1287,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     postAdvancePayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
                                 }
 
+                                BusProvider.getInstance().post(new PrintModel("",
+                                        selectedRoom.getName(),
+                                        "DEPOSIT",
+                                        GsonHelper.getGson().toJson(paymentsToPost),
+                                        selectedRoom.getRoomType()));
+
                             } else {
 
                                 Utils.showDialogMessage((MainActivity)getContext(), "No payment to post", "Information");
@@ -1546,6 +1559,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchVehicleResponse(FetchVehicleResponse fetchVehicleResponse) {
         vehicleList = fetchVehicleResponse.getResult();
+
+        SharedPreferenceManager.saveString(getContext(), GsonHelper.getGson().toJson(fetchVehicleResponse.getResult()), ApplicationConstants.VEHICLE_JSON);
     }
 
     @Subscribe
@@ -1555,6 +1570,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void guestWelcomeResponse(WelcomeGuestResponse welcomeGuestResponse) {
+        //print checkin receipt
+        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHECKIN", GsonHelper.getGson().toJson(welcomeGuestResponse.getResult().getBooked())));
 
         if (selectedRoom != null) {
             fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
@@ -1566,6 +1583,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void fetchRoomPending(String roomId) {
 
         BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+
+
+        printReceiptFromCheckout("VCHI-2019-00000001");
 
 
         showLoading();
@@ -1959,7 +1979,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void postCheckoutPayment(List<PostedPaymentsModel> ppm, String roomId, String  controlNumber) {
-
+//        Log.d("CHECKOUTDATA", new AddPaymentRequest(ppm, roomId, "0", controlNumber).toString());
         BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "0", controlNumber));
 
         showLoading();
@@ -2169,7 +2189,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void checkoutRoom(String roomId, String controlNumber) {
-        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, "1"));
+        Log.d("CHECKOUTDATA", new CheckOutRequest(roomId, controlNumber, "1").toString());
+//        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, "1"));
     }
 
     @Subscribe
@@ -2449,5 +2470,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         currentRoomStatus = selectedRoom.getStatus();
         setView(selectedRoom.getName());
+    }
+
+    private void printReceiptFromCheckout(String controlNumber) {
+        Toast.makeText(getContext(), "PRINT", Toast.LENGTH_SHORT).show();
+        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNumber);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+            @Override
+            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+                BusProvider.getInstance().post(new PrintModel(
+                        "", selectedRoom.getName(),
+                        "PRINT_RECEIPT", GsonHelper.getGson().toJson(response.body().getResult())));
+            }
+
+            @Override
+            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+            }
+        });
     }
 }

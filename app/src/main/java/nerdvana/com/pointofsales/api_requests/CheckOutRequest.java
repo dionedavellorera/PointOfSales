@@ -23,4 +23,11 @@ public class CheckOutRequest extends BaseRequest {
     public Map<String, String> getMapValue() {
         return mapValue;
     }
+
+    @Override
+    public String toString() {
+        return "CheckOutRequest{" +
+                "mapValue=" + mapValue +
+                '}';
+    }
 }

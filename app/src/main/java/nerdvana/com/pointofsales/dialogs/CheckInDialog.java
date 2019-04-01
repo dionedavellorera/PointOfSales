@@ -59,7 +59,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
     private List<FetchNationalityResponse.Result> nationalityList;
     private Context context;
 
-    private int userId = 0;
+    private String userId = "";
     private int roomRateId = 0;
     private int roomRatePriecId = 0;
     private int carId = 0;
@@ -262,7 +262,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
         steward.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                userId = userList.get(position).getUserId();
+                userId = userList.get(position).getUsername();
 
             }
 
@@ -379,7 +379,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
                         String.valueOf(guestTypeId),
                         customer.getText().toString().trim(),
                         plateNumber.getText().toString().trim(),
-                        String.valueOf(userId),
+                        userId,
                         "",
                         "",
                         adult.getText().toString(),
