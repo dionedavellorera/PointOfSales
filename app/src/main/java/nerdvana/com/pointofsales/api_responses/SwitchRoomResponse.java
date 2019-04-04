@@ -66,6 +66,50 @@ public class SwitchRoomResponse {
         @SerializedName("room_id")
         @Expose
         private Integer roomId;
+        @SerializedName("room_no")
+        @Expose
+        private String roomNumber;
+        @SerializedName("room_type")
+        @Expose
+        private String roomType;
+        @SerializedName("checkIn")
+        @Expose
+        private String checkInTime;
+        @SerializedName("user_id")
+        @Expose
+        private String user_id;
+
+        public String getUser_id() {
+            return user_id;
+        }
+
+        public void setUser_id(String user_id) {
+            this.user_id = user_id;
+        }
+
+        public String getCheckInTime() {
+            return checkInTime;
+        }
+
+        public void setCheckInTime(String checkInTime) {
+            this.checkInTime = checkInTime;
+        }
+
+        public String getRoomNumber() {
+            return roomNumber;
+        }
+
+        public void setRoomNumber(String roomNumber) {
+            this.roomNumber = roomNumber;
+        }
+
+        public String getRoomType() {
+            return roomType;
+        }
+
+        public void setRoomType(String roomType) {
+            this.roomType = roomType;
+        }
 
         public Integer getRoomId() {
             return roomId;

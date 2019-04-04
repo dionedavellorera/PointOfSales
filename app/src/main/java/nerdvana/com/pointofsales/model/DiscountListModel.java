@@ -8,6 +8,7 @@ public class DiscountListModel {
     private String department;
     private List<DiscountProduct> discountProductList;
     private List<FetchRoomPendingResponse.Discount> discountList;
+    private boolean isChecked;
 
     public static class DiscountProduct {
         private String postId;
@@ -92,10 +93,18 @@ public class DiscountListModel {
     }
 
     public DiscountListModel(String department, List<DiscountProduct> discountProductList,
-                             List<FetchRoomPendingResponse.Discount> discountList) {
+                             List<FetchRoomPendingResponse.Discount> discountList, boolean isChecked) {
         this.department = department;
         this.discountProductList = discountProductList;
         this.discountList = discountList;
+        this.isChecked = true;
     }
 
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
 }

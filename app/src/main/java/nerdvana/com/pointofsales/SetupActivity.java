@@ -70,7 +70,11 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         proceed = findViewById(R.id.proceed);
         proceed.setOnClickListener(this);
         username = findViewById(R.id.username);
+//        username.requestFocus();
+//        username.setShowSoftInputOnFocus(false);
         password = findViewById(R.id.password);
+//        password.requestFocus();
+//        password.setShowSoftInputOnFocus(false);
 
         setup = findViewById(R.id.setup);
         setup.setOnClickListener(this);

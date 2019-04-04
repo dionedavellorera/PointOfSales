@@ -41,4 +41,21 @@ public class Utils {
         }
 
     }
+
+    public static String returnWithTwoDecimal(String amount) {
+        String finalValue = "";
+        if (amount.contains(".")) {
+            String[] tempArray = amount.split("\\.");
+            if (tempArray[1].length() > 2) {
+                finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
+            } else {
+                finalValue = tempArray[0] + "." + tempArray[1];
+            }
+        } else {
+            finalValue = amount;
+        }
+
+        return finalValue;
+
+    }
 }

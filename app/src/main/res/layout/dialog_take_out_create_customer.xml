@@ -6,7 +6,23 @@
 
     <include layout="@layout/partial_header" />
 
+    <CheckBox
+        android:checked="true"
+        android:layout_margin="10dp"
+        android:id="@+id/isEmployeeChkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Employee order"/>
+
+    <Spinner
+        android:visibility="gone"
+        android:id="@+id/employeeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <EditText
+        android:visibility="gone"
+        android:layout_margin="10dp"
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,6 +34,8 @@
         android:layout_height="wrap_content"/>
 
     <Button
+        android:layout_margin="10dp"
+        android:background="@drawable/button_selector"
         android:id="@+id/create"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

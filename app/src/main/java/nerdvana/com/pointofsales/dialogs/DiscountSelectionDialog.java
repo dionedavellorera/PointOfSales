@@ -6,26 +6,41 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
+import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
+import retrofit2.Call;
 
-public class DiscountSelectionDialog extends BaseDialog implements ButtonsContract {
+public abstract class DiscountSelectionDialog extends BaseDialog implements ButtonsContract {
 
     private RecyclerView listDiscounts;
     private Activity activity;
     private FetchRoomPendingResponse.Result fetchRoomPendingResult;
-    public DiscountSelectionDialog(@NonNull Context context, Activity activity, FetchRoomPendingResponse.Result fetchRoomPendingResult) {
+
+    private String controlNumber;
+    private String roomId;
+    public DiscountSelectionDialog(@NonNull Context context,
+                                   Activity activity,
+                                   FetchRoomPendingResponse.Result fetchRoomPendingResult,
+                                   String controlNumber,
+                                   String roomId) {
         super(context);
         this.activity = activity;
         this.fetchRoomPendingResult = fetchRoomPendingResult;
+        this.controlNumber = controlNumber;
+        this.roomId = roomId;
     }
 
     @Override
@@ -58,7 +73,16 @@ public class DiscountSelectionDialog extends BaseDialog implements ButtonsContra
         switch (buttonsModel.getId()) {
             case 100:
                 if (fetchRoomPendingResult != null) {
-                    ManualDiscountDialog manualDiscountDialog = new ManualDiscountDialog(activity, fetchRoomPendingResult);
+                    ManualDiscountDialog manualDiscountDialog = new ManualDiscountDialog(activity, fetchRoomPendingResult, controlNumber, roomId) {
+                        @Override
+                        public void discountSuccess() {
+                            if (!TextUtils.isEmpty(controlNumber)) {
+                                fetchPending("to");
+                            } else {
+                                fetchPending("room");
+                            }
+                        }
+                    };
                     if (!manualDiscountDialog.isShowing()) manualDiscountDialog.show();
                 } else {
                     Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
@@ -66,10 +90,26 @@ public class DiscountSelectionDialog extends BaseDialog implements ButtonsContra
 
                 break;
             case 101:
-                SelectionDiscountDialog selectionDiscountDialog = new SelectionDiscountDialog(activity);
+                SelectionDiscountDialog selectionDiscountDialog =
+                        new SelectionDiscountDialog(activity, controlNumber, roomId) {
+                            @Override
+                            public void discountSuccess() {
+                                if (!TextUtils.isEmpty(controlNumber)) {
+                                    fetchPending("to");
+                                } else {
+                                    fetchPending("room");
+                                }
+
+                                dismiss();
+                            }
+                        };
 
                 if (!selectionDiscountDialog.isShowing()) selectionDiscountDialog.show();
                 break;
         }
     }
+
+    public abstract void fetchPending(String type);
+
+
 }

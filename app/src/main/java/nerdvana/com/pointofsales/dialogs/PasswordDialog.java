@@ -88,6 +88,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
                 } else {
                     passwordSuccess(String.valueOf(response.body().getResult().get(0).getId()));
                 }
+                dismiss();
             }
 
             @Override

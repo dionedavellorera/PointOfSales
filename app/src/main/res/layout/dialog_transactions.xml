@@ -35,11 +35,194 @@
             android:layout_weight="0.5"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
-                android:layout_above="@id/reprintOr"
-                android:id="@+id/listTransactionDetails"
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/constr"
+                android:layout_marginBottom="60dp">
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/notItems"
+                    android:gravity="center"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/guideTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="No items selected"/>
+
+                <TextView
+                    android:gravity="center"
+                    android:id="@+id/header"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:padding="10dp"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TABLE 1"/>
+                <android.support.v7.widget.RecyclerView
+                    android:textColor="@color/light"
+                    android:id="@+id/listTransactionDetails"
+                    app:layout_constraintTop_toBottomOf="@id/header"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/guideTotal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:background="@color/colorList"/>
+
+                <android.support.constraint.Guideline
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+
+                    android:id="@+id/guideTotal"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    app:layout_constraintGuide_percent="0.75"/>
+
+                <!--//return here-->
+                <android.support.constraint.Guideline
+                    android:id="@+id/guideFifty"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5"/>
+
+                <TextView
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    android:id="@+id/subTotalLabel"
+                    android:text="Sub total"
+                    android:layout_width="0dp"
+                    android:padding="5dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/guideTotal"/>
+
+                <TextView
+                    android:gravity="right"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    android:id="@+id/subTotalValue"
+                    android:text="500.00"
+                    android:padding="5dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/guideTotal"/>
+
+                <TextView
+                    android:visibility="visible"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    android:padding="5dp"
+                    android:id="@+id/discountLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Discount"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/subTotalLabel"/>
+
+                <TextView
+                    android:visibility="visible"
+                    android:gravity="right"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    android:padding="5dp"
+                    android:id="@+id/discountValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="1000.00"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/subTotalValue"/>
+
+
+                <TextView
+                    android:id="@+id/depositLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="Deposit"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/discountLabel"/>
+
+                <TextView
+                    android:gravity="right"
+                    android:id="@+id/depositValue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:text="0.00"
+                    android:background="@color/colorSecondary"
+                    android:textColor="@color/colorWhite"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/discountValue"/>
+
+
+
+
+
+                <TextView
+                    android:gravity="center_vertical"
+                    android:id="@+id/totalLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/colorPrimary"
+                    android:padding="5dp"
+                    android:text="TOTAL"
+                    android:textColor="@color/light"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/depositLabel"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                <TextView
+                    android:gravity="center_vertical|right"
+                    android:id="@+id/totalValue"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/colorPrimary"
+                    android:padding="5dp"
+                    android:text="0.00"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/guideFifty"
+                    app:layout_constraintTop_toBottomOf="@id/depositValue"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:layout_above="@id/reprintOr"-->
+                <!--android:id="@+id/listTransactionDetails"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"/>-->
 
             <Button
                 android:layout_margin="10dp"

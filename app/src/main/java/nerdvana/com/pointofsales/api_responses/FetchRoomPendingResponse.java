@@ -276,7 +276,101 @@ public class FetchRoomPendingResponse {
 
     }
 
+    public class DiscountsOuter {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("discount_type_id")
+        @Expose
+        private String discountTypeId;
+        @SerializedName("discount_type")
+        @Expose
+        private String discountType;
+        @SerializedName("discount_amount")
+        @Expose
+        private String discountAmount;
+        @SerializedName("rc_discount")
+        @Expose
+        private String rcDiscount;
+        @SerializedName("food_discount")
+        @Expose
+        private String foodDiscount;
+        @SerializedName("extra_hours")
+        @Expose
+        private String extraHours;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNumber;
+
+        public String getControlNumber() {
+            return controlNumber;
+        }
+
+        public void setControlNumber(String controlNumber) {
+            this.controlNumber = controlNumber;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getDiscountTypeId() {
+            return discountTypeId;
+        }
+
+        public void setDiscountTypeId(String discountTypeId) {
+            this.discountTypeId = discountTypeId;
+        }
+
+        public String getDiscountType() {
+            return discountType;
+        }
+
+        public void setDiscountType(String discountType) {
+            this.discountType = discountType;
+        }
+
+        public String getDiscountAmount() {
+            return discountAmount;
+        }
+
+        public void setDiscountAmount(String discountAmount) {
+            this.discountAmount = discountAmount;
+        }
+
+        public String getRcDiscount() {
+            return rcDiscount;
+        }
+
+        public void setRcDiscount(String rcDiscount) {
+            this.rcDiscount = rcDiscount;
+        }
+
+        public String getFoodDiscount() {
+            return foodDiscount;
+        }
+
+        public void setFoodDiscount(String foodDiscount) {
+            this.foodDiscount = foodDiscount;
+        }
+
+        public String getExtraHours() {
+            return extraHours;
+        }
+
+        public void setExtraHours(String extraHours) {
+            this.extraHours = extraHours;
+        }
+    }
+
     public class RoomTransaction {
+        @SerializedName("discounts")
+        @Expose
+        private List<DiscountsOuter> discountsOuter;
         @SerializedName("payments")
         @Expose
         private List<Payment> payments = null;
@@ -373,6 +467,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+
+        public List<DiscountsOuter> getDiscountsOuter() {
+            return discountsOuter;
+        }
+
+        public void setDiscountsOuter(List<DiscountsOuter> discountsOuter) {
+            this.discountsOuter = discountsOuter;
+        }
 
         public List<Tran> getTrans() {
             return trans;

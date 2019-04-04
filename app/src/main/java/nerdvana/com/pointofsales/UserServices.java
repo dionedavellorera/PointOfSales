@@ -5,6 +5,7 @@ import com.squareup.otto.Subscribe;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
+import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
@@ -33,13 +34,16 @@ import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.GetOrderRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
+import nerdvana.com.pointofsales.api_requests.PostVoidRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.SwitchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
+import nerdvana.com.pointofsales.api_requests.ViewReceiptRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
@@ -50,6 +54,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
@@ -67,10 +72,12 @@ import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
+import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import nerdvana.com.pointofsales.requests.TestRequest;
 import okhttp3.ResponseBody;
@@ -348,6 +355,35 @@ public class UserServices extends BaseService {
     public void fetchCompanyUser(FetchCompanyUserRequest fetchCompanyUserRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchCompanyUserResponse> request = iUsers.fetchCompanyUser(fetchCompanyUserRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void autoDiscount(AutoDiscountRequest autoDiscountRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<AutoDiscountResponse> request = iUsers.sendAutoDiscount(autoDiscountRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void fetchDiscountReason(FetchDiscountRequest fetchDiscountRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchDiscountReasonResponse> request = iUsers.fetchDiscountReason(fetchDiscountRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void fetchDiscountReason(ViewReceiptRequest viewReceiptRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ViewReceiptResponse> request = iUsers.viewReceipt(viewReceiptRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+
+    @Subscribe
+    public void voidReceipt(PostVoidRequest postVoidRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<PostVoidResponse> request = iUsers.voidReceipt(postVoidRequest.getMapValue());
         asyncRequest(request);
     }
 

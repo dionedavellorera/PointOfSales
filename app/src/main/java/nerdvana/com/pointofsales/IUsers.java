@@ -5,6 +5,7 @@ import java.util.Map;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
@@ -16,6 +17,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
@@ -33,10 +35,12 @@ import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
+import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -179,7 +183,6 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchRoomViaIdResponse> fetchRoomViaId(@FieldMap Map<String, String> params);
 
-    //fetchNationality
     @POST("fetchNationality")
     @FormUrlEncoded
     Call<FetchNationalityResponse> fetchNationality(@FieldMap Map<String, String> params);
@@ -187,6 +190,10 @@ public interface IUsers {
     @POST("sendDiscount")
     @FormUrlEncoded
     Call<DiscountResponse> sendDiscount(@FieldMap Map<String, String> params);
+
+    @POST("sendDiscount")
+    @FormUrlEncoded
+    Call<AutoDiscountResponse> sendAutoDiscount(@FieldMap Map<String, String> params);
 
     @POST("fetchCashDenomination")
     @FormUrlEncoded
@@ -199,4 +206,19 @@ public interface IUsers {
     @POST("fetchCompanyUser")
     @FormUrlEncoded
     Call<FetchCompanyUserResponse> fetchCompanyUser(@FieldMap Map<String, String> params);
+
+    //fetchDiscountReason
+    @POST("fetchDiscountReason")
+    @FormUrlEncoded
+    Call<FetchDiscountReasonResponse> fetchDiscountReason(@FieldMap Map<String, String> params);
+
+    //viewReceipt
+    @POST("viewReceipt")
+    @FormUrlEncoded
+    Call<ViewReceiptResponse> viewReceipt(@FieldMap Map<String, String> params);
+
+    //voidReceipt
+    @POST("voidReceipt")
+    @FormUrlEncoded
+    Call<PostVoidResponse> voidReceipt(@FieldMap Map<String, String> params);
 }

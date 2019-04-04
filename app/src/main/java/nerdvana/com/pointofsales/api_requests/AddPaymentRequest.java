@@ -24,6 +24,7 @@ public class AddPaymentRequest extends BaseRequest{
         mapValue.put("is_adv", isAdv);
         mapValue.put("control_no", controlNumber);
         mapValue.put("branch_code", branchCode);
+        mapValue.put("tax", tax);
 
 
     }

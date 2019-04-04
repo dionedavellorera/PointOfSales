@@ -89,8 +89,8 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
             public void onClick(View v) {
                 TakeOutCreateCustomerDialog takeout = new TakeOutCreateCustomerDialog(TakeOutActivity.this, roomAreaList) {
                     @Override
-                    public void createSuccess(String customerName, int areaId) {
-                        getOrderRequest(customerName, String.valueOf(areaId));
+                    public void createSuccess(String customerName, int areaId, String userId) {
+                        getOrderRequest(customerName, String.valueOf(areaId), userId);
                         dismiss();
                     }
                 };
@@ -165,9 +165,9 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         Toast.makeText(TakeOutActivity.this, apiError.message(), Toast.LENGTH_SHORT).show();
     }
 
-    private void getOrderRequest(String customerName, String areaId) {
+    private void getOrderRequest(String customerName, String areaId, String userId) {
         refreshRoom.setRefreshing(true);
-        BusProvider.getInstance().post(new GetOrderRequest(customerName, areaId));
+        BusProvider.getInstance().post(new GetOrderRequest(customerName, areaId, userId));
     }
 
     @Subscribe

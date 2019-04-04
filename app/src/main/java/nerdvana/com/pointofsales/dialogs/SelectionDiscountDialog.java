@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
@@ -19,11 +21,15 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
+import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDiscountRequest;
+import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
@@ -31,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SelectionDiscountDialog extends BaseDialog {
+public abstract class SelectionDiscountDialog extends BaseDialog {
     private SearchableSpinner spinnerDiscountType;
 
     private RelativeLayout formCard;
@@ -41,9 +47,25 @@ public class SelectionDiscountDialog extends BaseDialog {
     private Spinner spinnerEmployee;
 
     private String discountId = "";
+    private String discountType = "";
+    private String discountedBy = "";
+    private String selectionType = "";
+    private String controlNumber = "";
+    private String roomId = "";
 
-    public SelectionDiscountDialog(@NonNull Context context) {
+    private EditText etCardNumber;
+    private EditText etSeniorPwdName;
+    private EditText etSeniorPwdAddress;
+    private EditText etSeniorPwdCardNumber;
+
+    private Context context;
+    private Button submit;
+
+    public SelectionDiscountDialog(@NonNull Context context, String controlNumber, String roomId) {
         super(context);
+        this.context = context;
+        this.controlNumber = controlNumber;
+        this.roomId = roomId;
     }
 
     @Override
@@ -54,10 +76,23 @@ public class SelectionDiscountDialog extends BaseDialog {
         spinnerDiscountType.setTitle("Select Item");
         spinnerDiscountType.setPositiveButton("OK");
 
+        etCardNumber = findViewById(R.id.cardNumber);
+        etSeniorPwdName = findViewById(R.id.seniorPwdName);
+        etSeniorPwdAddress = findViewById(R.id.seniorPwdAddress);
+        etSeniorPwdCardNumber = findViewById(R.id.seniorPwdCardNumber);
+
         formCard = findViewById(R.id.formCard);
         formSpecial = findViewById(R.id.formSpecial);
         formEmployee = findViewById(R.id.formEmployee);
         spinnerEmployee = findViewById(R.id.spinnerEmployee);
+        submit = findViewById(R.id.submit);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendDiscount();
+            }
+        });
 
         requestDiscountSelection();
         populateCompanyUserList();
@@ -78,7 +113,7 @@ public class SelectionDiscountDialog extends BaseDialog {
 
     private void populateCompanyUserList() {
         TypeToken<List<FetchCompanyUserResponse.Result>> token = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
-        List<FetchCompanyUserResponse.Result> companyUser = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), token.getType());
+        final List<FetchCompanyUserResponse.Result> companyUser = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), token.getType());
         ArrayList<String> stringArray = new ArrayList<>();
 
         for (FetchCompanyUserResponse.Result r :companyUser) {
@@ -87,8 +122,17 @@ public class SelectionDiscountDialog extends BaseDialog {
         CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                 stringArray);
         spinnerEmployee.setAdapter(customSpinnerAdapter);
+        spinnerEmployee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                discountedBy = companyUser.get(position).getUsername();
+            }
 
-//        Log.d("COMPANYUSER", String.valueOf(companyUser.size()));
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void requestDiscountSelection() {
@@ -110,12 +154,18 @@ public class SelectionDiscountDialog extends BaseDialog {
                     spinnerDiscountType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+                            discountType = response.body().getResult().get(position).getDiscountCard();
                             discountId = String.valueOf(response.body().getResult().get(position).getId());
                             if (response.body().getResult().get(position).getIsCard() == 1) {
+                                selectionType = "card";
                                 showForm("card");
                             } else if (response.body().getResult().get(position).getIsEmployee() == 1) {
+                                selectionType = "employee";
                                 showForm("employee");
                             } else if (response.body().getResult().get(position).getIsSpecial() == 1) {
+                                selectionType = "special";
                                 showForm("special");
                             }
                         }
@@ -155,5 +205,100 @@ public class SelectionDiscountDialog extends BaseDialog {
                 break;
         }
     }
+
+    private void sendDiscount() {
+
+        PasswordDialog passwordDialog = new PasswordDialog(context) {
+
+            @Override
+            public void passwordSuccess(String employeeId) {
+
+                AutoDiscountRequest autoDiscountRequest = null;
+                switch (selectionType) {
+                    case "card":
+                        discountedBy = "";
+                        autoDiscountRequest =
+                                new AutoDiscountRequest(
+                                        discountType,
+                                        discountId,
+                                        discountedBy,
+                                        employeeId,
+                                        etCardNumber.getText().toString(),
+                                        "",
+                                        "",
+                                        controlNumber,
+                                        roomId);
+
+                        Log.d("ERQREQREQ", autoDiscountRequest.toString());
+
+                        break;
+                    case "employee":
+                        autoDiscountRequest =
+                                new AutoDiscountRequest(
+                                        discountType,
+                                        discountId,
+                                        discountedBy,
+                                        employeeId,
+                                        "",
+                                        "",
+                                        "",
+                                        controlNumber,
+                                        roomId);
+
+                        Log.d("ERQREQREQ", autoDiscountRequest.toString());
+
+                        break;
+                    case "special":
+                        autoDiscountRequest =
+                                new AutoDiscountRequest(
+                                        discountType,
+                                        discountId,
+                                        discountedBy,
+                                        employeeId,
+                                        etSeniorPwdCardNumber.getText().toString(),
+                                        etSeniorPwdName.getText().toString(),
+                                        etSeniorPwdAddress.getText().toString(),
+                                        controlNumber,
+                                        roomId);
+
+                        Log.d("ERQREQREQ", autoDiscountRequest.toString());
+                        break;
+                }
+
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<AutoDiscountResponse> request = iUsers.sendAutoDiscount(autoDiscountRequest.getMapValue());
+                request.enqueue(new Callback<AutoDiscountResponse>() {
+                    @Override
+                    public void onResponse(Call<AutoDiscountResponse> call, Response<AutoDiscountResponse> response) {
+                        if (response.body().getStatus() == 0) {
+                            Utils.showDialogMessage(context, response.body().getMessage() ,"Information");
+                        } else {
+                            SelectionDiscountDialog.this.dismiss();
+                            Utils.showDialogMessage(context, "Discounting success" ,"Information");
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<AutoDiscountResponse> call, Throwable t) {
+
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void passwordFailed() {
+
+            }
+        };
+
+        if (!passwordDialog.isShowing()) passwordDialog.show();
+
+    }
+
+
+    public abstract void discountSuccess();
 
 }

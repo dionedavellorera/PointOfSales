@@ -38,7 +38,8 @@ public class DiscountProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
     @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
+        final DiscountListModel.DiscountProduct dlm = productsList.get(i);
         ((DiscProductsViewHolder)holder).header.setText(productsList.get(i).getName());
 
         if (productsList.get(i).isChecked()) {
@@ -47,12 +48,12 @@ public class DiscountProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((DiscProductsViewHolder)holder).header.setChecked(false);
         }
 
-//        ((DiscProductsViewHolder)holder).header.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                productsList.get(i).setChecked(isChecked);
-//            }
-//        });
+        ((DiscProductsViewHolder)holder).header.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                dlm.setChecked(isChecked);
+            }
+        });
 
     }
 

@@ -26,6 +26,7 @@ public class AddProductToRequest extends BaseRequest {
         mapValue.put("currency_value", currencyValue);
         mapValue.put("remarks", remarks);
         mapValue.put("branch_code", branchCode);
+        mapValue.put("tax", tax);
     }
 
     public Map<String, String> getMapValue() {

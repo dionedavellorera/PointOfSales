@@ -61,9 +61,18 @@
         android:layout_height="wrap_content"
         android:text="REMARKS"/>
 
-    <EditText
+
+    <Spinner
         android:layout_margin="10dp"
         android:layout_below="@id/remarksHeader"
+        android:id="@+id/spinnerDiscountReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <EditText
+        android:layout_margin="10dp"
+        android:layout_below="@id/spinnerDiscountReason"
         android:id="@+id/inputReason"
         android:hint="REMARKS"
         android:layout_width="match_parent"

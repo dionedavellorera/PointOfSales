@@ -11,8 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,10 +24,15 @@ import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.DepartmentsAdapter;
 import nerdvana.com.pointofsales.adapters.RoomRatesAdapter;
 import nerdvana.com.pointofsales.api_requests.DiscountRequest;
+import nerdvana.com.pointofsales.api_requests.FetchDiscountReasonRequest;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.model.DiscountListModel;
@@ -34,7 +41,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ManualDiscountDialog extends BaseDialog {
+public abstract class ManualDiscountDialog extends BaseDialog {
+    String isPercentage = "";
     List<DiscountListModel> discountList;
     private DepartmentsAdapter departmentsAdapter;
     private RecyclerView listPosts;
@@ -44,11 +52,21 @@ public class ManualDiscountDialog extends BaseDialog {
     private RadioGroup discountOptionGroup;
     private EditText inputReason;
     private EditText inputAmount;
-
+    private Spinner spinnerDiscountReason;
+    private String discountReasonId = "";
+    private Context context;
+    private String controlNumber = "";
+    private String roomId = "";
     private ArrayList<DiscountModel> discountModelList;
-    public ManualDiscountDialog(@NonNull Context context, FetchRoomPendingResponse.Result fetchRoomPendingData) {
+    public ManualDiscountDialog(@NonNull Context context,
+                                FetchRoomPendingResponse.Result fetchRoomPendingData,
+                                String controlNumber,
+                                String roomId) {
         super(context);
+        this.context = context;
         this.fetchRoomPendingData = fetchRoomPendingData;
+        this.controlNumber = controlNumber;
+        this.roomId = roomId;
     }
 
 
@@ -59,10 +77,11 @@ public class ManualDiscountDialog extends BaseDialog {
         fabSave = findViewById(R.id.fabSave);
         inputReason = findViewById(R.id.inputReason);
         inputAmount = findViewById(R.id.inputAmount);
+        spinnerDiscountReason = findViewById(R.id.spinnerDiscountReason);
         discountModelList = new ArrayList<>();
         discountOptionGroup = findViewById(R.id.discountOptionGroup);
         discountList = new ArrayList<>();
-
+        fetchDiscountReasonRequest();
         checkBoxItem = new CheckBoxItem() {
             @Override
             public void isChecked(int position, boolean isChecked) {
@@ -71,7 +90,7 @@ public class ManualDiscountDialog extends BaseDialog {
                     result.setChecked(isChecked);
                 }
 
-                departmentsAdapter.notifyDataSetChanged();
+                departmentsAdapter.notifyItemChanged(position);
             }
         };
 
@@ -80,7 +99,7 @@ public class ManualDiscountDialog extends BaseDialog {
             public void onClick(View v) {
                 discountModelList = new ArrayList<>();
 
-                String isPercentage = "1";
+                isPercentage = "1";
                 if (discountOptionGroup.getCheckedRadioButtonId() == R.id.radioAmount) {
                     isPercentage = "0";
                 }
@@ -98,26 +117,52 @@ public class ManualDiscountDialog extends BaseDialog {
 
                     }
                 }
-                DiscountRequest discountRequest =
-                        new DiscountRequest(
-                                GsonHelper.getGson().toJson(discountModelList),
-                                inputReason.getText().toString(),
-                                isPercentage,
-                                inputAmount.getText().toString(),
-                                "1");
 
-                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                Call<DiscountResponse> request = iUsers.sendDiscount(discountRequest.getMapValue());
-                request.enqueue(new Callback<DiscountResponse>() {
+                PasswordDialog passwordDialog = new PasswordDialog(context) {
                     @Override
-                    public void onResponse(Call<DiscountResponse> call, Response<DiscountResponse> response) {
+                    public void passwordSuccess(String employeeId) {
+                        dismiss();
+                        DiscountRequest discountRequest =
+                                new DiscountRequest(
+                                        GsonHelper.getGson().toJson(discountModelList),
+                                        inputReason.getText().toString(),
+                                        isPercentage,
+                                        inputAmount.getText().toString(),
+                                        employeeId,
+                                        discountReasonId,
+                                        controlNumber,
+                                        roomId);
+
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        Call<DiscountResponse> request = iUsers.sendDiscount(discountRequest.getMapValue());
+                        request.enqueue(new Callback<DiscountResponse>() {
+                            @Override
+                            public void onResponse(Call<DiscountResponse> call, Response<DiscountResponse> response) {
+                                if (response.body().getStatus() == 0) {
+                                    Utils.showDialogMessage(context, response.body().getMessage(), "Information");
+                                } else {
+                                    Utils.showDialogMessage(context, response.body().getMessage(), "Information");
+                                    discountSuccess();
+                                    dismiss();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<DiscountResponse> call, Throwable t) {
+
+                            }
+                        });
+
                     }
 
                     @Override
-                    public void onFailure(Call<DiscountResponse> call, Throwable t) {
+                    public void passwordFailed() {
 
                     }
-                });
+                };
+                if (!passwordDialog.isShowing()) passwordDialog.show();
+
+
 
 
 
@@ -183,7 +228,8 @@ public class ManualDiscountDialog extends BaseDialog {
                         discountList.add(new DiscountListModel(
                                 "ROOM RATE",
                                 myProd,
-                                myDiscs
+                                myDiscs,
+                                true
                         ));
 
 
@@ -246,7 +292,8 @@ public class ManualDiscountDialog extends BaseDialog {
                         discountList.add(new DiscountListModel(
                                 result.getDepartment() == null ? "OTHERS" : result.getDepartment(),
                                 myProd,
-                                myDiscs
+                                myDiscs,
+                                true
                         ));
 
 
@@ -291,5 +338,44 @@ public class ManualDiscountDialog extends BaseDialog {
     }
 
 
+    private void fetchDiscountReasonRequest() {
+        FetchDiscountReasonRequest fetchDiscountReasonRequest = new FetchDiscountReasonRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchDiscountReasonResponse> request = iUsers.fetchDiscountReason(fetchDiscountReasonRequest.getMapValue());
+        request.enqueue(new Callback<FetchDiscountReasonResponse>() {
+            @Override
+            public void onResponse(Call<FetchDiscountReasonResponse> call, final Response<FetchDiscountReasonResponse> response) {
+
+                ArrayList<String> stringArray = new ArrayList<>();
+
+                for (FetchDiscountReasonResponse.Result r :response.body().getResult()) {
+                    stringArray.add(r.getDiscountReason());
+                }
+                CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                        stringArray);
+                spinnerDiscountReason.setAdapter(customSpinnerAdapter);
+
+                spinnerDiscountReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        discountReasonId = String.valueOf(response.body().getResult().get(position).getCoreId());
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure(Call<FetchDiscountReasonResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public abstract void discountSuccess();
 
 }

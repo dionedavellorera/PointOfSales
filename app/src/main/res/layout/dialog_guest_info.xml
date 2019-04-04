@@ -6,6 +6,7 @@
     <include layout="@layout/partial_header" android:id="@+id/header" />
 
     <LinearLayout
+        android:layout_below="@id/header"
         android:orientation="horizontal"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -42,11 +43,30 @@
                         android:text="ROOM NUMBER"/>
 
                     <TextView
+                        android:id="@+id/roomNumberValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM NUMBER"/>
+
+
+                    <TextView
                         android:layout_margin="5dp"
                         android:textSize="14sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ROOM TYPE"/>
+
+                    <TextView
+                        android:id="@+id/roomTypeValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM TYPE VALUE"/>
 
                     <TextView
                         android:layout_margin="5dp"
@@ -56,6 +76,15 @@
                         android:text="RATE DESCRIPTION"/>
 
                     <TextView
+                        android:id="@+id/rateDescriptionValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="RATE DESCRIPTION VALUE"/>
+
+                    <TextView
                         android:layout_margin="5dp"
                         android:textSize="14sp"
                         android:layout_width="match_parent"
@@ -63,11 +92,14 @@
                         android:text="RATE AMOUNT"/>
 
                     <TextView
+                        android:id="@+id/rateAmountValue"
                         android:layout_margin="5dp"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="DATE AND TIME"/>
+                        android:text="RATE AMOUNT VALUE"/>
+
 
                     <TextView
                         android:layout_margin="5dp"
@@ -77,11 +109,29 @@
                         android:text="VEHICLE TYPE"/>
 
                     <TextView
+                        android:id="@+id/vehicleValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="VEHICLE VALUE"/>
+
+                    <TextView
                         android:layout_margin="5dp"
                         android:textSize="14sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="CAR MAKE"/>
+
+                    <TextView
+                        android:id="@+id/carMakeValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CAR MAKE VALUE"/>
 
                     <TextView
                         android:layout_margin="5dp"
@@ -91,6 +141,15 @@
                         android:text="PLATE NUMBER"/>
 
                     <TextView
+                        android:id="@+id/plateNumberValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PLATE NUMBE VALUE"/>
+
+                    <TextView
                         android:layout_margin="5dp"
                         android:textSize="14sp"
                         android:layout_width="match_parent"
@@ -98,11 +157,29 @@
                         android:text="ROOM BOY"/>
 
                     <TextView
+                        android:id="@+id/roomBoyValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM BOY VALUE"/>
+
+                    <TextView
                         android:layout_margin="5dp"
                         android:textSize="14sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="REMARKS"/>
+
+                    <TextView
+                        android:id="@+id/remarksValue"
+                        android:layout_margin="5dp"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REMARKS VALUE"/>
                 </LinearLayout>
 
             </ScrollView>
