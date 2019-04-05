@@ -9,6 +9,7 @@ import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -41,6 +42,7 @@ import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
+import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -221,4 +223,14 @@ public interface IUsers {
     @POST("voidReceipt")
     @FormUrlEncoded
     Call<PostVoidResponse> voidReceipt(@FieldMap Map<String, String> params);
+
+    //wakeUpCallUpdate
+    @POST("wakeUpCallUpdate")
+    @FormUrlEncoded
+    Call<WakeUpCallUpdateResponse> updateWakeUpCall(@FieldMap Map<String, String> params);
+
+    //safeKeeping
+    @POST("safeKeeping")
+    @FormUrlEncoded
+    Call<CollectionResponse> collectionRequest(@FieldMap Map<String, String> params);
 }

@@ -25,7 +25,7 @@
         android:textColor="@color/colorBlack"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/iconStatus"
         app:layout_constraintRight_toLeftOf="@id/guideOne"
         app:layout_constraintTop_toTopOf="parent" />
     <android.support.constraint.Guideline
@@ -98,7 +98,7 @@
         android:textSize="16sp"
         app:layout_constraintLeft_toRightOf="@id/guideThree"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomGuide"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
 
@@ -114,13 +114,15 @@
         android:background="@color/colorLtGrey"/>
 
     <ImageView
+        android:layout_margin="5dp"
+        android:tint="@color/colorGreen"
         android:id="@+id/iconStatus"
-        android:visibility="gone"
-        app:layout_constraintLeft_toRightOf="@id/guideThree"
-        app:layout_constraintRight_toRightOf="parent"
+        android:visibility="visible"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/name"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
         android:src="@drawable/check_all"/>
 </android.support.constraint.ConstraintLayout>

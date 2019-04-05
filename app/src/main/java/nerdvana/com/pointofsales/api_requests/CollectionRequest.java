@@ -7,26 +7,31 @@ import java.util.Map;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
-public class GetOrderRequest extends BaseRequest{
+public class CollectionRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public GetOrderRequest(String customerName, String roomAreaId, String selectedEmployee) {
+    public CollectionRequest(List<CollectionFinalPostModel> collectionFinalPostModels) {
         mapValue = new HashMap<>();
-        mapValue.put("customer", customerName);
-        mapValue.put("pos_id", machineNumber);
+        mapValue.put("post", GsonHelper.getGson().toJson(collectionFinalPostModels));
+
+
         mapValue.put("user_id", userId);
-        mapValue.put("emp_id", selectedEmployee);
-        mapValue.put("room_area_id", roomAreaId);
+        mapValue.put("pos_id", machineNumber);
+        mapValue.put("branch_id", branchId);
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
 
-        mapValue.put("branch_code", branchCode);
-        mapValue.put("branch_id", branchId);
 
-        mapValue.put("tax", tax);
     }
 
     public Map<String, String> getMapValue() {
         return mapValue;
+    }
+
+    @Override
+    public String toString() {
+        return "CollectionRequest{" +
+                "mapValue=" + mapValue +
+                '}';
     }
 }

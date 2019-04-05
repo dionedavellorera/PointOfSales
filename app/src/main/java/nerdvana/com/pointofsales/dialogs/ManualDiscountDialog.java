@@ -133,6 +133,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
                                         controlNumber,
                                         roomId);
 
+
                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                         Call<DiscountResponse> request = iUsers.sendDiscount(discountRequest.getMapValue());
                         request.enqueue(new Callback<DiscountResponse>() {

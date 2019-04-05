@@ -8,14 +8,23 @@
         />
 
     <ScrollView
+        android:layout_marginBottom="40dp"
         android:layout_below="@id/header"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <RelativeLayout
+        <LinearLayout
+            android:orientation="vertical"
             android:id="@+id/relContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SAVE"/>
 
 </RelativeLayout>

@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -183,6 +184,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private RecyclerView listCheckoutItems;
     private RecyclerView listButtons;
+    private SwipeRefreshLayout checkoutSwipe;
 
     private CategoryAdapter categoryAdapter;
     private CategoryAdapter subCategoryAdapter;
@@ -222,7 +224,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         discount = view.findViewById(R.id.discountValue);
         deposit = view.findViewById(R.id.depositValue);
         subTotal = view.findViewById(R.id.subTotalValue);
-
+        checkoutSwipe = view.findViewById(R.id.checkoutSwipe);
         listCheckoutItems = view.findViewById(R.id.listCheckoutItems);
         listButtons = view.findViewById(R.id.listButtons);
 
@@ -295,6 +297,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         fetchPaymentTypeRequest();
 
 
+        checkoutSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (selectedRoom != null) {
+                    if (selectedRoom.isTakeOut()) {
+                        fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                    } else {
+                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                    }
+                } else {
+                    checkoutSwipe.setRefreshing(false);
+                }
+            }
+        });
         return view;
     }
 
@@ -831,7 +847,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 111://GUEST INFO
-                GuestInfoDialog guestInfoDialog = new GuestInfoDialog(getActivity(), fetchRoomPendingResult);
+                GuestInfoDialog guestInfoDialog = new GuestInfoDialog(getActivity(), fetchRoomPendingResult, getActivity()) {
+                    @Override
+                    public void refresh() {
+                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                    }
+                };
 
                 if (selectedRoom != null) {
                     if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
@@ -1669,6 +1690,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
+
+        checkoutSwipe.setRefreshing(false);
+
         cartItemList = new ArrayList<>();
         orderSlipList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
@@ -1893,6 +1917,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void sendOffGoingNegoRequest(String roomId) {
         BusProvider.getInstance().post(new OffGoingNegoRequest(roomId));
+        defaultView();
+        defaultView();
+        clearCartItems();
+
     }
 
     private void showGuestInfoDialog(final String status) {
@@ -2097,6 +2125,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
 //        Toast.makeText(getContext(), "FOP RESP", Toast.LENGTH_SHORT).show();
+        checkoutSwipe.setRefreshing(false);
         currentRoomStatus = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getIsSoa());
         totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal() - (fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount());
         cartItemList = new ArrayList<>();
@@ -2235,6 +2264,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             listCheckoutItems.setAdapter(checkoutAdapter);
             checkoutAdapter.notifyDataSetChanged();
         }
+
+        endLoading();
     }
 
     @Subscribe

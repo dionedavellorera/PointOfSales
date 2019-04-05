@@ -21,24 +21,28 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
     protected List<ButtonsModel> doInBackground(ButtonsModel... buttonsModels) {
         List<ButtonsModel> buttonsModelList = new ArrayList<>();
         String[]images = {"", ""};
-        buttonsModelList.add(new ButtonsModel(100,"SAVE", "",1));
-        buttonsModelList.add(new ButtonsModel(101,"VOID", "",2));
-        buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",3));
-        buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",4));
-        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",5));
-        buttonsModelList.add(new ButtonsModel(106,"SOA", "",6));
-        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",7));
-        buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",8));
-        buttonsModelList.add(new ButtonsModel(109,"FOC", "",9));
-        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",10));
-        buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",11));
-        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",12));
-        buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",13));
-        buttonsModelList.add(new ButtonsModel(114,"SWITCH ROOM", "",14));
-        buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",15));
-        buttonsModelList.add(new ButtonsModel(117,"CUT-OFF", "",16));
-        buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
-        buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",18));
+        buttonsModelList.add(new ButtonsModel(999,"ROOMS", "",1));
+        buttonsModelList.add(new ButtonsModel(998,"TAKE ORDER", "",2));
+        buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3));
+        buttonsModelList.add(new ButtonsModel(101,"VOID", "",4));
+        buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",5));
+        buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",6));
+        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",7));
+        buttonsModelList.add(new ButtonsModel(106,"SOA", "",8));
+        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",9));
+        buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",10));
+        buttonsModelList.add(new ButtonsModel(109,"FOC", "",11));
+        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",12));
+        buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",13));
+        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",14));
+        buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",15));
+        buttonsModelList.add(new ButtonsModel(114,"SWITCH ROOM", "",16));
+        buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",17));
+        buttonsModelList.add(new ButtonsModel(117,"CUT-OFF", "",18));
+        buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",19));
+        buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
+
+        buttonsModelList.add(new ButtonsModel(117,"LOGOUT", "",100));
 
 //        buttonsModelList.add(new ButtonsModel(110,"VALIDATE SLIP", "",10));
 //        buttonsModelList.add(new ButtonsModel(110,"IN-TRANSIT", "",10));

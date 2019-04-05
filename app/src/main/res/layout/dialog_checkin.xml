@@ -26,7 +26,7 @@
             android:padding="10dp"/>
 
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinnerRates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -41,7 +41,7 @@
 
 
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinnerGuestType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -54,7 +54,7 @@
             android:padding="10dp"/>
 
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinnerCar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -69,7 +69,7 @@
 
 
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinnerVehicle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -112,7 +112,7 @@
             android:textStyle="italic"
             android:padding="10dp"/>
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/steward"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -126,7 +126,7 @@
             android:padding="10dp"/>
 
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/roomArea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -139,7 +139,7 @@
             android:padding="10dp"/>
 
 
-        <Spinner
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinnerNationalirt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

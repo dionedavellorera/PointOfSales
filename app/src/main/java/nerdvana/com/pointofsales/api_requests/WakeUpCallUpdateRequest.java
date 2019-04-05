@@ -7,23 +7,22 @@ import java.util.Map;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
-public class GetOrderRequest extends BaseRequest{
+public class WakeUpCallUpdateRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public GetOrderRequest(String customerName, String roomAreaId, String selectedEmployee) {
+    public WakeUpCallUpdateRequest(String roomId, String dateTime) {
         mapValue = new HashMap<>();
-        mapValue.put("customer", customerName);
-        mapValue.put("pos_id", machineNumber);
         mapValue.put("user_id", userId);
-        mapValue.put("emp_id", selectedEmployee);
-        mapValue.put("room_area_id", roomAreaId);
-        mapValue.put("currency_id", currencyId);
-        mapValue.put("currency_value", currencyValue);
-
-        mapValue.put("branch_code", branchCode);
+        mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
-
+        mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);
+
+        mapValue.put("room_id", roomId);
+        mapValue.put("date_time", dateTime);
+
+
+
     }
 
     public Map<String, String> getMapValue() {

@@ -9,6 +9,7 @@ import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
+import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
@@ -39,6 +40,7 @@ import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.SwitchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_requests.ViewReceiptRequest;
+import nerdvana.com.pointofsales.api_requests.WakeUpCallUpdateRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
@@ -47,6 +49,7 @@ import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
@@ -386,5 +389,21 @@ public class UserServices extends BaseService {
         Call<PostVoidResponse> request = iUsers.voidReceipt(postVoidRequest.getMapValue());
         asyncRequest(request);
     }
+
+    @Subscribe
+    public void updateGuestInfo(WakeUpCallUpdateRequest wakeUpCallUpdateRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<PostVoidResponse> request = iUsers.voidReceipt(wakeUpCallUpdateRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void collectionSafeKeepCashReco(CollectionRequest collectionRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+
 
 }

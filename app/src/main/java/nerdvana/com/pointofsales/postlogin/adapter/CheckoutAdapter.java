@@ -42,6 +42,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView quantity;
         private TextView price;
         private TextView totalPrice;
+        private ImageView iconStatus;
         private ConstraintLayout rootView;
 
         public ProductsViewHolder(@NonNull View itemView) {
@@ -50,6 +51,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             quantity = itemView.findViewById(R.id.quantity);
             price = itemView.findViewById(R.id.price);
             totalPrice = itemView.findViewById(R.id.totalPrice);
+            iconStatus = itemView.findViewById(R.id.iconStatus);
             rootView = itemView.findViewById(R.id.rootView);
         }
 
@@ -63,9 +65,9 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if(holder instanceof CheckoutAdapter.ProductsViewHolder){
             if (!cartItem.isPosted()) {
-
+                ((ProductsViewHolder) holder).iconStatus.setVisibility(View.GONE);
             } else {
-
+                ((ProductsViewHolder) holder).iconStatus.setVisibility(View.VISIBLE);
             }
 
             ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {

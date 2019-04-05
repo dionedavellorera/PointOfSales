@@ -127,7 +127,6 @@ public class SetupDialog extends BaseDialog {
             public void onResponse(Call<VerifyMachineResponse> call, Response<VerifyMachineResponse> response) {
                 if (response.body().getStatus() == 1) { //success
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
-
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);

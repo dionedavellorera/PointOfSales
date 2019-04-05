@@ -79,6 +79,7 @@ import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
+import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
@@ -91,6 +92,7 @@ import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
 import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
 import nerdvana.com.pointofsales.requests.TestRequest;
+import nerdvana.com.pointofsales.service.TimerService;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
 
@@ -118,13 +120,22 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private Handler mHandler = new Handler();
     private DialogProgressBar dialogProgressBar;
 
+
+    private Intent timerIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
+        timerIntent = new Intent(this, TimerService.class);
+        startService(timerIntent);
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime jodatime = dtf.parseDateTime("2019-04-05 10:30:00");
 
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMMM dd h:m a");
+
+        Log.d("DATETIMENOW", dtfOut.print(jodatime));
 
         //endregion
         dialogProgressBar = new DialogProgressBar(MainActivity.this);
@@ -182,6 +193,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     }
 
+
+
+
     private void initializeViews() {
         logout = findViewById(R.id.logout);
         logout.setOnClickListener(this);
@@ -208,20 +222,20 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         if (userModel != null) {
             if (userModel.isLoggedIn()) { //post login
-                logout.setVisibility(View.VISIBLE);
+//                logout.setVisibility(View.VISIBLE);
                 user.setVisibility(View.VISIBLE);
                 user.setText(String.format("%s %s - %s", getResources().getString(R.string.welcome_text), userModel.getUsername(), userModel.getUserGroup()));
                 openFragment(R.id.leftFrame, postLoginLeftFrameFragment);
 
                 openFragment(R.id.rightFrame, postLoginRightFrameFragment);
             } else { //pre login
-                logout.setVisibility(View.GONE);
+//                logout.setVisibility(View.GONE);
                 user.setVisibility(View.GONE);
                 openFragment(R.id.leftFrame, preLoginLeftFrameFragment);
                 openFragment(R.id.rightFrame, preLoginRightFrameFragment);
             }
         } else { //pre login
-            logout.setVisibility(View.GONE);
+//            logout.setVisibility(View.GONE);
             user.setVisibility(View.GONE);
             openFragment(R.id.leftFrame, preLoginLeftFrameFragment);
             openFragment(R.id.rightFrame, preLoginRightFrameFragment);
@@ -342,6 +356,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             e.printStackTrace();
         }
 
+        stopService(timerIntent);
+
+
     }
 
     @Override
@@ -360,14 +377,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 BusProvider.getInstance().post(new FragmentNotifierModel(selected));
 
-                Toast.makeText(this, selected.getName() + " selected", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, selected.getName() + " selected", Toast.LENGTH_SHORT).show();
             } else if (requestCode == 20) {
                 RoomTableModel selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
-                Toast.makeText(getApplicationContext(), "ORDER SELECTED", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "ORDER SELECTED", Toast.LENGTH_SHORT).show();
                 BusProvider.getInstance().post(new FragmentNotifierModel(selected));
             }
         } else {
-            Toast.makeText(this, "CANCELLED", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "CANCELLED", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1380,7 +1397,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     ApplicationConstants.COMPANY_USER);
         }
 
-        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -1499,4 +1516,26 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         return formatSeconds(duration.getStandardSeconds());
 
     }
+
+    @Subscribe
+    public void clickedButton(ButtonsModel clickedItem) {
+        switch (clickedItem.getId()) {
+            case 999: //rooms
+                Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
+                startActivityForResult(roomSelectionIntent, 10);
+                break;
+            case 998: //take order
+                Intent takeOutIntent = new Intent(this, TakeOutActivity.class);
+                startActivityForResult(takeOutIntent, 20);
+                break;
+            case 117: //logout
+                userModel.setLoggedIn(false);
+                SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+                finish();
+                startActivity(new Intent(MainActivity.this, SetupActivity.class));
+                break;
+        }
+    }
 }
+

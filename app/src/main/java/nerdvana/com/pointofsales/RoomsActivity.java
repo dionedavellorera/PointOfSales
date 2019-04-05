@@ -28,6 +28,7 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.FilterOptionModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
+import okhttp3.internal.Util;
 
 public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         SelectionContract, RoomFilterContract {
@@ -42,10 +43,23 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     private SwipeRefreshLayout refreshRoom;
 
+    private List<String> allowedRoomStatusList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms);
+        allowedRoomStatusList = new ArrayList<>();
+
+        allowedRoomStatusList.add(RoomConstants.CLEAN);
+        allowedRoomStatusList.add(RoomConstants.DIRTY);
+        allowedRoomStatusList.add(RoomConstants.OCCUPIED);
+        allowedRoomStatusList.add(RoomConstants.SOA);
+        allowedRoomStatusList.add(RoomConstants.ONGOING_RC);
+        allowedRoomStatusList.add(RoomConstants.ONGOING_RC_WAITING_GUEST);
+        allowedRoomStatusList.add(RoomConstants.ONGOING_DIRTY_WAITING_GUEST);
+        allowedRoomStatusList.add(RoomConstants.WELCOME);
+        allowedRoomStatusList.add(RoomConstants.ON_GOING_NEGO);
 
         setTitle("ROOMS");
 
@@ -104,10 +118,18 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     @Override
     public void listClicked(RoomTableModel selectedItem) {
-        Intent intent = new Intent();
-        intent.putExtra("selected", GsonHelper.getGson().toJson(selectedItem));
-        setResult(RESULT_OK, intent);
-        finish();
+
+        if (allowedRoomStatusList.contains(selectedItem.getStatus())) {
+            Intent intent = new Intent();
+            intent.putExtra("selected", GsonHelper.getGson().toJson(selectedItem));
+            setResult(RESULT_OK, intent);
+            finish();
+        } else {
+            Utils.showDialogMessage(RoomsActivity.this, String.format("%s %s", "You are not allowed to use this room, current status is", selectedItem.getStatusDescription()), "Warning");
+        }
+
+
+
     }
 
     private void sendRoomListRequest() {

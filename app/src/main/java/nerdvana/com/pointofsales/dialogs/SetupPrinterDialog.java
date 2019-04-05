@@ -95,10 +95,10 @@ public abstract class SetupPrinterDialog extends BaseDialog {
                     Discovery.start(getContext(), mFilterOption, mDiscoveryListener);
                 } catch (Epos2Exception e) {
 
-                    Toast.makeText(getContext(), getEposExceptionText(((Epos2Exception) e).getErrorStatus()),Toast.LENGTH_SHORT).show();
-
-
-                    Toast.makeText(getContext(), "ERR", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), getEposExceptionText(((Epos2Exception) e).getErrorStatus()),Toast.LENGTH_SHORT).show();
+//
+//
+//                    Toast.makeText(getContext(), "ERR", Toast.LENGTH_SHORT).show();
                 }
             }
         });

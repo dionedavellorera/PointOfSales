@@ -50,7 +50,7 @@ public abstract class BaseDialog extends Dialog {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dismiss();
+                cancel();
             }
         });
     }

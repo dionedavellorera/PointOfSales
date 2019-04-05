@@ -2,11 +2,16 @@
 <resources>
     <!--<color name="colorPrimary">#ff4081</color>-->
     <!--<color name="colorPrimaryDark">#c60055</color>-->
-
     <!--<color name="colorPrimary">#273749</color>-->
+
+
+    <!-- main theme -->
     <color name="colorPrimary">#00796B</color>
     <color name="colorSecondary">#009688</color>
     <color name="colorList">#B2DFDB</color>
+    <!-- end main theme -->
+
+
     <color name="colorPrimaryDark">#282f35</color>
     <!--<color name="colorAccent">#6B6E70</color>-->
     <color name="colorAccent">#00BCD4</color>

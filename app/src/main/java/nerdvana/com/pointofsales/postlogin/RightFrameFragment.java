@@ -333,7 +333,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @Override
     public void listClicked(RoomTableModel selectedItem) {
-        Toast.makeText(getContext(), "SAVED", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "SAVED", Toast.LENGTH_SHORT).show();
         selectedRoom = selectedItem;
 //        saveSelectedSpace(selectedItem.getName(), selectedItem.getAmountSelected());
 //        BusProvider.getInstance().post(new FragmentNotifierModel(selectedItem.getName()));
@@ -373,7 +373,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
             } else {
                 BusProvider.getInstance().post(productsModel);
-                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
             }
         } else {
 
@@ -391,7 +391,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                 productsAdapter.notifyDataSetChanged();
             } else {
                 BusProvider.getInstance().post(productsModel);
-                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -459,19 +459,12 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     private void setQuantitySpinner() {
         ArrayList<String> stringArray = new ArrayList<>();
-        stringArray.add("1");
-        stringArray.add("2");
-        stringArray.add("3");
-        stringArray.add("4");
-        stringArray.add("5");
-        stringArray.add("6");
-        stringArray.add("7");
-        stringArray.add("8");
-        stringArray.add("9");
-        stringArray.add("10");
+        for (int i = 1; i < 21; i++) {
+            stringArray.add(String.valueOf(i));
+        }
+
         CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                 stringArray);
-//        ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, stringArray);
         qtySpinner.setAdapter(customSpinnerAdapter);
     }
 
@@ -481,7 +474,6 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         switch (clickedItem.getId()) {
 
         }
-
     }
 
 
