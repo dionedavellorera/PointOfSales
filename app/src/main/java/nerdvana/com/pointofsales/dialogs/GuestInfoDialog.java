@@ -96,7 +96,6 @@ public abstract class GuestInfoDialog extends BaseDialog {
         final DateTime checkInJodaTime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString()));
         DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime finalDate = dtf.parseDateTime(dtfOut.print(jodatime));
-        Log.d("DATETIMENOW", dtfOut.print(jodatime));
 
 
         dateSet = String.format("%s-%s-%s", String.valueOf(finalDate.getYear()),
@@ -143,12 +142,12 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
         wakeUpCall = findViewById(R.id.wakeUpCallValue);
 
-        wakeUpCall.setText(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getWakeUpCall()));
+        wakeUpCall.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getWakeUpCall())));
 
 
 
         checkInTime = findViewById(R.id.checkInTimeValue);
-        checkInTime.setText(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString()));
+        checkInTime.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString())));
 
         updateGuestInfo = findViewById(R.id.updateGuestInfo);
 

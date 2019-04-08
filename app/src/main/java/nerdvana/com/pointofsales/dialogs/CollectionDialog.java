@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.dialogs;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +26,19 @@ import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
+import nerdvana.com.pointofsales.api_requests.XReadRequest;
+import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
+import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -42,10 +50,14 @@ public class CollectionDialog extends BaseDialog {
     private Button save;
 
     private List<SafeKeepDataModel> safeKeepDataModelList;
+    private Context act;
+    private boolean willCashReco;
 
-    public CollectionDialog(@NonNull Context context, String type) {
+    public CollectionDialog(@NonNull Context context, String type, boolean continueCashReco) {
         super(context);
         this.type = type;
+        this.act = context;
+        this.willCashReco = continueCashReco;
     }
 
     @Override
@@ -62,37 +74,60 @@ public class CollectionDialog extends BaseDialog {
                 List<CollectionFinalPostModel> collectionFinalPostModels = new ArrayList<>();
                 for (SafeKeepDataModel skdm : safeKeepDataModelList) {
 
-                    if (!TextUtils.isEmpty(skdm.getEditText().getText().toString().trim()) && !skdm.getEditText().getText().toString().trim().equalsIgnoreCase("0")) {
-                        collectionFinalPostModels.add(
-                                new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
-                                        skdm.getEditText().getText().toString(),
-                                        skdm.getValue(),
-                                        SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE),
-                                        SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                        SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID),
-                                        SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID),
-                                        ""
-                                ));
+                    if (!TextUtils.isEmpty(skdm.getEditText().getText().toString().trim())) {
+                        if (Double.valueOf(skdm.getEditText().getText().toString()) > 0) {
+                            collectionFinalPostModels.add(
+                                    new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
+                                            skdm.getEditText().getText().toString(),
+                                            skdm.getValue(),
+                                            SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE),
+                                            SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                            SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID),
+                                            SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID),
+                                            ""
+                                    ));
+                        }
                     }
-
-
                 }
-                CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
 
-                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+                if (collectionFinalPostModels.size() > 0) {
+                    CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
 
-                request.enqueue(new Callback<CollectionResponse>() {
-                    @Override
-                    public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
-                        dismiss();
-                    }
+                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                    Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
 
-                    @Override
-                    public void onFailure(Call<CollectionResponse> call, Throwable t) {
+                    request.enqueue(new Callback<CollectionResponse>() {
+                        @Override
+                        public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
+                            if (willCashReco) {
+                                CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest();
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
+                                request.enqueue(new Callback<CashNReconcileResponse>() {
+                                    @Override
+                                    public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
+                                        Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                                        dismiss();
+                                    }
 
-                    }
-                });
+                                    @Override
+                                    public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+
+                                    }
+                                });
+                            }
+                            dismiss();
+                        }
+
+                        @Override
+                        public void onFailure(Call<CollectionResponse> call, Throwable t) {
+
+                        }
+                    });
+                } else {
+                    Utils.showDialogMessage(act, "Please put amount for safekeep", "Information");
+                }
+
             }
         });
         requestDenomination();
@@ -147,6 +182,7 @@ public class CollectionDialog extends BaseDialog {
         editText.setHint(actualAmount);
         editText.setId(id);
         editText.setLayoutParams(params1);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
         linearLayout.addView(editText);
 
         safeKeepDataModelList.add(new SafeKeepDataModel(editText, actualAmount));

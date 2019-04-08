@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
+import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
@@ -61,6 +62,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
+import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
@@ -73,6 +75,7 @@ import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
+import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             if (userModel.isLoggedIn()) { //post login
 //                logout.setVisibility(View.VISIBLE);
                 user.setVisibility(View.VISIBLE);
-                user.setText(String.format("%s %s - %s", getResources().getString(R.string.welcome_text), userModel.getUsername(), userModel.getUserGroup()));
+                user.setText(String.format("%s %s - %s", getResources().getString(R.string.welcome_text), userModel.getUsername(), userModel.getUserGroup()) + ApplicationConstants.VERSION);
                 openFragment(R.id.leftFrame, postLoginLeftFrameFragment);
 
                 openFragment(R.id.rightFrame, postLoginRightFrameFragment);
@@ -963,28 +966,28 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "DATE / TIME",
-                        convertDateToReadableDate(checkinDetails.get(0).getCreatedAt()),
+                        convertDateToReadableDate(checkinDetails.get(0).getCreatedAt() != null ? checkinDetails.get(0).getCreatedAt() : "NA"),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "VEHICLE TYPE",
-                        fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId())).toUpperCase(),
+                        fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId() != null ? checkinDetails.get(0).getVehicleId() : "NA")).toUpperCase(),
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "CAR MAKE",
-                        checkinDetails.get(0).getCar().getCarMake().toUpperCase(),
+                        checkinDetails.get(0).getCar().getCarMake() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA",
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumns(
                         "PLATE NUMBER",
-                        checkinDetails.get(0).getPlateNo().toUpperCase(),
+                        checkinDetails.get(0).getPlateNo() != null ? checkinDetails.get(0).getPlateNo().toUpperCase() : "NA",
                         45,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -1040,7 +1043,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             case "SOA-ROOM":
                 TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
                 List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
-
+                Log.d("TETE", String.valueOf(bookedList.size()));
                 addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreater(
                         "CASHIER",
                         getUserInfo(String.valueOf(bookedList.get(0).getUserId())),
@@ -1528,13 +1531,27 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 Intent takeOutIntent = new Intent(this, TakeOutActivity.class);
                 startActivityForResult(takeOutIntent, 20);
                 break;
-            case 117: //logout
+            case 997: //logout
                 userModel.setLoggedIn(false);
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
                 finish();
                 startActivity(new Intent(MainActivity.this, SetupActivity.class));
                 break;
+        }
+    }
+
+    private void checkSafeKeepingRequest() {
+        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+    }
+
+    @Subscribe
+    public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
+        if (checkSafeKeepingResponse.getResult().getCashOnHand() >= 1000) {
+            //pop safekeeping
+            CollectionDialog collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false);
+            if (!collectionDialog.isShowing()) collectionDialog.show();
+
         }
     }
 }

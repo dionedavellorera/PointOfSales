@@ -6,9 +6,12 @@ import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
+import nerdvana.com.pointofsales.api_responses.CheckEndOfDayResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -44,6 +47,8 @@ import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
+import nerdvana.com.pointofsales.api_responses.XReadResponse;
+import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.FieldMap;
@@ -209,28 +214,43 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchCompanyUserResponse> fetchCompanyUser(@FieldMap Map<String, String> params);
 
-    //fetchDiscountReason
     @POST("fetchDiscountReason")
     @FormUrlEncoded
     Call<FetchDiscountReasonResponse> fetchDiscountReason(@FieldMap Map<String, String> params);
 
-    //viewReceipt
     @POST("viewReceipt")
     @FormUrlEncoded
     Call<ViewReceiptResponse> viewReceipt(@FieldMap Map<String, String> params);
 
-    //voidReceipt
     @POST("voidReceipt")
     @FormUrlEncoded
     Call<PostVoidResponse> voidReceipt(@FieldMap Map<String, String> params);
 
-    //wakeUpCallUpdate
     @POST("wakeUpCallUpdate")
     @FormUrlEncoded
     Call<WakeUpCallUpdateResponse> updateWakeUpCall(@FieldMap Map<String, String> params);
 
-    //safeKeeping
     @POST("safeKeeping")
     @FormUrlEncoded
     Call<CollectionResponse> collectionRequest(@FieldMap Map<String, String> params);
+
+    @POST("xReading")
+    @FormUrlEncoded
+    Call<XReadResponse> xReading(@FieldMap Map<String, String> params);
+
+    @POST("zReading")
+    @FormUrlEncoded
+    Call<ZReadResponse> zReading(@FieldMap Map<String, String> params);
+
+    @POST("checkEndOfDay")
+    @FormUrlEncoded
+    Call<CheckEndOfDayResponse> checkEndOfDay(@FieldMap Map<String, String> params);
+
+    @POST("cashNReconcile")
+    @FormUrlEncoded
+    Call<CashNReconcileResponse> cashNReconcile(@FieldMap Map<String, String> params);
+
+    @POST("checkSafeKeeping")
+    @FormUrlEncoded
+    Call<CheckSafeKeepingResponse> checkSafeKeeping(@FieldMap Map<String, String> params);
 }

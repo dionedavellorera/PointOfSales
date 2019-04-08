@@ -56,6 +56,7 @@ import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
+import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
@@ -74,11 +75,15 @@ import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.SwitchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
+import nerdvana.com.pointofsales.api_requests.XReadRequest;
+import nerdvana.com.pointofsales.api_requests.ZReadRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
@@ -101,6 +106,8 @@ import nerdvana.com.pointofsales.api_responses.RoomRateSubViaId;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 //import nerdvana.com.pointofsales.background.CheckoutItemsAsync;
+import nerdvana.com.pointofsales.api_responses.XReadResponse;
+import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
@@ -143,6 +150,7 @@ import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -301,6 +309,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void onRefresh() {
                 if (selectedRoom != null) {
+
                     if (selectedRoom.isTakeOut()) {
                         fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
                     } else {
@@ -419,7 +428,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             //room logic
             currentRoomStatus = selectedRoom.getSelectedRoom().getStatus();
             setView(selectedRoom.getSelectedRoom().getName());
-            fetchRoomPending(String.valueOf(selectedRoom.getSelectedRoom().getRoomId()));
+            fetchRoomPending(String.valueOf(selectedRoom.getSelectedRoom().getRoomId()) + " - " + selectedRoom.getSelectedRoom().getRoomType());
         }
 
         this.selectedRoom = selectedRoom.getSelectedRoom();
@@ -670,22 +679,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
-            case 118:// SAFEKEEPING
-                CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING");
-                if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+            case 121: //CASH AND RECONCILE
+
+                cashNReconcile();
+
+
                 break;
-            case 117: //CUTOFF
-                CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CUTOFF");
-                if (!cutOffDialog.isShowing()) cutOffDialog.show();
+            case 120: //Z READ, END OF DAY
+
+                zReadRequest();
+
+
+                break;
+            case 119: //X READ, SHIFT CUT OFF
+
+                xReadRequest();
+
+
+                break;
+            case 118:// SAFEKEEPING
+                CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false);
+                if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
                 break;
             case 116: //cancel selected room / TO
                 defaultView();
                 clearCartItems();
                 break;
             case 115://DISCOUNT
-
-                //fetchRoomPendingResult
-
                 if (selectedRoom != null) {
                     if (selectedRoom.isTakeOut()) {
                         DiscountSelectionDialog discountSelectionDialog =
@@ -1981,36 +2001,43 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void showCheckInDialog() {
         if (fetchRoomPendingResult != null) {
-            checkInDialog = new CheckInDialog(getActivity(), selectedRoom,
-                    carList, vehicleList,
-                    guestTypeList, userList,
-                    roomAreaList, nationalityList, fetchRoomPendingResult) {
-                @Override
-                public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
-                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                        @Override
-                        public void save(String remarks) {
-                            BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-                                    welcomeGuestRequest.getRoomRatePriceId(),
-                                    remarks));
-                        }
-                    };
+            if (fetchRoomPendingResult.getBooked().size() > 0) {
+                checkInDialog = new CheckInDialog(getActivity(), selectedRoom,
+                        carList, vehicleList,
+                        guestTypeList, userList,
+                        roomAreaList, nationalityList, fetchRoomPendingResult) {
+                    @Override
+                    public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
+                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                            @Override
+                            public void save(String remarks) {
+                                BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+                                        welcomeGuestRequest.getRoomRatePriceId(),
+                                        remarks));
+                            }
+                        };
 
-                    confirmWithRemarksDialog.show();
+                        confirmWithRemarksDialog.show();
 
-                }
-            };
-            if (!checkInDialog.isShowing()) checkInDialog.show();
+                    }
+                };
+                if (!checkInDialog.isShowing()) checkInDialog.show();
+
+                checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
+                    }
+                });
+            } else {
+                Utils.showDialogMessage((MainActivity)getContext(), "No guest info data", "Information");
+            }
+
         } else {
             Utils.showDialogMessage(getActivity(), "Fetch room pending result is null", "Information");
         }
 
-        checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
-            }
-        });
+
 
     }
 
@@ -2088,6 +2115,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     Utils.showDialogMessage((MainActivity)getContext(), "No item/s to print", "Information");
                 }
             } else {
+
+                Log.d("SSSSS", String.valueOf(selectedRoom.getRoomId()));
+                Log.d("SSSSS", selectedRoom.getName());
+                Log.d("SSSSS", String.valueOf(printSoaResponse.getResult().getBooked().size()));
+
                 BusProvider.getInstance().post(new PrintModel("",
                         selectedRoom.getName(),
                         "SOA-ROOM",
@@ -2110,11 +2142,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void addPaymentResponse(AddPaymentResponse addPaymentResponse) {
         if (selectedRoom != null) {
-            if (selectedRoom.isTakeOut()) {
-                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+            if (addPaymentResponse.getStatus() == 0) {
+                Utils.showDialogMessage((MainActivity)getContext(), addPaymentResponse.getMessage(), "Information");
             } else {
-                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                if (selectedRoom.isTakeOut()) {
+                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                } else {
+                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                }
             }
+
         }
     }
 
@@ -2283,14 +2320,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void checkoutResponse(CheckOutResponse checkOutResponse) {
 
-        printReceiptFromCheckout(selectedRoom.getControlNo(),
-                selectedRoom.getName(),
-                selectedRoom.getRoomType());
+        if (checkOutResponse.getResult().getData().getBooked() != null) {
 
-        Utils.showDialogMessage((MainActivity)getContext(), "CHECK OUT SUCCES", "Information");
-        clearCartItems();
-        defaultView();
+            Toast.makeText(getContext(), "ROOM", Toast.LENGTH_SHORT).show();
+        } else {
 
+            Toast.makeText(getContext(), "TAKE OUT", Toast.LENGTH_SHORT).show();
+        }
+
+//        if (checkOutResponse.getStatus() == 0) {
+//            Utils.showDialogMessage((MainActivity)getContext(), checkOutResponse.getMessage(), "Information");
+//        } else {
+//            printReceiptFromCheckout(selectedRoom.getControlNo(),
+//                    selectedRoom.getName(),
+//                    selectedRoom.getRoomType());
+//            Utils.showDialogMessage((MainActivity)getContext(), "CHECK OUT SUCCESS", "Information");
+//            clearCartItems();
+//            defaultView();
+//        }
     }
 
 
@@ -2589,6 +2636,81 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             @Override
             public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private boolean hasUnpostedItems() {
+        boolean hasUnposted = false;
+        for (CartItemsModel cim : cartItemList) {
+            if (!cim.isPosted()) {
+                hasUnposted = true;
+                break;
+            }
+        }
+
+        return hasUnposted;
+    }
+
+    private void cashNReconcile() {
+        CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
+        request.enqueue(new Callback<CashNReconcileResponse>() {
+            @Override
+            public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
+
+                Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
+
+            }
+
+            @Override
+            public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+
+    private void zReadRequest() {
+        ZReadRequest zReadRequest = new ZReadRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
+        request.enqueue(new Callback<ZReadResponse>() {
+            @Override
+            public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+
+                Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
+
+            }
+
+            @Override
+            public void onFailure(Call<ZReadResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void xReadRequest() {
+        XReadRequest xReadRequest = new XReadRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<XReadResponse> request = iUsers.xReading(xReadRequest.getMapValue());
+        request.enqueue(new Callback<XReadResponse>() {
+            @Override
+            public void onResponse(Call<XReadResponse> call, Response<XReadResponse> response) {
+                if (response.body().getStatus() == 1) {
+                    //open safekeep, upon success of safekeep call cash and reconcile
+                    CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CUTOFF", true);
+                    if (!cutOffDialog.isShowing()) cutOffDialog.show();
+                } else {
+                    Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<XReadResponse> call, Throwable t) {
 
             }
         });

@@ -38,11 +38,14 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",15));
         buttonsModelList.add(new ButtonsModel(114,"SWITCH ROOM", "",16));
         buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",17));
+        buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
         buttonsModelList.add(new ButtonsModel(117,"CUT-OFF", "",18));
         buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",19));
-        buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
+        buttonsModelList.add(new ButtonsModel(119,"X-READ", "",21));
+        buttonsModelList.add(new ButtonsModel(120,"Z-READ", "",22));
+        buttonsModelList.add(new ButtonsModel(121,"CASH N RECONCILE", "",23));
 
-        buttonsModelList.add(new ButtonsModel(117,"LOGOUT", "",100));
+        buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
 
 //        buttonsModelList.add(new ButtonsModel(110,"VALIDATE SLIP", "",10));
 //        buttonsModelList.add(new ButtonsModel(110,"IN-TRANSIT", "",10));

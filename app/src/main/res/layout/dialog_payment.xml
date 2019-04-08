@@ -46,6 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:inputType="numberDecimal"
                         android:gravity="center"
                         android:hint="amount"
                         android:layout_toLeftOf="@id/add"
@@ -124,6 +125,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:inputType="numberDecimal"
                         android:hint="Amount"
                         android:id="@+id/creditCardAmount"
                         android:layout_width="match_parent"
@@ -177,6 +179,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:inputType="numberDecimal"
                         android:hint="Voucher amount"
                         android:id="@+id/voucherAmount"
                         android:layout_width="match_parent"
@@ -212,6 +215,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:inputType="number"
                         android:text="1"
                         android:hint="Quantity"
                         android:id="@+id/voucherQuantity"
@@ -259,6 +263,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:inputType="number"
                         android:hint="forex amount"
                         android:id="@+id/forexAmount"
                         android:layout_width="match_parent"

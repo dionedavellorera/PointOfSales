@@ -103,7 +103,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setDialogLayout(R.layout.dialog_checkin, "GUEST INFO");
+        setDialogLayout(R.layout.dialog_checkin, String.format("%s - %s (%s)", "GUEST INFO", selectedRoom.getName(), selectedRoom.getRoomType()));
 
         child = findViewById(R.id.child);
         adult = findViewById(R.id.adult);

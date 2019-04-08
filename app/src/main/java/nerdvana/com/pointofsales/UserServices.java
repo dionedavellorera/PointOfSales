@@ -9,6 +9,7 @@ import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
+import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
@@ -49,6 +50,7 @@ import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -401,6 +403,13 @@ public class UserServices extends BaseService {
     public void collectionSafeKeepCashReco(CollectionRequest collectionRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void checkSafeKeeping(CheckSafeKeepingRequest checkSafeKeepingRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CheckSafeKeepingResponse> request = iUsers.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
         asyncRequest(request);
     }
 

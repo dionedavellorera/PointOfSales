@@ -43,6 +43,7 @@ import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
@@ -61,6 +62,7 @@ import nerdvana.com.pointofsales.entities.PaymentEntity;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -234,62 +236,143 @@ public abstract class PaymentDialog extends BaseDialog  {
                 if (paymentMethod == null) {
                     Toast.makeText(getContext(), "Please select payment method", Toast.LENGTH_SHORT).show();
                 } else {
-
                     if (paymentMethod.getCoreId().equalsIgnoreCase("1")) { //cash
-                        postedPaymentList.add(new PostedPaymentsModel(
-                                paymentMethod.getCoreId(),
-                                amountToPay.getText().toString(),
-                                paymentMethod.getPaymentType(),
-                                false,
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                new JSONObject(),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("2")) { //card
+                        if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
+                            if (Double.valueOf(amountToPay.getText().toString()) > 0) {
+                                postedPaymentList.add(new PostedPaymentsModel(
+                                        paymentMethod.getCoreId(),
+                                        amountToPay.getText().toString(),
+                                        paymentMethod.getPaymentType(),
+                                        false,
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                        new JSONObject(),
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                            } else {
+                                Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
+                            }
+                        } else {
+                            Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
+                        }
 
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("card_type_id", cardTypeId);
-                            jsonObject.put("card_number", cardNumber.getText().toString());
-                            jsonObject.put("account_name", cardHoldersName.getText().toString());
-                            jsonObject.put("card_expiration", cardExpiration.getText().toString());
-                            jsonObject.put("authorization", authorization.getText().toString());
-                            jsonObject.put("remarks", remarks.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("2")) { //card
+                        boolean isValid = true;
+                        String errorMessage = "";
+                        if (TextUtils.isEmpty(cardTypeId)) {
+                            isValid = false;
+                            errorMessage += "Empty card type \n";
                         }
-                        postedPaymentList.add(new PostedPaymentsModel(
-                                paymentMethod.getCoreId(),
-                                creditCardAmount.getText().toString(),
-                                paymentMethod.getPaymentType(),
-                                false,
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+
+                        if (TextUtils.isEmpty(cardNumber.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Empty card number \n";
+                        }
+
+                        if (TextUtils.isEmpty(cardHoldersName.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Empty card holders name \n";
+                        }
+
+                        if (TextUtils.isEmpty(cardExpiration.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Empty expiration date \n";
+                        }
+
+                        if (TextUtils.isEmpty(authorization.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Empty authorization \n";
+                        }
+
+                        if (TextUtils.isEmpty(creditCardAmount.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Invalid amount \n";
+                        } else {
+                            if (Double.valueOf(creditCardAmount.getText().toString()) < 1) {
+                                isValid = false;
+                                errorMessage += "Invalid amount \n";
+                            }
+                        }
+
+
+
+                        if (paymentMethod == null) {
+                            isValid = false;
+                            errorMessage += "Invalid payment method \n";
+                        }
+
+                        if (isValid) {
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("card_type_id", cardTypeId);
+                                jsonObject.put("card_number", cardNumber.getText().toString());
+                                jsonObject.put("account_name", cardHoldersName.getText().toString());
+                                jsonObject.put("card_expiration", cardExpiration.getText().toString());
+                                jsonObject.put("authorization", authorization.getText().toString());
+                                jsonObject.put("remarks", remarks.getText().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            postedPaymentList.add(new PostedPaymentsModel(
+                                    paymentMethod.getCoreId(),
+                                    creditCardAmount.getText().toString(),
+                                    paymentMethod.getPaymentType(),
+                                    false,
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                    jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+
+
+                        } else {
+                            Utils.showDialogMessage(act, errorMessage, "Information");
+                        }
+
+
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("3")) { //online
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("online_payment_id", onlineId);
-                            jsonObject.put("voucher_code", voucherCode.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+
+                        boolean isValid = true;
+                        String errorMessage = "";
+
+                        if (paymentMethod == null) {
+                            isValid = false;
+                            errorMessage += "Invalid payment method \n";
                         }
-                        postedPaymentList.add(new PostedPaymentsModel(
-                                paymentMethod.getCoreId(),
-                                voucherAmount.getText().toString(),
-                                paymentMethod.getPaymentType(),
-                                false,
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                jsonObject,
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+
+                        if (TextUtils.isEmpty(onlineId.trim())) {
+                            isValid = false;
+                            errorMessage += "Please select ar type \n" ;
+                        }
+
+                        if (TextUtils.isEmpty(voucherCode.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Empty voucher code \n";
+                        }
+
+                        if (isValid) {
+                            JSONObject jsonObject = new JSONObject();
+                            try {
+                                jsonObject.put("online_payment_id", onlineId);
+                                jsonObject.put("voucher_code", voucherCode.getText().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            postedPaymentList.add(new PostedPaymentsModel(
+                                    paymentMethod.getCoreId(),
+                                    voucherAmount.getText().toString(),
+                                    paymentMethod.getPaymentType(),
+                                    false,
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                    jsonObject,
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                        } else {
+                            Utils.showDialogMessage(act, errorMessage, "Information");
+                        }
 
                     } else if (paymentMethod.getCoreId().equalsIgnoreCase("5")) { //voucher
                         if (gcList.size() > 0) {
-
                             Double amount = 0.00;
                             String gcCode = "";
                             int index = 0;
@@ -310,14 +393,6 @@ public abstract class PaymentDialog extends BaseDialog  {
                                 e.printStackTrace();
                             }
 
-//                            Log.d("TESTDATAGC", new PostedPaymentsModel(
-//                                    paymentMethod.getCoreId(),
-//                                    String.valueOf(amount),
-//                                    paymentMethod.getPaymentType(),
-//                                    false,
-//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-//                                    jsonObject).toString());
 
                             postedPaymentList.add(new PostedPaymentsModel(
                                     paymentMethod.getCoreId(),
@@ -330,28 +405,56 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
                         } else {
-                            Toast.makeText(getContext(),"No gc added", Toast.LENGTH_SHORT).show();
+                            Utils.showDialogMessage(act, "No gc added", "Information");
+                        }
+                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("6")) { //forex
+
+                        boolean isValid = true;
+                        String errorMessage = "";
+
+                        if (paymentMethod == null) {
+                            isValid = false;
+                            errorMessage += "Invalid payment method";
+                        }
+
+                        if (TextUtils.isEmpty(currencyId.toString().trim()) || TextUtils.isEmpty(currencyId.toString().trim())) {
+                            isValid = false;
+                            errorMessage += "invalid currency";
+                        }
+
+                        if (!TextUtils.isEmpty(forexAmount.getText().toString().trim())) {
+                            if (Double.valueOf(forexAmount.getText().toString()) < 1) {
+                                isValid = false;
+                                errorMessage = "Invalid amount \n";
+                            }
+                        } else {
+                            isValid = false;
+                            errorMessage = "Invalid amount \n";
                         }
 
 
+                        if (isValid) {
+                            postedPaymentList.add(new PostedPaymentsModel(
+                                    paymentMethod.getCoreId(),
+                                    forexAmount.getText().toString(),
+                                    paymentMethod.getPaymentType(),
+                                    false,
+                                    currencyId,
+                                    currencyValue,
+                                    new JSONObject(),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                        } else {
+                            Utils.showDialogMessage(act, errorMessage, "Information");
+                        }
 
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("6")) { //forex
-                        postedPaymentList.add(new PostedPaymentsModel(
-                                paymentMethod.getCoreId(),
-                                forexAmount.getText().toString(),
-                                paymentMethod.getPaymentType(),
-                                false,
-                                currencyId,
-                                currencyValue,
-                                new JSONObject(),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+
                     }
 
                     if (postedPaymentsAdapter != null) {
                         postedPaymentsAdapter.notifyDataSetChanged();
                     }
-                    paymentMethod = null;
+//                    paymentMethod = null;
                 }
 
                 computeTotal();
@@ -361,7 +464,12 @@ public abstract class PaymentDialog extends BaseDialog  {
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paymentSuccess(postedPaymentList);
+                if (postedPaymentList.size() > 0) {
+                    paymentSuccess(postedPaymentList);
+                } else {
+                    Utils.showDialogMessage(act, "No payment to post", "Warning");
+                }
+
             }
         });
 
@@ -386,13 +494,12 @@ public abstract class PaymentDialog extends BaseDialog  {
                 availableGcAdapter.notifyDataSetChanged();
             }
         };
-//        gcList.add(new AvailableGcModel("12321", "321321", "132131", "!32131"));
+
         availableGcAdapter = new AvailableGcAdapter(gcList, item);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         listAvailedGcs.setLayoutManager(llm);
         listAvailedGcs.setAdapter(availableGcAdapter);
         availableGcAdapter.notifyDataSetChanged();
-
         showForm("1");
     }
 
@@ -411,7 +518,12 @@ public abstract class PaymentDialog extends BaseDialog  {
         }
 
         totalChange = totalPayment - totalBalance;
-        displayTotalChange.setText(String.valueOf(totalChange));
+        if (Double.valueOf(totalChange) < 1) {
+            displayTotalChange.setText("0");
+        } else {
+            displayTotalChange.setText(String.valueOf(totalChange));
+        }
+
         displayTotalPayment.setText(String.valueOf(totalPayment));
 
         if (totalPayment >= totalBalance) {

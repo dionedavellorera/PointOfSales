@@ -3,7 +3,7 @@ package nerdvana.com.pointofsales.api_responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AddPaymentResponse {
+public class XReadResponse {
     @SerializedName("status")
     @Expose
     private Integer status;

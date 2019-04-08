@@ -9,6 +9,10 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.view.Display;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class Utils {
     public static boolean checkConnection(Context context) {
         ConnectivityManager cm =
@@ -39,7 +43,6 @@ public class Utils {
         if (!alert.isShowing()) {
             alert.show();
         }
-
     }
 
     public static String returnWithTwoDecimal(String amount) {
@@ -56,6 +59,24 @@ public class Utils {
         }
 
         return finalValue;
+
+    }
+
+    public static String convertDateToReadableDate(String createdAt) {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        String res = "";
+        try {
+            DateTime jodatime = dtf.parseDateTime(createdAt);
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+
+
+            res = dtfOut.print(jodatime);
+        } catch (Exception e) {
+            res  = "NA";
+        }
+
+
+        return res.toUpperCase();
 
     }
 }

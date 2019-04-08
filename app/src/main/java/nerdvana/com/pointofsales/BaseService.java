@@ -27,19 +27,19 @@ public class BaseService {
         apiCall.enqueue(new Callback<T>() {
             @Override
             public void onResponse(Call<T> call, Response<T> response) {
-//                BusProvider.getInstance().post(response.body());
-                try {
-                    BusProvider.getInstance().post(response.body());
-                } catch (Exception e) {
-                    BusProvider.getInstance().post(new ApiError(e.getMessage()));
-                    BusProvider.getInstance().post(new ProgressBarModel(false, e.getMessage()));
-                }
+                BusProvider.getInstance().post(response.body());
+//                try {
+//                    BusProvider.getInstance().post(response.body());
+//                } catch (Exception e) {
+//                    BusProvider.getInstance().post(new ApiError(e.getMessage()));
+//                    BusProvider.getInstance().post(new ProgressBarModel(false, e.getMessage()));
+//                }
             }
 
             @Override
             public void onFailure(Call<T> call, Throwable t) {
-                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
-                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
+//                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
+//                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
             }
         });
 
