@@ -13,15 +13,11 @@ public class CollectionRequest extends BaseRequest{
     public CollectionRequest(List<CollectionFinalPostModel> collectionFinalPostModels) {
         mapValue = new HashMap<>();
         mapValue.put("post", GsonHelper.getGson().toJson(collectionFinalPostModels));
-
-
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
-
-
     }
 
     public Map<String, String> getMapValue() {

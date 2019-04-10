@@ -3,15 +3,18 @@ package nerdvana.com.pointofsales.dialogs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +26,12 @@ import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.OrListAdapter;
-import nerdvana.com.pointofsales.adapters.OrderSlipProductsAdapter;
+import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.PostVoidRequest;
 import nerdvana.com.pointofsales.api_requests.ViewReceiptRequest;
+import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
@@ -39,8 +44,10 @@ import retrofit2.Response;
 
 public abstract class TransactionsDialog extends BaseDialog implements CheckoutItemsContract {
     private Boolean isViewing;
+    private String roomId = "";
 
     private RecyclerView listTransaction;
+    List<String> roomNumbers = new ArrayList<>();
     private RecyclerView listTransactionDetails;
     private Button reprintOr;
     private Button postVoid;
@@ -54,10 +61,16 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
 
     private OrList orList;
     String receiptNo = "";
+    private String controlNumber = "";
     private List<ViewReceiptResponse.Result> resultList;
     private List<CartItemsModel> cartItemList;
     private ViewReceiptResponse.Result selectedOr;
     private Activity act;
+
+    private CheckBox isTo;
+    private SearchView receiptNumber;
+    private Spinner roomSpinner;
+    private Button search;
 
     public TransactionsDialog(@NonNull Context context, Boolean isViewing, Activity activity) {
         super(context);
@@ -65,18 +78,19 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
         this.act = activity;
     }
 
-    public TransactionsDialog(@NonNull Context context, int themeResId) {
-        super(context, themeResId);
-    }
-
-    protected TransactionsDialog(@NonNull Context context, boolean cancelable, @NonNull DialogInterface.OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_transactions, "TRANSACTIONS");
+
+        search = findViewById(R.id.buttonSearch);
+        isTo = findViewById(R.id.checkBoxIsTo);
+        receiptNumber = findViewById(R.id.searchView);
+        roomSpinner = findViewById(R.id.roomSpinner);
+
+        setRoomSpinner();
+
 
         subTotal = findViewById(R.id.subTotalValue);
         total = findViewById(R.id.totalValue);
@@ -95,7 +109,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
 
                 setOrDetails(selectedOr);
                 receiptNo = resultList.get(position).getReceiptNo();
-
+                controlNumber = resultList.get(position).getControlNo();
                 if (selectedOr.getGuestInfo() != null) {
                     header.setText("RECEIPT# " +receiptNo + " - ROOM " + selectedOr.getGuestInfo().getRoomNo());
                 } else {
@@ -113,7 +127,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
             postVoid.setVisibility(View.GONE);
 
         } else {
-            showAllReceipt();
+//            showAllReceipt();
             reprintOr.setVisibility(View.GONE);
             postVoid.setVisibility(View.VISIBLE);
         }
@@ -128,13 +142,13 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
         postVoid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(receiptNo)) {
+                if (TextUtils.isEmpty(controlNumber)) {
                     Toast.makeText(getContext(), "Please select transaction to void", Toast.LENGTH_SHORT).show();
                 } else {
                     PasswordDialog passwordDialog = new PasswordDialog(act) {
                         @Override
                         public void passwordSuccess(String employeeId) {
-                            postVoidRequest(receiptNo, employeeId);
+                            postVoidRequest(controlNumber, employeeId);
                         }
 
                         @Override
@@ -146,7 +160,19 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 }
             }
         });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isTo.isChecked()) {
+                    showAllReceipt("", receiptNumber.getQuery().toString());
+                } else {
+                    showAllReceipt(roomId, receiptNumber.getQuery().toString());
+                }
+            }
+        });
     }
+
 
     @Override
     protected void onStart() {
@@ -166,8 +192,8 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
         BusProvider.getInstance().unregister(this);
     }
 
-    private void showAllReceipt() {
-        ViewReceiptRequest viewReceiptRequest = new ViewReceiptRequest();
+    private void showAllReceipt(String roomId, String receiptNumber) {
+        ViewReceiptRequest viewReceiptRequest = new ViewReceiptRequest(roomId, receiptNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<ViewReceiptResponse> request = iUsers.viewReceipt(viewReceiptRequest.getMapValue());
         request.enqueue(new Callback<ViewReceiptResponse>() {
@@ -243,16 +269,17 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 tpost.getPrice(),
                                 false,
                                 String.valueOf(tpost.getId()),
-                                false
+                                false,
+                                ""
                         ));
                     } else {
                         cartItemList.add(roomRateCounter.size(), new CartItemsModel(
                                 tpost.getControlNo(),
-                                tpost.getRoomId(),
+                                tpost.getRoomId() != null ? tpost.getRoomId() : 0,
                                 tpost.getProductId(),
-                                tpost.getRoomTypeId(),
+                                tpost.getRoomTypeId() != null ? tpost.getRoomTypeId() : 0,
                                 tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
-                                tpost.getRoomRatePriceId(),
+                                tpost.getRoomRatePriceId() != null ? tpost.getRoomRatePriceId() : 0,
                                 tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toString().toUpperCase(),
                                 tpost.getProductId() == 0 ? false : true,
                                 tpost.getTotal(),
@@ -264,7 +291,8 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 tpost.getPrice(),
                                 false,
                                 String.valueOf(tpost.getId()),
-                                false
+                                false,
+                                ""
                         ));
                     }
                 }
@@ -289,15 +317,22 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
         }
     }
 
-    private void postVoidRequest(String receiptNumber, String empId) {
-        PostVoidRequest postVoidRequest = new PostVoidRequest(empId, receiptNumber);
+    private void postVoidRequest(String controlNumber, String empId) {
+        PostVoidRequest postVoidRequest = new PostVoidRequest(empId, controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<PostVoidResponse> request = iUsers.voidReceipt(postVoidRequest.getMapValue());
         request.enqueue(new Callback<PostVoidResponse>() {
             @Override
             public void onResponse(Call<PostVoidResponse> call, Response<PostVoidResponse> response) {
-                postVoidSuccess();
-                dismiss();
+
+                if (response.body().getStatus() == 0) {
+                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                } else {
+                    postVoidSuccess();
+                    dismiss();
+                }
+
+
 
             }
 
@@ -309,4 +344,44 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     }
 
     public abstract void postVoidSuccess();
+
+    private void setRoomSpinner() {
+        FetchRoomRequest fetchRoomRequest = new FetchRoomRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        roomNumbers = new ArrayList<>();
+        Call<FetchRoomResponse> roomlistRequest = iUsers.sendRoomListRequest(
+                fetchRoomRequest.getMapValue());
+        roomlistRequest.enqueue(new Callback<FetchRoomResponse>() {
+            @Override
+            public void onResponse(Call<FetchRoomResponse> call, final Response<FetchRoomResponse> response) {
+                for (FetchRoomResponse.Result frr : response.body().getResult()) {
+                    roomNumbers.add(frr.getRoomNo());
+                }
+
+                CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                        roomNumbers);
+                roomSpinner.setAdapter(rateSpinnerAdapter);
+
+                roomSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        roomId = String.valueOf(response.body().getResult().get(position).getId());
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onFailure(Call<FetchRoomResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
 }

@@ -6,12 +6,14 @@ import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
 import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckEndOfDayResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
+import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -253,4 +255,13 @@ public interface IUsers {
     @POST("checkSafeKeeping")
     @FormUrlEncoded
     Call<CheckSafeKeepingResponse> checkSafeKeeping(@FieldMap Map<String, String> params);
+
+    @POST("cancelOverTime")
+    @FormUrlEncoded
+    Call<CancelOverTimeResponse> cancelOverTime(@FieldMap Map<String, String> params);
+
+    //CheckXReadRequest()
+    @POST("checkXReading")
+    @FormUrlEncoded
+    Call<CheckXReadResponse> checkXREad(@FieldMap Map<String, String> params);
 }

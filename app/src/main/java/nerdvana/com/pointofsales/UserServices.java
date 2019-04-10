@@ -6,6 +6,7 @@ import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
+import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
@@ -47,6 +48,7 @@ import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
@@ -410,6 +412,13 @@ public class UserServices extends BaseService {
     public void checkSafeKeeping(CheckSafeKeepingRequest checkSafeKeepingRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<CheckSafeKeepingResponse> request = iUsers.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void cancelOverTime(CancelOverTimeRequest cancelOverTimeRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
         asyncRequest(request);
     }
 

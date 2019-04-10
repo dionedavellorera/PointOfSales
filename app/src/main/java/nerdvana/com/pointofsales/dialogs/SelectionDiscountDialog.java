@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.dialogs;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -60,12 +61,15 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
 
     private Context context;
     private Button submit;
+    private String specialDiscountId;
 
-    public SelectionDiscountDialog(@NonNull Context context, String controlNumber, String roomId) {
+    public SelectionDiscountDialog(@NonNull Context context, String controlNumber,
+                                   String roomId, String specialDiscountId) {
         super(context);
         this.context = context;
         this.controlNumber = controlNumber;
         this.roomId = roomId;
+        this.specialDiscountId = specialDiscountId;
     }
 
     @Override
@@ -145,7 +149,17 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                 if (response.body().getResult().size() > 0) {
                     ArrayList<String> stringArray = new ArrayList<>();
                     for (FetchDiscountResponse.Result r :response.body().getResult()) {
-                        stringArray.add(r.getDiscountCard());
+                        if (!TextUtils.isEmpty(specialDiscountId)) {
+                            if (specialDiscountId.equalsIgnoreCase(String.valueOf(r.getId()))) {
+                                stringArray.add(r.getDiscountCard());
+                                break;
+                            }
+                        } else {
+                            if (r.getIsSpecial() != 1) {
+                                stringArray.add(r.getDiscountCard());
+                            }
+                        }
+
                     }
                     CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                             stringArray);

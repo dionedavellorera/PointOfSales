@@ -3,7 +3,7 @@ package nerdvana.com.pointofsales.api_responses;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CollectionResponse {
+public class CancelOverTimeResponse {
 
     @SerializedName("status")
     @Expose
@@ -12,13 +12,6 @@ public class CollectionResponse {
     @Expose
     private String message;
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 
     public String getMessage() {
         return message;
@@ -28,4 +21,11 @@ public class CollectionResponse {
         this.message = message;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }

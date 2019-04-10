@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-
+        checkSafeKeepingRequest();
         loadPrinter();
     }
 
@@ -1303,20 +1303,25 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void addFooterToPrinter() {
-        addTextToPrinter(SPrinter.getPrinter(), "OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Thank you come again", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Accred No. 1231231231231231231234324234", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "----- SYSTEM PROVIDER DETAILS -----", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Provider : Nerdvana", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Address : test address", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "TIN: 432545435435", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "ACCRE No. : 1231231231231231231234324234", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Date issued : 01/01/2001", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Valid until : 01/01/2090", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addPrinterSpace(1);
-        addTextToPrinter(SPrinter.getPrinter(), "THIS INVOICE RECEIPT SHALL BE VALID FOR FIVE(5) YEARS FROM THE DATE OF THE PERMIT TO USE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addPrinterSpace(1);
+
+        if (SPrinter.getPrinter() != null) {
+            addTextToPrinter(SPrinter.getPrinter(), "OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Thank you come again", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Accred No. 1231231231231231231234324234", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "----- SYSTEM PROVIDER DETAILS -----", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Provider : Nerdvana", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Address : test address", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "TIN: 432545435435", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "ACCRE No. : 1231231231231231231234324234", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Date issued : 01/01/2001", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Valid until : 01/01/2090", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addPrinterSpace(1);
+            addTextToPrinter(SPrinter.getPrinter(), "THIS INVOICE RECEIPT SHALL BE VALID FOR FIVE(5) YEARS FROM THE DATE OF THE PERMIT TO USE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addPrinterSpace(1);
+        }
+
+
 
     }
 
@@ -1325,26 +1330,31 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                                   int isBold, int isUnderlined,
                                   int alignment, int feedLine,
                                   int textSizeWidth, int textSizeHeight) {
-        StringBuilder textData = new StringBuilder();
-        try {
-            printer.addTextSize(textSizeWidth, textSizeHeight);
-            printer.addTextAlign(alignment);
-            printer.addTextStyle(Printer.PARAM_DEFAULT, isUnderlined, isBold, Printer.PARAM_DEFAULT);
-            printer.addTextSmooth(Printer.TRUE);
-            printer.addText(textData.toString());
-            textData.append(text);
-            printer.addText(textData.toString());
-            textData.delete(0, textData.length());
-            printer.addFeedLine(feedLine);
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+
+        if (printer != null) {
+            StringBuilder textData = new StringBuilder();
+            try {
+                printer.addTextSize(textSizeWidth, textSizeHeight);
+                printer.addTextAlign(alignment);
+                printer.addTextStyle(Printer.PARAM_DEFAULT, isUnderlined, isBold, Printer.PARAM_DEFAULT);
+                printer.addTextSmooth(Printer.TRUE);
+                printer.addText(textData.toString());
+                textData.append(text);
+                printer.addText(textData.toString());
+                textData.delete(0, textData.length());
+                printer.addFeedLine(feedLine);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
         }
+
+
 
     }
 
     private void loadPrinter() {
         if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT))) {
-            SPrinter printer = new SPrinter(
+            new SPrinter(
                     Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_LANGUAGE)),
                     getApplicationContext());
@@ -1547,11 +1557,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Subscribe
     public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
-        if (checkSafeKeepingResponse.getResult().getCashOnHand() >= 1000) {
-            //pop safekeeping
+        Log.d("TETETE", "TEST");
+        Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
+        if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
             CollectionDialog collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false);
             if (!collectionDialog.isShowing()) collectionDialog.show();
-
         }
     }
 }

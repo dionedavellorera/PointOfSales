@@ -52,6 +52,7 @@ public class CollectionDialog extends BaseDialog {
     private List<SafeKeepDataModel> safeKeepDataModelList;
     private Context act;
     private boolean willCashReco;
+    List<CollectionFinalPostModel> collectionFinalPostModels;
 
     public CollectionDialog(@NonNull Context context, String type, boolean continueCashReco) {
         super(context);
@@ -71,7 +72,7 @@ public class CollectionDialog extends BaseDialog {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<CollectionFinalPostModel> collectionFinalPostModels = new ArrayList<>();
+                collectionFinalPostModels = new ArrayList<>();
                 for (SafeKeepDataModel skdm : safeKeepDataModelList) {
 
                     if (!TextUtils.isEmpty(skdm.getEditText().getText().toString().trim())) {
@@ -90,40 +91,81 @@ public class CollectionDialog extends BaseDialog {
                     }
                 }
 
+
+//                if (willCashReco) {
+//                    CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest();
+//                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//                    Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
+//                    request.enqueue(new Callback<CashNReconcileResponse>() {
+//                        @Override
+//                        public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
+//                            Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+//                            dismiss();
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+//
+//                        }
+//                    });
+//                }
+
+
                 if (collectionFinalPostModels.size() > 0) {
-                    CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
-
-                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                    Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
-
-                    request.enqueue(new Callback<CollectionResponse>() {
-                        @Override
-                        public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
-                            if (willCashReco) {
-                                CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest();
+                    if (willCashReco) {
+                        PasswordDialog passwordDialog = new PasswordDialog(act) {
+                            @Override
+                            public void passwordSuccess(String employeeId) {
                                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
-                                request.enqueue(new Callback<CashNReconcileResponse>() {
+                                XReadRequest collectionRequest = new XReadRequest(collectionFinalPostModels, employeeId);
+                                Call<XReadResponse> request = iUsers.xReading(collectionRequest.getMapValue());
+                                request.enqueue(new Callback<XReadResponse>() {
                                     @Override
-                                    public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
-                                        Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-                                        dismiss();
+                                    public void onResponse(Call<XReadResponse> call, Response<XReadResponse> response) {
+                                        if (response.body().getStatus() == 0) {
+                                            Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                                        } else {
+                                            dismiss();
+                                        }
                                     }
 
                                     @Override
-                                    public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+                                    public void onFailure(Call<XReadResponse> call, Throwable t) {
 
                                     }
                                 });
                             }
-                            dismiss();
-                        }
 
-                        @Override
-                        public void onFailure(Call<CollectionResponse> call, Throwable t) {
+                            @Override
+                            public void passwordFailed() {
 
-                        }
-                    });
+                            }
+                        };
+
+                        if (!passwordDialog.isShowing()) passwordDialog.show();
+
+                    } else {
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
+                        Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+
+                        request.enqueue(new Callback<CollectionResponse>() {
+                            @Override
+                            public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
+                                if (response.body().getStatus() == 0) {
+                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                                } else {
+                                    dismiss();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CollectionResponse> call, Throwable t) {
+
+                            }
+                        });
+                    }
+
                 } else {
                     Utils.showDialogMessage(act, "Please put amount for safekeep", "Information");
                 }

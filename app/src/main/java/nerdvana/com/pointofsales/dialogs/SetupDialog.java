@@ -135,6 +135,7 @@ public class SetupDialog extends BaseDialog {
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTax()), ApplicationConstants.TAX_RATE);
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getId()), ApplicationConstants.BRANCH_ID);
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getBranchCode()), ApplicationConstants.BRANCH_CODE);
+                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getSafe_keeping_amount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
                     dismiss();
                 }
             }

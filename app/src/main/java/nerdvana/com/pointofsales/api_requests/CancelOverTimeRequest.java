@@ -7,13 +7,22 @@ import java.util.Map;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
-public class ViewReceiptRequest {
+public class CancelOverTimeRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
-    public ViewReceiptRequest(String roomId, String receiptNumber) {
+    public CancelOverTimeRequest(String roomId, String controlNumber) {
         mapValue = new HashMap<>();
+
         mapValue.put("room_id", roomId);
-        mapValue.put("receipt_no", receiptNumber);
+        mapValue.put("control_no", controlNumber);
+
+        mapValue.put("user_id", userId);
+        mapValue.put("pos_id", machineNumber);
+        mapValue.put("branch_id", branchId);
+        mapValue.put("branch_code", branchCode);
+        mapValue.put("tax", tax);
+
+
     }
 
     public Map<String, String> getMapValue() {

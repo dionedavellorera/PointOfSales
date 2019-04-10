@@ -70,29 +70,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((ProductsViewHolder) holder).iconStatus.setVisibility(View.VISIBLE);
             }
 
-            ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    checkoutItemsContract.itemSelected(cartItem, holder.getAdapterPosition());
-                    notifyItemChanged(i);
-                }
-            });
 
-
-//            if (productsModel.getProductStatus() != ProductConstants.PENDING &&
-//                    productsModel.getProductStatus() != ProductConstants.VOID) {
-
-//            }
-
-//            ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-////                    checkoutItemsContract.itemSelected(productsModel, holder.getAdapterPosition());
-////                    notifyItemChanged(i);
-//
-//                }
-//            });
 
 
 
@@ -106,39 +84,35 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
-//            if (!cartItem.isPosted()) {
-//                ((ProductsViewHolder)holder).price.setText(String.valueOf(((cartItem.getAmount() * (cartItem.getMarkUp() + 1))) * cartItem.getQuantity()));
-//
-//            } else {
-//            }
 
             ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
-            ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity()));
+
+            if (cartItem.getType().equalsIgnoreCase("ot")) {
+                ((ProductsViewHolder)holder).price.setText("0");
+                ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice()));
+
+            } else {
+
+                ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        checkoutItemsContract.itemSelected(cartItem, holder.getAdapterPosition());
+                        notifyItemChanged(i);
+                    }
+                });
 
 
-//            ((ProductsViewHolder)holder).name.setTextColor(Color.parseColor("#d3d3d3"));
-//            ((ProductsViewHolder)holder).quantity.setTextColor(Color.parseColor("#d3d3d3"));
-//            ((ProductsViewHolder)holder).price.setTextColor(Color.parseColor("#d3d3d3"));
+                ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
+                ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity()));
+            }
+
+
+
             if (cartItem.isSelected()) {
                 ((ProductsViewHolder) holder).rootView.setSelected(true);
-//                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.highlight);
             } else {
                 ((ProductsViewHolder) holder).rootView.setSelected(false);
-//                ((ProductsViewHolder)holder).rootView.setBackgroundResource(R.color.navyblue);
             }
-//
-//            switch (productsModelList.get(holder.getAdapterPosition()).getProductStatus()) {
-//                case ProductConstants.DISABLED: //will only be used on product listing
-//                    break;
-//                case ProductConstants.PAID: //will only be used for viewing purposess
-//                    break;
-//                case ProductConstants.PENDING: //on initial order, can remove without having to void
-//                    break;
-//                case ProductConstants.SAVED: //saved items that requires special permission to remove
-//                    break;
-//                case ProductConstants.VOID: //voided items for viewing only
-//                    break;
-//            }
         }
     }
 

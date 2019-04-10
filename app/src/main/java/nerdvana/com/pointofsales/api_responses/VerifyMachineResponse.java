@@ -710,6 +710,17 @@ public class VerifyMachineResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("safe_keeping_amount")
+        @Expose
+        private Double safe_keeping_amount;
+
+        public Double getSafe_keeping_amount() {
+            return safe_keeping_amount;
+        }
+
+        public void setSafe_keeping_amount(Double safe_keeping_amount) {
+            this.safe_keeping_amount = safe_keeping_amount;
+        }
 
         public Integer getId() {
             return id;

@@ -24,9 +24,49 @@
                 android:layout_height="wrap_content"
                 android:text="O.R. LIST"/>
 
+
+            <LinearLayout
+                android:layout_below="@id/orListLabel"
+                android:id="@+id/linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <android.support.v7.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_margin="10dp"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"/>
+
+                <Spinner
+                    android:layout_margin="10dp"
+                    android:id="@+id/roomSpinner"
+                    android:layout_weight="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <CheckBox
+                android:layout_margin="10dp"
+                android:layout_below="@id/linear"
+                android:id="@+id/checkBoxIsTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TO"/>
+
+            <Button
+                android:text="SEARCH"
+                android:background="@drawable/button_selector"
+                android:layout_margin="10dp"
+                android:id="@+id/buttonSearch"
+                android:layout_below="@id/checkBoxIsTo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/listTransactions"
-                android:layout_below="@id/orListLabel"
+                android:layout_below="@id/buttonSearch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </RelativeLayout>

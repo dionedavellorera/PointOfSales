@@ -5,11 +5,26 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
     private String name;
     private String imageUrl;
     private int position;
+
+    private boolean isSpecial;
     public ButtonsModel(int id, String name, String imageUrl, int position) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
         this.position = position;
+    }
+
+
+    public ButtonsModel(int id, String name, String imageUrl, int position, boolean isSpecial) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.position = position;
+        this.isSpecial = isSpecial;
+    }
+
+    public boolean isSpecial() {
+        return isSpecial;
     }
 
     public int getId() {

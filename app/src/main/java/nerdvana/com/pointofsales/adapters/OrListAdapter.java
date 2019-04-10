@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import nerdvana.com.pointofsales.dialogs.TransactionsDialog;
 public class OrListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ViewReceiptResponse.Result> orList;
     private TransactionsDialog.OrList orImpl;
+
     public OrListAdapter(List<ViewReceiptResponse.Result> orList, TransactionsDialog.OrList orImpl) {
         this.orList = orList;
         this.orImpl = orImpl;
@@ -35,9 +37,13 @@ public class OrListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     static class OrListViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private RelativeLayout rootView;
+        private ImageView skipImage;
+        private ImageView voidImage;
         public OrListViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
+            skipImage = itemView.findViewById(R.id.skipImage);
+            voidImage = itemView.findViewById(R.id.voidImage);
             rootView = itemView.findViewById(R.id.rootView);
         }
 
@@ -57,8 +63,24 @@ public class OrListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     orImpl.clicked(holder.getAdapterPosition());
                 }
             });
+            orList.get(0).getXSkip();
+            orList.get(0).getVoid();
             ((OrListAdapter.OrListViewHolder) holder).name.setText(orList.get(i).getReceiptNo());
+
+            if (orList.get(i).getXSkip() == 1) {
+                ((OrListViewHolder) holder).skipImage.setVisibility(View.VISIBLE);
+            } else {
+                ((OrListViewHolder) holder).skipImage.setVisibility(View.GONE);
+            }
+
+            if (orList.get(i).getVoid() == 1) {
+                ((OrListViewHolder) holder).voidImage.setVisibility(View.VISIBLE);
+            } else {
+                ((OrListViewHolder) holder).voidImage.setVisibility(View.GONE);
+            }
         }
+
+
 
     }
 

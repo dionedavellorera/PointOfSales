@@ -27,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
 import org.json.JSONException;
@@ -37,6 +38,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
@@ -52,10 +54,12 @@ import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
+import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
@@ -70,6 +74,7 @@ import retrofit2.Response;
 import static android.view.View.GONE;
 
 public abstract class PaymentDialog extends BaseDialog  {
+
 
     private LinearLayout formCash;
     private LinearLayout formCard;
@@ -99,6 +104,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private Double totalBalance;
     private TextView displayTotalBalance;
     private TextView displayTotalPayment;
+    private Spinner spinnerRoomBoy;
 
     //forex fields
     private String currencyId;
@@ -129,6 +135,10 @@ public abstract class PaymentDialog extends BaseDialog  {
     private EditText creditCardAmount;
     private String cardTypeId;
     private Context act;
+
+    private LinearLayout linRoomBoy;
+
+    private String empId = ""; //room boy selected
 
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
@@ -167,6 +177,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 //        setContentView(R.layout.dialog_payment);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
         gcList = new ArrayList<>();
+        linRoomBoy = findViewById(R.id.linRoomBoy);
         spinnerForex = findViewById(R.id.spinnerForex);
         formCash = findViewById(R.id.formCash);
         formCard = findViewById(R.id.formCard);
@@ -174,6 +185,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         formVoucher = findViewById(R.id.formGiftCheck);
         formForex = findViewById(R.id.formForex);
         forexAmount = findViewById(R.id.forexAmount);
+        spinnerRoomBoy = findViewById(R.id.spinnerRoomBoy);
         forexRate = findViewById(R.id.forexRate);
         displayTotalBalance = findViewById(R.id.totalBalance);
         displayTotalPayment = findViewById(R.id.totalPayment);
@@ -212,6 +224,13 @@ public abstract class PaymentDialog extends BaseDialog  {
         setVoucherSpinner();
         setupCreditCardSpinner();
 
+        if (isCheckout) {
+            linRoomBoy.setVisibility(View.VISIBLE);
+        } else {
+            linRoomBoy.setVisibility(GONE);
+        }
+        setRoomBoySpinner();
+
         displayTotalBalance.setText(String.valueOf(totalBalance));
         paymentMethodImpl = new PaymentMethod() {
             @Override
@@ -225,7 +244,11 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
         if (isCheckout) {
+
+
             pay.setText("CHECKOUT");
+
+
         } else {
             pay.setText("PAY");
         }
@@ -465,7 +488,7 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onClick(View v) {
                 if (postedPaymentList.size() > 0) {
-                    paymentSuccess(postedPaymentList);
+                    paymentSuccess(postedPaymentList, empId);
                 } else {
                     Utils.showDialogMessage(act, "No payment to post", "Warning");
                 }
@@ -503,7 +526,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         showForm("1");
     }
 
-    public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList);
+    public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList, String roomBoy);
     public abstract void paymentFailed();
 
     public interface PaymentMethod {
@@ -700,4 +723,31 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     }
 
+
+    private void setRoomBoySpinner() {
+
+        TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
+        final List<FetchCompanyUserResponse.Result> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), companyUser.getType());
+
+        List<String> userArray = new ArrayList<>();
+        for (FetchCompanyUserResponse.Result res : userList) {
+            userArray.add(res.getName());
+        }
+
+        CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                userArray);
+        spinnerRoomBoy.setAdapter(userAdapter);
+
+        spinnerRoomBoy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                empId = String.valueOf(userList.get(position).getUserId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
 }

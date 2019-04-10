@@ -39,9 +39,9 @@ public class CheckSafeKeepingResponse {
     }
 
     public class Result {
-        @SerializedName("collected")
+        @SerializedName("uncollected")
         @Expose
-        private Double collected;
+        private Double unCollected;
         @SerializedName("cash_on_hand")
         @Expose
         private Double cashOnHand;
@@ -49,12 +49,12 @@ public class CheckSafeKeepingResponse {
         @Expose
         private Double payments;
 
-        public Double getCollected() {
-            return collected;
+        public Double getUnCollected() {
+            return unCollected;
         }
 
-        public void setCollected(Double collected) {
-            this.collected = collected;
+        public void setCollected(Double unCollected) {
+            this.unCollected = unCollected;
         }
 
         public Double getCashOnHand() {
