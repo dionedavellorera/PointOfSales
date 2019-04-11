@@ -536,6 +536,17 @@ public class VerifyMachineResponse {
         @SerializedName("info")
         @Expose
         private Info info;
+        @SerializedName("shift")
+        @Expose
+        private List<Shift> shift;
+
+        public List<Shift> getShift() {
+            return shift;
+        }
+
+        public void setShift(List<Shift> shift) {
+            this.shift = shift;
+        }
 
         public Integer getId() {
             return id;
@@ -810,5 +821,85 @@ public class VerifyMachineResponse {
             this.deletedAt = deletedAt;
         }
 
+    }
+
+    public class Shift {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("branch_id")
+        @Expose
+        private String branchId;
+        @SerializedName("shift_no")
+        @Expose
+        private String shiftNo;
+        @SerializedName("sTime")
+        @Expose
+        private String sTime;
+        @SerializedName("eTime")
+        @Expose
+        private String eTime;
+        @SerializedName("grace_period")
+        @Expose
+        private String gracePeriod;
+        @SerializedName("is_last_shift")
+        @Expose
+        private String isLastShift;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getBranchId() {
+            return branchId;
+        }
+
+        public void setBranchId(String branchId) {
+            this.branchId = branchId;
+        }
+
+        public String getShiftNo() {
+            return shiftNo;
+        }
+
+        public void setShiftNo(String shiftNo) {
+            this.shiftNo = shiftNo;
+        }
+
+        public String getsTime() {
+            return sTime;
+        }
+
+        public void setsTime(String sTime) {
+            this.sTime = sTime;
+        }
+
+        public String geteTime() {
+            return eTime;
+        }
+
+        public void seteTime(String eTime) {
+            this.eTime = eTime;
+        }
+
+        public String getGracePeriod() {
+            return gracePeriod;
+        }
+
+        public void setGracePeriod(String gracePeriod) {
+            this.gracePeriod = gracePeriod;
+        }
+
+        public String getIsLastShift() {
+            return isLastShift;
+        }
+
+        public void setIsLastShift(String isLastShift) {
+            this.isLastShift = isLastShift;
+        }
     }
 }

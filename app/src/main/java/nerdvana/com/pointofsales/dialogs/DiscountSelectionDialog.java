@@ -150,9 +150,6 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
             @Override
             public void onResponse(Call<FetchDiscountResponse> call, final Response<FetchDiscountResponse> response) {
                 if (response.body().getResult().size() > 0) {
-
-
-//                    ArrayList<String> stringArray = new ArrayList<>();
                     for (FetchDiscountResponse.Result r :response.body().getResult()) {
                         if (r.getIsSpecial() == 1) {
                             buttonsModelList.add(new ButtonsModel(r.getId(),
@@ -161,10 +158,10 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     1,
                                     true));
                         }
-
                     }
 
                     buttonsAdapter.notifyDataSetChanged();
+
 //                    CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
 //                            stringArray);
 //                    spinnerDiscountType.setAdapter(customSpinnerAdapter);

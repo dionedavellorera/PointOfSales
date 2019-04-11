@@ -245,12 +245,12 @@ public abstract class PaymentDialog extends BaseDialog  {
 
         if (isCheckout) {
 
-
             pay.setText("CHECKOUT");
 
-
         } else {
+
             pay.setText("PAY");
+
         }
 
         add.setOnClickListener(new View.OnClickListener() {

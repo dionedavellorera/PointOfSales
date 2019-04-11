@@ -13,6 +13,7 @@ import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
+import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
@@ -36,6 +37,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
+import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
@@ -264,4 +266,15 @@ public interface IUsers {
     @POST("checkXReading")
     @FormUrlEncoded
     Call<CheckXReadResponse> checkXREad(@FieldMap Map<String, String> params);
+
+    //fetchTime
+    @POST("fetchTime")
+    @FormUrlEncoded
+    Call<FetchTimeResponse> fetchTime(@FieldMap Map<String, String> params);
+
+
+    //checkShift
+    @POST("checkShift")
+    @FormUrlEncoded
+    Call<CheckShiftResponse> checkShift(@FieldMap Map<String, String> params);
 }

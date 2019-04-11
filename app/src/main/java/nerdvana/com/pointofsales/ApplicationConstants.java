@@ -29,6 +29,7 @@ public class ApplicationConstants {
     public static final String BRANCH_ID = "branch_id";
     public static final String BRANCH_CODE = "branch_code";
     public static final String SAFEKEEPING_AMOUNT = "safekeeping_amount";
+    public static final String SHIFT_DETAILS = "shift_details";
     public static final String DEFAULT_SYMBOL_LEFT = "symbol_left";
     public static final String DEFAULT_SYMBOL_RIGHT = "symbol_right";
     public static final String COUNTRY_CODE = "country_code";

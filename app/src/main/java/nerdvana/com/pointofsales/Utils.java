@@ -7,11 +7,16 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Display;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Utils {
     public static boolean checkConnection(Context context) {
@@ -78,5 +83,50 @@ public class Utils {
 
         return res.toUpperCase();
 
+    }
+
+    public static long getDurationInSecs(String dateStart) {
+
+        DateTimeFormatter f = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime startDate = f.parseDateTime(dateStart);
+        return startDate.getMillis() / 1000;
+
+    }
+
+    public static String convertSecondsToReadableDate(long seconds) {
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM d, yyyy HH:mm:ss");
+        return formatter.format(new Date(seconds * 1000L));
+    }
+
+    public static String getDuration(String dateStart, String dateEnd) {
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime endDate = formatter.parseDateTime(dateEnd);
+        DateTime startDate = formatter.parseDateTime(dateStart);
+        Duration duration = new Duration(startDate, endDate);
+
+        return formatSeconds(duration.getStandardSeconds());
+    }
+
+    private static String formatSeconds(long timeInSeconds)
+    {
+        long hours = timeInSeconds / 3600;
+        long secondsLeft = timeInSeconds - hours * 3600;
+        long minutes = secondsLeft / 60;
+        long seconds = secondsLeft - minutes * 60;
+
+        String formattedTime = "";
+        if (hours < 10)
+            formattedTime += "0";
+        formattedTime += hours + ":";
+
+        if (minutes < 10)
+            formattedTime += "0";
+        formattedTime += minutes + ":";
+
+        if (seconds < 10)
+            formattedTime += "0";
+        formattedTime += seconds ;
+
+        return formattedTime;
     }
 }

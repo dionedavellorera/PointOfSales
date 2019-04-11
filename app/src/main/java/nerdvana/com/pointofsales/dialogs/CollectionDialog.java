@@ -28,11 +28,13 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
+import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
 import nerdvana.com.pointofsales.api_requests.XReadRequest;
 import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
+import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
@@ -54,6 +56,8 @@ public class CollectionDialog extends BaseDialog {
     private boolean willCashReco;
     List<CollectionFinalPostModel> collectionFinalPostModels;
 
+    private Double totalSafeKeepAmount = 0.00;
+
     public CollectionDialog(@NonNull Context context, String type, boolean continueCashReco) {
         super(context);
         this.type = type;
@@ -72,43 +76,33 @@ public class CollectionDialog extends BaseDialog {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                totalSafeKeepAmount = 0.00;
                 collectionFinalPostModels = new ArrayList<>();
                 for (SafeKeepDataModel skdm : safeKeepDataModelList) {
 
                     if (!TextUtils.isEmpty(skdm.getEditText().getText().toString().trim())) {
                         if (Double.valueOf(skdm.getEditText().getText().toString()) > 0) {
-                            collectionFinalPostModels.add(
-                                    new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
-                                            skdm.getEditText().getText().toString(),
-                                            skdm.getValue(),
-                                            SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE),
-                                            SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                            SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID),
-                                            SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID),
-                                            ""
-                                    ));
+
+                            if (skdm.getValue().equalsIgnoreCase("CHECK")) { //CHECK, SPECIAL CASE
+
+                            } else {
+                                totalSafeKeepAmount += (Double.valueOf(skdm.getValue()) * Double.valueOf(skdm.getEditText().getText().toString()));
+                                collectionFinalPostModels.add(
+
+                                        new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
+                                                skdm.getEditText().getText().toString(),
+                                                skdm.getValue(),
+                                                SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE),
+                                                SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                                SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID),
+                                                SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID),
+                                                ""
+                                        ));
+                            }
                         }
                     }
                 }
 
-
-//                if (willCashReco) {
-//                    CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest();
-//                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-//                    Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
-//                    request.enqueue(new Callback<CashNReconcileResponse>() {
-//                        @Override
-//                        public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
-//                            Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-//                            dismiss();
-//                        }
-//
-//                        @Override
-//                        public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
-//
-//                        }
-//                    });
-//                }
 
 
                 if (collectionFinalPostModels.size() > 0) {
@@ -145,22 +139,40 @@ public class CollectionDialog extends BaseDialog {
                         if (!passwordDialog.isShowing()) passwordDialog.show();
 
                     } else {
-                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                        CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
-                        Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
 
-                        request.enqueue(new Callback<CollectionResponse>() {
+                        CheckSafeKeepingRequest checkSafeKeepingRequest = new CheckSafeKeepingRequest();
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        Call<CheckSafeKeepingResponse> checkSafeKeepRequest = iUsers.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
+                        checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
                             @Override
-                            public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
-                                if (response.body().getStatus() == 0) {
-                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                            public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
+                                if (totalSafeKeepAmount <= response.body().getResult().getUnCollected()) {
+                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                    CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
+                                    Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+
+                                    request.enqueue(new Callback<CollectionResponse>() {
+                                        @Override
+                                        public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
+                                            if (response.body().getStatus() == 0) {
+                                                Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                                            } else {
+                                                dismiss();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<CollectionResponse> call, Throwable t) {
+
+                                        }
+                                    });
                                 } else {
-                                    dismiss();
+                                    Utils.showDialogMessage(act, "Safekeep amount is greater than the sales", "Error");
                                 }
                             }
 
                             @Override
-                            public void onFailure(Call<CollectionResponse> call, Throwable t) {
+                            public void onFailure(Call<CheckSafeKeepingResponse> call, Throwable t) {
 
                             }
                         });
@@ -198,6 +210,8 @@ public class CollectionDialog extends BaseDialog {
                 for (FetchDenominationResponse.Result r : response.body().getResult()) {
                     addView(r.getDenomination(), String.valueOf(r.getAmount()), r.getCoreId());
                 }
+
+                addView("CHECK", "CHECK", 9999);
             }
 
             @Override
@@ -231,4 +245,6 @@ public class CollectionDialog extends BaseDialog {
 
         relContainer.addView(linearLayout);
     }
+
+
 }

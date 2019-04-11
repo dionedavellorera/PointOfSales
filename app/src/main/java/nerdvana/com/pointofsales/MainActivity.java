@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
@@ -60,6 +61,7 @@ import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
+import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
@@ -71,9 +73,11 @@ import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
@@ -89,6 +93,7 @@ import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.SwitchRoomPrintModel;
+import nerdvana.com.pointofsales.model.TimerModel;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
@@ -110,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private nerdvana.com.pointofsales.postlogin.LeftFrameFragment postLoginLeftFrameFragment;
     private nerdvana.com.pointofsales.postlogin.RightFrameFragment postLoginRightFrameFragment;
 
+
+    private TextView timer;
     private Button logout;
     private Button showMap;
     private Button showTakeOuts;
@@ -131,16 +138,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         setContentView(R.layout.activity_main);
 
-        timerIntent = new Intent(this, TimerService.class);
-        startService(timerIntent);
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        DateTime jodatime = dtf.parseDateTime("2019-04-05 10:30:00");
-
-        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMMM dd h:m a");
-
-        Log.d("DATETIMENOW", dtfOut.print(jodatime));
-
-        //endregion
         dialogProgressBar = new DialogProgressBar(MainActivity.this);
         dialogProgressBar.setCancelable(false);
 
@@ -171,10 +168,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         fetchRoomAreaRequest();
         fetchUserListRequest();
         fetchCompanyUserRequest();
-        BusProvider.getInstance().post(new TestRequest("test"));
-
+        fetchTimeRequest();
         requestRoomStatusList();
         fetchDefaultCurrencyRequest();
+
+        BusProvider.getInstance().post(new TestRequest("test"));
 
 //        dialogProgressBar.show();
 //        Log.d("TAG", "SERIAL: " + Build.SERIAL);
@@ -201,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void initializeViews() {
         logout = findViewById(R.id.logout);
+        timer = findViewById(R.id.timer);
         logout.setOnClickListener(this);
         showMap = findViewById(R.id.showMap);
         showMap.setOnClickListener(this);
@@ -358,8 +357,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+        if (timerIntent != null) {
+            stopService(timerIntent);
+        }
 
-        stopService(timerIntent);
 
 
     }
@@ -1520,14 +1521,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private String  getDuration(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-
         DateTime today = new DateTime();
         DateTime yesterday = formatter.parseDateTime(dateTime);
-
         Duration duration = new Duration(yesterday, today);
-
         return formatSeconds(duration.getStandardSeconds());
-
     }
 
     @Subscribe
@@ -1542,6 +1539,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 startActivityForResult(takeOutIntent, 20);
                 break;
             case 997: //logout
+                if (timerIntent != null) {
+                    stopService(timerIntent);
+                }
                 userModel.setLoggedIn(false);
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
@@ -1557,12 +1557,27 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Subscribe
     public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
-        Log.d("TETETE", "TEST");
         Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
         if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
             CollectionDialog collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false);
             if (!collectionDialog.isShowing()) collectionDialog.show();
         }
+    }
+
+    @Subscribe
+    public void updateTime(TimerModel timerModel) {
+        timer.setText(timerModel.getTime());
+    }
+
+    private void fetchTimeRequest() {
+        BusProvider.getInstance().post(new FetchTimeRequest());
+    }
+
+    @Subscribe
+    public void fetchServerTime(FetchTimeResponse fetchTimeResponse) {
+        timerIntent = new Intent(this, TimerService.class);
+        timerIntent.putExtra("start_time", fetchTimeResponse.getTime());
+        startService(timerIntent);
     }
 }
 

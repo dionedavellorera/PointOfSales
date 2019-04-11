@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
@@ -136,6 +137,7 @@ public class SetupDialog extends BaseDialog {
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getId()), ApplicationConstants.BRANCH_ID);
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getBranchCode()), ApplicationConstants.BRANCH_CODE);
                     SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getSafe_keeping_amount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
+                    SharedPreferenceManager.saveString(context, GsonHelper.getGson().toJson(String.valueOf(response.body().getBranch().getShift())), ApplicationConstants.SHIFT_DETAILS);
                     dismiss();
                 }
             }

@@ -60,6 +60,7 @@ import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
 import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
+import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
 import nerdvana.com.pointofsales.api_requests.CheckXReadRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
@@ -87,6 +88,7 @@ import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
+import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -265,8 +267,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.postlogin_left_frame, container, false);
 
-
-
+//        Log.d("GETDURATIONTIME", Utils.getDuration("2015-04-01 01:00:00", "2015-05-01 01:00:00"));
 
         fetchArOnlineRequest();
         fetchNationalityRequest();
@@ -722,12 +723,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 zReadRequest();
 
-
                 break;
             case 119: //X READ, SHIFT CUT OFF
 
                 xReadRequest();
-
 
                 break;
             case 118:// SAFEKEEPING
@@ -1034,99 +1033,121 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         creditCardList,
                         arOnlineList) {
                     @Override
-                    public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
-                        List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
-                        boolean isReadyForCheckOut = false;
-                        Double totalPayments = 0.00;
-                        for (PostedPaymentsModel ppm : postedPaymentLit) {
-                            if (!ppm.isIs_posted()) {
-                                paymentsToPost.add(ppm);
-                            }
+                    public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
 
-                            totalPayments += Double.valueOf(ppm.getAmount());
-                        }
-
-                        if (cartItemList.size() == 0) {
-                            //no order and prompt to cancel order, disregard all payments
-                            if (selectedRoom.isTakeOut()) {
-                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        switch (which){
-                                            case DialogInterface.BUTTON_POSITIVE:
-                                                checkoutRoom("",
-                                                        selectedRoom.getControlNo(),
-                                                        "");
-                                                break;
-
-                                            case DialogInterface.BUTTON_NEGATIVE:
-                                                dismiss();
-                                                break;
-                                        }
-                                    }
-                                };
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
-                                        .setPositiveButton("Yes", dialogClickListener)
-                                        .setNegativeButton("No", dialogClickListener).show();
-                            } else {
-
-                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        switch (which){
-                                            case DialogInterface.BUTTON_POSITIVE:
-                                                dismiss();
-                                                break;
-                                            case DialogInterface.BUTTON_NEGATIVE:
-                                                dismiss();
-                                                break;
-                                        }
-                                    }
-                                };
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
-                                        .setPositiveButton("Ok", dialogClickListener).show();
-
-                            }
-
-                        } else {
-                            if (totalPayments >= totalBalance) {
-                                if (paymentsToPost.size() > 0) {
-                                    if (selectedRoom.isTakeOut()) {
-                                        postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
-                                    } else {
-                                        postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
-                                    }
+                        CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        Call<CheckShiftResponse> checkShfRqst = iUsers.checkShift(checkShiftRequest.getMapValue());
+                        checkShfRqst.enqueue(new Callback<CheckShiftResponse>() {
+                            @Override
+                            public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
+                                if (response.body().getStatus() == 0) {
+                                    Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Error");
                                 } else {
-                                    Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
-                                }
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (selectedRoom.isTakeOut()) {
-                                            checkoutRoom("",
-                                                    selectedRoom.getControlNo(),
-                                                    "");
-                                        } else {
-                                            checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
-                                                    "",
-                                                    roomboy);
+                                    Utils.showDialogMessage(getActivity(), "SUCCESS", "Information");
+                                    /*
+                                    //regionpayment checkout chain
+                                    List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                                    boolean isReadyForCheckOut = false;
+                                    Double totalPayments = 0.00;
+                                    for (PostedPaymentsModel ppm : postedPaymentLit) {
+                                        if (!ppm.isIs_posted()) {
+                                            paymentsToPost.add(ppm);
                                         }
 
-
+                                        totalPayments += Double.valueOf(ppm.getAmount());
                                     }
-                                }, 500);
-                                dismiss();
-                            } else {
 
-                                Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
+                                    if (cartItemList.size() == 0) {
+                                        //no order and prompt to cancel order, disregard all payments
+                                        if (selectedRoom.isTakeOut()) {
+                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    switch (which){
+                                                        case DialogInterface.BUTTON_POSITIVE:
+                                                            checkoutRoom("",
+                                                                    selectedRoom.getControlNo(),
+                                                                    "");
+                                                            break;
+
+                                                        case DialogInterface.BUTTON_NEGATIVE:
+                                                            dismiss();
+                                                            break;
+                                                    }
+                                                }
+                                            };
+
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                            builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
+                                                    .setPositiveButton("Yes", dialogClickListener)
+                                                    .setNegativeButton("No", dialogClickListener).show();
+                                        } else {
+
+                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    switch (which){
+                                                        case DialogInterface.BUTTON_POSITIVE:
+                                                            dismiss();
+                                                            break;
+                                                        case DialogInterface.BUTTON_NEGATIVE:
+                                                            dismiss();
+                                                            break;
+                                                    }
+                                                }
+                                            };
+
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                            builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
+                                                    .setPositiveButton("Ok", dialogClickListener).show();
+
+                                        }
+
+                                    } else {
+                                        if (totalPayments >= totalBalance) {
+                                            if (paymentsToPost.size() > 0) {
+                                                if (selectedRoom.isTakeOut()) {
+                                                    postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
+                                                } else {
+                                                    postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                                                }
+                                            } else {
+                                                Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    if (selectedRoom.isTakeOut()) {
+                                                        checkoutRoom("",
+                                                                selectedRoom.getControlNo(),
+                                                                "");
+                                                    } else {
+                                                        checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                                                "",
+                                                                roomboy);
+                                                    }
+
+
+                                                }
+                                            }, 500);
+                                            dismiss();
+                                        } else {
+
+                                            Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
+                                        }
+                                    }//endregion
+
+                                    */
+                                }
                             }
-                        }
 
+                            @Override
+                            public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
+
+                            }
+                        });
 
                     }
 
