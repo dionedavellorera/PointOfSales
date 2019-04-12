@@ -1045,7 +1045,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Error");
                                 } else {
                                     Utils.showDialogMessage(getActivity(), "SUCCESS", "Information");
-                                    /*
+
                                     //regionpayment checkout chain
                                     List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
                                     boolean isReadyForCheckOut = false;
@@ -1139,7 +1139,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         }
                                     }//endregion
 
-                                    */
+
                                 }
                             }
 
@@ -2752,22 +2752,37 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void cashNReconcile() {
-        CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest();
-        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
-        request.enqueue(new Callback<CashNReconcileResponse>() {
+
+        PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
             @Override
-            public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
+            public void passwordSuccess(String employeeId) {
+                CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest(employeeId);
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
+                request.enqueue(new Callback<CashNReconcileResponse>() {
+                    @Override
+                    public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
 
-                Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
+                        Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
 
+                    }
+
+                    @Override
+                    public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+            public void passwordFailed() {
 
             }
-        });
+        };
+        if (!passwordDialog.isShowing()) passwordDialog.show();
+
+
+
 
     }
 

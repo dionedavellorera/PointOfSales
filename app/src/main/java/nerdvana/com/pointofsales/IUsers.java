@@ -250,7 +250,7 @@ public interface IUsers {
     @FormUrlEncoded
     Call<CheckEndOfDayResponse> checkEndOfDay(@FieldMap Map<String, String> params);
 
-    @POST("cashNReconcile")
+    @POST("cashAndReconcile")
     @FormUrlEncoded
     Call<CashNReconcileResponse> cashNReconcile(@FieldMap Map<String, String> params);
 

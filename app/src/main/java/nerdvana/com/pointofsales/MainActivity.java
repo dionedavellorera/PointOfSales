@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         fetchTimeRequest();
         requestRoomStatusList();
         fetchDefaultCurrencyRequest();
-
         BusProvider.getInstance().post(new TestRequest("test"));
 
 //        dialogProgressBar.show();
