@@ -105,41 +105,42 @@ public class CollectionDialog extends BaseDialog {
 
 
 
-                if (collectionFinalPostModels.size() > 0) {
-                    if (willCashReco) {
-                        PasswordDialog passwordDialog = new PasswordDialog(act) {
-                            @Override
-                            public void passwordSuccess(String employeeId) {
-                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                XReadRequest collectionRequest = new XReadRequest(collectionFinalPostModels, employeeId);
-                                Call<XReadResponse> request = iUsers.xReading(collectionRequest.getMapValue());
-                                request.enqueue(new Callback<XReadResponse>() {
-                                    @Override
-                                    public void onResponse(Call<XReadResponse> call, Response<XReadResponse> response) {
-                                        if (response.body().getStatus() == 0) {
-                                            Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-                                        } else {
-                                            dismiss();
-                                        }
-                                    }
+                if (willCashReco) {
+                    PasswordDialog passwordDialog = new PasswordDialog(act) {
+                        @Override
+                        public void passwordSuccess(String employeeId) {
+                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                            CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
+                            Call<CashNReconcileResponse> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+                            request.enqueue(new Callback<CashNReconcileResponse>() {
+                                @Override
+                                public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
 
-                                    @Override
-                                    public void onFailure(Call<XReadResponse> call, Throwable t) {
+                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+
+                                    if (response.body().getStatus() == 1) {
+                                        dismiss();
 
                                     }
-                                });
-                            }
+                                }
 
-                            @Override
-                            public void passwordFailed() {
+                                @Override
+                                public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
 
-                            }
-                        };
+                                }
+                            });
+                        }
 
-                        if (!passwordDialog.isShowing()) passwordDialog.show();
+                        @Override
+                        public void passwordFailed() {
 
-                    } else {
+                        }
+                    };
 
+                    if (!passwordDialog.isShowing()) passwordDialog.show();
+
+                } else {
+                    if (collectionFinalPostModels.size() > 0) {
                         CheckSafeKeepingRequest checkSafeKeepingRequest = new CheckSafeKeepingRequest();
                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                         Call<CheckSafeKeepingResponse> checkSafeKeepRequest = iUsers.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
@@ -176,10 +177,9 @@ public class CollectionDialog extends BaseDialog {
 
                             }
                         });
+                    } else {
+                        Utils.showDialogMessage(act, "Please put amount for safekeep", "Information");
                     }
-
-                } else {
-                    Utils.showDialogMessage(act, "Please put amount for safekeep", "Information");
                 }
 
             }

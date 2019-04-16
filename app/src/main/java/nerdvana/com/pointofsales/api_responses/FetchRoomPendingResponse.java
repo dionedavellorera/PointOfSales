@@ -41,6 +41,43 @@ public class FetchRoomPendingResponse {
         this.message = message;
     }
 
+    public class Employee {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("username")
+        @Expose
+        private String username;
+        @SerializedName("email")
+        @Expose
+        private String email;
+
+        public String getId() {
+            return id;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+    }
 
     public class Result {
 
@@ -368,6 +405,9 @@ public class FetchRoomPendingResponse {
     }
 
     public class RoomTransaction {
+        @SerializedName("employee")
+        @Expose
+        private Employee employee;
         @SerializedName("discounts")
         @Expose
         private List<DiscountsOuter> discountsOuter;
@@ -467,6 +507,10 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+
+        public Employee getEmployee() {
+            return employee;
+        }
 
         public List<DiscountsOuter> getDiscountsOuter() {
             return discountsOuter;
@@ -733,6 +777,7 @@ public class FetchRoomPendingResponse {
         }
 
     }
+
 
 
     public class Booked {

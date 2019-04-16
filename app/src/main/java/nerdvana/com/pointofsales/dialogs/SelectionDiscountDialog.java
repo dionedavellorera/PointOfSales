@@ -34,12 +34,15 @@ import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
+import nerdvana.com.pointofsales.model.DiscountModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public abstract class SelectionDiscountDialog extends BaseDialog {
     private SearchableSpinner spinnerDiscountType;
+
+    private List<DiscountModel> discountModelList;
 
     private RelativeLayout formCard;
     private RelativeLayout formSpecial;
@@ -79,6 +82,8 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
         spinnerDiscountType = findViewById(R.id.spinnerDiscountType);
         spinnerDiscountType.setTitle("Select Item");
         spinnerDiscountType.setPositiveButton("OK");
+
+        discountModelList = new ArrayList<>();
 
         etCardNumber = findViewById(R.id.cardNumber);
         etSeniorPwdName = findViewById(R.id.seniorPwdName);
@@ -156,10 +161,11 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                             }
                         } else {
                             if (r.getIsSpecial() != 1) {
+
+                                discountModelList.add(new DiscountModel(String.valueOf(r.getId()), r.getDiscountCard()));
                                 stringArray.add(r.getDiscountCard());
                             }
                         }
-
                     }
                     CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
                             stringArray);
@@ -170,8 +176,10 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
 
-                            discountType = response.body().getResult().get(position).getDiscountCard();
-                            discountId = String.valueOf(response.body().getResult().get(position).getId());
+                            discountType = discountModelList.get(position).getName();
+                            discountId = discountModelList.get(position).getPost_id();
+//                            discountType = response.body().getResult().get(position).getDiscountCard();
+//                            discountId = String.valueOf(response.body().getResult().get(position).getId());
                             if (response.body().getResult().get(position).getIsCard() == 1) {
                                 selectionType = "card";
                                 showForm("card");

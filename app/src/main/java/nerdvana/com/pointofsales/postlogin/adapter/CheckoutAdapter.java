@@ -88,7 +88,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
 
             if (cartItem.getType().equalsIgnoreCase("ot")) {
-                ((ProductsViewHolder)holder).price.setText("0");
+                ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice() / cartItem.getQuantity()));
                 ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice()));
 
             } else {

@@ -59,7 +59,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         allowedRoomStatusList.add(RoomConstants.ONGOING_RC_WAITING_GUEST);
         allowedRoomStatusList.add(RoomConstants.ONGOING_DIRTY_WAITING_GUEST);
         allowedRoomStatusList.add(RoomConstants.WELCOME);
-        allowedRoomStatusList.add(RoomConstants.ON_GOING_NEGO);
+//        allowedRoomStatusList.add(RoomConstants.ON_GOING_NEGO);
 
         setTitle("ROOMS");
 

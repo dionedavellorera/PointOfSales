@@ -77,7 +77,7 @@ public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
                         Toast.makeText(getContext(), "user id cannot be empty", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getContext(), "request create", Toast.LENGTH_SHORT).show();
-                        createSuccess("", areaId, userId);
+                        createSuccess(employeeSpinner.getSelectedItem().toString(), areaId, userId);
                     }
                 } else {
                     createSuccess(name.getText().toString(), areaId, "");

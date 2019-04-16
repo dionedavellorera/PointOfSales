@@ -18,8 +18,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
@@ -51,6 +53,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView timer;
         private TextView price;
         private ImageView imageUrl;
+        private ImageView badge;
         private CardView rootView;
         private RelativeLayout rel;
         private TextView orderCount;
@@ -60,6 +63,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             timer = itemView.findViewById(R.id.timer);
             price = itemView.findViewById(R.id.roomPrice);
             imageUrl = itemView.findViewById(R.id.image);
+            badge = itemView.findViewById(R.id.badge);
             rootView = itemView.findViewById(R.id.rootView);
             rel = itemView.findViewById(R.id.rel);
             orderCount = itemView.findViewById(R.id.orderCount);
@@ -79,10 +83,10 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         });
 
         if (roomTableModelList.get(i).getUnpostedOrdersCount() > 0) {
-            ((ProductsViewHolder) holder).orderCount.setVisibility(View.VISIBLE);
-            ((ProductsViewHolder) holder).orderCount.setText(String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
+//            ((ProductsViewHolder) holder).orderCount.setVisibility(View.VISIBLE);
+//            ((ProductsViewHolder) holder).orderCount.setText(String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
         } else {
-            ((ProductsViewHolder) holder).orderCount.setVisibility(View.GONE);
+//            ((ProductsViewHolder) holder).orderCount.setVisibility(View.GONE);
         }
 
         if (productsModel.getOtHours().equalsIgnoreCase("0.0") || TextUtils.isEmpty(productsModel.getOtHours())) {
@@ -107,6 +111,9 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
         ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getAmountSelected()));
 
+        Log.d("CXCXCX", String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()));
+
+        ImageLoader.loadImage(String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()), ((ProductsViewHolder) holder).badge);
 
 
     }

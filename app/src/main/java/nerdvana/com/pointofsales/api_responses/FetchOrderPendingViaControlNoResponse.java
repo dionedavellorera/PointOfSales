@@ -1319,7 +1319,49 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+
+    public class Employee {
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("user_id")
+        @Expose
+        private String userId;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("username")
+        @Expose
+        private String username;
+        @SerializedName("email")
+        @Expose
+        private String email;
+
+        public String getId() {
+            return id;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+    }
+
     public class Result {
+        @SerializedName("employee")
+        @Expose
+        private Employee employee;
         @SerializedName("guest_info")
         @Expose
         private GuestInfo guestInfo;
@@ -1443,6 +1485,10 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("vat_exempt_sales")
         @Expose
         private Double vatExemptSales;
+
+        public Employee getEmployee() {
+            return employee;
+        }
 
         public Double getVatExemptSales() {
             return vatExemptSales;

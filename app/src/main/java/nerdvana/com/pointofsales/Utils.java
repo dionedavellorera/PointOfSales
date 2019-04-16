@@ -67,6 +67,24 @@ public class Utils {
 
     }
 
+    public static String convertDateOnlyToReadableDate(String createdAt) {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+        String res = "";
+        try {
+            DateTime jodatime = dtf.parseDateTime(createdAt);
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d");
+
+
+            res = dtfOut.print(jodatime);
+        } catch (Exception e) {
+            res  = "NA";
+        }
+
+
+        return res.toUpperCase();
+
+    }
+
     public static String convertDateToReadableDate(String createdAt) {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String res = "";

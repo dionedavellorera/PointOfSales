@@ -1,17 +1,22 @@
 package nerdvana.com.pointofsales.api_requests;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import nerdvana.com.pointofsales.GsonHelper;
 
 public class CashNReconcileRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public CashNReconcileRequest(String empId) {
+    public CashNReconcileRequest(List<CollectionFinalPostModel> collectionFinalPostModels, String empId) {
         mapValue = new HashMap<>();
+        mapValue.put("post", GsonHelper.getGson().toJson(collectionFinalPostModels));
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
-        mapValue.put("branch_code", branchCode);
+        mapValue.put("currency_id", currencyId);
+        mapValue.put("currency_value", currencyValue);
         mapValue.put("emp_id", empId);
     }
 

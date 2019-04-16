@@ -90,6 +90,9 @@ public class SetupDialog extends BaseDialog {
                                 "api",
                                 branchName.getText().toString(),
                                 branchCode.getText().toString());
+                        String apiImageUrl = String.format("%s/images/statuses/",
+                                ipAddress.getText().toString());
+                        SharedPreferenceManager.saveString(context, apiImageUrl, ApplicationConstants.API_IMAGE_URL);
                         SharedPreferenceManager.saveString(context, apiBaseUrl, ApplicationConstants.API_BASE_URL);
                         PosClient.changeApiBaseUrl(
                                 apiBaseUrl
