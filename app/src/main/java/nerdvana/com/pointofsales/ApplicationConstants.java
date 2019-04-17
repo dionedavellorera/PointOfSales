@@ -49,7 +49,7 @@ public class ApplicationConstants {
     public static final String SELECTED_LANGUAGE = "selected_language";
     public static final String SELECTED_PORT = "selected_port";
 
-
+    public static final String DISCARD_STRING = "You still have unposted item/s, It might be discarded, Do you want to continue?";
 
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 

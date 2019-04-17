@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,18 +37,24 @@ public class PostedPaymentsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         private TextView paymentType;
         private TextView paymentAmount;
         private LinearLayout rootView;
+        private ImageView iconStatus;
         public PostedPaymentsViewHolder(@NonNull View itemView) {
             super(itemView);
             paymentType = itemView.findViewById(R.id.paymentType);
             paymentAmount = itemView.findViewById(R.id.paymentAmount);
             rootView = itemView.findViewById(R.id.rootView);
+            iconStatus = itemView.findViewById(R.id.iconStatus);
         }
     }
 
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
-
+        if (postedPaymentList.get(i).isIs_posted()) {
+            ((PostedPaymentsViewHolder)holder).iconStatus.setVisibility(View.VISIBLE);
+        } else {
+            ((PostedPaymentsViewHolder)holder).iconStatus.setVisibility(View.GONE);
+        }
         ((PostedPaymentsViewHolder)holder).paymentType.setText(postedPaymentList.get(i).getPayment_description());
         ((PostedPaymentsViewHolder)holder).paymentAmount.setText(postedPaymentList.get(i).getAmount());
 

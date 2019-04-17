@@ -121,6 +121,7 @@ public class CollectionDialog extends BaseDialog {
                                     if (response.body().getStatus() == 1) {
                                         dismiss();
 
+
                                     }
                                 }
 

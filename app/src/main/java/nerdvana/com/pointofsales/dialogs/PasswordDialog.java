@@ -86,7 +86,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
                     Utils.showDialogMessage(((MainActivity)context), "Incorrect credentials given", "Warning!");
 //                    Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    passwordSuccess(String.valueOf(response.body().getResult().get(0).getId()));
+                    passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()));
                 }
                 dismiss();
             }

@@ -15,12 +15,12 @@ public class DiscountRequest extends BaseRequest {
 
     public DiscountRequest(String post, String remarks,
                            String isPercentage, String value,
-                           String discountReasonId, String empId,
+                           String empId, String discountReasonId,
                            String controlNumber, String roomId) {
         mapValue = new HashMap<>();
 
         mapValue.put("post", post);
-        mapValue.put("discount_type", "MANUAL");
+        mapValue.put("discount_type", "MANUAL DISCOUNT");
         mapValue.put("discount_id", "0");
         mapValue.put("discounted_by", "");
         mapValue.put("discount_reason_id", discountReasonId);

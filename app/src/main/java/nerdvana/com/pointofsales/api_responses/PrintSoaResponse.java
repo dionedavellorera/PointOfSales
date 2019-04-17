@@ -1441,7 +1441,106 @@ public class PrintSoaResponse {
 
     }
 
+    public class Info {
+        @SerializedName("card_no")
+        @Expose
+        private String cardNo;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public void setCardNo(String cardNo) {
+            this.cardNo = cardNo;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public String getCardNo() {
+            return cardNo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+    }
+
+    public class DiscountReason {
+        @SerializedName("discount_reason")
+        @Expose
+        private String discountReason;
+
+        public String getDiscountReason() {
+            return discountReason;
+        }
+
+        public void setDiscountReason(String discountReason) {
+            this.discountReason = discountReason;
+        }
+    }
+
+    public class Discounts {
+        @SerializedName("discount_type")
+        @Expose
+        private String discountType;
+
+        @SerializedName("discount_type_id")
+        @Expose
+        private String discountTypeId;
+        @SerializedName("info")
+        @Expose
+        private Info info;
+        @SerializedName("discount_reason")
+        @Expose
+        private DiscountReason discountReason;
+
+        public DiscountReason getDiscountReason() {
+            return discountReason;
+        }
+
+        public void setDiscountReason(DiscountReason discountReason) {
+            this.discountReason = discountReason;
+        }
+
+        public void setDiscountType(String discountType) {
+            this.discountType = discountType;
+        }
+
+        public void setDiscountTypeId(String discountTypeId) {
+            this.discountTypeId = discountTypeId;
+        }
+
+        public void setInfo(Info info) {
+            this.info = info;
+        }
+
+        public Info getInfo() {
+            return info;
+        }
+
+        public String getDiscountType() {
+            return discountType;
+        }
+
+        public String getDiscountTypeId() {
+            return discountTypeId;
+        }
+    }
+
     public class Transaction {
+
         @SerializedName("soa_count")
         @Expose
         private String soaCount;
@@ -1547,6 +1646,18 @@ public class PrintSoaResponse {
         @SerializedName("post")
         @Expose
         private List<Post> post = null;
+
+        @SerializedName("discounts")
+        @Expose
+        private List<Discounts> discounts;
+
+        public void setDiscounts(List<Discounts> discounts) {
+            this.discounts = discounts;
+        }
+
+        public List<Discounts> getDiscounts() {
+            return discounts;
+        }
 
         public String getSoaCount() {
             return soaCount;

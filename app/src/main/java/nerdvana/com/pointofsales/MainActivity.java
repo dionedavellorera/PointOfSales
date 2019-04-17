@@ -1170,6 +1170,31 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+                if (bookedList.get(0).getTransaction().getDiscounts().size() > 0) {
+
+                    addPrinterSpace(2);
+
+                    addTextToPrinter(SPrinter.getPrinter(), "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    for (PrintSoaResponse.Discounts d : bookedList.get(0).getTransaction().getDiscounts()) {
+                        addTextToPrinter(SPrinter.getPrinter(), d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        if (d.getDiscountTypeId().equalsIgnoreCase("0")) { //MANUAL
+                            addTextToPrinter(SPrinter.getPrinter(), "    " + d.getDiscountReason().getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        } else {
+                            if (d.getInfo() != null) {
+                                if (d.getInfo().getCardNo().isEmpty()) {
+                                    addTextToPrinter(SPrinter.getPrinter(), "    " +d.getInfo().getName().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+                                    addTextToPrinter(SPrinter.getPrinter(), "    " +d.getInfo().getCardNo().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+
+
 
                 addPrinterSpace(1);
 

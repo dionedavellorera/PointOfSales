@@ -157,6 +157,8 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                         if (!TextUtils.isEmpty(specialDiscountId)) {
                             if (specialDiscountId.equalsIgnoreCase(String.valueOf(r.getId()))) {
                                 stringArray.add(r.getDiscountCard());
+                                discountId = String.valueOf(r.getId());
+                                discountType = r.getDiscountCard();
                                 break;
                             }
                         } else {
@@ -175,11 +177,12 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                            if (discountModelList.size() > 0) {
+                                discountType = discountModelList.get(position).getName();
+                                discountId = discountModelList.get(position).getPost_id();
+                            }
 
-                            discountType = discountModelList.get(position).getName();
-                            discountId = discountModelList.get(position).getPost_id();
-//                            discountType = response.body().getResult().get(position).getDiscountCard();
-//                            discountId = String.valueOf(response.body().getResult().get(position).getId());
+
                             if (response.body().getResult().get(position).getIsCard() == 1) {
                                 selectionType = "card";
                                 showForm("card");
@@ -297,6 +300,7 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                         } else {
                             SelectionDiscountDialog.this.dismiss();
                             Utils.showDialogMessage(context, "Discounting success" ,"Information");
+                            discountSuccess();
                         }
 
                     }

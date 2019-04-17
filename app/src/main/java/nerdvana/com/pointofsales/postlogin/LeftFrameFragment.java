@@ -491,6 +491,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Override
     public void onPause() {
         super.onPause();
+
 //        BusProvider.getInstance().unregister(this);
     }
 
@@ -718,30 +719,156 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 9999: //rooms
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1));
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1));
+                }
+
+                break;
+            case 9988: //take order
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            BusProvider.getInstance().post(new ButtonsModel(998,"TAKE ORDER", "",2));
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    BusProvider.getInstance().post(new ButtonsModel(998,"TAKE ORDER", "",2));
+                }
+                break;
             case 122: //CANCEL OVERTIME
 
-                cancelOverTime();
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            cancelOverTime();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    cancelOverTime();
+                }
+
+
 
                 break;
             case 121: //CASH AND RECONCILE
 
-                cashNReconcile();
+
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            cashNReconcile();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    cashNReconcile();
+                }
+
+
 
 
                 break;
             case 120: //Z READ, END OF DAY
 
-                zReadRequest();
+
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            zReadRequest();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    zReadRequest();
+                }
+
+
 
                 break;
             case 119: //X READ, SHIFT CUT OFF
 
-                xReadRequest();
+
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            xReadRequest();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    xReadRequest();
+                }
+
+
+
 
                 break;
             case 118:// SAFEKEEPING
-                CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false);
-                if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            doSafeKeepFunction();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    doSafeKeepFunction();
+                }
+
+
                 break;
             case 116: //cancel selected room / TO
                 defaultView();
@@ -749,44 +876,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 115://DISCOUNT
                 if (selectedRoom != null) {
-                    if (selectedRoom.isTakeOut()) {
-                        DiscountSelectionDialog discountSelectionDialog =
-                                new DiscountSelectionDialog(getContext(),
-                                        getActivity(),
-                                        fetchRoomPendingResult,
-                                        selectedRoom.getControlNo(),
-                                        "") {
-                                    @Override
-                                    public void fetchPending(String type) {
-                                        if (type.equalsIgnoreCase("to")) {
-                                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                                        } else {
-                                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                                        }
-                                    }
-                                };
 
-                        if (!discountSelectionDialog.isShowing()) discountSelectionDialog.show();
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
+                                doDiscountFunction();
+                            }
+
+                            @Override
+                            public void noClicked() {
+
+                            }
+                        };
+                        alertYesNo.show();
                     } else {
-
-                        DiscountSelectionDialog discountSelectionDialog =
-                                new DiscountSelectionDialog(getContext(),
-                                        getActivity(),
-                                        fetchRoomPendingResult,
-                                        "",
-                                        String.valueOf(selectedRoom.getRoomId())) {
-                                    @Override
-                                    public void fetchPending(String type) {
-                                        if (type.equalsIgnoreCase("to")) {
-                                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                                        } else {
-                                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                                        }
-
-                                    }
-                                };
-
-                        if (!discountSelectionDialog.isShowing()) discountSelectionDialog.show();
+                        doDiscountFunction();
                     }
 
 
@@ -797,75 +902,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 114://SWITCH ROOM
                 if (selectedRoom != null) {
-                    SwitchRoomDialog switchRoomDialog = new SwitchRoomDialog(getActivity(), selectedRoom.getName()) {
-                        @Override
-                        public void switchRoomConfirm(final String roomRatePriceId, final String qty,
-                                                      final String price, final String rateName,
-                                                      final String roomId, List<RoomRateMain> roomRateMainList) {
-                            ConfirmWithRemarksDialog cfrmDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                @Override
-                                public void save(final String remarks) {
-//                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                    final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
 
-                                    for (CartItemsModel cim : cartItemList) {
-                                        if (!cim.isProduct()) {
-                                            voidModel.add(new VoidProductModel(
-                                                    cim.getPostId(),
-                                                    cim.getName(),
-                                                    String.valueOf(cim.getAmount()),
-                                                    String.valueOf(cim.getQuantity())
-                                            ));
-                                        }
-                                    }
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
+                                doSwitchRoomFunction();
+                            }
 
-                                    final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                            @Override
+                            public void noClicked() {
 
-                                        @Override
-                                        public void passwordSuccess(String employeeId) {
-
-                                            BusProvider.getInstance().post(
-                                                    new SwitchRoomRequest(
-                                                            String.valueOf(selectedRoom.getRoomId()),
-                                                            roomRatePriceId,
-                                                            remarks,
-                                                            roomId,
-                                                            employeeId,
-                                                            voidModel
-                                                    )
-                                            );
-
-
-                                        }
-
-                                        @Override
-                                        public void passwordFailed() {
-
-                                        }
-                                    };
-
-                                    passwordDialog.show();
-
-
-
-
-
-
-                                }
-                            };
-
-                            if (!cfrmDialog.isShowing()) cfrmDialog.show();
-                        }
-                    };
-
-                    if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                            currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
-                        if (!switchRoomDialog.isShowing()) {
-                            switchRoomDialog.show();
-                        }
+                            }
+                        };
+                        alertYesNo.show();
                     } else {
-                        Utils.showDialogMessage(getActivity(), "Room not yet checked-in", "Information");
+                        doSwitchRoomFunction();
                     }
+
+
                 } else {
                     Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
@@ -873,17 +928,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 113://POST VOID
-                TransactionsDialog postVoid = new TransactionsDialog(getActivity(), false, getActivity()) {
-                    @Override
-                    public void postVoidSuccess() {
-                        defaultView();
-                        clearCartItems();
-                    }
-                };
 
-                if (!postVoid.isShowing()) {
-                    postVoid.show();
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            doPostVoidFunction();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    doPostVoidFunction();
                 }
+
+
                 break;
             case 112://VIEW RECEIPT
                 TransactionsDialog transactionsDialog = new TransactionsDialog(getActivity(), true, getActivity()) {
@@ -998,7 +1061,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 106: //PRINT SOA
                 if (selectedRoom != null) {
                     if (hasUnpostedItems()) {
-                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), "You still have unposted item/s, It will be discarded, Do you want to continue?") {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
                             public void yesClicked() {
                                 doSoaFunction();
@@ -1020,213 +1083,47 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 105: //CHECKOUT
-                PaymentDialog checkoutDialog = new PaymentDialog(getActivity(),
-                        paymentTypeList,
-                        true,
-                        postedPaymentsList,
-                        totalBalance,
-                        currencyList,
-                        creditCardList,
-                        arOnlineList) {
-                    @Override
-                    public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
 
-                        CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
-                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                        Call<CheckShiftResponse> checkShfRqst = iUsers.checkShift(checkShiftRequest.getMapValue());
-                        checkShfRqst.enqueue(new Callback<CheckShiftResponse>() {
-                            @Override
-                            public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
-                                if (response.body().getStatus() == 0) {
-                                    Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Error");
-                                } else {
-//                                    Utils.showDialogMessage(getActivity(), "SUCCESS", "Information");
-
-                                    //regionpayment checkout chain
-                                    List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
-                                    boolean isReadyForCheckOut = false;
-                                    Double totalPayments = 0.00;
-                                    for (PostedPaymentsModel ppm : postedPaymentLit) {
-                                        if (!ppm.isIs_posted()) {
-                                            paymentsToPost.add(ppm);
-                                        }
-
-                                        totalPayments += Double.valueOf(ppm.getAmount());
-                                    }
-
-                                    if (cartItemList.size() == 0) {
-                                        //no order and prompt to cancel order, disregard all payments
-                                        if (selectedRoom.isTakeOut()) {
-                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    switch (which){
-                                                        case DialogInterface.BUTTON_POSITIVE:
-                                                            checkoutRoom("",
-                                                                    selectedRoom.getControlNo(),
-                                                                    "");
-                                                            break;
-
-                                                        case DialogInterface.BUTTON_NEGATIVE:
-                                                            dismiss();
-                                                            break;
-                                                    }
-                                                }
-                                            };
-
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                            builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
-                                                    .setPositiveButton("Yes", dialogClickListener)
-                                                    .setNegativeButton("No", dialogClickListener).show();
-                                        } else {
-
-                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    switch (which){
-                                                        case DialogInterface.BUTTON_POSITIVE:
-                                                            dismiss();
-                                                            break;
-                                                        case DialogInterface.BUTTON_NEGATIVE:
-                                                            dismiss();
-                                                            break;
-                                                    }
-                                                }
-                                            };
-
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                            builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
-                                                    .setPositiveButton("Ok", dialogClickListener).show();
-
-                                        }
-
-                                    } else {
-                                        if (totalPayments >= totalBalance) {
-                                            if (paymentsToPost.size() > 0) {
-                                                if (selectedRoom.isTakeOut()) {
-                                                    postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
-                                                } else {
-                                                    postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
-                                                }
-                                            } else {
-                                                Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
-                                            }
-
-                                            new Handler().postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    if (selectedRoom.isTakeOut()) {
-                                                        checkoutRoom("",
-                                                                selectedRoom.getControlNo(),
-                                                                "");
-                                                    } else {
-                                                        checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
-                                                                "",
-                                                                roomboy);
-                                                    }
-
-
-                                                }
-                                            }, 500);
-                                            dismiss();
-                                        } else {
-
-                                            Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
-                                        }
-                                    }//endregion
-
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
-
-                            }
-                        });
-
-                    }
-
-                    @Override
-                    public void paymentFailed() {
-
-                    }
-                };
-                if (selectedRoom != null) {
-                    if (selectedRoom.isTakeOut()) {
-                        if (paymentTypeList.size() > 0) {
-                            if (currentRoomStatus.equalsIgnoreCase("1")) {
-                                checkoutDialog.show();
-                            } else {
-
-                                Utils.showDialogMessage(getActivity(), "Please soa room first", "Information");
-                            }
-
-                        } else {
-
-                            Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            doCheckoutFunction();
                         }
-                    } else {
-                        if (currentRoomStatus.equalsIgnoreCase("17")) {
-                            if (paymentTypeList.size() > 0) {
 
-                                boolean isValid = false;
+                        @Override
+                        public void noClicked() {
 
-                                for (CartItemsModel cim : cartItemList) {
-                                    if (!cim.isProduct()) {
-                                        isValid = true;
-                                    }
-                                }
-
-                                if (isValid) {
-                                    checkoutDialog.show();
-                                } else {
-
-                                    Utils.showDialogMessage(getActivity(), "Cannot checkout a room without a room rate, add one first", "Information");
-                                }
-                            } else {
-
-                                Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
-
-                            }
-                        } else {
-                            Utils.showDialogMessage(getActivity(), "Please print SOA first", "Information");
                         }
-                    }
+                    };
 
+                    alertYesNo.show();
                 } else {
-
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+                    doCheckoutFunction();
                 }
+
+
                 break;
             case 103: //ADD RATE TO EXISTING TRANSACTION
                 if (selectedRoom != null) {
-                    if (!selectedRoom.isTakeOut()) {
-                        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
-                            final RateDialog rateDialog = new RateDialog(getContext(), selectedRoom.getPrice()) {
-                                @Override
-                                public void rateChangeSuccess(RoomRateMain selectedRate, String qty) {
-                                    addRateRequest("0",
-                                            String.valueOf(selectedRate.getRoomRatePriceId()),
-                                            qty,
-                                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                            String.valueOf(selectedRoom.getRoomId()),
-                                            String.valueOf(selectedRate.getRatePrice().getAmount()),
-                                            selectedRate.getRatePrice().getRoomRate().getRoomRate());
-                                    this.dismiss();
-                                }
-                            };
-                            rateDialog.show();
-                        } else {
 
-                            Utils.showDialogMessage(getActivity(), "Room not yet occupied", "Information");
-                        }
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
+                                doAddRateFunction();
+                            }
+
+                            @Override
+                            public void noClicked() {
+
+                            }
+                        };
+                        alertYesNo.show();
+
                     } else {
-
-                        Utils.showDialogMessage(getActivity(), "Adding rate feature is for rooms only", "Information");
+                        doAddRateFunction();
                     }
-
                 } else {
                     Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
@@ -1322,10 +1219,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 confirmWithRemarksDialog.show();
                             }
 
-
-
-
-
                         }
 
                     }
@@ -1336,80 +1229,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 101: //VOID
                 if (selectedRoom != null) {
 
-                    if (cartItemList.size() < 1) {
-                        Utils.showDialogMessage(getActivity(), "No items to void", "Information");
-                    } else {
-
-                        final ArrayList<VoidProductModel> model = new ArrayList<>();
-
-                        for (CartItemsModel cim : cartItemList) {
-                            if (cim.isSelected()) {
-                                model.add(new VoidProductModel(
-                                        cim.getPostId(),
-                                        cim.getName(),
-                                        String.valueOf(cim.getAmount()),
-                                        String.valueOf(cim.getQuantity())
-                                ));
-                            }
-                        }
-
-                        final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
-                            public void passwordSuccess(final String employeeId) {
-
-
-                                if (selectedRoom != null) {
-
-                                    if (selectedRoom.isTakeOut()) {
-                                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                            @Override
-                                            public void save(String remarks) {
-                                                BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
-                                                BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                                        String.valueOf(selectedRoom.getAreaId()),
-                                                        selectedRoom.getControlNo(),
-                                                        model,
-                                                        remarks));
-
-                                                showLoading();
-                                            }
-                                        };
-                                        confirmWithRemarksDialog.show();
-
-                                    } else {
-
-                                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                            @Override
-                                            public void save(String remarks) {
-                                                BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
-                                                BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                                        model, remarks,
-                                                        employeeId));
-
-                                                showLoading();
-                                            }
-                                        };
-                                        confirmWithRemarksDialog.show();
-
-                                    }
-                                }
+                            public void yesClicked() {
+                                doVoidFunction();
                             }
 
                             @Override
-                            public void passwordFailed() {
+                            public void noClicked() {
 
                             }
                         };
 
-                        if (model.size() > 0) {
-                            if(!passwordDialog.isShowing()) passwordDialog.show();
-                        } else {
-                            Utils.showDialogMessage(getActivity(), "Please select item/s to void", "Information");
-                        }
-
-
-
+                        alertYesNo.show();
+                    } else {
+                        doVoidFunction();
                     }
+
 
 
                 } else {
@@ -1419,142 +1256,345 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 102: //ADVANCE PAYMENT
-
                 if (selectedRoom != null) {
-                    PaymentDialog paymentDialog = new PaymentDialog(getActivity(),
-                            paymentTypeList,
-                            false,
-                            postedPaymentsList,
-                            totalBalance,
-                            currencyList,
-                            creditCardList,
-                            arOnlineList) {
-                        @Override
-                        public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit, String roomBoy) {
-                            List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
-                            for (PostedPaymentsModel ppm : postedPaymentLit) {
-                                if (!ppm.isIs_posted()) {
-                                    paymentsToPost.add(ppm);
-                                }
+
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+
+                            @Override
+                            public void yesClicked() {
+
+                                doAdvancePaymentFunction();
+
                             }
 
-                            if (paymentsToPost.size() > 0) {
-                                if (selectedRoom.isTakeOut()) {
-                                    postAdvancePayment(paymentsToPost, "", selectedRoom.getControlNo());
-                                } else {
-                                    postAdvancePayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
-                                }
+                            @Override
+                            public void noClicked() {
 
-                                BusProvider.getInstance().post(new PrintModel("",
-                                        selectedRoom.getName(),
-                                        "DEPOSIT",
-                                        GsonHelper.getGson().toJson(paymentsToPost),
-                                        selectedRoom.getRoomType()));
-
-                            } else {
-
-                                Utils.showDialogMessage(getActivity(), "No payment to post", "Information");
                             }
+                        };
 
-                            dismiss();
-                        }
+                        alertYesNo.show();
 
-                        @Override
-                        public void paymentFailed() {
-
-                        }
-                    };
-
-
-                    if (selectedRoom.isTakeOut()) {
-                        if (paymentTypeList.size() > 0) {
-                            paymentDialog.show();
-                        } else {
-                            Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
-                        }
                     } else {
-                        if (currentRoomStatus.equalsIgnoreCase("2") ||
-                                currentRoomStatus.equalsIgnoreCase("17")) {
-                            if (paymentTypeList.size() > 0) {
-                                paymentDialog.show();
-                            } else {
 
-                                Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the paplication", "Information");
-                            }
-                        } else {
-                            Utils.showDialogMessage(getActivity(), "Room not yet occupied, cant accept payment", "Information");
-                        }
+                        doAdvancePaymentFunction();
                     }
+
+
 
                 } else {
                     Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
 
-
-
-//                if ((userModel.getSystemType().equals(SystemConstants.SYS_ROOM) ||
-//                        userModel.getSystemType().equals(SystemConstants.SYS_TABLE)) &&
-//                    TextUtils.isEmpty(selectedRoomNumber())) {
-//                    //alert need to select table / room
-//                    Toast.makeText(getContext(), getString(R.string.error_no_space_selected), Toast.LENGTH_SHORT).show();
-//                } else if(userModel.getSystemType().equals(SystemConstants.SYS_CHECKOUT)) {
-//
-//                    //show total
-//
-//                } else {
-
-                    //loop payment details then pass to payment dialog
-//                    if (getTableRecord().size() > 0) {
-//                        double balance = 0;
-//                        for (ProductsModel selectedItem : cartItemList) {
-//                            balance += selectedItem.getPrice();
-//                        }
-//                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance) {
-//                            @Override
-//                            public void onClick(View v) {
-//
-//                            }
-//
-//                            @Override
-//                            public void paymentSuccess() {
-//                                if (getTableRecord().size() > 0) {
-//                                    String tempTransId = getTableRecord().get(0).getTransactionId();
-//                                    for (TransactionEntity t : getTableRecord()) {
-//                                        if (t.getTransactionStatus() == TransactionConstants.PENDING) {
-//                                            t.setTransactionStatus(TransactionConstants.FULLY_PAID);
-//                                            t.save();
-//                                        }
-//                                    }
-//                                    for (CartEntity c : getCartRecord(tempTransId)) {
-//                                        if (c.getProductStatus() != ProductConstants.PENDING &&
-//                                                c.getProductStatus() != ProductConstants.VOID &&
-//                                                c.getProductStatus() != ProductConstants.DISABLED)
-//                                            c.setProductStatus(ProductConstants.PAID);
-//                                        c.save();
-//                                    }
-//                                }
-//
-//                                clearCartItems();
-//                                defaultView();
-//                                CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
-//                            }
-//
-//                            @Override
-//                            public void paymentFailed() {
-//
-//                            }
-//                        };
-////                        PaymentDialog paymentDialog = new PaymentDialog(getActivity(), getTableRecord().get(0).getTransactionId(), balance);
-//                        paymentDialog.show();
-////                        Intent paymentIntent = new Intent(getContext(), PaymentActivity.class);
-////                        paymentIntent.putExtra("transaction_number", getTableRecord().get(0).getTransactionId());
-////                        startActivityForResult(paymentIntent, 100);
-//                    } else {
-//                        Toast.makeText(getContext(), "No transactions made yet.", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-
                 break;
+        }
+    }
+
+    private void doSafeKeepFunction() {
+        CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false);
+        if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+    }
+
+    private void doPostVoidFunction() {
+        TransactionsDialog postVoid = new TransactionsDialog(getActivity(), false, getActivity()) {
+            @Override
+            public void postVoidSuccess() {
+                defaultView();
+                clearCartItems();
+            }
+        };
+
+        if (!postVoid.isShowing()) {
+            postVoid.show();
+        }
+    }
+
+    private void doDiscountFunction() {
+        if (selectedRoom.isTakeOut()) {
+            DiscountSelectionDialog discountSelectionDialog =
+                    new DiscountSelectionDialog(getContext(),
+                            getActivity(),
+                            fetchRoomPendingResult,
+                            selectedRoom.getControlNo(),
+                            "") {
+                        @Override
+                        public void fetchPending(String type) {
+                            if (type.equalsIgnoreCase("to")) {
+                                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                            } else {
+                                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                            }
+                        }
+                    };
+
+            if (!discountSelectionDialog.isShowing()) discountSelectionDialog.show();
+        } else {
+
+            DiscountSelectionDialog discountSelectionDialog =
+                    new DiscountSelectionDialog(getContext(),
+                            getActivity(),
+                            fetchRoomPendingResult,
+                            "",
+                            String.valueOf(selectedRoom.getRoomId())) {
+                        @Override
+                        public void fetchPending(String type) {
+                            if (type.equalsIgnoreCase("to")) {
+                                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                            } else {
+                                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                            }
+
+                        }
+                    };
+
+            if (!discountSelectionDialog.isShowing()) discountSelectionDialog.show();
+        }
+    }
+
+    private void doSwitchRoomFunction() {
+        SwitchRoomDialog switchRoomDialog = new SwitchRoomDialog(getActivity(), selectedRoom.getName()) {
+            @Override
+            public void switchRoomConfirm(final String roomRatePriceId, final String qty,
+                                          final String price, final String rateName,
+                                          final String roomId, List<RoomRateMain> roomRateMainList) {
+                ConfirmWithRemarksDialog cfrmDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                    @Override
+                    public void save(final String remarks) {
+//                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                        final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+
+                        for (CartItemsModel cim : cartItemList) {
+                            if (!cim.isProduct()) {
+                                voidModel.add(new VoidProductModel(
+                                        cim.getPostId(),
+                                        cim.getName(),
+                                        String.valueOf(cim.getAmount()),
+                                        String.valueOf(cim.getQuantity())
+                                ));
+                            }
+                        }
+
+                        final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+
+                            @Override
+                            public void passwordSuccess(String employeeId) {
+
+                                BusProvider.getInstance().post(
+                                        new SwitchRoomRequest(
+                                                String.valueOf(selectedRoom.getRoomId()),
+                                                roomRatePriceId,
+                                                remarks,
+                                                roomId,
+                                                employeeId,
+                                                voidModel
+                                        )
+                                );
+
+
+                            }
+
+                            @Override
+                            public void passwordFailed() {
+
+                            }
+                        };
+
+                        passwordDialog.show();
+
+
+
+
+
+
+                    }
+                };
+
+                if (!cfrmDialog.isShowing()) cfrmDialog.show();
+            }
+        };
+
+        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
+            if (!switchRoomDialog.isShowing()) {
+                switchRoomDialog.show();
+            }
+        } else {
+            Utils.showDialogMessage(getActivity(), "Room not yet checked-in", "Information");
+        }
+    }
+
+    private void doAddRateFunction() {
+        if (!selectedRoom.isTakeOut()) {
+            if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                    currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
+                final RateDialog rateDialog = new RateDialog(getContext(), selectedRoom.getPrice()) {
+                    @Override
+                    public void rateChangeSuccess(RoomRateMain selectedRate, String qty) {
+                        addRateRequest("0",
+                                String.valueOf(selectedRate.getRoomRatePriceId()),
+                                qty,
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                String.valueOf(selectedRoom.getRoomId()),
+                                String.valueOf(selectedRate.getRatePrice().getAmount()),
+                                selectedRate.getRatePrice().getRoomRate().getRoomRate());
+                        this.dismiss();
+                    }
+                };
+                rateDialog.show();
+            } else {
+
+                Utils.showDialogMessage(getActivity(), "Room not yet occupied", "Information");
+            }
+        } else {
+
+            Utils.showDialogMessage(getActivity(), "Adding rate feature is for rooms only", "Information");
+        }
+
+    }
+
+    private void doAdvancePaymentFunction() {
+        PaymentDialog paymentDialog = new PaymentDialog(getActivity(),
+                paymentTypeList,
+                false,
+                postedPaymentsList,
+                totalBalance,
+                currencyList,
+                creditCardList,
+                arOnlineList) {
+            @Override
+            public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit, String roomBoy) {
+                List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                for (PostedPaymentsModel ppm : postedPaymentLit) {
+                    if (!ppm.isIs_posted()) {
+                        paymentsToPost.add(ppm);
+                    }
+                }
+
+                if (paymentsToPost.size() > 0) {
+                    if (selectedRoom.isTakeOut()) {
+                        postAdvancePayment(paymentsToPost, "", selectedRoom.getControlNo());
+                    } else {
+                        postAdvancePayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                    }
+
+                    BusProvider.getInstance().post(new PrintModel("",
+                            selectedRoom.getName(),
+                            "DEPOSIT",
+                            GsonHelper.getGson().toJson(paymentsToPost),
+                            selectedRoom.getRoomType()));
+
+                } else {
+
+                    Utils.showDialogMessage(getActivity(), "No payment to post", "Information");
+                }
+
+                dismiss();
+            }
+
+            @Override
+            public void paymentFailed() {
+
+            }
+        };
+
+
+        if (selectedRoom.isTakeOut()) {
+            if (paymentTypeList.size() > 0) {
+                paymentDialog.show();
+            } else {
+                Toast.makeText(getContext(), "No payment type found", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            if (currentRoomStatus.equalsIgnoreCase("2") ||
+                    currentRoomStatus.equalsIgnoreCase("17")) {
+                if (paymentTypeList.size() > 0) {
+                    paymentDialog.show();
+                } else {
+
+                    Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the paplication", "Information");
+                }
+            } else {
+                Utils.showDialogMessage(getActivity(), "Room not yet occupied, cant accept payment", "Information");
+            }
+        }
+
+    }
+
+    private void doVoidFunction() {
+        if (cartItemList.size() < 1) {
+            Utils.showDialogMessage(getActivity(), "No items to void", "Information");
+        } else {
+
+            final ArrayList<VoidProductModel> model = new ArrayList<>();
+
+            for (CartItemsModel cim : cartItemList) {
+                if (cim.isSelected()) {
+                    model.add(new VoidProductModel(
+                            cim.getPostId(),
+                            cim.getName(),
+                            String.valueOf(cim.getAmount()),
+                            String.valueOf(cim.getQuantity())
+                    ));
+                }
+            }
+
+            final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                @Override
+                public void passwordSuccess(final String employeeId) {
+
+
+                    if (selectedRoom != null) {
+
+                        if (selectedRoom.isTakeOut()) {
+                            ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                @Override
+                                public void save(String remarks) {
+                                    BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
+                                    BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                            String.valueOf(selectedRoom.getAreaId()),
+                                            selectedRoom.getControlNo(),
+                                            model,
+                                            remarks));
+
+                                    showLoading();
+                                }
+                            };
+                            confirmWithRemarksDialog.show();
+
+                        } else {
+
+                            ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                @Override
+                                public void save(String remarks) {
+                                    BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
+                                    BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                            model, remarks,
+                                            employeeId));
+
+                                    showLoading();
+                                }
+                            };
+                            confirmWithRemarksDialog.show();
+
+                        }
+                    }
+                }
+
+                @Override
+                public void passwordFailed() {
+
+                }
+            };
+
+            if (model.size() > 0) {
+                if(!passwordDialog.isShowing()) passwordDialog.show();
+            } else {
+                Utils.showDialogMessage(getActivity(), "Please select item/s to void", "Information");
+            }
+
+
+
         }
     }
 
@@ -1565,14 +1605,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
-//                final ProductsModel itemToRestore = cartItemList.get(viewHolder.getAdapterPosition());
-//                new DeleteCartItemAsync(cartItemList.get(viewHolder.getAdapterPosition())).execute();
 
                 cartItemList.remove(viewHolder.getAdapterPosition());
 
                 checkoutAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
 
-//                computeFromDb();
             }
 
             @Override
@@ -1583,9 +1620,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                 }
 
-//                if (cartItemList.get(viewHolder.getAdapterPosition()).getProductStatus() != ProductConstants.PENDING) {
-//                    return 0;
-//                }
                 return super.getMovementFlags(recyclerView, viewHolder);
             }
         };
@@ -1738,11 +1772,30 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     }
 
-    private void fetchRoomPending(String roomId) {
+    private void fetchRoomPending(final String roomId) {
 
-        BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+        if (hasUnpostedItems()) {
+            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                @Override
+                public void yesClicked() {
+                    BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
 
-        showLoading();
+                    showLoading();
+                }
+
+                @Override
+                public void noClicked() {
+
+                }
+            };
+            alertYesNo.show();
+        } else {
+            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+
+            showLoading();
+        }
+
+
     }
 
     private void showLoading() {
@@ -1757,8 +1810,208 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
-    private void fetchOrderPendingViaControlNo(String controlNo) {
-        BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+    private void fetchOrderPendingViaControlNo(final String controlNo) {
+
+        if (hasUnpostedItems()) {
+            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                @Override
+                public void yesClicked() {
+                    BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+                }
+
+                @Override
+                public void noClicked() {
+
+                }
+            };
+            alertYesNo.show();
+        } else {
+            BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+        }
+
+
+    }
+
+    private void doCheckoutFunction() {
+        PaymentDialog checkoutDialog = new PaymentDialog(getActivity(),
+                paymentTypeList,
+                true,
+                postedPaymentsList,
+                totalBalance,
+                currencyList,
+                creditCardList,
+                arOnlineList) {
+            @Override
+            public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
+
+                CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<CheckShiftResponse> checkShfRqst = iUsers.checkShift(checkShiftRequest.getMapValue());
+                checkShfRqst.enqueue(new Callback<CheckShiftResponse>() {
+                    @Override
+                    public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
+                        if (response.body().getStatus() == 0) {
+                            Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Error");
+                        } else {
+//                                    Utils.showDialogMessage(getActivity(), "SUCCESS", "Information");
+
+                            //regionpayment checkout chain
+                            List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                            boolean isReadyForCheckOut = false;
+                            Double totalPayments = 0.00;
+                            for (PostedPaymentsModel ppm : postedPaymentLit) {
+                                if (!ppm.isIs_posted()) {
+                                    paymentsToPost.add(ppm);
+                                }
+
+                                totalPayments += Double.valueOf(ppm.getAmount());
+                            }
+
+                            if (cartItemList.size() == 0) {
+                                //no order and prompt to cancel order, disregard all payments
+                                if (selectedRoom.isTakeOut()) {
+                                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which){
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    checkoutRoom("",
+                                                            selectedRoom.getControlNo(),
+                                                            "");
+                                                    break;
+
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    dismiss();
+                                                    break;
+                                            }
+                                        }
+                                    };
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
+                                            .setPositiveButton("Yes", dialogClickListener)
+                                            .setNegativeButton("No", dialogClickListener).show();
+                                } else {
+
+                                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which){
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    dismiss();
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    dismiss();
+                                                    break;
+                                            }
+                                        }
+                                    };
+
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
+                                            .setPositiveButton("Ok", dialogClickListener).show();
+
+                                }
+
+                            } else {
+                                if (totalPayments >= totalBalance) {
+                                    if (paymentsToPost.size() > 0) {
+                                        if (selectedRoom.isTakeOut()) {
+                                            postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
+                                        } else {
+                                            postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
+                                        }
+                                    } else {
+                                        Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (selectedRoom.isTakeOut()) {
+                                                checkoutRoom("",
+                                                        selectedRoom.getControlNo(),
+                                                        "");
+                                            } else {
+                                                checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                                        "",
+                                                        roomboy);
+                                            }
+
+
+                                        }
+                                    }, 500);
+                                    dismiss();
+                                } else {
+
+                                    Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
+                                }
+                            }//endregion
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void paymentFailed() {
+
+            }
+        };
+        if (selectedRoom != null) {
+            if (selectedRoom.isTakeOut()) {
+                if (paymentTypeList.size() > 0) {
+                    if (currentRoomStatus.equalsIgnoreCase("1")) {
+                        checkoutDialog.show();
+                    } else {
+
+                        Utils.showDialogMessage(getActivity(), "Please soa room first", "Information");
+                    }
+
+                } else {
+
+                    Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
+                }
+            } else {
+                if (currentRoomStatus.equalsIgnoreCase("17")) {
+                    if (paymentTypeList.size() > 0) {
+
+                        boolean isValid = false;
+
+                        for (CartItemsModel cim : cartItemList) {
+                            if (!cim.isProduct()) {
+                                isValid = true;
+                            }
+                        }
+
+                        if (isValid) {
+                            checkoutDialog.show();
+                        } else {
+
+                            Utils.showDialogMessage(getActivity(), "Cannot checkout a room without a room rate, add one first", "Information");
+                        }
+                    } else {
+
+                        Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
+
+                    }
+                } else {
+                    Utils.showDialogMessage(getActivity(), "Please print SOA first", "Information");
+                }
+            }
+
+        } else {
+
+            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+        }
+
     }
 
     @Subscribe
@@ -2048,12 +2301,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                                    Log.d("CHECKINDATA", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
 //                                            welcomeGuestRequest.getRoomRatePriceId(),
 //                                            remarks).toString());
-                                    Log.d("CHECKNREQU", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-                                            welcomeGuestRequest.getRoomRatePriceId(),
-                                            remarks).toString());
-//                                    BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+//                                    Log.d("CHECKNREQU", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
 //                                            welcomeGuestRequest.getRoomRatePriceId(),
-//                                            remarks));BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+//                                            remarks).toString());
+                                    BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+                                            welcomeGuestRequest.getRoomRatePriceId(),
+                                            remarks));
+//                                      BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
 //                                            welcomeGuestRequest.getRoomRatePriceId(),
 //                                            remarks));
                                     dismiss();
@@ -2101,9 +2355,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 "").toString());
 
 
-//                        BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-//                                welcomeGuestRequest.getRoomRatePriceId(),
-//                                ""));
+                        BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
+                                welcomeGuestRequest.getRoomRatePriceId(),
+                                ""));
 
 
 //                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
@@ -2163,7 +2417,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void addProductResponse(AddRoomPriceResponse addRoomPriceResponse) {
-        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+//        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+
+        BusProvider.getInstance().post(new FetchRoomPendingRequest(String.valueOf(selectedRoom.getRoomId())));
+
+        showLoading();
+
     }
 
     private void fetchPaymentTypeRequest() {
@@ -2781,38 +3040,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true);
         if (!cutOffDialog.isShowing()) cutOffDialog.show();
-
-
-//        PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
-//            @Override
-//            public void passwordSuccess(String employeeId) {
-//                CashNReconcileRequest cashNReconcileRequest = new CashNReconcileRequest(employeeId);
-//                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-//                Call<CashNReconcileResponse> request = iUsers.cashNReconcile(cashNReconcileRequest.getMapValue());
-//                request.enqueue(new Callback<CashNReconcileResponse>() {
-//                    @Override
-//                    public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
-//
-//                        Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
-//
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void passwordFailed() {
-//
-//            }
-//        };
-//        if (!passwordDialog.isShowing()) passwordDialog.show();
-
-
-
 
     }
 

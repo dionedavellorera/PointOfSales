@@ -6,6 +6,16 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
+
+    <ImageView
+        android:layout_margin="5dp"
+        android:tint="@color/colorGreen"
+        android:id="@+id/iconStatus"
+        android:visibility="visible"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:src="@drawable/check_all"/>
+
     <TextView
         android:id="@+id/paymentType"
         android:text="test"

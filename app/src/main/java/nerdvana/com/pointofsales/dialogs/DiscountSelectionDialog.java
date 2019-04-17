@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -82,6 +83,10 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
     @Override
     public void clicked(ButtonsModel buttonsModel) {
         if (buttonsModel.isSpecial()) {
+
+            Log.d("CCXZss", String.valueOf(buttonsModel.getId()));
+
+
             SelectionDiscountDialog selectionDiscountDialog =
                     new SelectionDiscountDialog(activity, controlNumber, roomId, String.valueOf(buttonsModel.getId())) {
                         @Override
@@ -97,6 +102,9 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                     };
             if (!selectionDiscountDialog.isShowing()) selectionDiscountDialog.show();
         } else {
+
+            Log.d("CCXZ", String.valueOf(buttonsModel.getId()));
+
             switch (buttonsModel.getId()) {
                 case 1000:
                     if (fetchRoomPendingResult != null) {
@@ -159,38 +167,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     true));
                         }
                     }
-
                     buttonsAdapter.notifyDataSetChanged();
-
-//                    CustomSpinnerAdapter customSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-//                            stringArray);
-//                    spinnerDiscountType.setAdapter(customSpinnerAdapter);
-//
-//                    spinnerDiscountType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                        @Override
-//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//
-//
-//                            discountType = response.body().getResult().get(position).getDiscountCard();
-//                            discountId = String.valueOf(response.body().getResult().get(position).getId());
-//                            if (response.body().getResult().get(position).getIsCard() == 1) {
-//                                selectionType = "card";
-//                                showForm("card");
-//                            } else if (response.body().getResult().get(position).getIsEmployee() == 1) {
-//                                selectionType = "employee";
-//                                showForm("employee");
-//                            } else if (response.body().getResult().get(position).getIsSpecial() == 1) {
-//                                selectionType = "special";
-//                                showForm("special");
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onNothingSelected(AdapterView<?> parent) {
-//
-//                        }
-//                    });
-
                 }
             }
 

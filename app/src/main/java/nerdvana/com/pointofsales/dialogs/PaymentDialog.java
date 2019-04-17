@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -61,6 +63,7 @@ import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
+import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
@@ -524,6 +527,8 @@ public abstract class PaymentDialog extends BaseDialog  {
         listAvailedGcs.setAdapter(availableGcAdapter);
         availableGcAdapter.notifyDataSetChanged();
         showForm("1");
+
+        setPostedPaymentSwipe();
     }
 
     public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList, String roomBoy);
@@ -749,5 +754,34 @@ public abstract class PaymentDialog extends BaseDialog  {
 
             }
         });
+    }
+
+    private void setPostedPaymentSwipe() {
+        SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(getContext()) {
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+
+                postedPaymentList.remove(viewHolder.getAdapterPosition());
+                computeTotal();
+                postedPaymentsAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
+            }
+
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                if (postedPaymentList.size() > 0) {
+                    if (postedPaymentList.get(viewHolder.getAdapterPosition()).isIs_posted()) {
+                        return 0;
+                    }
+                }
+
+                return super.getMovementFlags(recyclerView, viewHolder);
+            }
+        };
+
+        ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchhelper.attachToRecyclerView(listPostedPayments);
     }
 }
