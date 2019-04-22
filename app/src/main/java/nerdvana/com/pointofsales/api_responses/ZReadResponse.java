@@ -8,7 +8,7 @@ import java.util.List;
 public class ZReadResponse {
     @SerializedName("data")
     @Expose
-    private List<Data> dataList;
+    private Data dataList;
     @SerializedName("status")
     @Expose
     private Integer status;
@@ -16,7 +16,7 @@ public class ZReadResponse {
     @Expose
     private String message;
 
-    public List<Data> getDataList() {
+    public Data getDataList() {
         return dataList;
     }
 

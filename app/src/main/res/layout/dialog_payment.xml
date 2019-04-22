@@ -303,23 +303,76 @@
 
             <LinearLayout
                 android:id="@+id/linTotals"
-                android:layout_above="@id/linTendered"
+                android:layout_above="@id/linDeposit"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayTotal"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:textSize="18sp"
                     android:layout_above="@id/pay"
-                    android:text="TOTAL"
+                    android:text="SUB TOTAL"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
+                    android:padding="5dp"
                     android:text="total"
                     android:id="@+id/totalBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linDeposit"
+                android:layout_above="@id/linAmountDue"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="0.5"
+                    android:id="@+id/displayDeposit"
+                    android:padding="5dp"
+                    android:textSize="18sp"
+                    android:text="DEPOSIT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:padding="5dp"
+                    android:text="payemtn"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/totalBalance"
+                    android:id="@+id/totalDeposit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linAmountDue"
+                android:layout_above="@id/linTendered"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="0.5"
+                    android:id="@+id/displayAmountDue"
+                    android:padding="5dp"
+                    android:textSize="18sp"
+                    android:text="AMOUNT DUE"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:padding="5dp"
+                    android:text="payemtn"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/totalBalance"
+                    android:id="@+id/totalAmountDue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -334,7 +387,7 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayAmountTendered"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:textSize="18sp"
                     android:layout_above="@id/pay"
                     android:text="TENDERED"
@@ -342,6 +395,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
+                    android:padding="5dp"
                     android:text="payemtn"
                     android:layout_alignParentBottom="true"
                     android:layout_toLeftOf="@id/totalBalance"
@@ -361,7 +415,7 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayChange"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:textSize="18sp"
                     android:layout_above="@id/pay"
                     android:text="CHANGE"
@@ -369,6 +423,7 @@
                     android:layout_height="wrap_content" />
 
                 <TextView
+                    android:padding="5dp"
                     android:text="change"
                     android:layout_alignParentBottom="true"
                     android:layout_toLeftOf="@id/totalBalance"

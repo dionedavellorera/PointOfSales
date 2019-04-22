@@ -63,6 +63,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -506,6 +507,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         //endregion
 
         switch (printModel.getType()) {
+            case "XREADING":
+
+                CashNReconcileResponse cashNReconcileResponse = GsonHelper.getGson().fromJson(printModel.getData(), CashNReconcileResponse.class);
+
+//                cashNReconcileResponse.getResult().
+                break;
             case "SWITCH_ROOM":
 
                 SwitchRoomPrintModel switchRoomPrintModel = GsonHelper.getGson().fromJson(printModel.getData(), SwitchRoomPrintModel.class);
@@ -1608,7 +1615,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
         Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
         if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
-            CollectionDialog collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false);
+            CollectionDialog collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
+                @Override
+                public void printCashRecoData(CashNReconcileResponse cashNReconcileResponse) {
+
+                }
+            };
             if (!collectionDialog.isShowing()) collectionDialog.show();
         }
     }

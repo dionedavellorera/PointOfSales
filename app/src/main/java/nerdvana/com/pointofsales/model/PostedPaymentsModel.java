@@ -12,11 +12,13 @@ public class PostedPaymentsModel {
     private JSONObject data;
     private String symbolLeft;
     private String symbolRight;
+    private boolean isAdvance;
 
     public PostedPaymentsModel(String paymentType, String paymentAmount,
                                String paymentDescription, boolean isPosted,
                                String currencyId, String currencyValue,
-                               JSONObject data, String symbolLeft, String symbolRight) {
+                               JSONObject data, String symbolLeft, String symbolRight,
+                               boolean isAdvance) {
         this.payment_method = paymentType;
         this.amount = paymentAmount;
         this.payment_description = paymentDescription;
@@ -26,6 +28,11 @@ public class PostedPaymentsModel {
         this.data = data;
         this.symbolLeft = symbolLeft;
         this.symbolRight = symbolRight;
+        this.isAdvance = isAdvance;
+    }
+
+    public boolean isAdvance() {
+        return isAdvance;
     }
 
     public String getSymbolRight() {

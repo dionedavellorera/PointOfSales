@@ -244,7 +244,7 @@ public interface IUsers {
 
     @POST("zReading")
     @FormUrlEncoded
-    Call<ZReadResponse> zReading(@FieldMap Map<String, String> params);
+    Call<ResponseBody> zReading(@FieldMap Map<String, String> params);
 
     @POST("checkEndOfDay")
     @FormUrlEncoded

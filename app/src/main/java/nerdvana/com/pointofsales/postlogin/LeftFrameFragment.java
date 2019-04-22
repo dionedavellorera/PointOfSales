@@ -159,6 +159,7 @@ import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
+import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -1292,7 +1293,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void doSafeKeepFunction() {
-        CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false);
+        CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
+            @Override
+            public void printCashRecoData(CashNReconcileResponse cashNReconcileResponse) {
+
+            }
+        };
         if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
     }
 
@@ -2067,7 +2073,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 String.valueOf(pym.getCurrencyValue()),
                                 new JSONObject(),
                                 symbolLeft,
-                                symbolRight
+                                symbolRight,
+                                pym.getIsAdvance() == 1 ? true : false
                         ));
                     }
                 }
@@ -2570,7 +2577,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             String.valueOf(pym.getCurrencyValue()),
                             new JSONObject(),
                             symbolLeft,
-                            symbolRight
+                            symbolRight,
+                            pym.getIsAdvance() == 1 ? true : false
                     ));
                 }
             }
@@ -3038,38 +3046,67 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void cashNReconcile() {
 
-        CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true);
+        CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
+            @Override
+            public void printCashRecoData(CashNReconcileResponse cashNReconcileResponse) {
+                BusProvider.getInstance().post(new PrintModel("", "X READING", "XREADING", GsonHelper.getGson().toJson(cashNReconcileResponse)));
+            }
+        };
         if (!cutOffDialog.isShowing()) cutOffDialog.show();
 
     }
 
     private void zReadRequest() {
-        ZReadRequest zReadRequest = new ZReadRequest();
-        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
-        request.enqueue(new Callback<ZReadResponse>() {
-            @Override
-            public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
 
-                String message = response.body().getMessage() + "\n";
-                if (response.body().getDataList().size() > 0) {
-                    for (ZReadResponse.Data data : response.body().getDataList()) {
-                        message += String.format("%s(%s/%s) - %s - %s \n", data.getName(), data.getUserId(), data.getUsername(), data.getShiftNo(), Utils.convertDateOnlyToReadableDate(data.getDate()));
+        PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+            @Override
+            public void passwordSuccess(String employeeId) {
+                ZReadRequest zReadRequest = new ZReadRequest(employeeId);
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<ResponseBody> request = iUsers.zReading(zReadRequest.getMapValue());
+                request.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                JSONObject jsonObject = new JSONObject()
                     }
-                }
 
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-
-
-                Utils.showDialogMessage(getActivity(), message, "Information");
-
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<ZReadResponse> call, Throwable t) {
+            public void passwordFailed() {
 
             }
-        });
+        };
+
+        if (!passwordDialog.isShowing()) passwordDialog.show();
+
+
+//        Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
+//        request.enqueue(new Callback<ZReadResponse>() {
+//            @Override
+//            public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+//
+////                String message = response.body().getMessage() + "\n";
+////                if (response.body().getDataList().size() > 0) {
+////
+////                    for (ZReadResponse.Data data : response.body().getDataList()) {
+////                        message += String.format("%s(%s/%s) - %s - %s \n", data.getName(), data.getUserId(), data.getUsername(), data.getShiftNo(), Utils.convertDateOnlyToReadableDate(data.getDate()));
+////                    }
+////                }
+////                Utils.showDialogMessage(getActivity(), message, "Information");
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ZReadResponse> call, Throwable t) {
+//
+//            }
+//        });
     }
 
     private void xReadRequest() {

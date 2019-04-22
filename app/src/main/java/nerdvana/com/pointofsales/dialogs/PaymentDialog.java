@@ -78,6 +78,8 @@ import static android.view.View.GONE;
 
 public abstract class PaymentDialog extends BaseDialog  {
 
+    private TextView totalDeposit;
+    private TextView totalAmountDue;
 
     private LinearLayout formCash;
     private LinearLayout formCard;
@@ -180,6 +182,8 @@ public abstract class PaymentDialog extends BaseDialog  {
 //        setContentView(R.layout.dialog_payment);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
         gcList = new ArrayList<>();
+        totalDeposit = findViewById(R.id.totalDeposit);
+        totalAmountDue = findViewById(R.id.totalAmountDue);
         linRoomBoy = findViewById(R.id.linRoomBoy);
         spinnerForex = findViewById(R.id.spinnerForex);
         formCash = findViewById(R.id.formCash);
@@ -274,7 +278,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
                                         new JSONObject(),
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                                        false));
                             } else {
                                 Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
                             }
@@ -347,7 +352,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
                                     jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                                    false));
 
 
                         } else {
@@ -392,7 +398,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
                                     jsonObject,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                                    false));
                         } else {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
@@ -429,7 +436,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
                                     jsonObject,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                                    false));
                         } else {
                             Utils.showDialogMessage(act, "No gc added", "Information");
                         }
@@ -469,7 +477,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     currencyValue,
                                     new JSONObject(),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT)));
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                                    false));
                         } else {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
@@ -539,11 +548,23 @@ public abstract class PaymentDialog extends BaseDialog  {
     }
 
     private void computeTotal() {
+        Double advancePayment = 0.00;
+        Double normalPayment = 0.00;
         Double totalPayment = 0.00;
+        Double amountDue = 0.00;
+
         Double totalChange = 0.00;
         for (PostedPaymentsModel ppm : postedPaymentList) {
-            totalPayment += Double.valueOf(ppm.getAmount());
+            if (ppm.isAdvance()) {
+                advancePayment += Double.valueOf(ppm.getAmount());
+            } else {
+                normalPayment += Double.valueOf(ppm.getAmount());
+            }
         }
+
+        totalPayment = advancePayment + normalPayment;
+        amountDue = totalBalance - advancePayment;
+        totalAmountDue.setText(String.valueOf(amountDue));
 
         totalChange = totalPayment - totalBalance;
         if (Double.valueOf(totalChange) < 1) {
@@ -552,11 +573,15 @@ public abstract class PaymentDialog extends BaseDialog  {
             displayTotalChange.setText(String.valueOf(totalChange));
         }
 
-        displayTotalPayment.setText(String.valueOf(totalPayment));
+        displayTotalPayment.setText(String.valueOf(normalPayment));
 
         if (totalPayment >= totalBalance) {
             pay.setBackgroundColor(Color.GREEN);
+        } else {
+            pay.setBackgroundColor(Color.RED);
         }
+
+        totalDeposit.setText(String.valueOf(advancePayment));
     }
 
     @Override

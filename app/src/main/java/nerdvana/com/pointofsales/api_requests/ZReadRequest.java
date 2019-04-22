@@ -6,12 +6,14 @@ import java.util.Map;
 public class ZReadRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public ZReadRequest() {
+    public ZReadRequest(String empId) {
         mapValue = new HashMap<>();
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
         mapValue.put("branch_code", branchCode);
+        mapValue.put("emp_id", empId);
+
     }
 
     public Map<String, String> getMapValue() {

@@ -45,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CollectionDialog extends BaseDialog {
+public abstract class CollectionDialog extends BaseDialog {
     private String type;
     private LinearLayout relContainer;
     private LinearLayout linear;
@@ -111,6 +111,10 @@ public class CollectionDialog extends BaseDialog {
                         public void passwordSuccess(String employeeId) {
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
+                            Log.d("CASHRECOREQ", collectionRequest.toString());
+
+
+
                             Call<CashNReconcileResponse> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
                             request.enqueue(new Callback<CashNReconcileResponse>() {
                                 @Override
@@ -120,9 +124,9 @@ public class CollectionDialog extends BaseDialog {
 
                                     if (response.body().getStatus() == 1) {
                                         dismiss();
-
-
                                     }
+
+                                    printCashRecoData(response.body());
                                 }
 
                                 @Override
@@ -247,5 +251,5 @@ public class CollectionDialog extends BaseDialog {
         relContainer.addView(linearLayout);
     }
 
-
+    public abstract void printCashRecoData(CashNReconcileResponse cashNReconcileResponse);
 }
