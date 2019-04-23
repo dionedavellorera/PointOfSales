@@ -40,6 +40,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
@@ -244,7 +245,7 @@ public interface IUsers {
 
     @POST("zReading")
     @FormUrlEncoded
-    Call<ResponseBody> zReading(@FieldMap Map<String, String> params);
+    Call<ZReadResponse> zReading(@FieldMap Map<String, String> params);
 
     @POST("checkEndOfDay")
     @FormUrlEncoded
@@ -252,7 +253,7 @@ public interface IUsers {
 
     @POST("cashAndReconcile")
     @FormUrlEncoded
-    Call<CashNReconcileResponse> cashNReconcile(@FieldMap Map<String, String> params);
+    Call<Object> cashNReconcile(@FieldMap Map<String, String> params);
 
     @POST("checkSafeKeeping")
     @FormUrlEncoded
@@ -277,4 +278,8 @@ public interface IUsers {
     @POST("checkShift")
     @FormUrlEncoded
     Call<CheckShiftResponse> checkShift(@FieldMap Map<String, String> params);
+
+    @POST("fetchXReadingViaId")
+    @FormUrlEncoded
+    Call<FetchXReadingViaIdResponse> fetchXReadingViaId(@FieldMap Map<String, String> params);
 }

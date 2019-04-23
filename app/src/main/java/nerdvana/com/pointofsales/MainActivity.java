@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.eposprint.Print;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
@@ -41,6 +43,9 @@ import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,6 +68,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
 import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
@@ -77,6 +83,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
@@ -503,15 +510,352 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         addTextToPrinter(SPrinter.getPrinter(), "VAT REG TIN NO: " + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.TIN_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(SPrinter.getPrinter(), "PERMIT NO: FP082015-43A-0046941-00000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
         addTextToPrinter(SPrinter.getPrinter(), "MIN NO: 15080516005415409", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
-        addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber().equalsIgnoreCase("takeout") ? printModel.getRoomNumber() : "ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+        if (!printModel.getRoomNumber().equalsIgnoreCase("x reading")) {
+            addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber().equalsIgnoreCase("takeout") ? printModel.getRoomNumber() : "ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+        }
+
         //endregion
 
         switch (printModel.getType()) {
-            case "XREADING":
 
-                CashNReconcileResponse cashNReconcileResponse = GsonHelper.getGson().fromJson(printModel.getData(), CashNReconcileResponse.class);
+            case "REXREADING":
 
-//                cashNReconcileResponse.getResult().
+                Log.d("REXREAD", printModel.getData());
+
+                try {
+                    JSONObject jsonObject = new JSONObject(printModel.getData());
+                    JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                    JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
+                    JSONObject dutyManager = jsonObject.getJSONObject("data").getJSONObject("duty_manager");
+                    if (dataJsonObject != null) {
+                        Log.d("TESXXXXTDATA", jsonObject.toString());
+                        addTextToPrinter(SPrinter.getPrinter(), "X READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "POSTING DATE: " + dataJsonObject.getString("cut_off_date"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "SHIFT : " + dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "USER : " + cashierDataObject.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "MANAGER : " + dutyManager.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        addTextToPrinter(SPrinter.getPrinter(), "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "TERMINAL NO.",
+                                dataJsonObject.getString("pos_id")
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                        addPrinterSpace(1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "GROSS SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("gross_sales"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "NET SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("net_sales"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addPrinterSpace(1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "VATable SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("vatable"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "VAT EXEMPT SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("vat_exempt_sales"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "12% VAT",
+                                returnWithTwoDecimal(dataJsonObject.getString("vat"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "NON VAT",
+                                returnWithTwoDecimal(dataJsonObject.getString("vat_exempt"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "SERVICE CHARGE",
+                                "0.00"
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    }
+                    JSONArray paymentJsonArray = jsonObject.getJSONArray("payment");
+                    addPrinterSpace(1);
+
+                    if (paymentJsonArray.length() > 0) {
+
+
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "PAYMENT LIST",
+                                ""
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                        for (int i = 0; i < paymentJsonArray.length(); i++) {
+
+                            JSONObject temp = paymentJsonArray.getJSONObject(i);
+
+                            if (temp.getString("is_advance").equalsIgnoreCase("1") || temp.getString("is_advance").equalsIgnoreCase("1.0")) {
+                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                        temp.getString("payment_description") + "(adv)",
+                                        temp.getString("amount")
+                                        ,
+                                        40,
+                                        2),
+                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            } else {
+                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                        temp.getString("payment_description"),
+                                        temp.getString("amount")
+                                        ,
+                                        40,
+                                        2),
+                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            }
+
+                        }
+                    } else {
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "NO DISCOUNT",
+                                ""
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    }
+
+                    JSONArray discountJsonArray = jsonObject.getJSONArray("discount");
+                    addPrinterSpace(1);
+                    if (discountJsonArray.length() > 0) {
+
+
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "DISCOUNT LIST",
+                                ""
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        int otherDiscCount = 0;
+                        double otherDiscAmount = 0.00;
+
+                        for (int i = 0; i < discountJsonArray.length(); i++) {
+                            JSONObject temp = discountJsonArray.getJSONObject(i);
+
+                            if (temp.getString("is_special").equalsIgnoreCase("1") || temp.getString("is_special").equalsIgnoreCase("1.0")) {
+                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                        temp.getString("discount_type"),
+                                        temp.getString("discount_amount")
+                                        ,
+                                        40,
+                                        2),
+                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                        temp.getString("discount_type") + "(COUNT)",
+                                        temp.getString("count")
+                                        ,
+                                        40,
+                                        2),
+                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            } else {
+                                otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
+                                otherDiscCount += Integer.valueOf(temp.getString("count"));
+                            }
+
+
+                        }
+
+                        if (otherDiscCount > 0) {
+                            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                    "OTHERS",
+                                    String.valueOf(otherDiscAmount)
+                                    ,
+                                    40,
+                                    2),
+                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                    "OTHERS" + "(COUNT)",
+                                    String.valueOf(otherDiscCount)
+                                    ,
+                                    40,
+                                    2),
+                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        }
+
+                    } else {
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "NO DISCOUNT",
+                                ""
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                } catch (JSONException e) {
+                    Log.d("ERROR", e.getMessage());
+                }
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(SPrinter.getPrinter(), "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+                break;
+
+
+            case "XREADING": //USE REXREADING
+                /* DEPRECATED
+                try {
+                    JSONObject jsonObject = new JSONObject(printModel.getData());
+                    JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
+                    JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
+                    JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
+                    if (dataJsonObject != null) {
+                        Log.d("TESXXXXTDATA", jsonObject.toString());
+                        addTextToPrinter(SPrinter.getPrinter(), "X READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "POSTING DATE: " + convertDateToReadableDate(dataJsonObject.getString("cut_off_date")), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "SHIFT : " + dataJsonObject.getString("shift_no"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "USER : " + cashierDataObject.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "MANAGER : " + dutyManager.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        addTextToPrinter(SPrinter.getPrinter(), "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "TERMINAL NO.",
+                                dataJsonObject.getString("pos_id")
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                        addPrinterSpace(1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "GROSS SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("gross_sales"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "NET SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("net_sales"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addPrinterSpace(1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "VATable SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("vatable"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "VAT EXEMPT SALES",
+                                returnWithTwoDecimal(dataJsonObject.getString("vat_exempt_sales"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "12% VAT",
+                                returnWithTwoDecimal(dataJsonObject.getString("vat"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "NON VAT",
+                                returnWithTwoDecimal(dataJsonObject.getString("vat_exempt"))
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                "SERVICE CHARGE",
+                                "0.00"
+                                ,
+                                40,
+                                2),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    }
+                    JSONArray paymentJsonArray = jsonObject.getJSONObject("nameValuePairs").getJSONArray("payment");
+                    if (paymentJsonArray.length() > 0) {
+                        Log.d("TESTDATA", paymentJsonArray.toString());
+//                        for (int i = 0; i < paymentJsonArray.length(); i++) {
+//                            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                    paymentJsonArray.getJSONArray(1).getString(),
+//                                    "0.00"
+//                                    ,
+//                                    40,
+//                                    2),
+//                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                        }
+                    }
+
+                    JSONArray discountJsonArray = jsonObject.getJSONObject("nameValuePairs").getJSONArray("discount");
+                    if (discountJsonArray.length() > 0) {
+
+                    }
+                } catch (JSONException e) {
+                    Log.d("ERRORxXXx", e.getMessage());
+                }
+                */
                 break;
             case "SWITCH_ROOM":
 
@@ -1617,7 +1961,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
             CollectionDialog collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
                 @Override
-                public void printCashRecoData(CashNReconcileResponse cashNReconcileResponse) {
+                public void printCashRecoData(String cashNRecoData) {
 
                 }
             };
@@ -1640,5 +1984,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         timerIntent.putExtra("start_time", fetchTimeResponse.getTime());
         startService(timerIntent);
     }
+
+
 }
 

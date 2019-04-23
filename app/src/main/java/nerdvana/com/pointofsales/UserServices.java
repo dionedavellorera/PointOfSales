@@ -35,6 +35,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
+import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.GetOrderRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
@@ -80,6 +81,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
@@ -437,6 +439,13 @@ public class UserServices extends BaseService {
     public void checkShift(CheckShiftRequest checkShiftRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<CheckShiftResponse> request = iUsers.checkShift(checkShiftRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void fetchXReadViaId(FetchXReadingViaIdRequest fetchXReadingViaIdRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchXReadingViaIdResponse> request = iUsers.fetchXReadingViaId(fetchXReadingViaIdRequest.getMapValue());
         asyncRequest(request);
     }
 

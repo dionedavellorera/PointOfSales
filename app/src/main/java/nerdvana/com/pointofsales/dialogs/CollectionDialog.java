@@ -17,11 +17,16 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
@@ -40,6 +45,7 @@ import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
+import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -115,25 +121,46 @@ public abstract class CollectionDialog extends BaseDialog {
 
 
 
-                            Call<CashNReconcileResponse> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-                            request.enqueue(new Callback<CashNReconcileResponse>() {
+                            Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+                            request.enqueue(new Callback<Object>() {
                                 @Override
-                                public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
-
-                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-
-                                    if (response.body().getStatus() == 1) {
-                                        dismiss();
+                                public void onResponse(Call<Object> call, Response<Object> response) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0")) {
+                                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+                                        } else {
+                                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-
-                                    printCashRecoData(response.body());
                                 }
 
                                 @Override
-                                public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+                                public void onFailure(Call<Object> call, Throwable t) {
 
                                 }
                             });
+
+//                            request.enqueue(new Callback<CashNReconcileResponse>() {
+//                                @Override
+//                                public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
+//
+//                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+//
+//                                    if (response.body().getStatus() == 1) {
+//                                        dismiss();
+//                                    }
+//
+//                                    printCashRecoData(response.body());
+//                                }
+//
+//                                @Override
+//                                public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
+//
+//                                }
+//                            });
                         }
 
                         @Override
@@ -251,5 +278,5 @@ public abstract class CollectionDialog extends BaseDialog {
         relContainer.addView(linearLayout);
     }
 
-    public abstract void printCashRecoData(CashNReconcileResponse cashNReconcileResponse);
+    public abstract void printCashRecoData(String cashNRecoData);
 }

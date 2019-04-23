@@ -36,6 +36,7 @@ import com.squareup.otto.Subscribe;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -74,6 +75,7 @@ import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
+import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
@@ -105,6 +107,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FocResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.RatePrice;
@@ -316,6 +319,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
+        fetchXReadViaIdRequest("14");
         fetchCarRequest();
         fetchVehicleRequest();
         fetchGuestTypeRequest();
@@ -717,9 +721,31 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     }
 
+    private void changeShiftFunction() {
+        Toast.makeText(getContext(), "CHANGE SHIFT", Toast.LENGTH_SHORT).show();
+    }
+
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 117: //change shift
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            changeShiftFunction();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    changeShiftFunction();
+                }
+                break;
             case 9999: //rooms
                 if (hasUnpostedItems()) {
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
@@ -1295,7 +1321,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void doSafeKeepFunction() {
         CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
             @Override
-            public void printCashRecoData(CashNReconcileResponse cashNReconcileResponse) {
+            public void printCashRecoData(String cashNRecoData) {
 
             }
         };
@@ -3048,8 +3074,26 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
             @Override
-            public void printCashRecoData(CashNReconcileResponse cashNReconcileResponse) {
-                BusProvider.getInstance().post(new PrintModel("", "X READING", "XREADING", GsonHelper.getGson().toJson(cashNReconcileResponse)));
+            public void printCashRecoData(String cashNRecoData) {
+
+
+                try {
+                    JSONObject jsonObject = new JSONObject(cashNRecoData);
+                    JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
+                    JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
+
+                    JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
+                    if (dataJsonObject != null) {
+                        fetchXReadViaIdRequest(jsonObject.getString("id"));
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+//                BusProvider.getInstance().post(new PrintModel("", "X READING", "XREADING", cashNRecoData));
             }
         };
         if (!cutOffDialog.isShowing()) cutOffDialog.show();
@@ -3063,15 +3107,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void passwordSuccess(String employeeId) {
                 ZReadRequest zReadRequest = new ZReadRequest(employeeId);
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                Call<ResponseBody> request = iUsers.zReading(zReadRequest.getMapValue());
-                request.enqueue(new Callback<ResponseBody>() {
+                Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
+                request.enqueue(new Callback<ZReadResponse>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//                JSONObject jsonObject = new JSONObject()
+                    public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+
+                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<ZReadResponse> call, Throwable t) {
 
                     }
                 });
@@ -3086,27 +3132,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (!passwordDialog.isShowing()) passwordDialog.show();
 
 
-//        Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
-//        request.enqueue(new Callback<ZReadResponse>() {
-//            @Override
-//            public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
-//
-////                String message = response.body().getMessage() + "\n";
-////                if (response.body().getDataList().size() > 0) {
-////
-////                    for (ZReadResponse.Data data : response.body().getDataList()) {
-////                        message += String.format("%s(%s/%s) - %s - %s \n", data.getName(), data.getUserId(), data.getUsername(), data.getShiftNo(), Utils.convertDateOnlyToReadableDate(data.getDate()));
-////                    }
-////                }
-////                Utils.showDialogMessage(getActivity(), message, "Information");
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ZReadResponse> call, Throwable t) {
-//
-//            }
-//        });
+
     }
 
     private void xReadRequest() {
@@ -3244,5 +3270,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 Utils.showDialogMessage(getActivity(), "Please SOA room first", "Information");
             }
         }
+    }
+
+    private void fetchXReadViaIdRequest(String xReadingId) {
+        BusProvider.getInstance().post(new FetchXReadingViaIdRequest(xReadingId));
+    }
+
+    @Subscribe
+    public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
+
+        BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+
+
     }
 }
