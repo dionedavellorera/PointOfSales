@@ -76,6 +76,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
+import nerdvana.com.pointofsales.api_requests.FetchZReadViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FocRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
@@ -319,7 +320,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
-        fetchXReadViaIdRequest("14");
+        fetchXReadViaIdRequest("19");
+
+//        fetchZReadViaIdRequest("44");
+
         fetchCarRequest();
         fetchVehicleRequest();
         fetchGuestTypeRequest();
@@ -1896,7 +1900,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     paymentsToPost.add(ppm);
                                 }
 
-                                totalPayments += Double.valueOf(ppm.getAmount());
+                                totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
                             }
 
                             if (cartItemList.size() == 0) {
@@ -3078,13 +3082,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                 try {
+
+//                    FetchXReadingViaIdResponse fetchXReadingViaIdResponse = GsonHelper.getGson().fromJson(cashNRecoData)
                     JSONObject jsonObject = new JSONObject(cashNRecoData);
                     JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
                     JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
 
                     JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
                     if (dataJsonObject != null) {
-                        fetchXReadViaIdRequest(jsonObject.getString("id"));
+                        fetchXReadViaIdRequest(dataJsonObject.getString("id"));
 
                     }
 
@@ -3279,8 +3285,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
 
+        Log.d("dsadsadsadsadsa", "X READ RESPONSE");
         BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+    }
 
+    private void fetchZReadViaIdRequest(String zReadId) {
+        FetchZReadViaIdRequest fetchZReadViaIdRequest = new FetchZReadViaIdRequest(zReadId);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ZReadResponse> request = iUsers.fetchZReadViaId(fetchZReadViaIdRequest.getMapValue());
+        request.enqueue(new Callback<ZReadResponse>() {
+            @Override
+            public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+            }
+
+            @Override
+            public void onFailure(Call<ZReadResponse> call, Throwable t) {
+
+            }
+        });
 
     }
 }

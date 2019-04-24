@@ -41,6 +41,7 @@ public class FetchXReadingViaIdResponse {
         this.message = message;
     }
 
+
     public class Result {
 
         @SerializedName("data")
@@ -52,6 +53,28 @@ public class FetchXReadingViaIdResponse {
         @SerializedName("discount")
         @Expose
         private List<Discount> discount = null;
+        @SerializedName("short_over")
+        @Expose
+        private Double shortOver;
+//        @SerializedName("currency")
+//        @Expose
+//        private Object currency;
+
+        public Double getShortOver() {
+            return shortOver;
+        }
+
+        public void setShortOver(Double shortOver) {
+            this.shortOver = shortOver;
+        }
+
+//        public Object getCurrency() {
+//            return currency;
+//        }
+//
+//        public void setCurrency(Object currency) {
+//            this.currency = currency;
+//        }
 
         public Data getData() {
             return data;
@@ -179,7 +202,7 @@ public class FetchXReadingViaIdResponse {
         private String currencyId;
         @SerializedName("currency_value")
         @Expose
-        private Integer currencyValue;
+        private Double currencyValue;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -467,11 +490,11 @@ public class FetchXReadingViaIdResponse {
             this.currencyId = currencyId;
         }
 
-        public Integer getCurrencyValue() {
+        public Double getCurrencyValue() {
             return currencyValue;
         }
 
-        public void setCurrencyValue(Integer currencyValue) {
+        public void setCurrencyValue(Double currencyValue) {
             this.currencyValue = currencyValue;
         }
 
@@ -618,8 +641,138 @@ public class FetchXReadingViaIdResponse {
 
     }
 
-    public class CashAndReco {
+    public class Denomination {
+        @SerializedName("id")
+        @Expose
+        private int id;
+        @SerializedName("cash_denomination_id")
+        @Expose
+        private int cashDenominationId;
+        @SerializedName("cash_denomination_value")
+        @Expose
+        private Double cash_denomination_value;
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currency_value;
 
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getCashDenominationId() {
+            return cashDenominationId;
+        }
+
+        public void setCashDenominationId(int cashDenominationId) {
+            this.cashDenominationId = cashDenominationId;
+        }
+
+        public Double getCash_denomination_value() {
+            return cash_denomination_value;
+        }
+
+        public void setCash_denomination_value(Double cash_denomination_value) {
+            this.cash_denomination_value = cash_denomination_value;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrency_value() {
+            return currency_value;
+        }
+
+        public void setCurrency_value(Double currency_value) {
+            this.currency_value = currency_value;
+        }
+    }
+
+    public class SafeKeepings {
+
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
+        @SerializedName("denomination")
+        @Expose
+        private List<Denomination> denominations;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
+        }
+
+        public List<Denomination> getDenominations() {
+            return denominations;
+        }
+
+        public void setDenominations(List<Denomination> denominations) {
+            this.denominations = denominations;
+        }
+    }
+
+    public class CashAndReco {
+        @SerializedName("safe_keepings")
+        @Expose
+        private List<SafeKeepings> safeKeepings;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -665,6 +818,14 @@ public class FetchXReadingViaIdResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+
+        public List<SafeKeepings> getSafeKeepings() {
+            return safeKeepings;
+        }
+
+        public void setSafeKeepings(List<SafeKeepings> safeKeepings) {
+            this.safeKeepings = safeKeepings;
+        }
 
         public Integer getId() {
             return id;
@@ -942,19 +1103,19 @@ public class FetchXReadingViaIdResponse {
         private Integer id;
         @SerializedName("total")
         @Expose
-        private Integer total;
+        private Double total;
         @SerializedName("xPerson_amount")
         @Expose
-        private Integer xPersonAmount;
+        private Double xPersonAmount;
         @SerializedName("ot_amount")
         @Expose
-        private Integer otAmount;
+        private Double otAmount;
         @SerializedName("void_amount")
         @Expose
-        private Integer voidAmount;
+        private Double voidAmount;
         @SerializedName("gross_sales")
         @Expose
-        private Integer grossSales;
+        private Double grossSales;
         @SerializedName("net_sales")
         @Expose
         private Double netSales;
@@ -969,7 +1130,7 @@ public class FetchXReadingViaIdResponse {
         private Double vatable;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("vat_exempt_sales")
         @Expose
         private Double vatExemptSales;
@@ -981,16 +1142,16 @@ public class FetchXReadingViaIdResponse {
         private String controlIdList;
         @SerializedName("shift_id")
         @Expose
-        private Integer shiftId;
+        private String shiftId;
         @SerializedName("shift_no")
         @Expose
-        private Integer shiftNo;
+        private String shiftNo;
         @SerializedName("currency_id")
         @Expose
         private String currencyId;
         @SerializedName("currency_value")
         @Expose
-        private Integer currencyValue;
+        private Double currencyValue;
         @SerializedName("pos_id")
         @Expose
         private Integer posId;
@@ -1036,43 +1197,43 @@ public class FetchXReadingViaIdResponse {
             this.id = id;
         }
 
-        public Integer getTotal() {
+        public Double getTotal() {
             return total;
         }
 
-        public void setTotal(Integer total) {
+        public void setTotal(Double total) {
             this.total = total;
         }
 
-        public Integer getXPersonAmount() {
+        public Double getxPersonAmount() {
             return xPersonAmount;
         }
 
-        public void setXPersonAmount(Integer xPersonAmount) {
+        public void setxPersonAmount(Double xPersonAmount) {
             this.xPersonAmount = xPersonAmount;
         }
 
-        public Integer getOtAmount() {
+        public Double getOtAmount() {
             return otAmount;
         }
 
-        public void setOtAmount(Integer otAmount) {
+        public void setOtAmount(Double otAmount) {
             this.otAmount = otAmount;
         }
 
-        public Integer getVoidAmount() {
+        public Double getVoidAmount() {
             return voidAmount;
         }
 
-        public void setVoidAmount(Integer voidAmount) {
+        public void setVoidAmount(Double voidAmount) {
             this.voidAmount = voidAmount;
         }
 
-        public Integer getGrossSales() {
+        public Double getGrossSales() {
             return grossSales;
         }
 
-        public void setGrossSales(Integer grossSales) {
+        public void setGrossSales(Double grossSales) {
             this.grossSales = grossSales;
         }
 
@@ -1108,11 +1269,11 @@ public class FetchXReadingViaIdResponse {
             this.vatable = vatable;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 
@@ -1140,19 +1301,19 @@ public class FetchXReadingViaIdResponse {
             this.controlIdList = controlIdList;
         }
 
-        public Integer getShiftId() {
+        public String getShiftId() {
             return shiftId;
         }
 
-        public void setShiftId(Integer shiftId) {
+        public void setShiftId(String shiftId) {
             this.shiftId = shiftId;
         }
 
-        public Integer getShiftNo() {
+        public String getShiftNo() {
             return shiftNo;
         }
 
-        public void setShiftNo(Integer shiftNo) {
+        public void setShiftNo(String shiftNo) {
             this.shiftNo = shiftNo;
         }
 
@@ -1164,11 +1325,11 @@ public class FetchXReadingViaIdResponse {
             this.currencyId = currencyId;
         }
 
-        public Integer getCurrencyValue() {
+        public Double getCurrencyValue() {
             return currencyValue;
         }
 
-        public void setCurrencyValue(Integer currencyValue) {
+        public void setCurrencyValue(Double currencyValue) {
             this.currencyValue = currencyValue;
         }
 
@@ -1267,7 +1428,6 @@ public class FetchXReadingViaIdResponse {
         public void setDutyManager(DutyManager dutyManager) {
             this.dutyManager = dutyManager;
         }
-
     }
 
     public class Discount {

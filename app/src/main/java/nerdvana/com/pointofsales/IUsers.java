@@ -282,4 +282,8 @@ public interface IUsers {
     @POST("fetchXReadingViaId")
     @FormUrlEncoded
     Call<FetchXReadingViaIdResponse> fetchXReadingViaId(@FieldMap Map<String, String> params);
+
+    @POST("fetchZReadingViaId")
+    @FormUrlEncoded
+    Call<ZReadResponse> fetchZReadViaId(@FieldMap Map<String, String> params);
 }

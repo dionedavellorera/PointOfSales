@@ -556,9 +556,9 @@ public abstract class PaymentDialog extends BaseDialog  {
         Double totalChange = 0.00;
         for (PostedPaymentsModel ppm : postedPaymentList) {
             if (ppm.isAdvance()) {
-                advancePayment += Double.valueOf(ppm.getAmount());
+                advancePayment += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
             } else {
-                normalPayment += Double.valueOf(ppm.getAmount());
+                normalPayment += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
             }
         }
 

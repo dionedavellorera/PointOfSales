@@ -59,11 +59,14 @@ import java.util.concurrent.TimeUnit;
 
 
 import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
+import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
+import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
+import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
@@ -77,7 +80,9 @@ import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
+import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
@@ -85,6 +90,7 @@ import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
@@ -96,6 +102,7 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
+import nerdvana.com.pointofsales.model.PaymentPrintModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
@@ -109,6 +116,9 @@ import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
 import nerdvana.com.pointofsales.requests.TestRequest;
 import nerdvana.com.pointofsales.service.TimerService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
 
@@ -146,7 +156,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         setContentView(R.layout.activity_main);
 
-        Log.d("sdadsda", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.API_BASE_URL));
+        saveDenominationPref();
+        savePaymentTypePref();
+
 
         dialogProgressBar = new DialogProgressBar(MainActivity.this);
         dialogProgressBar.setCancelable(false);
@@ -510,18 +522,69 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         addTextToPrinter(SPrinter.getPrinter(), "VAT REG TIN NO: " + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.TIN_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(SPrinter.getPrinter(), "PERMIT NO: FP082015-43A-0046941-00000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
         addTextToPrinter(SPrinter.getPrinter(), "MIN NO: 15080516005415409", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
-        if (!printModel.getRoomNumber().equalsIgnoreCase("x reading")) {
+        if (!printModel.getType().equalsIgnoreCase("rexreading")
+                && !printModel.getType().equalsIgnoreCase("safekeeping")
+                && !printModel.getType().equalsIgnoreCase("shortover")) {
             addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber().equalsIgnoreCase("takeout") ? printModel.getRoomNumber() : "ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
         }
 
         //endregion
 
         switch (printModel.getType()) {
+            case "SHORTOVER":
+                FetchXReadingViaIdResponse.Result shorover = GsonHelper.getGson().fromJson(printModel.getData(), FetchXReadingViaIdResponse.Result.class);
+
+                addTextToPrinter(SPrinter.getPrinter(), "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        "SHORT / OVER", ""
+//                        String.valueOf(shorover.getShortOver())
+                        ,
+                        40,
+                        2),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addPrinterSpace(1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+
+
+
+                break;
+            case "CASHRECONCILE":
+                addTextToPrinter(SPrinter.getPrinter(), "CASHIER RECONCILE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                TypeToken<List<CollectionFinalPostModel>> cashrecotoken = new TypeToken<List<CollectionFinalPostModel>>() {};
+                List<CollectionFinalPostModel> cashrecodetails = GsonHelper.getGson().fromJson(printModel.getData(), cashrecotoken.getType());
+                addTextToPrinter(SPrinter.getPrinter(), "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                fixDenoPrint(cashrecodetails);
+                break;
+            case "SAFEKEEPING":
+                addTextToPrinter(SPrinter.getPrinter(), "SAFEKEEPING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
+                List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
+                addTextToPrinter(SPrinter.getPrinter(), "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                fixDenoPrint(collectionDetails);
+                break;
+            case "ZREAD":
+
+                ZReadResponse zReadResponse = GsonHelper.getGson().fromJson(printModel.getData(), ZReadResponse.class);
+
+                if (zReadResponse != null) {
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "ZREAD IS NULL", Toast.LENGTH_SHORT).show();
+                }
+
+                 break;
 
             case "REXREADING":
-
-                Log.d("REXREAD", printModel.getData());
-
                 try {
                     JSONObject jsonObject = new JSONObject(printModel.getData());
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
@@ -609,56 +672,169 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                     }
+
+
                     JSONArray paymentJsonArray = jsonObject.getJSONArray("payment");
+
+                    Log.d("TETE", paymentJsonArray.toString());
                     addPrinterSpace(1);
 
-                    if (paymentJsonArray.length() > 0) {
+
+                    if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON))) {
+
+                        TypeToken<List<FetchPaymentResponse.Result>> paymentTypeToken = new TypeToken<List<FetchPaymentResponse.Result>>() {
+                        };
+                        List<FetchPaymentResponse.Result> paymentTypeList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON), paymentTypeToken.getType());
+                        Log.d("TESZZ", String.valueOf(paymentTypeList.size()));
 
 
-
-                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
-                                "PAYMENT LIST",
-                                ""
-                                ,
-                                40,
-                                2),
-                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        List<PaymentPrintModel> paymentPrintModels = new ArrayList<>();
+                        for (FetchPaymentResponse.Result payment : paymentTypeList) {
 
 
-                        for (int i = 0; i < paymentJsonArray.length(); i++) {
-
-                            JSONObject temp = paymentJsonArray.getJSONObject(i);
-
-                            if (temp.getString("is_advance").equalsIgnoreCase("1") || temp.getString("is_advance").equalsIgnoreCase("1.0")) {
-                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
-                                        temp.getString("payment_description") + "(adv)",
-                                        temp.getString("amount")
-                                        ,
-                                        40,
-                                        2),
-                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                            } else {
-                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
-                                        temp.getString("payment_description"),
-                                        temp.getString("amount")
-                                        ,
-                                        40,
-                                        2),
-                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            Double value = 0.00;
+                            String isAdvance = "0";
+                            for (int i = 0; i < paymentJsonArray.length(); i++) {
+                                JSONObject temp = paymentJsonArray.getJSONObject(i);
+                                if (temp.getString("payment_description").equalsIgnoreCase(payment.getPaymentType())) {
+                                    value = Double.valueOf(temp.getString("amount"));
+                                    isAdvance = temp.getString("is_advance");
+                                    break;
+                                }
                             }
 
-                        }
-                    } else {
 
-                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
-                                "NO DISCOUNT",
-                                ""
-                                ,
-                                40,
-                                2),
-                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                            if (payment.getPaymentType().equalsIgnoreCase("cash") || payment.getPaymentType().equalsIgnoreCase("card")) {
+
+                                Log.d("TEKTEK", payment.getPaymentType() + " - " + String.valueOf(isAdvance));
+                                if (isAdvance.equalsIgnoreCase("1")) {
+
+                                    paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
+
+
+                                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                            payment.getPaymentType(),
+                                            "0.00"
+                                            ,
+                                            40,
+                                            2),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+
+
+                                    addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                            payment.getPaymentType(),
+                                            String.valueOf(value)
+                                            ,
+                                            40,
+                                            2),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+
+                            } else {
+
+                                if (value > 0) {
+                                    if (isAdvance.equalsIgnoreCase("1")) {
+
+                                        paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
+//                                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                                payment.getPaymentType() + "(adv)",
+//                                                String.valueOf(value)
+//                                                ,
+//                                                40,
+//                                                2),
+//                                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    } else {
+                                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                                                payment.getPaymentType(),
+                                                String.valueOf(value)
+                                                ,
+                                                40,
+                                                2),
+                                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+                                }
+                            }
+
+
+
+
+
+
+
+                        }
+
+
+//                        if (paymentPrintModels.size() > 0) {
+//                            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                    "ADVANCE PAYMENT/s",
+//                                    ""
+//                                    ,
+//                                    40,
+//                                    2),
+//                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                            for (PaymentPrintModel ppm : paymentPrintModels) {
+//                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                        ppm.getPaymentType(),
+//                                        String.valueOf(ppm.getAmount())
+//                                        ,
+//                                        40,
+//                                        2),
+//                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                            }
+//                        }
+
+
+
+
 
                     }
+//                    if (paymentJsonArray.length() > 0) {
+//                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                "PAYMENT LIST",
+//                                ""
+//                                ,
+//                                40,
+//                                2),
+//                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                        for (int i = 0; i < paymentJsonArray.length(); i++) {
+//
+//                            JSONObject temp = paymentJsonArray.getJSONObject(i);
+//
+//                            if (temp.getString("is_advance").equalsIgnoreCase("1") || temp.getString("is_advance").equalsIgnoreCase("1.0")) {
+//                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                        temp.getString("payment_description") + "(adv)",
+//                                        temp.getString("amount")
+//                                        ,
+//                                        40,
+//                                        2),
+//                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                            } else {
+//                                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                        temp.getString("payment_description"),
+//                                        temp.getString("amount")
+//                                        ,
+//                                        40,
+//                                        2),
+//                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                            }
+//
+//                        }
+//                    } else {
+//
+//                        addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+//                                "NO DISCOUNT",
+//                                ""
+//                                ,
+//                                40,
+//                                2),
+//                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//                    }
 
                     JSONArray discountJsonArray = jsonObject.getJSONArray("discount");
                     addPrinterSpace(1);
@@ -740,8 +916,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 addTextToPrinter(SPrinter.getPrinter(), "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
                 addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-
-
                 break;
 
 
@@ -1985,6 +2159,106 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         startService(timerIntent);
     }
 
+
+
+    private void saveDenominationPref() {
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON))) {
+            FetchDenominationRequest fetchDenominationRequest = new FetchDenominationRequest();
+            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+            Call<FetchDenominationResponse> request = iUsers.fetchDenomination(fetchDenominationRequest.getMapValue());
+            request.enqueue(new Callback<FetchDenominationResponse>() {
+                @Override
+                public void onResponse(Call<FetchDenominationResponse> call, Response<FetchDenominationResponse> response) {
+                    SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult()), ApplicationConstants.CASH_DENO_JSON);
+                }
+
+                @Override
+                public void onFailure(Call<FetchDenominationResponse> call, Throwable t) {
+
+                }
+            });
+        }
+
+
+    }
+
+    private void fixDenoPrint(List<CollectionFinalPostModel> myList) {
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON))) {
+            TypeToken<List<FetchDenominationResponse.Result>> collectionToken = new TypeToken<List<FetchDenominationResponse.Result>>() {};
+            List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON), collectionToken.getType());
+            Double finalAmount = 0.00;
+            for (FetchDenominationResponse.Result cfm : denoDetails) {
+                String valueCount = "0";
+                String valueAmount = "0.00";
+                for (CollectionFinalPostModel c : myList) {
+                    if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
+                        valueCount = c.getAmount();
+                        valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
+                        break;
+                    }
+                }
+
+                addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                        String.format("%s  x %s", valueCount, cfm.getAmount()),
+                        valueAmount
+                        ,
+                        40,
+                        2),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                finalAmount += Double.valueOf(valueAmount);
+            }
+
+            addPrinterSpace(1);
+
+            addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                    "CASH COUNT",
+                    String.valueOf(finalAmount)
+                    ,
+                    40,
+                    2),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            addTextToPrinter(SPrinter.getPrinter(), twoColumns(
+                    "CASH OUT",
+                    "0.00"
+                    ,
+                    40,
+                    2),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            addPrinterSpace(1);
+            addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(SPrinter.getPrinter(), "Printed date: PENDING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+        }
+
+    }
+
+    private void savePaymentTypePref() {
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON))) {
+            FetchPaymentRequest fetchPaymentRequest = new FetchPaymentRequest();
+            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+            Call<FetchPaymentResponse> request = iUsers.sendFetchPaymentRequest(fetchPaymentRequest.getMapValue());
+            request.enqueue(new Callback<FetchPaymentResponse>() {
+                @Override
+                public void onResponse(Call<FetchPaymentResponse> call, Response<FetchPaymentResponse> response) {
+                    SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult()), ApplicationConstants.PAYMENT_TYPE_JSON);
+                }
+
+                @Override
+                public void onFailure(Call<FetchPaymentResponse> call, Throwable t) {
+
+                }
+            });
+        }
+
+
+    }
 
 }
 

@@ -44,6 +44,7 @@ import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
+import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
 import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
@@ -129,6 +130,14 @@ public abstract class CollectionDialog extends BaseDialog {
                                         JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
                                         if (jsonObject.getString("status").equalsIgnoreCase("1.0")) {
                                             printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+
+                                            BusProvider.getInstance().post(new PrintModel("",
+                                                    "",
+                                                    "CASHRECONCILE",
+                                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                                    ""));
+
+
                                         } else {
                                             Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
                                         }
@@ -190,6 +199,14 @@ public abstract class CollectionDialog extends BaseDialog {
                                             if (response.body().getStatus() == 0) {
                                                 Utils.showDialogMessage(act, response.body().getMessage(), "Information");
                                             } else {
+
+                                                BusProvider.getInstance().post(new PrintModel("",
+                                                        "",
+                                                        "SAFEKEEPING",
+                                                        GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                                        ""));
+
+
                                                 dismiss();
                                             }
                                         }
@@ -200,7 +217,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                         }
                                     });
                                 } else {
-                                    Utils.showDialogMessage(act, "Safekeep amount is greater than the sales", "Error");
+                                    Utils.showDialogMessage(act, "The amount you entered is more than the actual sales", "Error");
                                 }
                             }
 

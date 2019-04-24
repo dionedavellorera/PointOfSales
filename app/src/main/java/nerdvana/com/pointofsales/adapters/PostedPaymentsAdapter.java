@@ -55,8 +55,19 @@ public class PostedPaymentsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         } else {
             ((PostedPaymentsViewHolder)holder).iconStatus.setVisibility(View.GONE);
         }
+
+
+
+
         ((PostedPaymentsViewHolder)holder).paymentType.setText(postedPaymentList.get(i).getPayment_description());
+
+        if (Double.valueOf(postedPaymentList.get(i).getCurrency_value()) != 1) {
+            ((PostedPaymentsViewHolder)holder).paymentType.setText(postedPaymentList.get(i).getCurrency_id());
+        }
+
+
         ((PostedPaymentsViewHolder)holder).paymentAmount.setText(postedPaymentList.get(i).getAmount());
+
 
     }
 
