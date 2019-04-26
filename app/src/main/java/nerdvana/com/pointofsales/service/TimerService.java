@@ -15,6 +15,9 @@ import nerdvana.com.pointofsales.model.TimerModel;
 public class TimerService extends Service {
     long secsOfDate = 0;
     String startDate = "";
+
+    private static String currentDate = "";
+
     CountDownTimer countUpTimer;
     @Override
     public void onCreate() {
@@ -24,16 +27,28 @@ public class TimerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        startDate = intent.getStringExtra("start_time");
-        secsOfDate = Utils.getDurationInSecs(startDate);
+        if (intent != null) {
+            if (intent.getStringExtra("start_time") != null) {
+                startDate = intent.getStringExtra("start_time");
 
-        countUpTimer = new CountUpTimer(999999999) {
-                @Override
-                public void onTick(int second) {
-                    secsOfDate+= 1;
-                    BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate)));
-                }
-            }.start();
+                secsOfDate = Utils.getDurationInSecs(startDate);
+
+                countUpTimer = new CountUpTimer(999999999) {
+                    @Override
+                    public void onTick(int second) {
+                        secsOfDate+= 1;
+                        BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate)));
+
+                        currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
+                    }
+                }.start();
+            }
+        }
+
+
+
+
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -45,6 +60,10 @@ public class TimerService extends Service {
             countUpTimer.cancel();
             countUpTimer = null;
         }
+    }
+
+    public static String getCurrentDate() {
+        return currentDate;
     }
 
     @NonNull

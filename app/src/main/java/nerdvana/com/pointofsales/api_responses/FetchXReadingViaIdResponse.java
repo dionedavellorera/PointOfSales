@@ -41,54 +41,311 @@ public class FetchXReadingViaIdResponse {
         this.message = message;
     }
 
+    public class Payment {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNo;
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("payment_type_id")
+        @Expose
+        private Integer paymentTypeId;
+        @SerializedName("payment_description")
+        @Expose
+        private String paymentDescription;
+        @SerializedName("collected_by")
+        @Expose
+        private Integer collectedBy;
+        @SerializedName("pos_id")
+        @Expose
+        private Integer posId;
+        @SerializedName("is_advance")
+        @Expose
+        private Integer isAdvance;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
+        @SerializedName("cash_and_reconcile_id")
+        @Expose
+        private Integer cashAndReconcileId;
+        @SerializedName("void_by")
+        @Expose
+        private Object voidBy;
+        @SerializedName("void_at")
+        @Expose
+        private Object voidAt;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getControlNo() {
+            return controlNo;
+        }
+
+        public void setControlNo(String controlNo) {
+            this.controlNo = controlNo;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public Integer getPaymentTypeId() {
+            return paymentTypeId;
+        }
+
+        public void setPaymentTypeId(Integer paymentTypeId) {
+            this.paymentTypeId = paymentTypeId;
+        }
+
+        public String getPaymentDescription() {
+            return paymentDescription;
+        }
+
+        public void setPaymentDescription(String paymentDescription) {
+            this.paymentDescription = paymentDescription;
+        }
+
+        public Integer getCollectedBy() {
+            return collectedBy;
+        }
+
+        public void setCollectedBy(Integer collectedBy) {
+            this.collectedBy = collectedBy;
+        }
+
+        public Integer getPosId() {
+            return posId;
+        }
+
+        public void setPosId(Integer posId) {
+            this.posId = posId;
+        }
+
+        public Integer getIsAdvance() {
+            return isAdvance;
+        }
+
+        public void setIsAdvance(Integer isAdvance) {
+            this.isAdvance = isAdvance;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
+        }
+
+        public Integer getCashAndReconcileId() {
+            return cashAndReconcileId;
+        }
+
+        public void setCashAndReconcileId(Integer cashAndReconcileId) {
+            this.cashAndReconcileId = cashAndReconcileId;
+        }
+
+        public Object getVoidBy() {
+            return voidBy;
+        }
+
+        public void setVoidBy(Object voidBy) {
+            this.voidBy = voidBy;
+        }
+
+        public Object getVoidAt() {
+            return voidAt;
+        }
+
+        public void setVoidAt(Object voidAt) {
+            this.voidAt = voidAt;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+    }
+
+    public class OuterPayment {
+
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("payment_description")
+        @Expose
+        private String paymentDescription;
+        @SerializedName("is_advance")
+        @Expose
+        private Integer isAdvance;
+        @SerializedName("payment_type_id")
+        @Expose
+        private Integer paymentTypeId;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
+        @SerializedName("cash_and_reconcile_id")
+        @Expose
+        private Integer cashAndReconcileId;
+        @SerializedName("credit_card")
+        @Expose
+        private Object creditCard;
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public String getPaymentDescription() {
+            return paymentDescription;
+        }
+
+        public void setPaymentDescription(String paymentDescription) {
+            this.paymentDescription = paymentDescription;
+        }
+
+        public Integer getIsAdvance() {
+            return isAdvance;
+        }
+
+        public void setIsAdvance(Integer isAdvance) {
+            this.isAdvance = isAdvance;
+        }
+
+        public Integer getPaymentTypeId() {
+            return paymentTypeId;
+        }
+
+        public void setPaymentTypeId(Integer paymentTypeId) {
+            this.paymentTypeId = paymentTypeId;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
+        }
+
+        public Integer getCashAndReconcileId() {
+            return cashAndReconcileId;
+        }
+
+        public void setCashAndReconcileId(Integer cashAndReconcileId) {
+            this.cashAndReconcileId = cashAndReconcileId;
+        }
+
+        public Object getCreditCard() {
+            return creditCard;
+        }
+
+        public void setCreditCard(Object creditCard) {
+            this.creditCard = creditCard;
+        }
+
+    }
 
     public class Result {
 
         @SerializedName("data")
         @Expose
-        private Data data;
+        private Datum data;
         @SerializedName("payment")
         @Expose
-        private List<Payment> payment = null;
+        private List<OuterPayment> payment = null;
         @SerializedName("discount")
         @Expose
         private List<Discount> discount = null;
         @SerializedName("short_over")
         @Expose
         private Double shortOver;
-//        @SerializedName("currency")
-//        @Expose
-//        private Object currency;
+        @SerializedName("currency")
+        @Expose
+        private Currency currency;
 
-        public Double getShortOver() {
-            return shortOver;
-        }
-
-        public void setShortOver(Double shortOver) {
-            this.shortOver = shortOver;
-        }
-
-//        public Object getCurrency() {
-//            return currency;
-//        }
-//
-//        public void setCurrency(Object currency) {
-//            this.currency = currency;
-//        }
-
-        public Data getData() {
+        public Datum getData() {
             return data;
         }
 
-        public void setData(Data data) {
+        public void setData(Datum data) {
             this.data = data;
         }
 
-        public List<Payment> getPayment() {
+        public List<OuterPayment> getPayment() {
             return payment;
         }
 
-        public void setPayment(List<Payment> payment) {
+        public void setPayment(List<OuterPayment> payment) {
             this.payment = payment;
         }
 
@@ -98,6 +355,148 @@ public class FetchXReadingViaIdResponse {
 
         public void setDiscount(List<Discount> discount) {
             this.discount = discount;
+        }
+
+        public Double getShortOver() {
+            return shortOver;
+        }
+
+        public void setShortOver(Double shortOver) {
+            this.shortOver = shortOver;
+        }
+
+        public Currency getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(Currency currency) {
+            this.currency = currency;
+        }
+
+    }
+
+    public class SafeKeeping {
+
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
+        @SerializedName("cash_and_reconcile_id")
+        @Expose
+        private Integer cashAndReconcileId;
+        @SerializedName("pos_id")
+        @Expose
+        private Integer posId;
+        @SerializedName("created_by")
+        @Expose
+        private Integer createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+        @SerializedName("denomination")
+        @Expose
+        private List<Denomination> denomination = null;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
+        }
+
+        public Integer getCashAndReconcileId() {
+            return cashAndReconcileId;
+        }
+
+        public void setCashAndReconcileId(Integer cashAndReconcileId) {
+            this.cashAndReconcileId = cashAndReconcileId;
+        }
+
+        public Integer getPosId() {
+            return posId;
+        }
+
+        public void setPosId(Integer posId) {
+            this.posId = posId;
+        }
+
+        public Integer getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(Integer createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        public List<Denomination> getDenomination() {
+            return denomination;
+        }
+
+        public void setDenomination(List<Denomination> denomination) {
+            this.denomination = denomination;
         }
 
     }
@@ -580,199 +979,8 @@ public class FetchXReadingViaIdResponse {
     }
 
 
-
-    public class Payment {
-
-        @SerializedName("amount")
-        @Expose
-        private Double amount;
-        @SerializedName("payment_description")
-        @Expose
-        private String paymentDescription;
-        @SerializedName("is_advance")
-        @Expose
-        private Integer isAdvance;
-        @SerializedName("cash_and_reconcile_id")
-        @Expose
-        private Integer cashAndReconcileId;
-        @SerializedName("credit_card")
-        @Expose
-        private Object creditCard;
-
-        public Double getAmount() {
-            return amount;
-        }
-
-        public void setAmount(Double amount) {
-            this.amount = amount;
-        }
-
-        public String getPaymentDescription() {
-            return paymentDescription;
-        }
-
-        public void setPaymentDescription(String paymentDescription) {
-            this.paymentDescription = paymentDescription;
-        }
-
-        public Integer getIsAdvance() {
-            return isAdvance;
-        }
-
-        public void setIsAdvance(Integer isAdvance) {
-            this.isAdvance = isAdvance;
-        }
-
-        public Integer getCashAndReconcileId() {
-            return cashAndReconcileId;
-        }
-
-        public void setCashAndReconcileId(Integer cashAndReconcileId) {
-            this.cashAndReconcileId = cashAndReconcileId;
-        }
-
-        public Object getCreditCard() {
-            return creditCard;
-        }
-
-        public void setCreditCard(Object creditCard) {
-            this.creditCard = creditCard;
-        }
-
-    }
-
-    public class Denomination {
-        @SerializedName("id")
-        @Expose
-        private int id;
-        @SerializedName("cash_denomination_id")
-        @Expose
-        private int cashDenominationId;
-        @SerializedName("cash_denomination_value")
-        @Expose
-        private Double cash_denomination_value;
-        @SerializedName("amount")
-        @Expose
-        private Double amount;
-        @SerializedName("currency_id")
-        @Expose
-        private String currencyId;
-        @SerializedName("currency_value")
-        @Expose
-        private Double currency_value;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public int getCashDenominationId() {
-            return cashDenominationId;
-        }
-
-        public void setCashDenominationId(int cashDenominationId) {
-            this.cashDenominationId = cashDenominationId;
-        }
-
-        public Double getCash_denomination_value() {
-            return cash_denomination_value;
-        }
-
-        public void setCash_denomination_value(Double cash_denomination_value) {
-            this.cash_denomination_value = cash_denomination_value;
-        }
-
-        public Double getAmount() {
-            return amount;
-        }
-
-        public void setAmount(Double amount) {
-            this.amount = amount;
-        }
-
-        public String getCurrencyId() {
-            return currencyId;
-        }
-
-        public void setCurrencyId(String currencyId) {
-            this.currencyId = currencyId;
-        }
-
-        public Double getCurrency_value() {
-            return currency_value;
-        }
-
-        public void setCurrency_value(Double currency_value) {
-            this.currency_value = currency_value;
-        }
-    }
-
-    public class SafeKeepings {
-
-        @SerializedName("id")
-        @Expose
-        private String id;
-        @SerializedName("amount")
-        @Expose
-        private Double amount;
-        @SerializedName("currency_id")
-        @Expose
-        private String currencyId;
-        @SerializedName("currency_value")
-        @Expose
-        private Double currencyValue;
-        @SerializedName("denomination")
-        @Expose
-        private List<Denomination> denominations;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public Double getAmount() {
-            return amount;
-        }
-
-        public void setAmount(Double amount) {
-            this.amount = amount;
-        }
-
-        public String getCurrencyId() {
-            return currencyId;
-        }
-
-        public void setCurrencyId(String currencyId) {
-            this.currencyId = currencyId;
-        }
-
-        public Double getCurrencyValue() {
-            return currencyValue;
-        }
-
-        public void setCurrencyValue(Double currencyValue) {
-            this.currencyValue = currencyValue;
-        }
-
-        public List<Denomination> getDenominations() {
-            return denominations;
-        }
-
-        public void setDenominations(List<Denomination> denominations) {
-            this.denominations = denominations;
-        }
-    }
-
     public class CashAndReco {
-        @SerializedName("safe_keepings")
-        @Expose
-        private List<SafeKeepings> safeKeepings;
+
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -818,14 +1026,12 @@ public class FetchXReadingViaIdResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
-
-        public List<SafeKeepings> getSafeKeepings() {
-            return safeKeepings;
-        }
-
-        public void setSafeKeepings(List<SafeKeepings> safeKeepings) {
-            this.safeKeepings = safeKeepings;
-        }
+        @SerializedName("safe_keepings")
+        @Expose
+        private List<SafeKeeping> safeKeepings = null;
+        @SerializedName("payments")
+        @Expose
+        private List<Payment> payments = null;
 
         public Integer getId() {
             return id;
@@ -945,6 +1151,22 @@ public class FetchXReadingViaIdResponse {
 
         public void setDeletedAt(Object deletedAt) {
             this.deletedAt = deletedAt;
+        }
+
+        public List<SafeKeeping> getSafeKeepings() {
+            return safeKeepings;
+        }
+
+        public void setSafeKeepings(List<SafeKeeping> safeKeepings) {
+            this.safeKeepings = safeKeepings;
+        }
+
+        public List<Payment> getPayments() {
+            return payments;
+        }
+
+        public void setPayments(List<Payment> payments) {
+            this.payments = payments;
         }
     }
 
@@ -1096,8 +1318,34 @@ public class FetchXReadingViaIdResponse {
 
     }
 
-    public class Data {
+    public class Currency {
 
+        @SerializedName("PHP")
+        @Expose
+        private Double pHP;
+        @SerializedName("USD")
+        @Expose
+        private Double uSD;
+
+        public Double getPHP() {
+            return pHP;
+        }
+
+        public void setPHP(Double pHP) {
+            this.pHP = pHP;
+        }
+
+        public Double getUSD() {
+            return uSD;
+        }
+
+        public void setUSD(Double uSD) {
+            this.uSD = uSD;
+        }
+
+    }
+
+    public class Datum {
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -1154,19 +1402,19 @@ public class FetchXReadingViaIdResponse {
         private Double currencyValue;
         @SerializedName("pos_id")
         @Expose
-        private Integer posId;
+        private String posId;
         @SerializedName("emp_id")
         @Expose
-        private Integer empId;
+        private String empId;
         @SerializedName("cut_off_date")
         @Expose
         private String cutOffDate;
         @SerializedName("created_by")
         @Expose
-        private Integer createdBy;
+        private String createdBy;
         @SerializedName("end_of_day_id")
         @Expose
-        private Object endOfDayId;
+        private String endOfDayId;
         @SerializedName("created_at")
         @Expose
         private String createdAt;
@@ -1175,7 +1423,7 @@ public class FetchXReadingViaIdResponse {
         private String updatedAt;
         @SerializedName("deleted_at")
         @Expose
-        private Object deletedAt;
+        private String deletedAt;
         @SerializedName("cash_and_reco")
         @Expose
         private List<CashAndReco> cashAndReco = null;
@@ -1188,6 +1436,7 @@ public class FetchXReadingViaIdResponse {
         @SerializedName("duty_manager")
         @Expose
         private DutyManager dutyManager;
+
 
         public Integer getId() {
             return id;
@@ -1333,19 +1582,19 @@ public class FetchXReadingViaIdResponse {
             this.currencyValue = currencyValue;
         }
 
-        public Integer getPosId() {
+        public String getPosId() {
             return posId;
         }
 
-        public void setPosId(Integer posId) {
+        public void setPosId(String posId) {
             this.posId = posId;
         }
 
-        public Integer getEmpId() {
+        public String getEmpId() {
             return empId;
         }
 
-        public void setEmpId(Integer empId) {
+        public void setEmpId(String empId) {
             this.empId = empId;
         }
 
@@ -1357,19 +1606,19 @@ public class FetchXReadingViaIdResponse {
             this.cutOffDate = cutOffDate;
         }
 
-        public Integer getCreatedBy() {
+        public String getCreatedBy() {
             return createdBy;
         }
 
-        public void setCreatedBy(Integer createdBy) {
+        public void setCreatedBy(String createdBy) {
             this.createdBy = createdBy;
         }
 
-        public Object getEndOfDayId() {
+        public String getEndOfDayId() {
             return endOfDayId;
         }
 
-        public void setEndOfDayId(Object endOfDayId) {
+        public void setEndOfDayId(String endOfDayId) {
             this.endOfDayId = endOfDayId;
         }
 
@@ -1389,11 +1638,11 @@ public class FetchXReadingViaIdResponse {
             this.updatedAt = updatedAt;
         }
 
-        public Object getDeletedAt() {
+        public String getDeletedAt() {
             return deletedAt;
         }
 
-        public void setDeletedAt(Object deletedAt) {
+        public void setDeletedAt(String deletedAt) {
             this.deletedAt = deletedAt;
         }
 
@@ -1428,6 +1677,131 @@ public class FetchXReadingViaIdResponse {
         public void setDutyManager(DutyManager dutyManager) {
             this.dutyManager = dutyManager;
         }
+    }
+
+    public class Denomination {
+        @SerializedName("id")
+        @Expose
+        private Integer id;
+        @SerializedName("cash_denomination_id")
+        @Expose
+        private Integer cashDenominationId;
+        @SerializedName("cash_denomination_value")
+        @Expose
+        private Double cashDenominationValue;
+        @SerializedName("amount")
+        @Expose
+        private Double amount;
+        @SerializedName("currency_id")
+        @Expose
+        private String currencyId;
+        @SerializedName("currency_value")
+        @Expose
+        private Double currencyValue;
+        @SerializedName("safe_keeping_id")
+        @Expose
+        private Integer safeKeepingId;
+        @SerializedName("created_by")
+        @Expose
+        private Integer createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deleted_at")
+        @Expose
+        private Object deletedAt;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public Integer getCashDenominationId() {
+            return cashDenominationId;
+        }
+
+        public void setCashDenominationId(Integer cashDenominationId) {
+            this.cashDenominationId = cashDenominationId;
+        }
+
+        public Double getCashDenominationValue() {
+            return cashDenominationValue;
+        }
+
+        public void setCashDenominationValue(Double cashDenominationValue) {
+            this.cashDenominationValue = cashDenominationValue;
+        }
+
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
+
+        public String getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(String currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public Double getCurrencyValue() {
+            return currencyValue;
+        }
+
+        public void setCurrencyValue(Double currencyValue) {
+            this.currencyValue = currencyValue;
+        }
+
+        public Integer getSafeKeepingId() {
+            return safeKeepingId;
+        }
+
+        public void setSafeKeepingId(Integer safeKeepingId) {
+            this.safeKeepingId = safeKeepingId;
+        }
+
+        public Integer getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(Integer createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public Object getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(Object deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
     }
 
     public class Discount {
@@ -1489,7 +1863,6 @@ public class FetchXReadingViaIdResponse {
         }
 
     }
-
     public class DutyManager {
 
         @SerializedName("id")

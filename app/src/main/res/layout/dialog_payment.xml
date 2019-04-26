@@ -33,6 +33,68 @@
 
 
 
+            <LinearLayout
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/formGuestInfo"
+                android:layout_above="@id/add"
+                android:layout_toRightOf="@id/cardPayments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <CheckBox
+                    android:text="Employee"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/checkEmployee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Spinner
+                    android:visibility="gone"
+                    android:id="@+id/spinnerEmplyeeSelection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:gravity="center"
+                        android:hint="Guest Name"
+                        android:id="@+id/guestNameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:inputType="text"
+                        android:gravity="center"
+                        android:hint="Guest Address"
+                        android:id="@+id/guestAddressinput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:inputType="text"
+                        android:gravity="center"
+                        android:hint="Guest tin"
+                        android:id="@+id/guestTinInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:visibility="gone"
@@ -301,6 +363,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+            <RelativeLayout
+                android:layout_above="@id/linTotals"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/relGuestInfo">
+                <TextView
+                    android:id="@+id/guestName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Issue receipt to Name"/>
+
+                <TextView
+                    android:layout_below="@id/guestName"
+                    android:id="@+id/guestAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Address"/>
+
+                <TextView
+                    android:layout_below="@id/guestAddress"
+                    android:id="@+id/guestTin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TIN number"/>
+            </RelativeLayout>
             <LinearLayout
                 android:id="@+id/linTotals"
                 android:layout_above="@id/linDeposit"
@@ -325,10 +412,9 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/linDeposit"
-                android:layout_above="@id/linAmountDue"
+                android:layout_above="@id/linTendered"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -351,36 +437,9 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linAmountDue"
-                android:layout_above="@id/linTendered"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_weight="0.5"
-                    android:id="@+id/displayAmountDue"
-                    android:padding="5dp"
-                    android:textSize="18sp"
-                    android:text="AMOUNT DUE"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:padding="5dp"
-                    android:text="payemtn"
-                    android:layout_alignParentBottom="true"
-                    android:layout_toLeftOf="@id/totalBalance"
-                    android:id="@+id/totalAmountDue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/linTendered"
-                android:layout_above="@id/linChange"
+                android:layout_above="@id/linAmountDue"
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -404,8 +463,31 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linAmountDue"
+                android:layout_above="@id/linChange"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_weight="0.5"
+                    android:id="@+id/displayAmountDue"
+                    android:padding="5dp"
+                    android:textSize="18sp"
+                    android:text="AMOUNT DUE"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
+                <TextView
+                    android:padding="5dp"
+                    android:text="payemtn"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toLeftOf="@id/totalBalance"
+                    android:id="@+id/totalAmountDue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/linChange"
                 android:layout_above="@id/linRoomBoy"
@@ -432,7 +514,6 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/linRoomBoy"
                 android:layout_above="@id/pay"
@@ -455,9 +536,6 @@
                     android:layout_height="wrap_content"/>
 
             </LinearLayout>
-
-
-
             <Button
                 android:textColor="@color/colorWhite"
                 android:background="@color/colorRed"
@@ -467,6 +545,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="PAY"/>
+
+
         </RelativeLayout>
 
 

@@ -23,8 +23,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,15 +57,18 @@ import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
 import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
+import nerdvana.com.pointofsales.api_requests.SaveGuestInfoRequest;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
+import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
@@ -80,6 +86,16 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private TextView totalDeposit;
     private TextView totalAmountDue;
+
+    private LinearLayout formGuestInfo;
+    private TextView guestName;
+    private TextView guestAddress;
+    private TextView guestTin;
+    private RelativeLayout relGuestInfo;
+
+    private EditText guestNameInput;
+    private EditText guestAddressInput;
+    private EditText guestTinInput;
 
     private LinearLayout formCash;
     private LinearLayout formCard;
@@ -111,6 +127,9 @@ public abstract class PaymentDialog extends BaseDialog  {
     private TextView displayTotalPayment;
     private Spinner spinnerRoomBoy;
 
+
+    private CheckBox checkEmployee;
+    private Spinner spinnerEmplyeeSelection;
     //forex fields
     private String currencyId;
     private String currencyValue;
@@ -145,6 +164,9 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private String empId = ""; //room boy selected
 
+
+    private Double discountPayment = 0.00;
+
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
@@ -152,7 +174,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                          Double totalBalance,
                          List<FetchCurrencyExceptDefaultResponse.Result> currencyList,
                          List<FetchCreditCardResponse.Result> creditCardList,
-                         List<FetchArOnlineResponse.Result> arOnlineList) {
+                         List<FetchArOnlineResponse.Result> arOnlineList,
+                         Double discountPayment) {
         super(context);
         this.act = context;
         this.paymentList = paymentList;
@@ -163,6 +186,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         this.currencyList = currencyList;
         this.creditCardList = creditCardList;
         this.arOnlineList = arOnlineList;
+        this.discountPayment = discountPayment;
 //        this.transactionNumber = transactionNumber;
 //        this.balance = balance;
     }
@@ -181,11 +205,21 @@ public abstract class PaymentDialog extends BaseDialog  {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 //        setContentView(R.layout.dialog_payment);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
+        relGuestInfo = findViewById(R.id.relGuestInfo);
+        guestName = findViewById(R.id.guestName);
+        guestAddress = findViewById(R.id.guestAddress);
+        guestTin = findViewById(R.id.guestTin);
         gcList = new ArrayList<>();
         totalDeposit = findViewById(R.id.totalDeposit);
         totalAmountDue = findViewById(R.id.totalAmountDue);
         linRoomBoy = findViewById(R.id.linRoomBoy);
         spinnerForex = findViewById(R.id.spinnerForex);
+        formGuestInfo = findViewById(R.id.formGuestInfo);
+        guestNameInput = findViewById(R.id.guestNameInput);
+        checkEmployee = findViewById(R.id.checkEmployee);
+        spinnerEmplyeeSelection = findViewById(R.id.spinnerEmplyeeSelection);
+        guestAddressInput = findViewById(R.id.guestAddressinput);
+        guestTinInput = findViewById(R.id.guestTinInput);
         formCash = findViewById(R.id.formCash);
         formCard = findViewById(R.id.formCard);
         formOnline = findViewById(R.id.formOnline);
@@ -259,6 +293,29 @@ public abstract class PaymentDialog extends BaseDialog  {
             pay.setText("PAY");
 
         }
+
+        FetchPaymentResponse.Result f = new FetchPaymentResponse.Result();
+        f.setCoreId("999");
+        f.setPaymentType("GUEST");
+        paymentList.add(f);
+
+
+        checkEmployee.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    guestAddressInput.setVisibility(View.GONE);
+                    guestNameInput.setVisibility(View.GONE);
+                    guestTinInput.setVisibility(View.GONE);
+                    spinnerEmplyeeSelection.setVisibility(View.VISIBLE);
+                } else {
+                    guestAddressInput.setVisibility(View.VISIBLE);
+                    guestNameInput.setVisibility(View.VISIBLE);
+                    guestTinInput.setVisibility(View.VISIBLE);
+                    spinnerEmplyeeSelection.setVisibility(View.GONE);
+                }
+            }
+        });
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -484,6 +541,31 @@ public abstract class PaymentDialog extends BaseDialog  {
                         }
 
 
+                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("999")) { //add guest
+                        boolean isValid = true;
+                        String errorMessage = "";
+
+                        if (paymentMethod == null) {
+                            isValid = false;
+                            errorMessage += "Invalid payment method";
+                        }
+
+                        if (TextUtils.isEmpty(guestNameInput.getText().toString().trim())) {
+                            isValid = false;
+                            errorMessage += "Invalid name";
+                        }
+
+
+
+                        if (isValid) {
+                            //spinnerEmplyeeSelection
+                            submitGuestInfoData("",
+                                    guestNameInput.getText().toString(),
+                                    guestAddressInput.getText().toString(),
+                                    guestTinInput.getText().toString());
+                        } else {
+                            Utils.showDialogMessage(act, errorMessage, "Information");
+                        }
                     }
 
                     if (postedPaymentsAdapter != null) {
@@ -562,8 +644,8 @@ public abstract class PaymentDialog extends BaseDialog  {
             }
         }
 
-        totalPayment = advancePayment + normalPayment;
-        amountDue = totalBalance - advancePayment;
+        totalPayment = normalPayment;
+        amountDue = totalBalance - (advancePayment + discountPayment);
         totalAmountDue.setText(String.valueOf(amountDue));
 
         totalChange = totalPayment - totalBalance;
@@ -575,7 +657,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 
         displayTotalPayment.setText(String.valueOf(normalPayment));
 
-        if (totalPayment >= totalBalance) {
+        if (totalPayment >= amountDue) {
             pay.setBackgroundColor(Color.GREEN);
         } else {
             pay.setBackgroundColor(Color.RED);
@@ -603,30 +685,42 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formForex.setVisibility(GONE);
+            formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("2")) { //card
             formCash.setVisibility(GONE);
             formCard.setVisibility(View.VISIBLE);
             formVoucher.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formForex.setVisibility(GONE);
+            formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("3")) { //online
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
             formVoucher.setVisibility(GONE);
             formOnline.setVisibility(View.VISIBLE);
             formForex.setVisibility(GONE);
+            formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("5")) { //voucher
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
             formVoucher.setVisibility(View.VISIBLE);
             formOnline.setVisibility(GONE);
             formForex.setVisibility(GONE);
+            formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("6")) { //forex
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
             formVoucher.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formForex.setVisibility(View.VISIBLE);
+            formGuestInfo.setVisibility(GONE);
+        } else if (coreId.equalsIgnoreCase("999")) {
+            formGuestInfo.setVisibility(View.VISIBLE);
+            formCash.setVisibility(View.GONE);
+            formCard.setVisibility(GONE);
+            formVoucher.setVisibility(GONE);
+            formOnline.setVisibility(GONE);
+            formForex.setVisibility(View.GONE);
         }
     }
 
@@ -809,4 +903,24 @@ public abstract class PaymentDialog extends BaseDialog  {
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
         itemTouchhelper.attachToRecyclerView(listPostedPayments);
     }
+
+    private void submitGuestInfoData(String userId, String guestName, String guestAddress, String guestTin) {
+
+        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, guestName, guestAddress, guestTin);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<SaveGuestInfoResponse> request = iUsers.saveGuestInfo(saveGuestInfoRequest.getMapValue());
+
+        request.enqueue(new Callback<SaveGuestInfoResponse>() {
+            @Override
+            public void onResponse(Call<SaveGuestInfoResponse> call, Response<SaveGuestInfoResponse> response) {
+                
+            }
+
+            @Override
+            public void onFailure(Call<SaveGuestInfoResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
 }

@@ -21,6 +21,7 @@ import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDiscountRequest;
+import nerdvana.com.pointofsales.api_requests.FetchDiscountSpecialRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchNationalityRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
@@ -67,6 +68,7 @@ import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -449,5 +451,13 @@ public class UserServices extends BaseService {
         asyncRequest(request);
     }
 
+
+    //fetchDiscountSpecial
+    @Subscribe
+    public void fetchDiscountSpecial(FetchDiscountSpecialRequest fetchDiscountSpecialRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchDiscountSpecialResponse> request = iUsers.fetchDiscountSpecial(fetchDiscountSpecialRequest.getMapValue());
+        asyncRequest(request);
+    }
 
 }

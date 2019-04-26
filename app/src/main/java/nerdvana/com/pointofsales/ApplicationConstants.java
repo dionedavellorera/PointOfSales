@@ -53,6 +53,7 @@ public class ApplicationConstants {
 
     public static final String CASH_DENO_JSON = "cash_deno_json";
     public static final String PAYMENT_TYPE_JSON = "payment_type_json";
+    public static final String DISCOUNT_SPECIAL_JSON = "discount_special_json";
 
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 

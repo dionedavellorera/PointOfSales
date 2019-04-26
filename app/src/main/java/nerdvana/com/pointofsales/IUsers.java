@@ -26,6 +26,7 @@ import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
@@ -46,6 +47,7 @@ import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
@@ -286,4 +288,16 @@ public interface IUsers {
     @POST("fetchZReadingViaId")
     @FormUrlEncoded
     Call<ZReadResponse> fetchZReadViaId(@FieldMap Map<String, String> params);
+
+
+
+    @POST("fetchDiscountSpecial")
+    @FormUrlEncoded
+    Call<FetchDiscountSpecialResponse> fetchDiscountSpecial(@FieldMap Map<String, String> params);
+
+
+    @POST("saveGuestInfo")
+    @FormUrlEncoded
+    Call<SaveGuestInfoResponse> saveGuestInfo(@FieldMap Map<String, String> params);
+
 }

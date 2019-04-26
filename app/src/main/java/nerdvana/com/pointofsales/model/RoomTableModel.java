@@ -165,4 +165,8 @@ public class RoomTableModel {
     public void setPrice(List<RoomRateMain> price) {
         this.price = price;
     }
+
+    public void setControlNo(String controlNo) {
+        this.controlNo = controlNo;
+    }
 }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include android:id="@+id/header" layout="@layout/partial_header"/>
+
+    <TextView
+        android:layout_below="@id/header"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:id="@+id/oldOtLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OLD OT HOURS"/>
+
+    <TextView
+        android:id="@+id/oldOtValue"
+        android:padding="5dp"
+        android:textSize="17sp"
+        android:layout_below="@id/oldOtLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"/>
+
+    <TextView
+        android:layout_below="@id/oldOtValue"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:id="@+id/newOtLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEW OT HOURS"/>
+
+
+    <EditText
+        android:inputType="number"
+        android:id="@+id/newOtValue"
+        android:padding="5dp"
+        android:textSize="17sp"
+        android:layout_below="@id/newOtLabel"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="NEW OT HOURS"/>
+
+    <Button
+        android:layout_margin="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/newOtValue"
+        android:id="@+id/updateOverTime"
+        android:text="UPDATE OVERTIME"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

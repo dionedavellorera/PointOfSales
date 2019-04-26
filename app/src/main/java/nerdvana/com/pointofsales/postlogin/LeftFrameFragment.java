@@ -136,6 +136,7 @@ import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
+import nerdvana.com.pointofsales.dialogs.RemoveOtDialog;
 import nerdvana.com.pointofsales.dialogs.SetupPrinterDialog;
 import nerdvana.com.pointofsales.dialogs.SwitchRoomDialog;
 import nerdvana.com.pointofsales.dialogs.TransactionsDialog;
@@ -177,6 +178,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     boolean isAllowedToDiscard = true;
 
+    private Integer overTimeValue = 0;
 
     private View view;
     private String currentRoomStatus = "";
@@ -320,9 +322,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
-        fetchXReadViaIdRequest("19");
+        fetchXReadViaIdRequest("23");
 
-//        fetchZReadViaIdRequest("44");
+        fetchZReadViaIdRequest("44");
 
         fetchCarRequest();
         fetchVehicleRequest();
@@ -793,8 +795,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
+
                             cancelOverTime();
                         }
+
 
                         @Override
                         public void noClicked() {
@@ -1497,7 +1501,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 totalBalance,
                 currencyList,
                 creditCardList,
-                arOnlineList) {
+                arOnlineList,
+                discountPayment) {
             @Override
             public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit, String roomBoy) {
                 List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
@@ -1876,7 +1881,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 totalBalance,
                 currencyList,
                 creditCardList,
-                arOnlineList) {
+                arOnlineList,
+                discountPayment) {
             @Override
             public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
 
@@ -1950,7 +1956,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 }
 
                             } else {
-                                if (totalPayments >= totalBalance) {
+                                if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
                                     if (paymentsToPost.size() > 0) {
                                         if (selectedRoom.isTakeOut()) {
                                             postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
@@ -1976,7 +1982,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                                         }
-                                    }, 500);
+                                    }, 2000);
                                     dismiss();
                                 } else {
 
@@ -2065,6 +2071,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
                 //regionpayments
+                overTimeValue =  r.getTransaction().getOtHours();
                 if (r.getTransaction().getPayments().size() > 0) {
                     for(FetchRoomPendingResponse.Payment pym : r.getTransaction().getPayments()) {
 
@@ -2111,9 +2118,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 //endregion
                 //region order list
                 if (r.getTransaction().getTrans().size() > 0) {
-                    totalBalance = fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
+
+                    selectedRoom.setControlNo(r.getTransaction().getControlNo());
+                    totalBalance = (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
-                            fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount();
+                            fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount())
+                            - fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered()
+                            ;
                     advancePayment = r.getTransaction().getAdvance();
                     discountPayment = r.getTransaction().getDiscount();
                     subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
@@ -2309,7 +2320,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void sendOffGoingNegoRequest(String roomId) {
         BusProvider.getInstance().post(new OffGoingNegoRequest(roomId));
-        defaultView();
         defaultView();
         clearCartItems();
 
@@ -2731,12 +2741,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (checkOutResponse.getStatus() == 0) {
             Utils.showDialogMessage(getActivity(), checkOutResponse.getMessage(), "Information");
         } else {
+
+            Log.d("TESTEST", selectedRoom.getControlNo());
+
             printReceiptFromCheckout(selectedRoom.getControlNo(),
                     selectedRoom.getName(),
                     selectedRoom.getRoomType());
             Utils.showDialogMessage(getActivity(), "CHECK OUT SUCCESS", "Information");
-            clearCartItems();
-            defaultView();
+//            clearCartItems();
+//            defaultView();
 
 //            if (checkOutResponse.getResult().getData().getBooked() != null) {
 //                BusProvider.getInstance().post(new ButtonsModel(999, "ROOMS", "", 1));
@@ -2834,6 +2847,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             } else {
                 fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
             }
+
+            selectedRoom.setControlNo(checkInResponse.getResult().getBooked().get(0).getTransaction().getControlNo());
 
         }
     }
@@ -3036,6 +3051,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void printReceiptFromCheckout(String controlNumber, final String roomName, final String roomType) {
+
+        Log.d("TETEMO", controlNumber);
+
         FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
@@ -3221,25 +3239,37 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
 
                     if (hasOt) {
-                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                        CancelOverTimeRequest cancelOverTimeRequest = new CancelOverTimeRequest(String.valueOf(selectedRoom.getRoomId()), selectedRoom.getControlNo());
-                        Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
-                        request.enqueue(new Callback<CancelOverTimeResponse>() {
-                            @Override
-                            public void onResponse(Call<CancelOverTimeResponse> call, Response<CancelOverTimeResponse> response) {
-                                if (response.body().getStatus() == 0) {
-                                    Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
-                                } else {
-                                    Utils.showDialogMessage(getActivity(), "Cancel OT Success", "Information");
-                                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                                }
-                            }
 
+                        RemoveOtDialog removeOtDialog = new RemoveOtDialog(getContext(), String.valueOf(overTimeValue), getActivity()) {
                             @Override
-                            public void onFailure(Call<CancelOverTimeResponse> call, Throwable t) {
+                            public void removeOtSuccess(String oldOtValue, String remainingOt) {
+
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                CancelOverTimeRequest cancelOverTimeRequest = new CancelOverTimeRequest(String.valueOf(selectedRoom.getRoomId()), selectedRoom.getControlNo(), oldOtValue, remainingOt);
+                                Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
+                                request.enqueue(new Callback<CancelOverTimeResponse>() {
+                                    @Override
+                                    public void onResponse(Call<CancelOverTimeResponse> call, Response<CancelOverTimeResponse> response) {
+                                        if (response.body().getStatus() == 0) {
+                                            Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+                                        } else {
+                                            Utils.showDialogMessage(getActivity(), "Cancel OT Success", "Information");
+                                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<CancelOverTimeResponse> call, Throwable t) {
+
+                                    }
+                                });
+
 
                             }
-                        });
+                        };
+                        if (!removeOtDialog.isShowing()) removeOtDialog.show();
+
+
                     } else {
                         Utils.showDialogMessage(getActivity(), "Room dont have OT", "Information");
                     }
@@ -3279,6 +3309,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void fetchXReadViaIdRequest(String xReadingId) {
+        Log.d("TETETE", "WEE");
         BusProvider.getInstance().post(new FetchXReadingViaIdRequest(xReadingId));
     }
 
@@ -3287,6 +3318,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         Log.d("dsadsadsadsadsa", "X READ RESPONSE");
         BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }
 
     private void fetchZReadViaIdRequest(String zReadId) {
@@ -3296,7 +3328,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         request.enqueue(new Callback<ZReadResponse>() {
             @Override
             public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+
                 BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+
+
+                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+
+
             }
 
             @Override

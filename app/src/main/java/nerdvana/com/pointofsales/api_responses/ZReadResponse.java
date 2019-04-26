@@ -276,10 +276,10 @@ public class ZReadResponse {
 
         @SerializedName("old_grand_total")
         @Expose
-        private Integer oldGrandTotal;
+        private Double oldGrandTotal;
         @SerializedName("new_grand_total")
         @Expose
-        private Integer newGrandTotal;
+        private Double newGrandTotal;
         @SerializedName("control_no")
         @Expose
         private List<String> controlNo = null;
@@ -296,19 +296,19 @@ public class ZReadResponse {
         @Expose
         private List<Discount> discount = null;
 
-        public Integer getOldGrandTotal() {
+        public Double getOldGrandTotal() {
             return oldGrandTotal;
         }
 
-        public void setOldGrandTotal(Integer oldGrandTotal) {
+        public void setOldGrandTotal(Double oldGrandTotal) {
             this.oldGrandTotal = oldGrandTotal;
         }
 
-        public Integer getNewGrandTotal() {
+        public Double getNewGrandTotal() {
             return newGrandTotal;
         }
 
-        public void setNewGrandTotal(Integer newGrandTotal) {
+        public void setNewGrandTotal(Double newGrandTotal) {
             this.newGrandTotal = newGrandTotal;
         }
 
@@ -1587,87 +1587,36 @@ public class ZReadResponse {
 
     public class Discount {
 
-        @SerializedName("id")
+        @SerializedName("discount_amount")
         @Expose
-        private Integer id;
-        @SerializedName("control_no")
+        private Double discountAmount;
+        @SerializedName("count")
         @Expose
-        private String controlNo;
+        private Integer count;
         @SerializedName("discount_type_id")
         @Expose
         private Integer discountTypeId;
         @SerializedName("discount_type")
         @Expose
         private String discountType;
-        @SerializedName("discount_amount")
+        @SerializedName("is_special")
         @Expose
-        private Double discountAmount;
-        @SerializedName("post_exempt_id_list")
-        @Expose
-        private Object postExemptIdList;
-        @SerializedName("post_id_list")
-        @Expose
-        private Object postIdList;
-        @SerializedName("rc_discount")
-        @Expose
-        private Double rcDiscount;
-        @SerializedName("food_discount")
-        @Expose
-        private Double foodDiscount;
-        @SerializedName("discount_reason_id")
-        @Expose
-        private Integer discountReasonId;
-        @SerializedName("is_percentage")
-        @Expose
-        private Integer isPercentage;
-        @SerializedName("value")
-        @Expose
-        private Double value;
-        @SerializedName("extra_hours")
-        @Expose
-        private Double extraHours;
-        @SerializedName("remarks")
-        @Expose
-        private Object remarks;
-        @SerializedName("emp_id")
-        @Expose
-        private Integer empId;
-        @SerializedName("discounted_by")
-        @Expose
-        private Object discountedBy;
-        @SerializedName("void_by")
-        @Expose
-        private Object voidBy;
-        @SerializedName("voided_at")
-        @Expose
-        private Object voidedAt;
-        @SerializedName("created_by")
-        @Expose
-        private Integer createdBy;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
+        private Integer isSpecial;
 
-        public Integer getId() {
-            return id;
+        public Double getDiscountAmount() {
+            return discountAmount;
         }
 
-        public void setId(Integer id) {
-            this.id = id;
+        public void setDiscountAmount(Double discountAmount) {
+            this.discountAmount = discountAmount;
         }
 
-        public String getControlNo() {
-            return controlNo;
+        public Integer getCount() {
+            return count;
         }
 
-        public void setControlNo(String controlNo) {
-            this.controlNo = controlNo;
+        public void setCount(Integer count) {
+            this.count = count;
         }
 
         public Integer getDiscountTypeId() {
@@ -1686,150 +1635,17 @@ public class ZReadResponse {
             this.discountType = discountType;
         }
 
-        public Double getDiscountAmount() {
-            return discountAmount;
+        public Integer getIsSpecial() {
+            return isSpecial;
         }
 
-        public void setDiscountAmount(Double discountAmount) {
-            this.discountAmount = discountAmount;
+        public void setIsSpecial(Integer isSpecial) {
+            this.isSpecial = isSpecial;
         }
 
-        public Object getPostExemptIdList() {
-            return postExemptIdList;
-        }
-
-        public void setPostExemptIdList(Object postExemptIdList) {
-            this.postExemptIdList = postExemptIdList;
-        }
-
-        public Object getPostIdList() {
-            return postIdList;
-        }
-
-        public void setPostIdList(Object postIdList) {
-            this.postIdList = postIdList;
-        }
-
-        public Double getRcDiscount() {
-            return rcDiscount;
-        }
-
-        public void setRcDiscount(Double rcDiscount) {
-            this.rcDiscount = rcDiscount;
-        }
-
-        public Double getFoodDiscount() {
-            return foodDiscount;
-        }
-
-        public void setFoodDiscount(Double foodDiscount) {
-            this.foodDiscount = foodDiscount;
-        }
-
-        public Integer getDiscountReasonId() {
-            return discountReasonId;
-        }
-
-        public void setDiscountReasonId(Integer discountReasonId) {
-            this.discountReasonId = discountReasonId;
-        }
-
-        public Integer getIsPercentage() {
-            return isPercentage;
-        }
-
-        public void setIsPercentage(Integer isPercentage) {
-            this.isPercentage = isPercentage;
-        }
-
-        public Double getValue() {
-            return value;
-        }
-
-        public void setValue(Double value) {
-            this.value = value;
-        }
-
-        public Double getExtraHours() {
-            return extraHours;
-        }
-
-        public void setExtraHours(Double extraHours) {
-            this.extraHours = extraHours;
-        }
-
-        public Object getRemarks() {
-            return remarks;
-        }
-
-        public void setRemarks(Object remarks) {
-            this.remarks = remarks;
-        }
-
-        public Integer getEmpId() {
-            return empId;
-        }
-
-        public void setEmpId(Integer empId) {
-            this.empId = empId;
-        }
-
-        public Object getDiscountedBy() {
-            return discountedBy;
-        }
-
-        public void setDiscountedBy(Object discountedBy) {
-            this.discountedBy = discountedBy;
-        }
-
-        public Object getVoidBy() {
-            return voidBy;
-        }
-
-        public void setVoidBy(Object voidBy) {
-            this.voidBy = voidBy;
-        }
-
-        public Object getVoidedAt() {
-            return voidedAt;
-        }
-
-        public void setVoidedAt(Object voidedAt) {
-            this.voidedAt = voidedAt;
-        }
-
-        public Integer getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(Integer createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
-        }
     }
+
+
 
     public class DutyManager {
 
