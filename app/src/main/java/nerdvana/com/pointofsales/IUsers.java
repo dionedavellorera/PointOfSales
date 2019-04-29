@@ -6,6 +6,7 @@ import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
 import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckEndOfDayResponse;
@@ -296,8 +297,12 @@ public interface IUsers {
     Call<FetchDiscountSpecialResponse> fetchDiscountSpecial(@FieldMap Map<String, String> params);
 
 
-    @POST("saveGuestInfo")
+    //region pending
+    @POST("saveGuestInfo") //REMOVE OT
     @FormUrlEncoded
     Call<SaveGuestInfoResponse> saveGuestInfo(@FieldMap Map<String, String> params);
-
+    @POST("backOutGuest")
+    @FormUrlEncoded
+    Call<BackOutGuestResponse> backOutGuest(@FieldMap Map<String, String> params);
+    //endregion
 }

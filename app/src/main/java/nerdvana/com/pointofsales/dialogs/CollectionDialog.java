@@ -115,7 +115,7 @@ public abstract class CollectionDialog extends BaseDialog {
                 if (willCashReco) {
                     PasswordDialog passwordDialog = new PasswordDialog(act) {
                         @Override
-                        public void passwordSuccess(String employeeId) {
+                        public void passwordSuccess(String employeeId, String employeeName) {
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
                             Log.d("CASHRECOREQ", collectionRequest.toString());

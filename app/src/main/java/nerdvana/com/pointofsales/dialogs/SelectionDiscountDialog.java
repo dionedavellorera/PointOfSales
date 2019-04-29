@@ -236,7 +236,7 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
         PasswordDialog passwordDialog = new PasswordDialog(context) {
 
             @Override
-            public void passwordSuccess(String employeeId) {
+            public void passwordSuccess(String employeeId, String employeeName) {
 
                 AutoDiscountRequest autoDiscountRequest = null;
                 switch (selectionType) {

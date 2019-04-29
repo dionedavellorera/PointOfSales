@@ -147,7 +147,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 } else {
                     PasswordDialog passwordDialog = new PasswordDialog(act) {
                         @Override
-                        public void passwordSuccess(String employeeId) {
+                        public void passwordSuccess(String employeeId, String employeeName) {
                             postVoidRequest(controlNumber, employeeId);
                         }
 

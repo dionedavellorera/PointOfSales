@@ -57,6 +57,7 @@ import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
+import nerdvana.com.pointofsales.api_requests.BackOutGuestRequest;
 import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
 import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
@@ -87,6 +88,7 @@ import nerdvana.com.pointofsales.api_requests.ZReadRequest;
 import nerdvana.com.pointofsales.api_responses.AddPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
+import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
 import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
@@ -99,6 +101,7 @@ import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
@@ -322,9 +325,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
-        fetchXReadViaIdRequest("23");
-
-        fetchZReadViaIdRequest("44");
+//        fetchXReadViaIdRequest("23");
+//        fetchZReadViaIdRequest("52");
 
         fetchCarRequest();
         fetchVehicleRequest();
@@ -734,6 +736,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 124: //BACKOUT
+                doBackOutGuestFunction();
+                break;
+            case 123: //REPRINT X/Z READING
+                break;
             case 117: //change shift
                 if (hasUnpostedItems()) {
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
@@ -1326,6 +1333,137 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
+    private void doBackOutGuestFunction() {
+
+        if (selectedRoom != null) {
+            if (!selectedRoom.isTakeOut()) {
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+
+                            final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                @Override
+                                public void save(final String remarks) {
+
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                                        @Override
+                                        public void passwordSuccess(String employeeId, String employeeName) {
+
+                                            //comment after test
+                                            BusProvider.getInstance().post(new PrintModel("",
+                                                    selectedRoom.getName(),
+                                                    "BACKOUT",
+                                                    GsonHelper.getGson().toJson(selectedRoom),
+                                                    selectedRoom.getRoomType(),
+                                                    employeeName,
+                                                    remarks
+                                                    ));
+                                            //
+
+                                            BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks);
+                                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                            Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                            request.enqueue(new Callback<BackOutGuestResponse>() {
+                                                @Override
+                                                public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                                                    BusProvider.getInstance().post(new PrintModel("",
+                                                            selectedRoom.getName(),
+                                                            "BACKOUT",
+                                                            GsonHelper.getGson().toJson(selectedRoom),
+                                                            selectedRoom.getRoomType()));
+                                                    defaultView();
+                                                    clearCartItems();
+                                                    endLoading();
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                    endLoading();
+                                                }
+                                            });
+
+
+                                        }
+
+                                        @Override
+                                        public void passwordFailed() {
+
+                                        }
+                                    };
+                                    if (!passwordDialog.isShowing()) passwordDialog.show();
+
+
+                                }
+                            };
+                            if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
+                            showLoading();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                        @Override
+                        public void save(final String remarks) {
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                                @Override
+                                public void passwordSuccess(String employeeId, String employeeName) {
+                                    BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks);
+                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                    Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                    request.enqueue(new Callback<BackOutGuestResponse>() {
+                                        @Override
+                                        public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                                            BusProvider.getInstance().post(new PrintModel("",
+                                                    selectedRoom.getName(),
+                                                    "BACKOUT",
+                                                    "TEST",
+                                                    selectedRoom.getRoomType()));
+                                            defaultView();
+                                            clearCartItems();
+                                            endLoading();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                            endLoading();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void passwordFailed() {
+
+                                }
+                            };
+                            if (!passwordDialog.isShowing()) passwordDialog.show();
+                        }
+                    };
+                    if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
+
+
+                }
+
+
+            } else {
+                Utils.showDialogMessage(getActivity(), "Transaction for take out only", "Information");
+            }
+
+        } else {
+            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+        }
+
+
+
+
+
+    }
+
     private void doSafeKeepFunction() {
         CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
             @Override
@@ -1418,7 +1556,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
 
                             @Override
-                            public void passwordSuccess(String employeeId) {
+                            public void passwordSuccess(String employeeId, String employeeName) {
 
                                 BusProvider.getInstance().post(
                                         new SwitchRoomRequest(
@@ -1582,7 +1720,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                 @Override
-                public void passwordSuccess(final String employeeId) {
+                public void passwordSuccess(final String employeeId, String employeeName) {
 
 
                     if (selectedRoom != null) {
@@ -3015,6 +3153,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         }
 
+        String checkInTime = "NA";
+        if (r.getResult().getTransaction() != null) {
+            if (r.getResult().getTransaction().getCheckIn() != null) {
+                checkInTime = r.getResult().getTransaction().getCheckIn();
+            }
+        }
 
         selectedRoom = new RoomTableModel (
                 r.getResult().getId(),
@@ -3038,7 +3182,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 r.getResult().getStatus().getIsBlink() == 1 ? true : false,
                 r.getResult().getStatus().getIsTimer() == 1 ? true : false,
                 checkoutExpected,
-                r.getResult().getTransaction() != null ? String.valueOf(r.getResult().getTransaction().getTransaction().getOtHours()) : ""
+                r.getResult().getTransaction() != null ? String.valueOf(r.getResult().getTransaction().getTransaction().getOtHours()) : "",
+                checkInTime
         );
 
         currentRoomStatus = selectedRoom.getStatus();
@@ -3128,7 +3273,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
             @Override
-            public void passwordSuccess(String employeeId) {
+            public void passwordSuccess(String employeeId, String employeeName) {
                 ZReadRequest zReadRequest = new ZReadRequest(employeeId);
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                 Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
@@ -3136,6 +3281,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     @Override
                     public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
 
+
+                        fetchZReadViaIdRequest(String.valueOf(response.body().getResult().getData().getId()));
                         Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
 
                     }
@@ -3163,7 +3310,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
             @Override
-            public void passwordSuccess(String employeeId) {
+            public void passwordSuccess(String employeeId, String employeeName) {
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                 XReadRequest collectionRequest = new XReadRequest(new ArrayList<CollectionFinalPostModel>(), employeeId);
                 Call<XReadResponse> request = iUsers.xReading(collectionRequest.getMapValue());

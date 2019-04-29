@@ -49,6 +49,7 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                             r.getIsSoa() == 1 ? true : false,
                             false,
                             "",
+                            "",
                             ""
 
                     )

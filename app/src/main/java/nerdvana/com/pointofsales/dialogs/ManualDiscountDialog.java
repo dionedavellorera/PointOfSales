@@ -120,7 +120,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
 
                 PasswordDialog passwordDialog = new PasswordDialog(context) {
                     @Override
-                    public void passwordSuccess(String employeeId) {
+                    public void passwordSuccess(String employeeId, String employeeName) {
                         dismiss();
                         DiscountRequest discountRequest =
                                 new DiscountRequest(

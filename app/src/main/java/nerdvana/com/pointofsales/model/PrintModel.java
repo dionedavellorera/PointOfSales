@@ -7,6 +7,9 @@ public class PrintModel {
     private String data;
     private String roomType;
 
+    private String dutyManager;
+    private String remarks;
+
     public PrintModel(String message, String roomNumber, String type, String data) {
         this.message = message;
         this.roomNumber = roomNumber;
@@ -20,6 +23,27 @@ public class PrintModel {
         this.type = type;
         this.data = data;
         this.roomType = roomType;
+    }
+
+    public PrintModel(String message, String roomNumber,
+                      String type, String data,
+                      String roomType, String dutyManager,
+                      String remarks) {
+        this.message = message;
+        this.roomNumber = roomNumber;
+        this.type = type;
+        this.data = data;
+        this.roomType = roomType;
+        this.dutyManager = dutyManager;
+        this.remarks = remarks;
+    }
+
+    public String getDutyManager() {
+        return dutyManager;
+    }
+
+    public String getRemarks() {
+        return remarks;
     }
 
     public String getRoomType() {

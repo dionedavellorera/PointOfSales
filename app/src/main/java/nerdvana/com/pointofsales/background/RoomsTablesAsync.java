@@ -120,6 +120,15 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                     }
                 }
             }
+
+            String checkInTime = "NA";
+            if (r.getTransaction() != null) {
+                if (r.getTransaction().getCheckIn() != null) {
+                    checkInTime = r.getTransaction().getCheckIn();
+                }
+            }
+
+
             productsModelList.add(
                     new RoomTableModel (
                             r.getId(),
@@ -143,7 +152,8 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             r.getStatus().getIsBlink() == 1 ? true : false,
                             r.getStatus().getIsTimer() == 1 ? true : false,
                             checkoutExpected,
-                            otHours
+                            otHours,
+                            checkInTime
 
 
                     )

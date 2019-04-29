@@ -54,7 +54,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
 
     }
 
-    public abstract void passwordSuccess(String employeeId);
+    public abstract void passwordSuccess(String employeeId, String employeeName);
     public abstract void passwordFailed();
 
     @Override
@@ -86,7 +86,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
                     Utils.showDialogMessage(((MainActivity)context), "Incorrect credentials given", "Warning!");
 //                    Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
-                    passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()));
+                    passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()), response.body().getResult().get(0).getName());
                 }
                 dismiss();
             }
