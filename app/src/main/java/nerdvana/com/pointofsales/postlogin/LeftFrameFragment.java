@@ -119,6 +119,7 @@ import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.api_responses.RoomRateMainViaId;
 import nerdvana.com.pointofsales.api_responses.RoomRateSubViaId;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
+import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 //import nerdvana.com.pointofsales.background.CheckoutItemsAsync;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
@@ -997,6 +998,21 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         defaultView();
                         clearCartItems();
                     }
+
+                    @Override
+                    public void postVoidPrint(String jsonData) {
+                        ViewReceiptResponse.Result toListPV = GsonHelper.getGson().fromJson(jsonData, ViewReceiptResponse.Result.class)
+                                ;
+
+                        BusProvider.getInstance().post(new PrintModel("",
+                                toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
+                                "POST_VOID",
+                                jsonData,
+                                toListPV != null ? toListPV.getGuestInfo().getRoomType() : ""));
+
+                        defaultView();
+                        clearCartItems();
+                    }
                 };
 
                 if (!transactionsDialog.isShowing()) {
@@ -1010,6 +1026,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     @Override
                     public void refresh() {
                         fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                    }
+
+                    @Override
+                    public void refresh(String jsonString) {
+                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHANGE_WAKE_UP_CALL", jsonString));
+
                     }
                 };
 
@@ -1361,7 +1384,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                     ));
                                             //
 
-                                            BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks);
+                                            BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, selectedRoom.getControlNo());
                                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                             Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
                                             request.enqueue(new Callback<BackOutGuestResponse>() {
@@ -1413,7 +1436,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                                 @Override
                                 public void passwordSuccess(String employeeId, String employeeName) {
-                                    BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks);
+                                    BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, selectedRoom.getControlNo());
                                     IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                     Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
                                     request.enqueue(new Callback<BackOutGuestResponse>() {
@@ -1445,8 +1468,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         }
                     };
                     if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
-
-
                 }
 
 
@@ -1478,6 +1499,21 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         TransactionsDialog postVoid = new TransactionsDialog(getActivity(), false, getActivity()) {
             @Override
             public void postVoidSuccess() {
+                defaultView();
+                clearCartItems();
+            }
+
+            @Override
+            public void postVoidPrint(String jsonData) {
+                ViewReceiptResponse.Result toListPV = GsonHelper.getGson().fromJson(jsonData, ViewReceiptResponse.Result.class)
+                        ;
+
+                BusProvider.getInstance().post(new PrintModel("",
+                        toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
+                        "POST_VOID",
+                        jsonData,
+                        toListPV != null ? toListPV.getGuestInfo().getRoomType() : ""));
+
                 defaultView();
                 clearCartItems();
             }
@@ -1640,7 +1676,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 currencyList,
                 creditCardList,
                 arOnlineList,
-                discountPayment) {
+                discountPayment,
+                selectedRoom.getControlNo()) {
             @Override
             public void paymentSuccess(List<PostedPaymentsModel> postedPaymentLit, String roomBoy) {
                 List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
@@ -2020,7 +2057,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 currencyList,
                 creditCardList,
                 arOnlineList,
-                discountPayment) {
+                discountPayment,
+                selectedRoom.getControlNo()) {
             @Override
             public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
 
@@ -3389,28 +3427,39 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                         RemoveOtDialog removeOtDialog = new RemoveOtDialog(getContext(), String.valueOf(overTimeValue), getActivity()) {
                             @Override
-                            public void removeOtSuccess(String oldOtValue, String remainingOt) {
+                            public void removeOtSuccess(final String oldOtValue, final String remainingOt) {
 
-                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                CancelOverTimeRequest cancelOverTimeRequest = new CancelOverTimeRequest(String.valueOf(selectedRoom.getRoomId()), selectedRoom.getControlNo(), oldOtValue, remainingOt);
-                                Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
-                                request.enqueue(new Callback<CancelOverTimeResponse>() {
+                                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                                     @Override
-                                    public void onResponse(Call<CancelOverTimeResponse> call, Response<CancelOverTimeResponse> response) {
-                                        if (response.body().getStatus() == 0) {
-                                            Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
-                                        } else {
-                                            Utils.showDialogMessage(getActivity(), "Cancel OT Success", "Information");
-                                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                                        }
+                                    public void passwordSuccess(String employeeId, String employeeName) {
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        CancelOverTimeRequest cancelOverTimeRequest = new CancelOverTimeRequest(String.valueOf(selectedRoom.getRoomId()), selectedRoom.getControlNo(), oldOtValue, remainingOt, employeeId);
+                                        Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
+                                        request.enqueue(new Callback<CancelOverTimeResponse>() {
+                                            @Override
+                                            public void onResponse(Call<CancelOverTimeResponse> call, Response<CancelOverTimeResponse> response) {
+                                                if (response.body().getStatus() == 0) {
+                                                    Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+                                                } else {
+                                                    Utils.showDialogMessage(getActivity(), "Cancel OT Success", "Information");
+                                                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<CancelOverTimeResponse> call, Throwable t) {
+
+                                            }
+                                        });
                                     }
 
                                     @Override
-                                    public void onFailure(Call<CancelOverTimeResponse> call, Throwable t) {
+                                    public void passwordFailed() {
 
                                     }
-                                });
+                                };
 
+                                if (!passwordDialog.isShowing()) passwordDialog.show();
 
                             }
                         };
@@ -3426,7 +3475,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             }
         }
-
 
     }
 

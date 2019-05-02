@@ -20,11 +20,11 @@ public class AddPaymentRequest extends BaseRequest{
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
+        mapValue.put("branch_code", branchCode);
+        mapValue.put("tax", tax);
         mapValue.put("room_id", roomId);
         mapValue.put("is_adv", isAdv);
         mapValue.put("control_no", controlNumber);
-        mapValue.put("branch_code", branchCode);
-        mapValue.put("tax", tax);
 
 
     }

@@ -451,8 +451,6 @@ public class UserServices extends BaseService {
         asyncRequest(request);
     }
 
-
-
     @Subscribe
     public void fetchDiscountSpecial(FetchDiscountSpecialRequest fetchDiscountSpecialRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);

@@ -10,7 +10,7 @@ import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 public class BackOutGuestRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
-    public BackOutGuestRequest(String roomId, String remarks) {
+    public BackOutGuestRequest(String roomId, String remarks, String controlNumber) {
         mapValue = new HashMap<>();
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
@@ -19,6 +19,8 @@ public class BackOutGuestRequest extends BaseRequest {
         mapValue.put("remarks", remarks);
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);
+
+        mapValue.put("control_no", controlNumber);
 
 
     }

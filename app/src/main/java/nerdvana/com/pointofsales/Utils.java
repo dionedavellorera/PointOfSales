@@ -90,14 +90,12 @@ public class Utils {
         String res = "";
         try {
             DateTime jodatime = dtf.parseDateTime(createdAt);
-            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
-
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d hh:mm a");
 
             res = dtfOut.print(jodatime);
         } catch (Exception e) {
             res  = "NA";
         }
-
 
         return res.toUpperCase();
 

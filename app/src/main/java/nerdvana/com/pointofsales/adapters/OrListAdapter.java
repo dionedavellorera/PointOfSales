@@ -39,12 +39,14 @@ public class OrListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         private RelativeLayout rootView;
         private ImageView skipImage;
         private ImageView voidImage;
+        private TextView cutOffImage;
         public OrListViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             skipImage = itemView.findViewById(R.id.skipImage);
             voidImage = itemView.findViewById(R.id.voidImage);
             rootView = itemView.findViewById(R.id.rootView);
+            cutOffImage = itemView.findViewById(R.id.cutOffImage);
         }
 
     }
@@ -77,6 +79,12 @@ public class OrListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 ((OrListViewHolder) holder).voidImage.setVisibility(View.VISIBLE);
             } else {
                 ((OrListViewHolder) holder).voidImage.setVisibility(View.GONE);
+            }
+
+            if (orList.get(i).getIsCutOff() != 0) {
+                ((OrListViewHolder)holder).cutOffImage.setVisibility(View.VISIBLE);
+            } else {
+                ((OrListViewHolder)holder).cutOffImage.setVisibility(View.GONE);
             }
         }
 

@@ -51,6 +51,7 @@ import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
+import nerdvana.com.pointofsales.api_responses.UpdateCheckInTimeResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
@@ -298,11 +299,14 @@ public interface IUsers {
 
 
     //region pending
-    @POST("saveGuestInfo") //REMOVE OT
+    @POST("saveGuestInfo") //SAVE USER DETAILS FOR RECEIPT
     @FormUrlEncoded
     Call<SaveGuestInfoResponse> saveGuestInfo(@FieldMap Map<String, String> params);
     @POST("backOutGuest")
     @FormUrlEncoded
     Call<BackOutGuestResponse> backOutGuest(@FieldMap Map<String, String> params);
+    @POST("updateCheckInTime")
+    @FormUrlEncoded
+    Call<UpdateCheckInTimeResponse> updateCheckInTime(@FieldMap Map<String, String> params);
     //endregion
 }

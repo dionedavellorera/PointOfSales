@@ -84,6 +84,8 @@ import static android.view.View.GONE;
 
 public abstract class PaymentDialog extends BaseDialog  {
 
+    private boolean isEmployee = false;
+
     private TextView totalDeposit;
     private TextView totalAmountDue;
 
@@ -96,6 +98,9 @@ public abstract class PaymentDialog extends BaseDialog  {
     private EditText guestNameInput;
     private EditText guestAddressInput;
     private EditText guestTinInput;
+
+    String guestInfoEmployeeId;
+    String guestInfoEmployeeName;
 
     private LinearLayout formCash;
     private LinearLayout formCard;
@@ -167,6 +172,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private Double discountPayment = 0.00;
 
+    private String controlNumber = "";
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
@@ -175,9 +181,11 @@ public abstract class PaymentDialog extends BaseDialog  {
                          List<FetchCurrencyExceptDefaultResponse.Result> currencyList,
                          List<FetchCreditCardResponse.Result> creditCardList,
                          List<FetchArOnlineResponse.Result> arOnlineList,
-                         Double discountPayment) {
+                         Double discountPayment,
+                         String controlNumber) {
         super(context);
         this.act = context;
+        this.controlNumber = controlNumber;
         this.paymentList = paymentList;
         paymentMethod = paymentList.get(0);
         this.isCheckout = isCheckout;
@@ -271,13 +279,13 @@ public abstract class PaymentDialog extends BaseDialog  {
             linRoomBoy.setVisibility(GONE);
         }
         setRoomBoySpinner();
+        setGuestInfoSelection();
 
         displayTotalBalance.setText(String.valueOf(totalBalance));
         paymentMethodImpl = new PaymentMethod() {
             @Override
             public void clicked(int position) {
                 showForm(paymentList.get(position).getCoreId());
-
                 paymentMethod = paymentList.get(position);
             }
         };
@@ -304,11 +312,13 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    isEmployee = true;
                     guestAddressInput.setVisibility(View.GONE);
                     guestNameInput.setVisibility(View.GONE);
                     guestTinInput.setVisibility(View.GONE);
                     spinnerEmplyeeSelection.setVisibility(View.VISIBLE);
                 } else {
+                    isEmployee = false;
                     guestAddressInput.setVisibility(View.VISIBLE);
                     guestNameInput.setVisibility(View.VISIBLE);
                     guestTinInput.setVisibility(View.VISIBLE);
@@ -555,14 +565,12 @@ public abstract class PaymentDialog extends BaseDialog  {
                             errorMessage += "Invalid name";
                         }
 
-
-
                         if (isValid) {
-                            //spinnerEmplyeeSelection
-                            submitGuestInfoData("",
-                                    guestNameInput.getText().toString(),
-                                    guestAddressInput.getText().toString(),
-                                    guestTinInput.getText().toString());
+                            submitGuestInfoData(isEmployee ? guestInfoEmployeeId : "",
+                                    !isEmployee ?guestNameInput.getText().toString() : guestInfoEmployeeName,
+                                    !isEmployee ? guestAddressInput.getText().toString() : "",
+                                    !isEmployee ? guestTinInput.getText().toString() : "",
+                                    controlNumber);
                         } else {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
@@ -586,7 +594,6 @@ public abstract class PaymentDialog extends BaseDialog  {
                 } else {
                     Utils.showDialogMessage(act, "No payment to post", "Warning");
                 }
-
             }
         });
 
@@ -848,6 +855,34 @@ public abstract class PaymentDialog extends BaseDialog  {
     }
 
 
+    private void setGuestInfoSelection() {
+
+        TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
+        final List<FetchCompanyUserResponse.Result> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), companyUser.getType());
+
+        List<String> userArray = new ArrayList<>();
+        for (FetchCompanyUserResponse.Result res : userList) {
+            userArray.add(res.getName());
+        }
+
+        CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                userArray);
+        spinnerEmplyeeSelection.setAdapter(userAdapter);
+
+        spinnerEmplyeeSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                guestInfoEmployeeId = String.valueOf(userList.get(position).getUserId());
+                guestInfoEmployeeName = String.valueOf(userList.get(position).getName());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     private void setRoomBoySpinner() {
 
         TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
@@ -904,16 +939,16 @@ public abstract class PaymentDialog extends BaseDialog  {
         itemTouchhelper.attachToRecyclerView(listPostedPayments);
     }
 
-    private void submitGuestInfoData(String userId, String guestName, String guestAddress, String guestTin) {
+    private void submitGuestInfoData(String userId, String guestName, String guestAddress, String guestTin, String controlNumber) {
 
-        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, guestName, guestAddress, guestTin);
+        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, guestName, guestAddress, guestTin, controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<SaveGuestInfoResponse> request = iUsers.saveGuestInfo(saveGuestInfoRequest.getMapValue());
 
         request.enqueue(new Callback<SaveGuestInfoResponse>() {
             @Override
             public void onResponse(Call<SaveGuestInfoResponse> call, Response<SaveGuestInfoResponse> response) {
-                
+
             }
 
             @Override

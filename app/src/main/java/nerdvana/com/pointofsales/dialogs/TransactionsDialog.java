@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
@@ -71,6 +72,8 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     private SearchView receiptNumber;
     private Spinner roomSpinner;
     private Button search;
+
+    private ViewReceiptResponse.Result selectedOrToPrintOrVoid;
 
     public TransactionsDialog(@NonNull Context context, Boolean isViewing, Activity activity) {
         super(context);
@@ -243,9 +246,8 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
 
     private void setOrDetails(ViewReceiptResponse.Result selectedOr) {
         if (selectedOr != null) {
-
+            selectedOrToPrintOrVoid = selectedOr;
             cartItemList = new ArrayList<>();
-
             List<Integer> roomRateCounter = new ArrayList<>();
             for (ViewReceiptResponse.Post_ tpost : selectedOr.getPost()) {
                 if (tpost.getVoid() == 0) {
@@ -328,6 +330,10 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 if (response.body().getStatus() == 0) {
                     Utils.showDialogMessage(act, response.body().getMessage(), "Information");
                 } else {
+
+                    dismiss();
+                    postVoidPrint(GsonHelper.getGson().toJson(selectedOrToPrintOrVoid));
+
                     postVoidSuccess();
                     dismiss();
                 }
@@ -384,4 +390,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
         });
 
     }
+
+    public abstract void postVoidPrint(String jsonData);
+
 }

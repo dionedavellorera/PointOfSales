@@ -34,12 +34,17 @@ import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.UpdateCheckInTimeRequest;
 import nerdvana.com.pointofsales.api_requests.WakeUpCallUpdateRequest;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
+import nerdvana.com.pointofsales.api_responses.UpdateCheckInTimeResponse;
 import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
+import nerdvana.com.pointofsales.model.ChangeWakeUpCallPrintModel;
+import nerdvana.com.pointofsales.model.PrintModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,10 +64,15 @@ public abstract class GuestInfoDialog extends BaseDialog {
     private TextView wakeUpCall;
     private TextView checkInTime;
 
+    String finalCheckInDateTime = ""; //24hrs time 23:23:00
+    String finalCheckInDate = "";
+    String finalCheckInTime = "";
+
     private Activity act;
 
     private Button changeTime;
     private Button changeDate;
+    private Button changeCheckInTime;
 
     private String dateSet = "";
     private String timeSet = "";
@@ -96,16 +106,20 @@ public abstract class GuestInfoDialog extends BaseDialog {
         final DateTime checkInJodaTime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString()));
         DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime finalDate = dtf.parseDateTime(dtfOut.print(jodatime));
+        DateTime finalChDate = dtf.parseDateTime(dtfOut.print(checkInJodaTime));
 
 
         dateSet = String.format("%s-%s-%s", String.valueOf(finalDate.getYear()),
                 String.valueOf(finalDate.getMonthOfYear() < 10 ? "0" + finalDate.getMonthOfYear() : finalDate.getMonthOfYear()),
                 String.valueOf(finalDate.getDayOfMonth() < 10 ? "0" + finalDate.getDayOfMonth() : finalDate.getDayOfMonth()));
         timeSet = String.format("%s:%s:00", String.valueOf(finalDate.getHourOfDay()), String.valueOf(finalDate.getMinuteOfHour()));
-        finalTime = dateSet + " " + timeSet;
+
+        finalCheckInDateTime = String.format("%s-%s-%s", String.valueOf(finalChDate.getYear()),
+                String.valueOf(finalChDate.getMonthOfYear() < 10 ? "0" + finalChDate.getMonthOfYear() : finalChDate.getMonthOfYear()),
+                String.valueOf(finalChDate.getDayOfMonth() < 10 ? "0" + finalChDate.getDayOfMonth() : finalChDate.getDayOfMonth())) + " " +
+                String.format("%s:%s:00", String.valueOf(finalChDate.getHourOfDay()), String.valueOf(finalChDate.getMinuteOfHour()));
 
 
-        Log.d("TESTESt", finalTime);
         changeDate = findViewById(R.id.changeDate);
 
 
@@ -133,7 +147,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
                 final TimePickerDialog timePickerDialog = new TimePickerDialog(act, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        timeSet = String.format("%s:%s:00", String.valueOf(hourOfDay), minute);
+                        timeSet = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute : minute)));
                     }
                 }, jodatime.hourOfDay().get(), jodatime.minuteOfHour().get(), true);
                 timePickerDialog.show();
@@ -197,6 +211,15 @@ public abstract class GuestInfoDialog extends BaseDialog {
         roomBoy.setText(getUserInfo(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getSteward())));
         remarks = findViewById(R.id.remarksValue);
         remarks.setText("N/A");
+
+
+        changeCheckInTime = findViewById(R.id.changeCheckInTime);
+        changeCheckInTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChangeCheckInTimeChainDialog();
+            }
+        });
     }
 
     @Override
@@ -243,6 +266,9 @@ public abstract class GuestInfoDialog extends BaseDialog {
     }
 
     private void updateGuestInfo(String finalTime) {
+
+        final ChangeWakeUpCallPrintModel changeWakeUpCallPrintModel = new ChangeWakeUpCallPrintModel(fetchRoomPendingResult.getBooked().get(0).getRoomNo(), finalTime);
+
         WakeUpCallUpdateRequest wakeUpCallUpdateRequest = new WakeUpCallUpdateRequest(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalTime);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<WakeUpCallUpdateResponse> request = iUsers.updateWakeUpCall(wakeUpCallUpdateRequest.getMapValue());
@@ -251,7 +277,8 @@ public abstract class GuestInfoDialog extends BaseDialog {
             @Override
             public void onResponse(Call<WakeUpCallUpdateResponse> call, Response<WakeUpCallUpdateResponse> response) {
                 dismiss();
-                refresh();
+                refresh(GsonHelper.getGson().toJson(changeWakeUpCallPrintModel));
+
             }
 
             @Override
@@ -261,5 +288,52 @@ public abstract class GuestInfoDialog extends BaseDialog {
         });
     }
 
+    private void updateCheckInTime(String roomId, String checkInTime) {
+        UpdateCheckInTimeRequest updateCheckInTimeRequest = new UpdateCheckInTimeRequest(roomId, checkInTime);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<UpdateCheckInTimeResponse> request = iUsers.updateCheckInTime(updateCheckInTimeRequest.getMapValue());
+        request.enqueue(new Callback<UpdateCheckInTimeResponse>() {
+            @Override
+            public void onResponse(Call<UpdateCheckInTimeResponse> call, Response<UpdateCheckInTimeResponse> response) {
+                dismiss();
+                refresh();
+            }
+
+            @Override
+            public void onFailure(Call<UpdateCheckInTimeResponse> call, Throwable t) {
+
+            }
+        });
+
+    }
+
     public abstract void refresh();
+    public abstract void refresh(String jsonString);
+
+    private void showChangeCheckInTimeChainDialog() {
+        final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        final DateTime jodatime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn()));
+        DatePickerDialog datePickerDialog =
+                new DatePickerDialog(act, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        finalCheckInDate = String.format("%s-%s-%s", String.valueOf(year < 10 ? "0" + year : year),
+                                String.valueOf((month + 1) < 10 ? "0" + (month +1) : (month + 1)) , String.valueOf(dayOfMonth < 10 ? "0" + dayOfMonth : dayOfMonth));
+                        final TimePickerDialog timePickerDialog = new TimePickerDialog(act, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                finalCheckInTime = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute  : minute)));
+
+                                finalCheckInDateTime = finalCheckInDate + " " + finalCheckInTime;
+
+                                Log.d("TEKTEKTKE", finalCheckInDateTime);
+
+                                updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime);
+                            }
+                        }, jodatime.hourOfDay().get(), jodatime.minuteOfHour().get(), true);
+                        timePickerDialog.show();
+                    }
+                }, jodatime.getYear(), jodatime.getMonthOfYear() -1, jodatime.getDayOfMonth());
+        datePickerDialog.show();
+    }
 }

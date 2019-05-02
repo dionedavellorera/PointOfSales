@@ -5,6 +5,19 @@
     android:id="@+id/rootView">
 
 
+    <TextView
+        android:text="CUTOFF"
+        android:visibility="gone"
+        android:textColor="@color/colorRed"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:layout_toLeftOf="@id/skipImage"
+        android:layout_width="wrap_content"
+
+        android:layout_height="30dp"
+        android:id="@+id/cutOffImage"
+        android:src="@mipmap/baseline_error_outline_black_24"/>
+
     <ImageView
         android:visibility="gone"
         android:layout_centerVertical="true"

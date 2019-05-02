@@ -10,7 +10,9 @@ import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 public class CancelOverTimeRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
-    public CancelOverTimeRequest(String roomId, String controlNumber, String oldOtHour, String newOtHour) {
+    public CancelOverTimeRequest(String roomId, String controlNumber,
+                                 String oldOtHour, String newOtHour,
+                                 String empId) {
         mapValue = new HashMap<>();
 
         mapValue.put("room_id", roomId);
@@ -23,6 +25,8 @@ public class CancelOverTimeRequest extends BaseRequest {
         mapValue.put("branch_id", branchId);
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);
+
+        mapValue.put("emp_id", empId);
 
 
     }

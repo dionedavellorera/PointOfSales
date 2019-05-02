@@ -240,6 +240,15 @@
 
                 <Button
                     android:padding="5dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_selector"
+                    android:id="@+id/changeCheckInTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Update Check in time"/>
+
+                <Button
+                    android:padding="5dp"
                     android:layout_margin="10dp"
                     android:background="@drawable/button_selector"
                     android:id="@+id/updateGuestInfo"
