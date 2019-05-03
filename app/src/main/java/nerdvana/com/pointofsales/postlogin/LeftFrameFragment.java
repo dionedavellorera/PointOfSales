@@ -648,6 +648,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.voidItem:
+                        doVoidFunction();
+                        break;
                     case R.id.changePrice:
                         final OpenPriceDialog openPriceDialog = new OpenPriceDialog(getActivity(), itemSelected, position) {
                             @Override
@@ -2045,12 +2048,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             };
             alertYesNo.show();
         } else {
-            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
-
-            showLoading();
+//            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
         }
-
-
     }
 
     private void showLoading() {
@@ -2956,8 +2955,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void addProductToResponse(AddProductToResponse addProductToResponse) {
         if (selectedRoom != null) {
-            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+            BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo()));
         }
+        endLoading();
 
     }
 
