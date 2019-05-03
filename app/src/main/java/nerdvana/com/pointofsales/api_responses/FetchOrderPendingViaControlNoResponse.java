@@ -1358,7 +1358,46 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+    public class Customer {
+        @SerializedName("customer")
+        @Expose
+        private String customer;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public String getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(String customer) {
+            this.customer = customer;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+    }
+
     public class Result {
+        @SerializedName("customer")
+        @Expose
+        private Customer customer;
         @SerializedName("employee")
         @Expose
         private Employee employee;
@@ -1485,6 +1524,18 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("vat_exempt_sales")
         @Expose
         private Double vatExemptSales;
+
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
+
+        public void setEmployee(Employee employee) {
+            this.employee = employee;
+        }
 
         public Employee getEmployee() {
             return employee;

@@ -25,6 +25,18 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
         List<RoomTableModel> productsModelList = new ArrayList<>();
 
         for (FetchOrderPendingResponse.Result r : roomList) {
+            String displayName = "";
+
+            if (r.getCustomer() != null) {
+                if (!r.getCustomer().getCustomer().equalsIgnoreCase("to be filled") && !r.getCustomer().getCustomer().equalsIgnoreCase("empty")) {
+                    String[] myName = r.getCustomer().getCustomer().trim().split(" ");
+                    for (int i = 0; i < myName.length; i++) {
+                        displayName += myName[i].trim().substring(0,1).toUpperCase();
+                    }
+                } else {
+                    displayName = "GUEST";
+                }
+            }
 
             productsModelList.add(
                     new RoomTableModel (
@@ -36,7 +48,7 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                             r.getRoomAreaId() != null ? ((Number)r.getRoomAreaId()).intValue() : 0,
                             "",
                             "",
-                            String.valueOf(r.getCustomerId()),
+                            displayName,
                             new ArrayList<RoomRateMain>(),
                             true,
                             "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",

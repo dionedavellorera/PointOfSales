@@ -1205,7 +1205,46 @@ public class PrintSoaResponse {
         }
     }
 
+    public class Customer {
+        @SerializedName("customer")
+        @Expose
+        private String customer;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public String getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(String customer) {
+            this.customer = customer;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+    }
+
     public class Result {
+        @SerializedName("customer")
+        @Expose
+        private Customer customer;
         @SerializedName("created_at")
         @Expose
         private String createdAt;
@@ -1260,6 +1299,14 @@ public class PrintSoaResponse {
         @SerializedName("post")
         @Expose
         private List<SoaToPost> toPostList;
+
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
 
         public String getCreatedAt() {
             return createdAt;
@@ -1943,7 +1990,9 @@ public class PrintSoaResponse {
 
 
     public class Booked {
-
+        @SerializedName("customer")
+        @Expose
+        private Customer customer;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -2025,6 +2074,14 @@ public class PrintSoaResponse {
         @SerializedName("transaction")
         @Expose
         private Transaction transaction;
+
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
 
         public Integer getId() {
             return id;

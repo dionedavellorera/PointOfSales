@@ -40,6 +40,42 @@ public class FetchOrderPendingResponse {
         this.message = message;
     }
 
+    public class Customer {
+        @SerializedName("customer")
+        @Expose
+        private String customer;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public String getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(String customer) {
+            this.customer = customer;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+    }
+
     public class Payment {
 
         @SerializedName("id")
@@ -816,7 +852,9 @@ public class FetchOrderPendingResponse {
     }
 
     public class Result {
-
+        @SerializedName("customer")
+        @Expose
+        private Customer customer;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -925,6 +963,15 @@ public class FetchOrderPendingResponse {
         @SerializedName("payments")
         @Expose
         private List<Payment> payments = null;
+
+
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
 
         public Integer getId() {
             return id;

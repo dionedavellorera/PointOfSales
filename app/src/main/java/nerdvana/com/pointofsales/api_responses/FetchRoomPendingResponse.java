@@ -778,10 +778,48 @@ public class FetchRoomPendingResponse {
 
     }
 
+    public class Customer {
+        @SerializedName("customer")
+        @Expose
+        private String customer;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public String getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(String customer) {
+            this.customer = customer;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+    }
+
 
 
     public class Booked {
-
+        @SerializedName("customer")
+        @Expose
+        private Customer customer;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -890,6 +928,14 @@ public class FetchRoomPendingResponse {
 //            this.status = status;
 //        }
 
+
+        public Customer getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(Customer customer) {
+            this.customer = customer;
+        }
 
         public BranchNationality getBranchNationality() {
             return branchNationality;

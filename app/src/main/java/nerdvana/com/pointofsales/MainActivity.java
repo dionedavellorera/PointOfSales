@@ -876,45 +876,74 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 addTextToPrinter(SPrinter.getPrinter(), "BACK OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "ROOM NO",
-                        selectedRoom.getName()
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                if (selectedRoom.getRoomId() != 0) {
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "ROOM NO",
+                            selectedRoom.getName() != null ? selectedRoom.getName() : "NA"
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "CHECK IN TIME",
-                        selectedRoom.getCheckInTime()
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "CHECK IN TIME",
+                            selectedRoom.getCheckInTime() != null ? selectedRoom.getCheckInTime() : "NA"
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "EXPECTED CHECKOUT",
-                        selectedRoom.getExpectedCheckout()
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "EXPECTED CHECKOUT",
+                            selectedRoom.getExpectedCheckout() != null ? selectedRoom.getExpectedCheckout() : "NA"
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "BACKOUT TIME",
-                        currentDateTime
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "BACKOUT TIME",
+                            currentDateTime
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "REMARKS",
-                        printModel.getRemarks()
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "REMARKS",
+                            printModel.getRemarks()
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                } else {
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "CONTROL NO",
+                            selectedRoom.getControlNo()
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "BACKOUT TIME",
+                            currentDateTime
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "REMARKS",
+                            printModel.getRemarks()
+                            ,
+                            40,
+                            2),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                }
 
 
 
@@ -1896,6 +1925,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         ;
 
                 if (toList1 != null) {
+
+
                     addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                             "CASHIER",
                             toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA "
@@ -2072,6 +2103,16 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         }
                     }
 
+                    addPrinterSpace(1);
+
+                    if (toList1.getCustomer() != null) {
+                        if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+                            addTextToPrinter(SPrinter.getPrinter(), "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                            addTextToPrinter(SPrinter.getPrinter(), toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                            addTextToPrinter(SPrinter.getPrinter(), toList1.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                            addTextToPrinter(SPrinter.getPrinter(), toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        }
+                    }
                     addPrinterSpace(1);
 
                     addFooterToPrinter();
@@ -2321,7 +2362,19 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 //
                 addPrinterSpace(1);
-//
+
+                if (toList.getCustomer() != null) {
+                    if (!toList.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+                        addTextToPrinter(SPrinter.getPrinter(), "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    }
+                }
+
+
+
+                addPrinterSpace(1);
 //                addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
                 addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
@@ -2465,7 +2518,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
-                        "CHECKED-OUT",
+                        "EXP. CHECK-OUT",
                         bookedList.get(0).getExpectedCheckOut(),
                         40,
                         2)
@@ -2604,6 +2657,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                     }
 
+                }
+
+
+                addPrinterSpace(1);
+
+                if (bookedList.get(0).getCustomer() != null) {
+                    if (!bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+                        addTextToPrinter(SPrinter.getPrinter(), "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    }
                 }
 
 

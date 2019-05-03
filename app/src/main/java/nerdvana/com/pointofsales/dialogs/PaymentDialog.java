@@ -73,6 +73,7 @@ import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
+import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 import okhttp3.internal.Util;
@@ -173,6 +174,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private Double discountPayment = 0.00;
 
     private String controlNumber = "";
+    private GuestReceiptInfoModel guestReceiptInfoModel;
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
@@ -182,9 +184,11 @@ public abstract class PaymentDialog extends BaseDialog  {
                          List<FetchCreditCardResponse.Result> creditCardList,
                          List<FetchArOnlineResponse.Result> arOnlineList,
                          Double discountPayment,
-                         String controlNumber) {
+                         String controlNumber,
+                         GuestReceiptInfoModel guestReceiptInfoModel) {
         super(context);
         this.act = context;
+        this.guestReceiptInfoModel = guestReceiptInfoModel;
         this.controlNumber = controlNumber;
         this.paymentList = paymentList;
         paymentMethod = paymentList.get(0);
@@ -272,7 +276,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         setForexSpinner();
         setVoucherSpinner();
         setupCreditCardSpinner();
-
+        setupGuestName();
         if (isCheckout) {
             linRoomBoy.setVisibility(View.VISIBLE);
         } else {
@@ -627,6 +631,22 @@ public abstract class PaymentDialog extends BaseDialog  {
         showForm("1");
 
         setPostedPaymentSwipe();
+    }
+
+    private void setupGuestName() {
+
+        if (guestReceiptInfoModel != null) {
+
+            if (!guestReceiptInfoModel.getName().equalsIgnoreCase("to be filled") && !guestReceiptInfoModel.getName().equalsIgnoreCase("empty")) {
+                guestName.setText(guestReceiptInfoModel.getName());
+                guestAddress.setText(guestReceiptInfoModel.getAddress());
+                guestTin.setText(guestReceiptInfoModel.getTin());
+
+                guestNameInput.setText(guestReceiptInfoModel.getName());
+                guestAddressInput.setText(guestReceiptInfoModel.getAddress());
+                guestTinInput.setText(guestReceiptInfoModel.getTin());
+            }
+        }
     }
 
     public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList, String roomBoy);
