@@ -41,9 +41,41 @@ public class ViewReceiptResponse {
         this.message = message;
     }
 
+    public class RoomBoyIn {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public class RoomBoyOut {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public class GuestInfo {
-
+        @SerializedName("room_boy_in")
+        @Expose
+        private RoomBoyIn roomBoyIn;
+        @SerializedName("room_boy_out")
+        @Expose
+        private RoomBoyOut roomBoyOut;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -143,6 +175,22 @@ public class ViewReceiptResponse {
         @SerializedName("rate_room")
         @Expose
         private RateRoom rateRoom;
+
+        public RoomBoyIn getRoomBoyIn() {
+            return roomBoyIn;
+        }
+
+        public void setRoomBoyIn(RoomBoyIn roomBoyIn) {
+            this.roomBoyIn = roomBoyIn;
+        }
+
+        public RoomBoyOut getRoomBoyOut() {
+            return roomBoyOut;
+        }
+
+        public void setRoomBoyOut(RoomBoyOut roomBoyOut) {
+            this.roomBoyOut = roomBoyOut;
+        }
 
         public Integer getId() {
             return id;
@@ -2051,8 +2099,56 @@ public class ViewReceiptResponse {
 
     }
 
+    public class RoomBoy {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public class CashierOut {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public class Cashier {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
     public class Result {
 
+        @SerializedName("cashier_out")
+        @Expose
+        private CashierOut cashierOut;
+        @SerializedName("cashier")
+        @Expose
+        private Cashier cashier;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -2142,7 +2238,7 @@ public class ViewReceiptResponse {
         private Integer xSkip;
         @SerializedName("room_boy")
         @Expose
-        private Integer roomBoy;
+        private RoomBoy roomBoy;
         @SerializedName("user_id")
         @Expose
         private Integer userId;
@@ -2182,6 +2278,46 @@ public class ViewReceiptResponse {
         @SerializedName("post")
         @Expose
         private List<Post_> post = null;
+
+        public CashierOut getCashierOut() {
+            return cashierOut;
+        }
+
+        public void setCashierOut(CashierOut cashierOut) {
+            this.cashierOut = cashierOut;
+        }
+
+        public Cashier getCashier() {
+            return cashier;
+        }
+
+        public void setCashier(Cashier cashier) {
+            this.cashier = cashier;
+        }
+
+        public Double getxPersonAmount() {
+            return xPersonAmount;
+        }
+
+        public void setxPersonAmount(Double xPersonAmount) {
+            this.xPersonAmount = xPersonAmount;
+        }
+
+        public Integer getxSkip() {
+            return xSkip;
+        }
+
+        public void setxSkip(Integer xSkip) {
+            this.xSkip = xSkip;
+        }
+
+        public Integer get_void() {
+            return _void;
+        }
+
+        public void set_void(Integer _void) {
+            this._void = _void;
+        }
 
         public Integer getId() {
             return id;
@@ -2415,11 +2551,11 @@ public class ViewReceiptResponse {
             this.xSkip = xSkip;
         }
 
-        public Integer getRoomBoy() {
+        public RoomBoy getRoomBoy() {
             return roomBoy;
         }
 
-        public void setRoomBoy(Integer roomBoy) {
+        public void setRoomBoy(RoomBoy roomBoy) {
             this.roomBoy = roomBoy;
         }
 

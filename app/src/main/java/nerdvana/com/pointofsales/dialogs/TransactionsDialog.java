@@ -246,6 +246,10 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
 
     private void setOrDetails(ViewReceiptResponse.Result selectedOr) {
         if (selectedOr != null) {
+
+            postVoidPrint(GsonHelper.getGson().toJson(selectedOrToPrintOrVoid));
+
+
             selectedOrToPrintOrVoid = selectedOr;
             cartItemList = new ArrayList<>();
             List<Integer> roomRateCounter = new ArrayList<>();

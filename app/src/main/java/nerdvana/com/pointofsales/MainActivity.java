@@ -547,18 +547,31 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         ;
 
                 if (toListPV != null) {
-//                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-//                            "CASHIER",
-//                            toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA "
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-//                            "ROOM BOY",
-//                            String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "CASHIER IN",
+                            toListPV.getCashier() != null ? String.valueOf(toListPV.getCashier().getName()) : "NA "
+                            ,
+                            40,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "CASHIER OUT",
+                            toListPV.getCashierOut() != null ? String.valueOf(toListPV.getCashierOut().getName()) : "NA "
+                            ,
+                            40,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "ROOM BOY IN",
+                            String.valueOf(toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomBoyIn().getName() : "NA")
+                            ,
+                            40,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            "ROOM BOY OUT",
+                            String.valueOf(toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomBoyOut().getName() : "NA")
+                            ,
+                            40,
+                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                     addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                             "CHECK IN",
