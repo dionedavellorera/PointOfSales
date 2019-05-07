@@ -103,14 +103,14 @@ public class Utils {
 
     public static long getDurationInSecs(String dateStart) {
 
-        DateTimeFormatter f = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter f = DateTimeFormat.forPattern("yyyy-MM-dd kk:mm:ss");
         DateTime startDate = f.parseDateTime(dateStart);
         return startDate.getMillis() / 1000;
 
     }
 
     public static String convertSecondsToReadableDate(long seconds) {
-        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM d, yyyy HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("EEEE, MMMM d, yyyy hh:mm:ss a");
         return formatter.format(new Date(seconds * 1000L));
     }
 

@@ -9,6 +9,8 @@ public class SPrinter {
     private static Printer printer;
     public SPrinter(int printerModel, int printerLanguage, Context context) {
         try {
+
+
             if (printer == null) {
                 printer = new Printer(printerModel, printerLanguage, context);
             }

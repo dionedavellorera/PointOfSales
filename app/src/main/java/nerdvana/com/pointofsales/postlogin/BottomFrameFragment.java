@@ -62,4 +62,5 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
                 break;
         }
     }
+
 }

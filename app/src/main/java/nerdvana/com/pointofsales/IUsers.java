@@ -19,6 +19,7 @@ import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
@@ -58,6 +59,7 @@ import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.FieldMap;
@@ -249,7 +251,7 @@ public interface IUsers {
 
     @POST("zReading")
     @FormUrlEncoded
-    Call<ZReadResponse> zReading(@FieldMap Map<String, String> params);
+    Call<ResponseBody> zReading(@FieldMap Map<String, String> params);
 
     @POST("checkEndOfDay")
     @FormUrlEncoded
@@ -298,7 +300,6 @@ public interface IUsers {
     Call<FetchDiscountSpecialResponse> fetchDiscountSpecial(@FieldMap Map<String, String> params);
 
 
-    //region pending
     @POST("saveGuestInfo") //SAVE USER DETAILS FOR RECEIPT
     @FormUrlEncoded
     Call<SaveGuestInfoResponse> saveGuestInfo(@FieldMap Map<String, String> params);
@@ -308,5 +309,12 @@ public interface IUsers {
     @POST("updateCheckInTime")
     @FormUrlEncoded
     Call<UpdateCheckInTimeResponse> updateCheckInTime(@FieldMap Map<String, String> params);
+
+
+    @POST("fetchBranchInfo")
+    @FormUrlEncoded
+    Call<FetchBranchInfoResponse> fetchBranchInfo(@FieldMap Map<String, String> params);
+    //region pending
+
     //endregion
 }

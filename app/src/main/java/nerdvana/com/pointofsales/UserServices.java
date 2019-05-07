@@ -14,6 +14,7 @@ import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
+import nerdvana.com.pointofsales.api_requests.FetchBranchInfoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
@@ -60,6 +61,7 @@ import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
@@ -455,6 +457,13 @@ public class UserServices extends BaseService {
     public void fetchDiscountSpecial(FetchDiscountSpecialRequest fetchDiscountSpecialRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchDiscountSpecialResponse> request = iUsers.fetchDiscountSpecial(fetchDiscountSpecialRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void fetchBranchInfo(FetchBranchInfoRequest fetchBranchInfoRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchBranchInfoResponse> request = iUsers.fetchBranchInfo(fetchBranchInfoRequest.getMapValue());
         asyncRequest(request);
     }
 

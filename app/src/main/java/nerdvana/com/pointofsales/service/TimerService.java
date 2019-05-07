@@ -7,15 +7,33 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.gson.reflect.TypeToken;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
+import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.model.TimerModel;
 
 public class TimerService extends Service {
     long secsOfDate = 0;
     String startDate = "";
-
+    String shiftInfoStringArray = "";
+    private String shiftDisplay = "";
     private static String currentDate = "";
 
     CountDownTimer countUpTimer;
@@ -30,6 +48,12 @@ public class TimerService extends Service {
         if (intent != null) {
             if (intent.getStringExtra("start_time") != null) {
                 startDate = intent.getStringExtra("start_time");
+                shiftInfoStringArray = intent.getStringExtra("shift_info_array");
+
+                TypeToken<List<FetchBranchInfoResponse.Shift>> branchInfo = new TypeToken<List<FetchBranchInfoResponse.Shift>>() {};
+                final List<FetchBranchInfoResponse.Shift> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.SHIFT_INFO_ARRAY), branchInfo.getType());
+
+
 
                 secsOfDate = Utils.getDurationInSecs(startDate);
 
@@ -37,19 +61,51 @@ public class TimerService extends Service {
                     @Override
                     public void onTick(int second) {
                         secsOfDate+= 1;
-                        BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate)));
 
+
+                        BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate), shiftDisplay));
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
+                        if (secsOfDate % 10 == 0) {
+                            shiftDisplay = shiftNumber(userList, secsOfDate);
+                        }
                     }
                 }.start();
             }
         }
-
-
-
-
-
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private String shiftNumber(List<FetchBranchInfoResponse.Shift> userList, long secsOfDate) {
+        String shiftNumber = "0";
+        if (userList.size() > 0) {
+            for (FetchBranchInfoResponse.Shift res : userList) {
+                DateTimeFormatter fff = DateTimeFormat.forPattern("HH:mm:ss");
+                DateTime startSec = fff.parseDateTime(res.getSTime());
+                Log.d("CCCCCC-START", String.valueOf(startSec.getSecondOfDay()));
+
+
+
+
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+                DateTime midTime = fff.parseDateTime(formatter.format(new Date(secsOfDate * 1000L)));
+                Log.d("CCCCCC-MID", String.valueOf(midTime.getSecondOfDay()));
+
+
+                DateTimeFormatter ddd = DateTimeFormat.forPattern("HH:mm:ss");
+                DateTime endSec = ddd.parseDateTime(res.getETime());
+
+                Log.d("CCCCCC-END", String.valueOf(endSec.getSecondOfDay()));
+                if (midTime.getSecondOfDay() >= startSec.getSecondOfDay() && midTime.getSecondOfDay() <= endSec.getSecondOfDay()) {
+                    shiftNumber = String.valueOf(res.getShiftNo());
+                    break;
+                }
+            }
+        } else {
+            shiftNumber = "0";
+        }
+
+        return shiftNumber;
     }
 
 

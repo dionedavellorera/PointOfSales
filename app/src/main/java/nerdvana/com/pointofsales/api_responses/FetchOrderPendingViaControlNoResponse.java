@@ -1138,7 +1138,7 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("checkOut")
         @Expose
         private String checkOut;
-        @SerializedName("room_boy")
+        @SerializedName("room_boy_in")
         @Expose
         private RoomBoy roomBoy;
 

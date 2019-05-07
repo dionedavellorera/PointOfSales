@@ -39,6 +39,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -303,6 +304,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //        printReceiptFromCheckout("VCHI-2019-00000020",
 //                "TEST",
 //                "STANDARD");
+
+
+//        printReceiptFromCheckout("VCHI-2019-00000078", "XXX", "DDD");
+
 
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.userSettings), UserModel.class);
         if (userModel != null) {
@@ -659,7 +664,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 if (cartItemList.get(position).isPosted()) {
                                     cartItemList.get(position).setPosted(false);
                                     cartItemList.get(position).setForVoid(true);
-
                                 }
                                 if (newPrice != 0) {
                                     cartItemList.get(position).setUnitPrice(newPrice);
@@ -2048,7 +2052,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             };
             alertYesNo.show();
         } else {
-//            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
         }
     }
 
@@ -2345,7 +2349,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     totalBalance = (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount())
-                            - fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered()
+                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered() + fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt())
                             ;
                     advancePayment = r.getTransaction().getAdvance();
                     discountPayment = r.getTransaction().getDiscount();
@@ -2728,6 +2732,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
+
+
+
                 fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
                 BusProvider.getInstance().post(new PrintModel("",
                         "takeout",
@@ -2972,12 +2979,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             Utils.showDialogMessage(getActivity(), checkOutResponse.getMessage(), "Information");
         } else {
 
-            Log.d("TESTEST", selectedRoom.getControlNo());
 
             printReceiptFromCheckout(selectedRoom.getControlNo(),
                     selectedRoom.getName(),
                     selectedRoom.getRoomType());
-            Utils.showDialogMessage(getActivity(), "CHECK OUT SUCCESS", "Information");
+
+
+//            Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+//            Utils.showDialogMessage(getActivity(), "CHECK OUT SUCCESS", "Information");
 //            clearCartItems();
 //            defaultView();
 
@@ -3288,21 +3297,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void printReceiptFromCheckout(String controlNumber, final String roomName, final String roomType) {
-
-        Log.d("TETEMO", controlNumber);
-
         FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
         request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
             @Override
             public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
-
-                Toast.makeText(getContext(), "print me", Toast.LENGTH_SHORT).show();
-
                 BusProvider.getInstance().post(new PrintModel(
                         "", roomName,
-                        "PRINT_RECEIPT", GsonHelper.getGson().toJson(response.body().getResult()),
+                        "PRINT_RECEIPT",
+                        GsonHelper.getGson().toJson(response.body().getResult()),
                         roomType));
 
                 clearCartItems();
@@ -3368,22 +3372,48 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void passwordSuccess(String employeeId, String employeeName) {
                 ZReadRequest zReadRequest = new ZReadRequest(employeeId);
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                Call<ZReadResponse> request = iUsers.zReading(zReadRequest.getMapValue());
-                request.enqueue(new Callback<ZReadResponse>() {
+                Call<ResponseBody> request = iUsers.zReading(zReadRequest.getMapValue());
+                request.enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
-
-
-                        fetchZReadViaIdRequest(String.valueOf(response.body().getResult().getData().getId()));
-                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
-
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        try {
+                            String result = response.body().string();
+                            JSONObject zReadObject = new JSONObject(result);
+                            if (zReadObject.getString("status").equalsIgnoreCase("0")) {
+                                Utils.showDialogMessage(getActivity(), zReadObject.getString("message"), "Information");
+                            } else {
+                                JSONObject zReadResultObject = zReadObject.getJSONObject("result");
+                                JSONObject ZReadResultDataObject = zReadResultObject.getJSONObject("data");
+                                fetchZReadViaIdRequest(ZReadResultDataObject.getString("id"));
+                                Utils.showDialogMessage(getActivity(), "ZREAD SUCCESS", "Information");
+                            }
+//                            Log.d("JJJJJ", new JSONObject(result).toString());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
-                    public void onFailure(Call<ZReadResponse> call, Throwable t) {
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                     }
                 });
+//                request.enqueue(new Callback<ZReadResponse>() {
+//                    @Override
+//                    public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+//
+//                        fetchZReadViaIdRequest(String.valueOf(response.body().getResult().getData().getId()));
+//                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ZReadResponse> call, Throwable t) {
+//
+//                    }
+//                });
             }
 
             @Override
