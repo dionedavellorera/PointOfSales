@@ -55,6 +55,8 @@ import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.UpdateCheckInTimeResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
+import nerdvana.com.pointofsales.api_responses.VoidDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.VoidPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
@@ -314,6 +316,14 @@ public interface IUsers {
     @POST("fetchBranchInfo")
     @FormUrlEncoded
     Call<FetchBranchInfoResponse> fetchBranchInfo(@FieldMap Map<String, String> params);
+
+    @POST("voidPayment")
+    @FormUrlEncoded
+    Call<VoidPaymentResponse> voidPayment(@FieldMap Map<String, String> params);
+
+    @POST("voidDiscount")
+    @FormUrlEncoded
+    Call<VoidDiscountResponse> voidDiscount(@FieldMap Map<String, String> params);
     //region pending
 
     //endregion

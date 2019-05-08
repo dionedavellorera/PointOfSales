@@ -58,8 +58,10 @@ import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.SaveGuestInfoRequest;
+import nerdvana.com.pointofsales.api_requests.VoidPaymentRequest;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
@@ -69,9 +71,11 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
+import nerdvana.com.pointofsales.api_responses.VoidPaymentResponse;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
+import nerdvana.com.pointofsales.interfaces.VoidItemContract;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
 import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
@@ -173,18 +177,19 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private Double discountPayment = 0.00;
 
+    private VoidItemContract voidItemContract;
     private String controlNumber = "";
     private GuestReceiptInfoModel guestReceiptInfoModel;
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
-                         List<PostedPaymentsModel> postedPaymentList,
+                         final List<PostedPaymentsModel> postedPaymentList,
                          Double totalBalance,
                          List<FetchCurrencyExceptDefaultResponse.Result> currencyList,
                          List<FetchCreditCardResponse.Result> creditCardList,
                          List<FetchArOnlineResponse.Result> arOnlineList,
                          Double discountPayment,
-                         String controlNumber,
+                         final String controlNumber,
                          GuestReceiptInfoModel guestReceiptInfoModel) {
         super(context);
         this.act = context;
@@ -199,6 +204,51 @@ public abstract class PaymentDialog extends BaseDialog  {
         this.creditCardList = creditCardList;
         this.arOnlineList = arOnlineList;
         this.discountPayment = discountPayment;
+        this.voidItemContract = new VoidItemContract() {
+            @Override
+            public void remove(final String post_id, String name, String amount, final int position) {
+
+                PasswordDialog passwordDialog = new PasswordDialog(act) {
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+
+                        VoidPaymentRequest voidPaymentRequest = new VoidPaymentRequest(controlNumber, post_id, employeeId);
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        Call<VoidPaymentResponse> request = iUsers.voidPayment(voidPaymentRequest.getMapValue());
+                        request.enqueue(new Callback<VoidPaymentResponse>() {
+                            @Override
+                            public void onResponse(Call<VoidPaymentResponse> call, Response<VoidPaymentResponse> response) {
+                                postedPaymentList.remove(position);
+                                computeTotal();
+
+                                removePaymentSuccess();
+                            }
+
+                            @Override
+                            public void onFailure(Call<VoidPaymentResponse> call, Throwable t) {
+
+                            }
+                        });
+
+
+
+
+
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+
+                    }
+                };
+
+                if (!passwordDialog.isShowing()) {
+                    passwordDialog.show();
+                }
+
+
+            }
+        };
 //        this.transactionNumber = transactionNumber;
 //        this.balance = balance;
     }
@@ -350,7 +400,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                         new JSONObject(),
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                        false));
+                                        isCheckout ? false : true,
+                                        "cash", ""));
                             } else {
                                 Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
                             }
@@ -424,7 +475,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
                                     jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    false));
+                                    isCheckout ? false : true,
+                                    "card", ""));
 
 
                         } else {
@@ -470,7 +522,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     jsonObject,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    false));
+                                    isCheckout ? false : true,
+                                    "online", ""));
                         } else {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
@@ -508,7 +561,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     jsonObject,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    false));
+                                    isCheckout ? false : true,
+                                    "voucher",""));
                         } else {
                             Utils.showDialogMessage(act, "No gc added", "Information");
                         }
@@ -549,7 +603,8 @@ public abstract class PaymentDialog extends BaseDialog  {
                                     new JSONObject(),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    false));
+                                    isCheckout ? false : true,
+                                    "forex",""));
                         } else {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
@@ -611,7 +666,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         listPayments.setAdapter(paymentsAdapter);
         paymentsAdapter.notifyDataSetChanged();
 
-        postedPaymentsAdapter = new PostedPaymentsAdapter(postedPaymentList);
+        postedPaymentsAdapter = new PostedPaymentsAdapter(postedPaymentList, voidItemContract);
         listPostedPayments.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         listPostedPayments.setAdapter(postedPaymentsAdapter);
 
@@ -649,6 +704,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         }
     }
 
+    public abstract void removePaymentSuccess();
     public abstract void paymentSuccess(List<PostedPaymentsModel> postedPaymentList, String roomBoy);
     public abstract void paymentFailed();
 

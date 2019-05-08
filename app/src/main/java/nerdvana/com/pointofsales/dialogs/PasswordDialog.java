@@ -29,9 +29,16 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     private EditText password;
     private Button proceed;
     private Context context;
+    private String headerAppend = "";
     public PasswordDialog(@NonNull Context context) {
         super(context);
         this.context = context;
+    }
+
+    public PasswordDialog(@NonNull Context context, String headerAppend) {
+        super(context);
+        this.context = context;
+        this.headerAppend = headerAppend;
     }
 
     public PasswordDialog(@NonNull Context context, int themeResId) {
@@ -46,7 +53,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.dialog_password);
-        setDialogLayout(R.layout.dialog_password, "ADMIN PASSWORD");
+        setDialogLayout(R.layout.dialog_password, headerAppend + "ADMIN PASSWORD");
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         proceed = findViewById(R.id.proceed);

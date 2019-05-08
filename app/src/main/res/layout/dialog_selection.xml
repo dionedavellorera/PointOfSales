@@ -5,9 +5,17 @@
 
     <include layout="@layout/partial_header" android:id="@+id/header" />
 
+
     <android.support.v7.widget.RecyclerView
         android:layout_below="@id/header"
         android:id="@+id/listDiscounts"
         android:layout_width="match_parent"
+        android:layout_height="120dp"/>
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/listDiscounts"
+        android:id="@+id/listPostedDiscounts"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+
 </RelativeLayout>

@@ -113,7 +113,7 @@ public abstract class CollectionDialog extends BaseDialog {
 
 
                 if (willCashReco) {
-                    PasswordDialog passwordDialog = new PasswordDialog(act) {
+                    PasswordDialog passwordDialog = new PasswordDialog(act, "X READING PROCESS \n") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);

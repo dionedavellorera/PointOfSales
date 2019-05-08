@@ -81,21 +81,18 @@ public class TimerService extends Service {
             for (FetchBranchInfoResponse.Shift res : userList) {
                 DateTimeFormatter fff = DateTimeFormat.forPattern("HH:mm:ss");
                 DateTime startSec = fff.parseDateTime(res.getSTime());
-                Log.d("CCCCCC-START", String.valueOf(startSec.getSecondOfDay()));
-
-
-
+//                Log.d("CCCCCC-START", String.valueOf(startSec.getSecondOfDay()));
 
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 
                 DateTime midTime = fff.parseDateTime(formatter.format(new Date(secsOfDate * 1000L)));
-                Log.d("CCCCCC-MID", String.valueOf(midTime.getSecondOfDay()));
+//                Log.d("CCCCCC-MID", String.valueOf(midTime.getSecondOfDay()));
 
 
                 DateTimeFormatter ddd = DateTimeFormat.forPattern("HH:mm:ss");
                 DateTime endSec = ddd.parseDateTime(res.getETime());
 
-                Log.d("CCCCCC-END", String.valueOf(endSec.getSecondOfDay()));
+//                Log.d("CCCCCC-END", String.valueOf(endSec.getSecondOfDay()));
                 if (midTime.getSecondOfDay() >= startSec.getSecondOfDay() && midTime.getSecondOfDay() <= endSec.getSecondOfDay()) {
                     shiftNumber = String.valueOf(res.getShiftNo());
                     break;

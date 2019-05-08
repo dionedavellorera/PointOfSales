@@ -28,7 +28,8 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(106,"SOA", "",5));
         buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
         buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
-        buttonsModelList.add(new ButtonsModel(109,"FOC", "",8));
+        buttonsModelList.add(new ButtonsModel(115,"ROOM LIST VIEW", "",8));
+//        buttonsModelList.add(new ButtonsModel(109,"FOC", "",8));
         buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
         buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10));
         buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11));

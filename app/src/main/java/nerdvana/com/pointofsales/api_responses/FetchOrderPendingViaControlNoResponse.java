@@ -1013,12 +1013,34 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
     public class Discounts {
+        @SerializedName("void_by")
+        @Expose
+        private String void_by;
+        @SerializedName("id")
+        @Expose
+        private String id;
         @SerializedName("discount_type")
         @Expose
         private String discountType;
         @SerializedName("discount_amount")
         @Expose
         private Double discountAmount;
+
+        public String getVoid_by() {
+            return void_by;
+        }
+
+        public void setVoid_by(String void_by) {
+            this.void_by = void_by;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getDiscountType() {
             return discountType;

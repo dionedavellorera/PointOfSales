@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.model;
 import org.json.JSONObject;
 
 public class PostedPaymentsModel {
+    private String paymentId;
     private String payment_method;
     private String payment_description;
     private String amount;
@@ -13,12 +14,13 @@ public class PostedPaymentsModel {
     private String symbolLeft;
     private String symbolRight;
     private boolean isAdvance;
+    private String type;
 
     public PostedPaymentsModel(String paymentType, String paymentAmount,
                                String paymentDescription, boolean isPosted,
                                String currencyId, String currencyValue,
                                JSONObject data, String symbolLeft, String symbolRight,
-                               boolean isAdvance) {
+                               boolean isAdvance, String type, String paymentId) {
         this.payment_method = paymentType;
         this.amount = paymentAmount;
         this.payment_description = paymentDescription;
@@ -29,6 +31,12 @@ public class PostedPaymentsModel {
         this.symbolLeft = symbolLeft;
         this.symbolRight = symbolRight;
         this.isAdvance = isAdvance;
+        this.type = type;
+        this.paymentId = paymentId;
+    }
+
+    public String getPaymentId() {
+        return paymentId;
     }
 
     public boolean isAdvance() {

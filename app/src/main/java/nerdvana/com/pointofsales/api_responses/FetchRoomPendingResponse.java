@@ -314,6 +314,9 @@ public class FetchRoomPendingResponse {
     }
 
     public class DiscountsOuter {
+        @SerializedName("void_by")
+        @Expose
+        private String void_by;
         @SerializedName("id")
         @Expose
         private String id;
@@ -338,6 +341,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("control_no")
         @Expose
         private String controlNumber;
+
+        public String getVoid_by() {
+            return void_by;
+        }
+
+        public void setVoid_by(String void_by) {
+            this.void_by = void_by;
+        }
 
         public String getControlNumber() {
             return controlNumber;

@@ -2440,7 +2440,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 Double totalAmount = 0.00;
                 addTextToPrinter(SPrinter.getPrinter(), "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 addTextToPrinter(SPrinter.getPrinter(), "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), "QTY   Description             Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "QTY   Description               Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(SPrinter.getPrinter(), "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 TypeToken<List<AddRateProductModel>> token = new TypeToken<List<AddRateProductModel>>() {};
@@ -2452,7 +2452,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     if (r.getQty().length() < 4) {
                         for (int i = 0; i < 4 - r.getQty().length(); i++) {
                             qty += " ";
-
                         }
                     }
 
@@ -2643,9 +2642,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
     private void addFooterToPrinter() {
-
         if (SPrinter.getPrinter() != null) {
-            addTextToPrinter(SPrinter.getPrinter(), "OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "THiS IS NOT AN OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             addTextToPrinter(SPrinter.getPrinter(), "Thank you come again", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(SPrinter.getPrinter(), "----- SYSTEM PROVIDER DETAILS -----", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(SPrinter.getPrinter(), "Provider : Nerdvana", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

@@ -336,4 +336,8 @@ public abstract class GuestInfoDialog extends BaseDialog {
                 }, jodatime.getYear(), jodatime.getMonthOfYear() -1, jodatime.getDayOfMonth());
         datePickerDialog.show();
     }
+
+//    private void setPaymentsDiscountsAdapter() {
+//        fetchRoomPendingResult.getBooked().get(0).getTransaction()
+//    }
 }

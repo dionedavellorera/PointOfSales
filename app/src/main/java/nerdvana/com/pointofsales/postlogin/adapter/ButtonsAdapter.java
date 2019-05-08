@@ -62,24 +62,10 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         });
 
-
-
         String firstString = buttonsModelList.get(i).getName().substring(0, 1);
-
-
-
-        if (!shortcutString.contains(firstString)) {
-            shortcutString.add(firstString);
-        } else {
-
-            firstString = buttonsModelList.get(i).getName().substring(1, 1);
-            shortcutString.add(firstString);
-        }
-
-
-
         String remainingString = buttonsModelList.get(i).getName().substring(1);
         String finalString = String.format("<b><u>%s</b></u>%s", firstString, remainingString);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ((ButtonsViewHolder)holder).name.setText(Html.fromHtml(finalString, Html.FROM_HTML_MODE_LEGACY));
         } else {
