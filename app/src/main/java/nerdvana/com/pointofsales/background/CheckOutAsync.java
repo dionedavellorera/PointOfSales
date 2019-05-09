@@ -20,14 +20,17 @@ import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.UserModel;
 
 public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
     private PrintModel printModel;
     private Context context;
-    public CheckOutAsync(PrintModel printModel, Context context) {
+    private UserModel userModel;
+    public CheckOutAsync(PrintModel printModel, Context context, UserModel userModel) {
         this.context = context;
         this.printModel = printModel;
+        this.userModel = userModel;
 
     }
 
@@ -43,7 +46,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
         if (toList1 != null) {
             addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                     "CASHIER",
-                    toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA "
+                    userModel.getUsername()
                     ,
                     40,
                     2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);

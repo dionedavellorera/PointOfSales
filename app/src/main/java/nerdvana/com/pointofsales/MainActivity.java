@@ -104,6 +104,7 @@ import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
+import nerdvana.com.pointofsales.dialogs.RoomListViewDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
@@ -978,10 +979,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                             40,
                             2),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
                 }
-
-
 
                 addPrinterSpace(1);
                 addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
@@ -1040,7 +1038,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                     addTextToPrinter(SPrinter.getPrinter(), "Z READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                     addTextToPrinter(SPrinter.getPrinter(), "POSTING DATE: " + zReadResponse.getData().getGeneratedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                    addTextToPrinter(SPrinter.getPrinter(), "USER : " + zReadResponse.getData().getCashier().getName(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    addTextToPrinter(SPrinter.getPrinter(), "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     addTextToPrinter(SPrinter.getPrinter(), "MANAGER : " + zReadResponse.getData().getDutyManager().getName(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                     addTextToPrinter(SPrinter.getPrinter(), "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -1451,7 +1449,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         addTextToPrinter(SPrinter.getPrinter(), "X READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                         addTextToPrinter(SPrinter.getPrinter(), "POSTING DATE: " + dataJsonObject.getString("cut_off_date"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                         addTextToPrinter(SPrinter.getPrinter(), "SHIFT : " + (dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                        addTextToPrinter(SPrinter.getPrinter(), "USER : " + cashierDataObject.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                        addTextToPrinter(SPrinter.getPrinter(), "USER : " + cashierDataObject.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(SPrinter.getPrinter(), "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                         addTextToPrinter(SPrinter.getPrinter(), "MANAGER : " + dutyManager.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                         addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         addTextToPrinter(SPrinter.getPrinter(), "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -1944,7 +1943,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 addTextToPrinter(SPrinter.getPrinter(), "SWITCHED TO : " +switchRoomPrintModel.getToRoomNumber() + "(" + switchRoomPrintModel.getToRoomType() + ")", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-                addTextToPrinter(SPrinter.getPrinter(), "CASHIER : " + getUserInfo(switchRoomPrintModel.getUserId()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                addTextToPrinter(SPrinter.getPrinter(), "CASHIER : " + getUserInfo(switchRoomPrintModel.getUserId()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "CASHIER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 addTextToPrinter(SPrinter.getPrinter(), "CHECK IN TIME : " + convertDateToReadableDate(switchRoomPrintModel.getCheckInTime()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
@@ -1957,7 +1957,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "PRINT_RECEIPT":
                 willExecutGlobalPrint = false;
-                new CheckOutAsync(printModel, MainActivity.this).execute();
+                new CheckOutAsync(printModel, MainActivity.this, userModel).execute();
 
                 break;
             case "DEPOSIT":
@@ -2238,7 +2238,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
                         "CASHIER",
-                        getUserInfo(String.valueOf(bookedList.get(0).getUserId())),
+//                        getUserInfo(String.valueOf(bookedList.get(0).getUserId())),
+                        userModel.getUsername(),
                         40,
                         2)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -2863,6 +2864,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 125: //ROOM LIST VIEW POPUP
+                RoomListViewDialog roomListViewDialog = new RoomListViewDialog(MainActivity.this);
+                if (!roomListViewDialog.isShowing()) roomListViewDialog.show();
+                break;
             case 999: //rooms
                 Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
                 startActivityForResult(roomSelectionIntent, 10);

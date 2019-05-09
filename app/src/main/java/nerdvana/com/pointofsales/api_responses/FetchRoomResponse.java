@@ -1043,6 +1043,56 @@ public class FetchRoomResponse {
 
     }
 
+    public class PostFood {
+        @SerializedName("qty")
+        @Expose
+        private int qty;
+        @SerializedName("price")
+        @Expose
+        private Double total;
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
+
+        public Double getTotal() {
+            return total;
+        }
+
+        public void setTotal(Double total) {
+            this.total = total;
+        }
+    }
+
+    public class PostRoom {
+        @SerializedName("total")
+        @Expose
+        private Double total;
+        @SerializedName("room_rate")
+        @Expose
+        private String roomRate;
+
+        public Double getTotal() {
+            return total;
+        }
+
+        public void setTotal(Double total) {
+            this.total = total;
+        }
+
+        public String getRoomRate() {
+            return roomRate;
+        }
+
+        public void setRoomRate(String roomRate) {
+            this.roomRate = roomRate;
+        }
+    }
+
     public class TransactionInner {
 
         @SerializedName("id")
@@ -1147,6 +1197,28 @@ public class FetchRoomResponse {
         @SerializedName("post")
         @Expose
         private List<Post> post = null;
+        @SerializedName("post_food")
+        @Expose
+        private List<PostFood> postFood;
+        @SerializedName("post_room")
+        @Expose
+        private List<PostRoom> postRoom;
+
+        public List<PostFood> getPostFood() {
+            return postFood;
+        }
+
+        public void setPostFood(List<PostFood> postFood) {
+            this.postFood = postFood;
+        }
+
+        public List<PostRoom> getPostRoom() {
+            return postRoom;
+        }
+
+        public void setPostRoom(List<PostRoom> postRoom) {
+            this.postRoom = postRoom;
+        }
 
         public Integer getId() {
             return id;

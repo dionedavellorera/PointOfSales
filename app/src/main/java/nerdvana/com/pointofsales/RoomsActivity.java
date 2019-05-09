@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
@@ -33,6 +35,8 @@ import okhttp3.internal.Util;
 public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         SelectionContract, RoomFilterContract {
 
+    private CoordinatorLayout rootView;
+
     private RoomsTablesAdapter roomsTablesAdapter;
     private RecyclerView listTableRoomSelection;
 
@@ -42,13 +46,15 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     private List<RoomTableModel> filteredRoomList;
 
     private SwipeRefreshLayout refreshRoom;
-
+    private android.support.v7.widget.SearchView searchView;
     private List<String> allowedRoomStatusList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms);
+        searchView = findViewById(R.id.search);
+        rootView = findViewById(R.id.rootView);
         allowedRoomStatusList = new ArrayList<>();
 
         allowedRoomStatusList.add(RoomConstants.CLEAN);
@@ -87,6 +93,26 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             }
         });
+
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+
+
+                roomsTablesAdapter.getFilter().filter(s);
+
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -191,6 +217,10 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     @Override
     public void filterSelected(int statusId) {
+
+        searchView.setQuery("", false);
+        rootView.requestFocus();
+
         if (statusId == 0) { //SHOW ALL
             roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this, RoomsActivity.this);
             listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));

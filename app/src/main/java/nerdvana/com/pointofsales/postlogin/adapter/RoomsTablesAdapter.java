@@ -12,10 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
@@ -27,15 +30,19 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
-public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
     private List<RoomTableModel> roomTableModelList;
     private SelectionContract selectionContract;
+
+    private List<RoomTableModel> roomsFilteredList;
+
 
     private Animation animBlink;
     private Context context;
     public RoomsTablesAdapter(List<RoomTableModel> roomTableModelList, SelectionContract selectionContract,
                               Context context) {
-        this.roomTableModelList = roomTableModelList;
+        this.roomsFilteredList = new ArrayList<>(roomTableModelList);
+        this.roomTableModelList = new ArrayList<>(roomTableModelList);
         this.selectionContract = selectionContract;
         this.context = context;
         animBlink = AnimationUtils.loadAnimation(context,
@@ -46,6 +53,37 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new RoomsTablesAdapter.ProductsViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_roomtables, viewGroup, false));
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String charSting = constraint.toString();
+                roomsFilteredList = new ArrayList<>();
+                if (charSting.isEmpty()) {
+                    roomsFilteredList = roomTableModelList;
+                } else {
+                    List<RoomTableModel> filteredList = new ArrayList<>();
+                    for (RoomTableModel pm : roomTableModelList) {
+                        if (pm.getName().contains(charSting)) {
+                            filteredList.add(pm);
+                        }
+                    }
+                    roomsFilteredList = filteredList;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = roomsFilteredList;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                roomsFilteredList = (ArrayList<RoomTableModel>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
     static class ProductsViewHolder extends RecyclerView.ViewHolder {
@@ -73,7 +111,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int i) {
-        final RoomTableModel productsModel = roomTableModelList.get(i);
+        final RoomTableModel productsModel = roomsFilteredList.get(i);
         ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,60 +119,38 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((ProductsViewHolder)holder).rel.setSelected(true);
             }
         });
-
-        if (roomTableModelList.get(i).getUnpostedOrdersCount() > 0) {
-//            ((ProductsViewHolder) holder).orderCount.setVisibility(View.VISIBLE);
-//            ((ProductsViewHolder) holder).orderCount.setText(String.valueOf(roomTableModelList.get(i).getUnpostedOrdersCount()));
-        } else {
-//            ((ProductsViewHolder) holder).orderCount.setVisibility(View.GONE);
-        }
-
         if (productsModel.getOtHours().equalsIgnoreCase("0.0") || TextUtils.isEmpty(productsModel.getOtHours())) {
             ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
         } else {
             ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName() + "\n(OT:" + productsModel.getOtHours()+")");
         }
-
         ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
 
         if (!productsModel.isTakeOut()) {
             ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
         }
-
         if (productsModel.isBlink()) {
             ((ProductsViewHolder)holder).name.startAnimation(animBlink);
         } else {
             ((ProductsViewHolder)holder).name.clearAnimation();
         }
-
-
         ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
         ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getAmountSelected()));
-
-        Log.d("CXCXCX", String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()));
-
         ImageLoader.loadImage(String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()), ((ProductsViewHolder) holder).badge);
-
-
     }
 
 
     public void addItems(List<RoomTableModel> roomTableModelList) {
-        this.roomTableModelList = roomTableModelList;
-        notifyDataSetChanged();
-    }
 
-    public List<RoomTableModel> getRoomTableModelList() {
-        return roomTableModelList;
-    }
-
-    public void setRoomTableModelList(List<RoomTableModel> roomTableModelList) {
-        this.roomTableModelList = roomTableModelList;
+        this.roomTableModelList = new ArrayList<>(roomTableModelList);
+        this.roomsFilteredList = roomTableModelList;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return roomTableModelList.size();
+        return roomsFilteredList.size();
     }
+
+
 }

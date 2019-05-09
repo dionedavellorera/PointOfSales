@@ -45,6 +45,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(120,"ZREAD", "",21));
         buttonsModelList.add(new ButtonsModel(123,"REPRINT X/Z READING", "",22));
         buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
+        buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",24));
 
         buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
 
