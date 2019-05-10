@@ -1030,11 +1030,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         ViewReceiptResponse.Result toListPV = GsonHelper.getGson().fromJson(jsonData, ViewReceiptResponse.Result.class)
                                 ;
 
-                        BusProvider.getInstance().post(new PrintModel("",
-                                toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
-                                "POST_VOID",
-                                jsonData,
-                                toListPV != null ? toListPV.getGuestInfo().getRoomType() : ""));
+                        if (toListPV != null) {
+                            BusProvider.getInstance().post(new PrintModel("",
+                                    toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
+                                    "POST_VOID",
+                                    jsonData,
+                                    toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomType() : ""));
+                        }
+
 
                         defaultView();
                         clearCartItems();
@@ -1396,7 +1399,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                 PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                                     @Override
-                                    public void passwordSuccess(String employeeId, String employeeName) {
+                                    public void passwordSuccess(String employeeId, final String employeeName) {
 
                                         if (!selectedRoom.isTakeOut()) {
                                             BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
@@ -1409,7 +1412,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                             selectedRoom.getName(),
                                                             "BACKOUT",
                                                             GsonHelper.getGson().toJson(selectedRoom),
-                                                            selectedRoom.getRoomType()));
+                                                            selectedRoom.getRoomType(),
+                                                            employeeName,
+                                                            remarks));
                                                     defaultView();
                                                     clearCartItems();
                                                     endLoading();
@@ -1431,7 +1436,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                             selectedRoom.getName(),
                                                             "BACKOUT",
                                                             GsonHelper.getGson().toJson(selectedRoom),
-                                                            selectedRoom.getRoomType()));
+                                                            selectedRoom.getRoomType(),employeeName,
+                                                            remarks));
                                                     defaultView();
                                                     clearCartItems();
                                                     endLoading();
@@ -1471,7 +1477,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     public void save(final String remarks) {
                         PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
                             @Override
-                            public void passwordSuccess(String employeeId, String employeeName) {
+                            public void passwordSuccess(String employeeId, final String employeeName) {
 
                                 if (!selectedRoom.isTakeOut()) {
                                     BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
@@ -1484,7 +1490,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                     selectedRoom.getName(),
                                                     "BACKOUT",
                                                     GsonHelper.getGson().toJson(selectedRoom),
-                                                    selectedRoom.getRoomType()));
+                                                    selectedRoom.getRoomType(),employeeName,
+                                                    remarks));
                                             defaultView();
                                             clearCartItems();
                                             endLoading();
@@ -1506,7 +1513,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                     selectedRoom.getName(),
                                                     "BACKOUT",
                                                     GsonHelper.getGson().toJson(selectedRoom),
-                                                    selectedRoom.getRoomType()));
+                                                    selectedRoom.getRoomType(),employeeName,
+                                                    remarks));
                                             defaultView();
                                             clearCartItems();
                                             endLoading();
@@ -1571,11 +1579,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 ViewReceiptResponse.Result toListPV = GsonHelper.getGson().fromJson(jsonData, ViewReceiptResponse.Result.class)
                         ;
 
-                BusProvider.getInstance().post(new PrintModel("",
-                        toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
-                        "POST_VOID",
-                        jsonData,
-                        toListPV != null ? toListPV.getGuestInfo().getRoomType() : ""));
+                if (toListPV != null) {
+                    BusProvider.getInstance().post(new PrintModel("",
+                            toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
+                            "POST_VOID",
+                            jsonData,
+                            toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomType() : ""));
+                }
+
 
                 defaultView();
                 clearCartItems();

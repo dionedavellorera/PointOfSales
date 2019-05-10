@@ -53,7 +53,7 @@
                 android:id="@+id/checkBoxIsTo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TO"/>
+                android:text="TAKE OUT TRANSACTION"/>
 
             <Button
                 android:text="SEARCH"

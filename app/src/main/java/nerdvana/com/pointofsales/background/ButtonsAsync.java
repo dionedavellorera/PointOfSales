@@ -28,13 +28,12 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(106,"SOA", "",5));
         buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
         buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
-        buttonsModelList.add(new ButtonsModel(115,"ROOM LIST VIEW", "",8));
-//        buttonsModelList.add(new ButtonsModel(109,"FOC", "",8));
+//        buttonsModelList.add(new ButtonsModel(115,"ROOM LIST VIEW", "",8));
         buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
         buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10));
         buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11));
         buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
-        buttonsModelList.add(new ButtonsModel(101,"VOID", "",13));
+        buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
         buttonsModelList.add(new ButtonsModel(114,"SWITCH ROOM", "",14));
         buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15));
         buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",16));
@@ -45,28 +44,11 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(120,"ZREAD", "",21));
         buttonsModelList.add(new ButtonsModel(123,"REPRINT X/Z READING", "",22));
         buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
-        buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",24));
+        buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
 
         buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
 
         buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",99));
-//        buttonsModelList.add(new ButtonsModel(119,"X-READ", "",21));
-//        buttonsModelList.add(new ButtonsModel(117,"CHANGE SHIFT", "",18));
-//        buttonsModelList.add(new ButtonsModel(110,"VALIDATE SLIP", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"IN-TRANSIT", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"CALCULATOR", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"POST VOID", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"SPLIT BILL", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"TENDER DECLARATION", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"PROMO", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"CHARGE REDEMPTION", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"DISCOUNT EXCEMPT", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"SAFEKEEPING", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"ADJUSTMENT", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"REPRINT OR", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"VIEW RECEIPT", "",10));
-//        buttonsModelList.add(new ButtonsModel(110,"DEPOSIT RECALL", "",10));
-
         Collections.sort(buttonsModelList);
 
 //        Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {

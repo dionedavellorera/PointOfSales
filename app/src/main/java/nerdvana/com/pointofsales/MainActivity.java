@@ -91,6 +91,7 @@ import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
@@ -284,8 +285,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             if (userModel.isLoggedIn()) { //post login
 //                logout.setVisibility(View.VISIBLE);
                 user.setVisibility(View.VISIBLE);
-                user.setText(String.format("%s %s - %s", getResources().getString(R.string.welcome_text), userModel.getUsername(), userModel.getUserGroup()) + ApplicationConstants.VERSION);
-                currentText = String.format("%s %s - %s", getResources().getString(R.string.welcome_text), userModel.getUsername(), userModel.getUserGroup());
+                user.setText(String.format("%s - %s", userModel.getUsername(), userModel.getUserGroup()) + ApplicationConstants.VERSION);
+                currentText = String.format("%s - %s", userModel.getUsername(), userModel.getUserGroup());
                 openFragment(R.id.leftFrame, postLoginLeftFrameFragment);
 
                 openFragment(R.id.rightFrame, postLoginRightFrameFragment);
@@ -572,12 +573,66 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 && !printModel.getType().equalsIgnoreCase("shortover")
                 && !printModel.getType().equalsIgnoreCase("zread")
                 && !printModel.getType().equalsIgnoreCase("backout")) {
-            addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber().equalsIgnoreCase("takeout") ? printModel.getRoomNumber() : "ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+
+            if (!printModel.getType().equalsIgnoreCase("in_transit")) {
+                addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber().equalsIgnoreCase("takeout") ? printModel.getRoomNumber() : "ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+            }
+
         }
 
         //endregion
 
         switch (printModel.getType()) {
+            case "IN_TRANSIT":
+                addTextToPrinter(SPrinter.getPrinter(), "IN TRANSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                TypeToken<List<FetchRoomResponse.Result>> intransitToken = new TypeToken<List<FetchRoomResponse.Result>>() {};
+                List<FetchRoomResponse.Result> intransitDetails = GsonHelper.getGson().fromJson(printModel.getData(), intransitToken.getType());
+
+                List<String> t = new ArrayList<>();
+                t.add("I");
+                t.add("II");
+                t.add("III");
+                t.add("IV");
+                t.add("V");
+                addTextToPrinter(SPrinter.getPrinter(), intransitReceipt(t), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
+
+                DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                DateTimeFormatter dateIn = DateTimeFormat.forPattern("MM/dd");
+                DateTimeFormatter timeIn = DateTimeFormat.forPattern("HH:mm");
+
+                int intransitCount = 0;
+                for (FetchRoomResponse.Result r : intransitDetails) {
+                    if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
+                        intransitCount += 1;
+                        List<String> temp = new ArrayList<>();
+                        temp.add(r.getRoomNo());
+
+                        DateTime jodatime = dtf.parseDateTime(r.getTransaction().getCheckIn());
+
+                        temp.add(dateIn.print(jodatime));
+                        temp.add(timeIn.print(jodatime));
+                        temp.add(returnWithTwoDecimal(String.valueOf(r.getTransaction().getTransaction().getAdvance())));
+
+                        Double totalFnb = 0.00;
+                        for (FetchRoomResponse.PostFood pf : r.getTransaction().getTransaction().getPostFood()) {
+                            totalFnb += pf.getTotal() * pf.getQty();
+                        }
+                        temp.add(returnWithTwoDecimal(String.valueOf(totalFnb)));
+                        addTextToPrinter(SPrinter.getPrinter(), intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
+                    }
+
+                }
+
+                addPrinterSpace(1);
+                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr("TOTAL NO OF ROOMS", String.valueOf(intransitCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addPrinterSpace(1);
+                addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+                break;
             case "POST_VOID":
 
                 ViewReceiptResponse.Result toListPV = GsonHelper.getGson().fromJson(printModel.getData(), ViewReceiptResponse.Result.class)
@@ -2582,6 +2637,24 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         return finalString;
     }
 
+    private String intransitReceipt(List<String> details) {
+        String finalString = "";
+        float maxColumn = 40;
+        float perColumn = maxColumn / details.size();
+        for (int i = 0; i < details.size(); i++) {
+            if (details.size() >= perColumn) {
+                finalString += details.get(i);
+            } else {
+                finalString += details.get(i);
+                float temp = perColumn - details.get(i).length();
+                for (int j = 0; j < temp; j++) {
+                    finalString += " ";
+                }
+            }
+        }
+        return finalString;
+    }
+
     private String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
         String finalString = "";
         float column1 = 20;
@@ -2865,7 +2938,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
             case 125: //ROOM LIST VIEW POPUP
-                RoomListViewDialog roomListViewDialog = new RoomListViewDialog(MainActivity.this);
+                RoomListViewDialog roomListViewDialog = new RoomListViewDialog(MainActivity.this) {
+                    @Override
+                    public void instransitClicked(List<FetchRoomResponse.Result> data) {
+                        BusProvider.getInstance().post(new PrintModel("",
+                                "",
+                                "IN_TRANSIT",
+                                GsonHelper.getGson().toJson(data)));
+                    }
+                };
                 if (!roomListViewDialog.isShowing()) roomListViewDialog.show();
                 break;
             case 999: //rooms
@@ -2909,16 +2990,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Subscribe
     public void updateTime(TimerModel timerModel) {
-
         currentDateTime = timerModel.getTime();
-
         timer.setText(timerModel.getTime());
 
-        user.setText(currentText + " SHIFT : " + timerModel.getShiftNumber());
-
-
-
-
+//        user.setText(currentText + " SHIFT : " + timerModel.getShiftNumber());
     }
 
     private void fetchTimeRequest() {

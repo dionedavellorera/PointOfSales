@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_margin="5dp"
+            android:id="@+id/labelMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MODE"/>
+
+        <Switch
+            android:id="@+id/switchCashier"
+            android:layout_margin="5dp"
+            android:layout_below="@id/labelMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cashier"/>
+
+        <TextView
+            android:id="@+id/labelType"
+            android:layout_below="@id/switchCashier"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TYPE"/>
+
+        <RadioGroup
+            android:orientation="horizontal"
+            android:id="@+id/groupSystemType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RadioGroup>
+    </RelativeLayout>
+
+
+
+
+</ScrollView>
