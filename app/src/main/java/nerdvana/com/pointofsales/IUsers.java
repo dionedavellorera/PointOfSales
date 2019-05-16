@@ -8,7 +8,6 @@ import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
-import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckEndOfDayResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
@@ -44,7 +43,7 @@ import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
-import nerdvana.com.pointofsales.api_responses.FocResponse;
+import nerdvana.com.pointofsales.api_responses.FocTransactionResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
@@ -61,7 +60,6 @@ import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
 import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.FieldMap;
@@ -187,9 +185,6 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchCreditCardResponse> fetchCreditCard(@FieldMap Map<String, String> params);
 
-    @POST("foc")
-    @FormUrlEncoded
-    Call<FocResponse> focTransaction(@FieldMap Map<String, String> params);
 
     @POST("checkGc")
     @FormUrlEncoded
@@ -324,6 +319,10 @@ public interface IUsers {
     @POST("voidDiscount")
     @FormUrlEncoded
     Call<VoidDiscountResponse> voidDiscount(@FieldMap Map<String, String> params);
+
+    @POST("getFoc")
+    @FormUrlEncoded
+    Call<FocTransactionResponse> focTransactionRequest(@FieldMap Map<String, String> params);
     //region pending
 
     //endregion

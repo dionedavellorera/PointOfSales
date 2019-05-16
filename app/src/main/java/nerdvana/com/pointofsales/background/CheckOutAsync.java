@@ -31,7 +31,6 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
-
     }
 
     @Override
@@ -158,9 +157,12 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     2)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+
             addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                     "AMOUNT DUE",
-                    returnWithTwoDecimal(String.valueOf(toList1.getTotal() - (toList1.getAdvance() + toList1.getDiscount()))),
+                    returnWithTwoDecimal(String.valueOf(
+                            (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+                                    - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
                     40,
                     2)
                     ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,2,1);
@@ -327,12 +329,6 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
         }
 
 
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
 
         try {
 
@@ -348,6 +344,29 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+
+
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+
+//        try {
+//
+//            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+//
+//            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
+//                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
+//                SPrinter.getPrinter().clearCommandBuffer();
+//            }
+//
+//
+////            SPrinter.getPrinter().endTransaction();
+//        } catch (Epos2Exception e) {
+//            e.printStackTrace();
+//        }
 
 
     }
@@ -433,16 +452,16 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
     private void addFooterToPrinter() {
 
         if (SPrinter.getPrinter() != null) {
-            addTextToPrinter(SPrinter.getPrinter(), "OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "THIS IS NOT AN OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             addTextToPrinter(SPrinter.getPrinter(), "Thank you come again", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(SPrinter.getPrinter(), "----- SYSTEM PROVIDER DETAILS -----", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Provider : Nerdvana", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Address : test address", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "TIN: 432540435435", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "ACCRE No. : 1231231231231231231234324234", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Date issued : 01/01/2001", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Valid until : 01/01/2090", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Provider : NERDVANA CORP.", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Address : 1 CANLEY ROAD BRGY BAGONG ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "TIN: 009-772-500-000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "ACCRE No. : ******", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Date issued : 01/01/2019", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(SPrinter.getPrinter(), "Valid until : 01/01/2024", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(SPrinter.getPrinter(), "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);
             addTextToPrinter(SPrinter.getPrinter(), "THIS INVOICE RECEIPT SHALL BE VALID FOR FIVE(5) YEARS FROM THE DATE OF THE PERMIT TO USE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);

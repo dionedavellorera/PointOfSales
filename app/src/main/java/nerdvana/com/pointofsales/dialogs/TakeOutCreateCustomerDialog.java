@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
     private EditText name;
     private Button create;
-    private Spinner roomAreaSpinner;
+    private SearchableSpinner roomAreaSpinner;
     private List<FetchRoomAreaResponse.Result> roomAreaList;
     private Context context;
     private CheckBox isEmployeeChkBox;

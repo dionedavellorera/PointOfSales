@@ -68,7 +68,10 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         if(holder instanceof RoomListViewAdapter.RoomDataHolder){
-
+//            roomDataList.get(i).getStatus().getCoreId() == 3
+//            roomDataList.get(i).getStatus().getCoreId() == 31
+//            roomDataList.get(i).getStatus().getCoreId() == 17
+//            roomDataList.get(i).getStatus().getCoreId() == 1
             if (roomDataList.get(i).getStatus().getCoreId() == 2 || roomDataList.get(i).getStatus().getCoreId() == 17) {
 //                ((RoomListViewAdapter.RoomDataHolder) holder).row.setVisibility(View.VISIBLE);
 

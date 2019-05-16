@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Employee order"/>
 
-    <Spinner
+    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
         android:layout_margin="10dp"
         android:visibility="gone"
         android:id="@+id/employeeSpinner"
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:hint="Customer name"/>
 
-    <Spinner
+    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
         android:layout_margin="10dp"
         android:id="@+id/roomArea"
         android:layout_width="match_parent"

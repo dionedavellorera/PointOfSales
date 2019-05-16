@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -22,12 +23,22 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.MainActivity;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
+import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
+import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
+import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.TimerModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TimerService extends Service {
     long secsOfDate = 0;
@@ -52,7 +63,7 @@ public class TimerService extends Service {
 
                 TypeToken<List<FetchBranchInfoResponse.Shift>> branchInfo = new TypeToken<List<FetchBranchInfoResponse.Shift>>() {};
                 final List<FetchBranchInfoResponse.Shift> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.SHIFT_INFO_ARRAY), branchInfo.getType());
-
+;
 
 
                 secsOfDate = Utils.getDurationInSecs(startDate);
@@ -65,8 +76,41 @@ public class TimerService extends Service {
 
                         BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate), shiftDisplay));
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
+
                         if (secsOfDate % 10 == 0) {
-                            shiftDisplay = shiftNumber(userList, secsOfDate);
+                            CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
+                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                            Call<CheckShiftResponse> request = iUsers.checkShift(checkShiftRequest.getMapValue());
+                            request.enqueue(new Callback<CheckShiftResponse>() {
+                                @Override
+                                public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
+                                    if (response.body().getStatus() == 1) {
+                                        if (response.body().getResult().size() > 0) {
+                                            DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                                            DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getEarlyEnd());
+                                            shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
+
+
+
+                                            if (secsOfDate >= (endShiftTime.getMillis() / 1000)) {
+                                                BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                            } else {
+                                                BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                            }
+                                        } else {
+                                            shiftDisplay = "0";
+                                            BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
+
+                                }
+                            });
+
+//                            shiftDisplay = shiftNumber(userList, secsOfDate);
                         }
                     }
                 }.start();

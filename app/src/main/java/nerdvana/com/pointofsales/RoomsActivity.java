@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -217,7 +218,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     @Override
     public void filterSelected(int statusId) {
-
         searchView.setQuery("", false);
         rootView.requestFocus();
 
@@ -241,5 +241,16 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             roomsTablesAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Subscribe
+    public void updateRoom(UpdateDataModel updateDataModel) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                sendRoomListRequest();
+            }
+        });
+
     }
 }

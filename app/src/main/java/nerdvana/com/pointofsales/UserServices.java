@@ -38,7 +38,7 @@ import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
-import nerdvana.com.pointofsales.api_requests.FocRequest;
+import nerdvana.com.pointofsales.api_requests.FocTransactionRequest;
 import nerdvana.com.pointofsales.api_requests.GetOrderRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
@@ -86,7 +86,7 @@ import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
-import nerdvana.com.pointofsales.api_responses.FocResponse;
+import nerdvana.com.pointofsales.api_responses.FocTransactionResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
@@ -317,12 +317,6 @@ public class UserServices extends BaseService {
         asyncRequest(request);
     }
 
-    @Subscribe
-    public void onReceiveFocRequest(FocRequest focRequest) {
-        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        Call<FocResponse> request = iUsers.focTransaction(focRequest.getMapValue());
-        asyncRequest(request);
-    }
 
     @Subscribe
     public void onCheckGc(CheckGcRequest checkGcRequest) {
@@ -464,6 +458,13 @@ public class UserServices extends BaseService {
     public void fetchBranchInfo(FetchBranchInfoRequest fetchBranchInfoRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchBranchInfoResponse> request = iUsers.fetchBranchInfo(fetchBranchInfoRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void focRequest(FocTransactionRequest focRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FocTransactionResponse> request = iUsers.focTransactionRequest(focRequest.getMapValue());
         asyncRequest(request);
     }
 

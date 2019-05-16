@@ -66,7 +66,7 @@ public class FetchBranchInfoResponse {
         private String accreditationNo;
         @SerializedName("safe_keeping_amount")
         @Expose
-        private Integer safeKeepingAmount;
+        private Double safeKeepingAmount;
         @SerializedName("remarks")
         @Expose
         private String remarks;
@@ -136,11 +136,11 @@ public class FetchBranchInfoResponse {
             this.accreditationNo = accreditationNo;
         }
 
-        public Integer getSafeKeepingAmount() {
+        public Double getSafeKeepingAmount() {
             return safeKeepingAmount;
         }
 
-        public void setSafeKeepingAmount(Integer safeKeepingAmount) {
+        public void setSafeKeepingAmount(Double safeKeepingAmount) {
             this.safeKeepingAmount = safeKeepingAmount;
         }
 

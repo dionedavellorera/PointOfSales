@@ -11,6 +11,7 @@ public class ApplicationConstants {
     public static final String HOST = "host";
     public static final String VERSION = "1.0.3";
     public static final String BRANCH = "branch";
+    public static final String BRANCH_PERMIT = "branch_permit";
     public static final String CODE = "code";
     public static final String SERIAL_NUMBER = "serial_number";
     public static final String API_BASE_URL = "api_base_url";
@@ -21,6 +22,7 @@ public class ApplicationConstants {
     public static final String BUSINESS_NAME = "business_name";
     public static final String TAXPAYERS_NAME = "taxpayers_name";
     public static final String TIN_NUMBER = "tin_number";
+    public static final String BRANCH_NAME = "branch_name";
     public static final String BRANCH_ADDRESS = "branch_address";
     public static final String OR_INFO_DISPLAY = "or_info_display";
     public static final String TAX_RATE = "tax_rate";
@@ -29,6 +31,7 @@ public class ApplicationConstants {
     public static final String DEFAULT_CURRENCY_VALUE = "currency_value";
     public static final String BRANCH_ID = "branch_id";
     public static final String BRANCH_CODE = "branch_code";
+    public static final String BRANCH_TELEPHONE = "branch_telephone";
     public static final String SAFEKEEPING_AMOUNT = "safekeeping_amount";
     public static final String SHIFT_DETAILS = "shift_details";
     public static final String DEFAULT_SYMBOL_LEFT = "symbol_left";
@@ -55,6 +58,9 @@ public class ApplicationConstants {
     public static final String PAYMENT_TYPE_JSON = "payment_type_json";
     public static final String DISCOUNT_SPECIAL_JSON = "discount_special_json";
     public static final String SHIFT_INFO_ARRAY = "shift_info_array";
+
+
+    public static final String SHIFT_BLOCKER = "shift_blocker";
 
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 

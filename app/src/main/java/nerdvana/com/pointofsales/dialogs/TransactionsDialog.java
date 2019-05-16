@@ -29,14 +29,17 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.OrListAdapter;
+import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.PostVoidRequest;
 import nerdvana.com.pointofsales.api_requests.ViewReceiptRequest;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.model.CartItemsModel;
+import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 import retrofit2.Call;
@@ -138,7 +141,36 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
         reprintOr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedOr.getControlNo());
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+                request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+                    @Override
+                    public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+                        String roomNo = "";
+                        String roomType = "";
+                        if (selectedOr.getGuestInfo() != null) {
+                            roomNo = selectedOr.getGuestInfo().getRoomNo();
+                            roomType = selectedOr.getGuestInfo().getRoomType();
+                        } else {
+                            roomNo = "TAKEOUT";
+                            roomType = "NA";
+                        }
 
+
+                        BusProvider.getInstance().post(new PrintModel(
+                                "", roomNo,
+                                "PRINT_RECEIPT",
+                                GsonHelper.getGson().toJson(response.body().getResult()),
+                                roomType));
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+                    }
+                });
             }
         });
 

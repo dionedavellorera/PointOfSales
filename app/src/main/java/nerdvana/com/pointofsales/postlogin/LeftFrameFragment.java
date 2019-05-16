@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
@@ -60,11 +59,9 @@ import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.BackOutGuestRequest;
 import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
-import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
-import nerdvana.com.pointofsales.api_requests.CheckXReadRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
@@ -79,7 +76,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchVehicleRequest;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchZReadViaIdRequest;
-import nerdvana.com.pointofsales.api_requests.FocRequest;
+import nerdvana.com.pointofsales.api_requests.FocTransactionRequest;
 import nerdvana.com.pointofsales.api_requests.OffGoingNegoRequest;
 import nerdvana.com.pointofsales.api_requests.PrintSoaRequest;
 import nerdvana.com.pointofsales.api_requests.SwitchRoomRequest;
@@ -91,18 +88,13 @@ import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
-import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
-import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
-import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
-import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
-import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
@@ -113,7 +105,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
-import nerdvana.com.pointofsales.api_responses.FocResponse;
+import nerdvana.com.pointofsales.api_responses.FocTransactionResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.RatePrice;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
@@ -133,7 +125,6 @@ import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
 import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
-import nerdvana.com.pointofsales.dialogs.ManualDiscountDialog;
 import nerdvana.com.pointofsales.dialogs.FocDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
@@ -160,6 +151,7 @@ import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.ForVoidDiscountModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
+import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.OrderSlipModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
@@ -172,16 +164,16 @@ import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CategoryAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 import okhttp3.ResponseBody;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
-
+    private AlertDialog blockerDialog;
+    private CollectionDialog cutOffDialog;
     private Data data;
-
+    private String employeeId = "";
     private List<ForVoidDiscountModel> forVoidDiscountModels = new ArrayList<>();
 
     private FetchRoomPendingResponse.Result fetchRoomPendingResult = null;
@@ -425,6 +417,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void defaultView() {
+
+        employeeId = "";
+
         if (isValid) { //means userModel is not null
             noItems.setVisibility(View.VISIBLE);
             switch (userModel.getSystemType().toLowerCase()) {
@@ -760,31 +755,76 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         Toast.makeText(getContext(), "CHANGE SHIFT", Toast.LENGTH_SHORT).show();
     }
 
+    private void doFocFunction() {
+
+        if (selectedRoom != null) {
+            if (!employeeId.isEmpty()) {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+                        if (selectedRoom.isTakeOut()) {
+                            BusProvider.getInstance().post(new FocTransactionRequest(
+                                    "",
+                                    selectedRoom.getControlNo(),
+                                    employeeId
+                            ));
+                        } else {
+                            BusProvider.getInstance().post(new FocTransactionRequest(
+                                    String.valueOf(selectedRoom.getRoomId()),
+                                    "",
+                                    employeeId
+                            ));
+                        }
+
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+
+                    }
+                };
+
+                if (!passwordDialog.isShowing()) passwordDialog.show();
+
+            } else {
+                Utils.showDialogMessage(getActivity(), "Not an employee", "Information");
+            }
+        } else {
+            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+        }
+    }
+
+    private boolean isAllowedToTransact() {
+        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("")) {
+            return false;
+        }
+        return true;
+    }
+
+
+    private boolean canTransact() {
+        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("NOT_ALLOW") ||
+                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("") ||
+                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute cutoff")) {
+            Toast.makeText(getContext(), "Please execute cutoff", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
+
+
         switch (clickedItem.getId()) {
+            case 126: //FOC
+                if (canTransact()) doFocFunction();
+                break;
             case 124: //BACKOUT
-                doBackOutGuestFunction();
+                if (canTransact()) doBackOutGuestFunction();
                 break;
             case 123: //REPRINT X/Z READING
-                break;
-            case 117: //change shift
-                if (hasUnpostedItems()) {
-                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                        @Override
-                        public void yesClicked() {
-                            changeShiftFunction();
-                        }
-
-                        @Override
-                        public void noClicked() {
-
-                        }
-                    };
-                    alertYesNo.show();
-                } else {
-                    changeShiftFunction();
-                }
                 break;
             case 9999: //rooms
                 if (hasUnpostedItems()) {
@@ -803,7 +843,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 } else {
                     BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1));
                 }
-
                 break;
             case 9988: //take order
                 if (hasUnpostedItems()) {
@@ -825,31 +864,28 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 122: //CANCEL OVERTIME
 
-                if (hasUnpostedItems()) {
-                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                        @Override
-                        public void yesClicked() {
+                if (canTransact()) {
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
 
-                            cancelOverTime();
-                        }
+                                cancelOverTime();
+                            }
 
 
-                        @Override
-                        public void noClicked() {
+                            @Override
+                            public void noClicked() {
 
-                        }
-                    };
-                    alertYesNo.show();
-                } else {
-                    cancelOverTime();
+                            }
+                        };
+                        alertYesNo.show();
+                    } else {
+                        cancelOverTime();
+                    }
                 }
-
-
-
                 break;
             case 121: //CASH AND RECONCILE
-
-
                 if (hasUnpostedItems()) {
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
@@ -866,14 +902,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 } else {
                     cashNReconcile();
                 }
-
-
-
-
                 break;
             case 120: //Z READ, END OF DAY
-
-
                 if (hasUnpostedItems()) {
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
@@ -890,9 +920,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 } else {
                     zReadRequest();
                 }
-
-
-
                 break;
             case 119: //X READ, SHIFT CUT OFF
 
@@ -920,22 +947,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 118:// SAFEKEEPING
 
-                if (hasUnpostedItems()) {
-                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                        @Override
-                        public void yesClicked() {
-                            doSafeKeepFunction();
-                        }
+                if (canTransact()) {
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
+                                doSafeKeepFunction();
+                            }
 
-                        @Override
-                        public void noClicked() {
+                            @Override
+                            public void noClicked() {
 
-                        }
-                    };
-                    alertYesNo.show();
-                } else {
-                    doSafeKeepFunction();
+                            }
+                        };
+                        alertYesNo.show();
+                    } else {
+                        doSafeKeepFunction();
+                    }
                 }
+
 
 
                 break;
@@ -944,76 +974,80 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 clearCartItems();
                 break;
             case 115://DISCOUNT
-                if (selectedRoom != null) {
+                if (canTransact()) {
+                    if (selectedRoom != null) {
+                        if (hasUnpostedItems()) {
+                            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                @Override
+                                public void yesClicked() {
+                                    doDiscountFunction();
+                                }
 
-                    if (hasUnpostedItems()) {
-                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                            @Override
-                            public void yesClicked() {
-                                doDiscountFunction();
-                            }
+                                @Override
+                                public void noClicked() {
 
-                            @Override
-                            public void noClicked() {
+                                }
+                            };
+                            alertYesNo.show();
+                        } else {
+                            doDiscountFunction();
+                        }
 
-                            }
-                        };
-                        alertYesNo.show();
+
                     } else {
-                        doDiscountFunction();
+                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                     }
-
-
-                } else {
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
+
 
                 break;
             case 114://SWITCH ROOM
-                if (selectedRoom != null) {
+                if (canTransact()) {
+                    if (selectedRoom != null) {
+                        if (hasUnpostedItems()) {
+                            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                @Override
+                                public void yesClicked() {
+                                    doSwitchRoomFunction();
+                                }
 
-                    if (hasUnpostedItems()) {
-                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                            @Override
-                            public void yesClicked() {
-                                doSwitchRoomFunction();
-                            }
+                                @Override
+                                public void noClicked() {
 
-                            @Override
-                            public void noClicked() {
+                                }
+                            };
+                            alertYesNo.show();
+                        } else {
+                            doSwitchRoomFunction();
+                        }
 
-                            }
-                        };
-                        alertYesNo.show();
+
                     } else {
-                        doSwitchRoomFunction();
+                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                     }
-
-
-                } else {
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
-
-
                 break;
             case 113://POST VOID
 
-                if (hasUnpostedItems()) {
-                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                        @Override
-                        public void yesClicked() {
-                            doPostVoidFunction();
-                        }
+                if (canTransact()) {
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
+                                doPostVoidFunction();
+                            }
 
-                        @Override
-                        public void noClicked() {
+                            @Override
+                            public void noClicked() {
 
-                        }
-                    };
-                    alertYesNo.show();
-                } else {
-                    doPostVoidFunction();
+                            }
+                        };
+                        alertYesNo.show();
+                    } else {
+                        doPostVoidFunction();
+                    }
                 }
+
 
 
                 break;
@@ -1051,30 +1085,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 111://GUEST INFO
-                GuestInfoDialog guestInfoDialog = new GuestInfoDialog(getActivity(), fetchRoomPendingResult, getActivity()) {
-                    @Override
-                    public void refresh() {
-                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                    }
+                if (canTransact()) {
+                    GuestInfoDialog guestInfoDialog = new GuestInfoDialog(getActivity(), fetchRoomPendingResult, getActivity()) {
+                        @Override
+                        public void refresh() {
+                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                        }
 
-                    @Override
-                    public void refresh(String jsonString) {
-                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHANGE_WAKE_UP_CALL", jsonString));
+                        @Override
+                        public void refresh(String jsonString) {
+                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                            BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHANGE_WAKE_UP_CALL", jsonString));
 
-                    }
-                };
+                        }
+                    };
 
-                if (selectedRoom != null) {
-                    if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                            currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
-                        guestInfoDialog.show();
+                    if (selectedRoom != null) {
+                        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
+                            guestInfoDialog.show();
+                        } else {
+                            Utils.showDialogMessage(getActivity(), "No guest info yet", "Information");
+                        }
                     } else {
-                        Utils.showDialogMessage(getActivity(), "No guest info yet", "Information");
+                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                     }
-                } else {
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
+
                 break;
             case 110:// SETUP PRINTER
                 SetupPrinterDialog setupPrinterDialog = new SetupPrinterDialog(getActivity()) {
@@ -1087,33 +1124,34 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     setupPrinterDialog.show();
                 }
                 break;
-            case 109: //FOC
-                FocDialog focDialog = new FocDialog(getActivity(), postedPaymentsList) {
-                    @Override
-                    public void focSuccess() {
-                        dismiss();
-                        Toast.makeText(getContext(), "SUCC FOC", Toast.LENGTH_SHORT).show();
-                        focTransaction();
-                    }
-                };
-                if (selectedRoom != null) {
-                    if (selectedRoom.getStatus().equalsIgnoreCase("17")) {
 
-                        if (advancePayment != 0 || discountPayment != 0) {
-                            Utils.showDialogMessage(getActivity(), "Please remove advance payment / discount", "Information");
-                        } else {
-                            if (!focDialog.isShowing()) focDialog.show();
-                        }
-
-
-                    } else {
-                        Utils.showDialogMessage(getActivity(), "Please SOA room first", "Information");
-                    }
-                } else {
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
-                }
-                break;
-                //
+//            case 109: //FOC not being used
+//                FocDialog focDialog = new FocDialog(getActivity(), postedPaymentsList) {
+//                    @Override
+//                    public void focSuccess() {
+//                        dismiss();
+//                        Toast.makeText(getContext(), "SUCC FOC", Toast.LENGTH_SHORT).show();
+//                        focTransaction();
+//                    }
+//                };
+//                if (selectedRoom != null) {
+//                    if (selectedRoom.getStatus().equalsIgnoreCase("17")) {
+//
+//                        if (advancePayment != 0 || discountPayment != 0) {
+//                            Utils.showDialogMessage(getActivity(), "Please remove advance payment / discount", "Information");
+//                        } else {
+//                            if (!focDialog.isShowing()) focDialog.show();
+//                        }
+//
+//
+//                    } else {
+//                        Utils.showDialogMessage(getActivity(), "Please SOA room first", "Information");
+//                    }
+//                } else {
+//                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+//                }
+//                break;
+//                //
             case 108: //show order slip form
                 String roomNumber = "";
                 if (selectedRoom != null) {
@@ -1153,12 +1191,39 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 106: //PRINT SOA
-                if (selectedRoom != null) {
+                if (canTransact()) {
+                    if (selectedRoom != null) {
+                        if (hasUnpostedItems()) {
+                            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                @Override
+                                public void yesClicked() {
+                                    doSoaFunction();
+                                }
+
+                                @Override
+                                public void noClicked() {
+
+                                }
+                            };
+                            alertYesNo.show();
+                        } else {
+                            doSoaFunction();
+                        }
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+                    }
+                }
+
+
+
+                break;
+            case 105: //CHECKOUT
+                if (canTransact()) {
                     if (hasUnpostedItems()) {
                         AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
                             public void yesClicked() {
-                                doSoaFunction();
+                                doCheckoutFunction();
                             }
 
                             @Override
@@ -1166,41 +1231,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             }
                         };
+
                         alertYesNo.show();
                     } else {
-                        doSoaFunction();
+                        doCheckoutFunction();
                     }
-                } else {
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
 
-
-                break;
-            case 105: //CHECKOUT
-
-                if (hasUnpostedItems()) {
-                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                        @Override
-                        public void yesClicked() {
-                            doCheckoutFunction();
-                        }
-
-                        @Override
-                        public void noClicked() {
-
-                        }
-                    };
-
-                    alertYesNo.show();
-                } else {
-                    doCheckoutFunction();
-                }
 
 
                 break;
             case 103: //ADD RATE TO EXISTING TRANSACTION
                 if (selectedRoom != null) {
-
                     if (hasUnpostedItems()) {
                         AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
@@ -1321,35 +1363,38 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
                 break;
             case 101: //VOID
-                if (selectedRoom != null) {
+                if (canTransact()) {
+                    if (selectedRoom != null) {
+                        if (hasUnpostedItems()) {
+                            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                @Override
+                                public void yesClicked() {
+                                    doVoidFunction();
+                                }
 
-                    if (hasUnpostedItems()) {
-                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                            @Override
-                            public void yesClicked() {
-                                doVoidFunction();
-                            }
+                                @Override
+                                public void noClicked() {
 
-                            @Override
-                            public void noClicked() {
+                                }
+                            };
 
-                            }
-                        };
+                            alertYesNo.show();
+                        } else {
+                            doVoidFunction();
+                        }
 
-                        alertYesNo.show();
+
+
                     } else {
-                        doVoidFunction();
+
+                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                     }
 
-
-
-                } else {
-
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
 
                 break;
             case 102: //ADVANCE PAYMENT
+
                 if (selectedRoom != null) {
 
                     if (hasUnpostedItems()) {
@@ -1802,11 +1847,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         postAdvancePayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
                     }
 
-                    BusProvider.getInstance().post(new PrintModel("",
-                            selectedRoom.getName(),
-                            "DEPOSIT",
-                            GsonHelper.getGson().toJson(paymentsToPost),
-                            selectedRoom.getRoomType()));
+
                 } else {
                     Utils.showDialogMessage(getActivity(), "No payment to post", "Information");
                 }
@@ -2176,119 +2217,97 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
 
-                CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
-                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                Call<CheckShiftResponse> checkShfRqst = iUsers.checkShift(checkShiftRequest.getMapValue());
-                checkShfRqst.enqueue(new Callback<CheckShiftResponse>() {
-                    @Override
-                    public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
-                        if (response.body().getStatus() == 0) {
-                            Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Error");
-                        } else {
-//                                    Utils.showDialogMessage(getActivity(), "SUCCESS", "Information");
 
-                            //regionpayment checkout chain
-                            List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
-                            boolean isReadyForCheckOut = false;
-                            Double totalPayments = 0.00;
-                            for (PostedPaymentsModel ppm : postedPaymentLit) {
-                                if (!ppm.isIs_posted()) {
-                                    paymentsToPost.add(ppm);
+                //regionpayment checkout chain
+                List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                boolean isReadyForCheckOut = false;
+                Double totalPayments = 0.00;
+                for (PostedPaymentsModel ppm : postedPaymentLit) {
+                    if (!ppm.isIs_posted()) {
+                        paymentsToPost.add(ppm);
+                    }
+
+                    totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
+                }
+
+                if (cartItemList.size() == 0) {
+                    //no order and prompt to cancel order, disregard all payments
+                    if (selectedRoom.isTakeOut()) {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        checkoutRoom("",
+                                                selectedRoom.getControlNo(),
+                                                "");
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        dismiss();
+                                        break;
                                 }
+                            }
+                        };
 
-                                totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
+                                .setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    } else {
+
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        dismiss();
+                                        break;
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        dismiss();
+                                        break;
+                                }
+                            }
+                        };
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
+                                .setPositiveButton("Ok", dialogClickListener).show();
+
+                    }
+
+                } else {
+                    if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
+                        if (paymentsToPost.size() > 0) {
+                            if (selectedRoom.isTakeOut()) {
+                                postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
+                            } else {
+                                postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
+                            }
+                        } else {
+
+                            if (selectedRoom.isTakeOut()) {
+                                checkoutRoom("",
+                                        selectedRoom.getControlNo(),
+                                        "");
+                            } else {
+                                checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                        "",
+                                        roomboy);
                             }
 
-                            if (cartItemList.size() == 0) {
-                                //no order and prompt to cancel order, disregard all payments
-                                if (selectedRoom.isTakeOut()) {
-                                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            switch (which){
-                                                case DialogInterface.BUTTON_POSITIVE:
-                                                    checkoutRoom("",
-                                                            selectedRoom.getControlNo(),
-                                                            "");
-                                                    break;
 
-                                                case DialogInterface.BUTTON_NEGATIVE:
-                                                    dismiss();
-                                                    break;
-                                            }
-                                        }
-                                    };
-
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
-                                            .setPositiveButton("Yes", dialogClickListener)
-                                            .setNegativeButton("No", dialogClickListener).show();
-                                } else {
-
-                                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            switch (which){
-                                                case DialogInterface.BUTTON_POSITIVE:
-                                                    dismiss();
-                                                    break;
-                                                case DialogInterface.BUTTON_NEGATIVE:
-                                                    dismiss();
-                                                    break;
-                                            }
-                                        }
-                                    };
-
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
-                                            .setPositiveButton("Ok", dialogClickListener).show();
-
-                                }
-
-                            } else {
-                                if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
-                                    if (paymentsToPost.size() > 0) {
-                                        if (selectedRoom.isTakeOut()) {
-                                            postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo());
-                                        } else {
-                                            postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "");
-                                        }
-                                    } else {
-                                        Toast.makeText(getContext(), "No payment to post", Toast.LENGTH_SHORT).show();
-                                    }
-
-                                    new Handler().postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            if (selectedRoom.isTakeOut()) {
-                                                checkoutRoom("",
-                                                        selectedRoom.getControlNo(),
-                                                        "");
-                                            } else {
-                                                checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
-                                                        "",
-                                                        roomboy);
-                                            }
-
-
-                                        }
-                                    }, 2000);
-                                    dismiss();
-                                } else {
-
-                                    Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
-                                }
-                            }//endregion
-
-
+                            Toast.makeText(getContext(), "No payment to post, will proceed to checkout", Toast.LENGTH_SHORT).show();
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
+                        dismiss();
+                    } else {
 
+                        Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
                     }
-                });
+                }
+                //endregion
+
 
             }
 
@@ -2363,6 +2382,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
 
+                if (r.getTransaction() != null) {
+                    if (r.getTransaction().getEmployee_id() != null && !TextUtils.isEmpty(r.getTransaction().getEmployee_id())) {
+                        employeeId = r.getTransaction().getEmployee_id();
+                    }
+
+                }
+
                 if (r.getCustomer() != null) {
                     guestReceiptInfoModel = new GuestReceiptInfoModel(r.getCustomer().getCustomer(), r.getCustomer().getAddress(), r.getCustomer().getTin());
                 }
@@ -2431,8 +2457,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     totalBalance = (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount())
-                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered() + fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt())
-                            ;
+//                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered());
+                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered() + fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt());
+
                     advancePayment = r.getTransaction().getAdvance();
                     discountPayment = r.getTransaction().getDiscount();
                     subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
@@ -2495,6 +2522,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 //endregion
                 //region orders
                 roomRateCounter = new ArrayList<>();
+
+
                 for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
                     if (tpost.getVoid() == 0) {
                         if (tpost.getRoomRateId() != null) {
@@ -2796,16 +2825,97 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //        paymentTypeList = fetchPaymentResponse.getResult();
     }
 
-    private void postAdvancePayment(List<PostedPaymentsModel> ppm, String roomId, String controlNumber) {
-        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "1", controlNumber));
+    private void postAdvancePayment(final List<PostedPaymentsModel> ppm, String roomId, String controlNumber) {
+//        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "1", controlNumber));
+        AddPaymentRequest addPaymentRequest = new AddPaymentRequest(ppm, roomId, "1", controlNumber);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<AddPaymentResponse> request = iUsers.sendAddPayment(addPaymentRequest.getMapValue());
+
+        request.enqueue(new Callback<AddPaymentResponse>() {
+            @Override
+            public void onResponse(Call<AddPaymentResponse> call, Response<AddPaymentResponse> response) {
+                if (selectedRoom != null) {
+                    if (response.body().getStatus() == 0) {
+                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+                        endLoading();
+                    } else {
+
+                        BusProvider.getInstance().post(new PrintModel("",
+                                selectedRoom.getName(),
+                                "DEPOSIT",
+                                GsonHelper.getGson().toJson(ppm),
+                                selectedRoom.getRoomType()));
+
+
+                        if (selectedRoom.isTakeOut()) {
+                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                        } else {
+                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddPaymentResponse> call, Throwable t) {
+                endLoading();
+            }
+        });
 
         showLoading();
     }
 
-    private void postCheckoutPayment(List<PostedPaymentsModel> ppm, String roomId, String  controlNumber) {
-//        Log.d("CHECKOUTDATA", new AddPaymentRequest(ppm, roomId, "0", controlNumber).toString());
-        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "0", controlNumber));
+//    @Subscribe
+//    public void addPaymentResponse(AddPaymentResponse addPaymentResponse) {
+//        if (selectedRoom != null) {
+//            if (addPaymentResponse.getStatus() == 0) {
+//                Utils.showDialogMessage(getActivity(), addPaymentResponse.getMessage(), "Information");
+//            } else {
+//                if (selectedRoom.isTakeOut()) {
+//                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+//                } else {
+//                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+//                }
+//            }
+//
+//        }
+//    }
 
+
+
+    private void postCheckoutPayment(List<PostedPaymentsModel> ppm, String roomId, String  controlNumber, final String roomBoy) {
+//        Log.d("CHECKOUTDATA", new AddPaymentRequest(ppm, roomId, "0", controlNumber).toString());
+//        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "0", controlNumber));
+        AddPaymentRequest addPaymentRequest = new AddPaymentRequest(ppm, roomId, "0", controlNumber);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<AddPaymentResponse> request = iUsers.sendAddPayment(addPaymentRequest.getMapValue());
+        request.enqueue(new Callback<AddPaymentResponse>() {
+            @Override
+            public void onResponse(Call<AddPaymentResponse> call, Response<AddPaymentResponse> response) {
+                if (selectedRoom != null) {
+                    if (response.body().getStatus() == 0) {
+                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+                        endLoading();
+                    } else {
+
+                        if (selectedRoom.isTakeOut()) {
+                            checkoutRoom("",
+                                    selectedRoom.getControlNo(),
+                                    "");
+                        } else {
+                            checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                    "",
+                                    roomBoy);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AddPaymentResponse> call, Throwable t) {
+                endLoading();
+            }
+        });
         showLoading();
     }
 
@@ -2814,9 +2924,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
-
-
-
                 fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
                 BusProvider.getInstance().post(new PrintModel("",
                         "takeout",
@@ -2830,10 +2937,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     Utils.showDialogMessage(getActivity(), "No item/s to print", "Information");
                 }
             } else {
-
-                Log.d("SSSSS", String.valueOf(selectedRoom.getRoomId()));
-                Log.d("SSSSS", selectedRoom.getName());
-                Log.d("SSSSS", String.valueOf(printSoaResponse.getResult().getBooked().size()));
 
                 BusProvider.getInstance().post(new PrintModel("",
                         selectedRoom.getName(),
@@ -2854,21 +2957,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
-    @Subscribe
-    public void addPaymentResponse(AddPaymentResponse addPaymentResponse) {
-        if (selectedRoom != null) {
-            if (addPaymentResponse.getStatus() == 0) {
-                Utils.showDialogMessage(getActivity(), addPaymentResponse.getMessage(), "Information");
-            } else {
-                if (selectedRoom.isTakeOut()) {
-                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                } else {
-                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                }
-            }
 
-        }
-    }
 
     private void printSoaRequest(String roomId, String controlNumber) {
         BusProvider.getInstance().post(new PrintSoaRequest(roomId, controlNumber));
@@ -2893,12 +2982,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         /*fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
                 fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
                 fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount()*/
-        totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal();
+        totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal() - ( fetchOrderPendingViaControlNoResponse.getResult().getTendered()  + fetchOrderPendingViaControlNoResponse.getResult().getVatExempt());
+
+        advancePayment = fetchOrderPendingViaControlNoResponse.getResult().getAdvance();
+        discountPayment = fetchOrderPendingViaControlNoResponse.getResult().getDiscount();
+
+
         cartItemList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
         orderSlipList = new ArrayList<>();
         Double totalAmount = 0.00;
         if (fetchOrderPendingViaControlNoResponse.getResult() != null) {
+            if (fetchOrderPendingViaControlNoResponse.getResult().getEmployeeId() != null) {
+
+                employeeId = fetchOrderPendingViaControlNoResponse.getResult().getEmployeeId().toString();
+
+            }
 
 
             for (FetchOrderPendingViaControlNoResponse.Discounts dos : fetchOrderPendingViaControlNoResponse.getResult().getDiscountsList()) {
@@ -3075,9 +3174,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             printReceiptFromCheckout(selectedRoom.getControlNo(),
                     selectedRoom.getName(),
                     selectedRoom.getRoomType());
+            Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+
+            if (selectedRoom != null) {
+                if (selectedRoom.isTakeOut()) {
+                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                } else {
+                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                }
+            }
 
 
-//            Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+
 //            Utils.showDialogMessage(getActivity(), "CHECK OUT SUCCESS", "Information");
 //            clearCartItems();
 //            defaultView();
@@ -3159,14 +3267,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
 
-    private void focTransaction() {
-        BusProvider.getInstance().post(new FocRequest());
-    }
 
-    @Subscribe
-    public void focResponse(FocResponse focResponse) {
 
-    }
 
 
     @Subscribe
@@ -3427,33 +3529,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void cashNReconcile() {
 
-        CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
-            @Override
-            public void printCashRecoData(String cashNRecoData) {
+        if (cutOffDialog != null) {
+            if (!cutOffDialog.isShowing()) cutOffDialog.show();
+        } else {
+            cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
+                @Override
+                public void printCashRecoData(String cashNRecoData) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(cashNRecoData);
+                        JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
+                        JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
+
+                        JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
+                        if (dataJsonObject != null) {
+                            fetchXReadViaIdRequest(dataJsonObject.getString("id"));
+
+                        }
 
 
-                try {
-
-//                    FetchXReadingViaIdResponse fetchXReadingViaIdResponse = GsonHelper.getGson().fromJson(cashNRecoData)
-                    JSONObject jsonObject = new JSONObject(cashNRecoData);
-                    JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
-                    JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
-
-                    JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
-                    if (dataJsonObject != null) {
-                        fetchXReadViaIdRequest(dataJsonObject.getString("id"));
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+            };
+            if (!cutOffDialog.isShowing()) cutOffDialog.show();
+        }
 
-//                BusProvider.getInstance().post(new PrintModel("", "X READING", "XREADING", cashNRecoData));
-            }
-        };
-        if (!cutOffDialog.isShowing()) cutOffDialog.show();
+
 
     }
 
@@ -3687,7 +3789,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
 
-        Log.d("dsadsadsadsadsa", "X READ RESPONSE");
         BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
         BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }
@@ -3719,6 +3820,82 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public interface Data {
         void refresh();
     }
+
+    @Subscribe
+    public void focResponse(FocTransactionResponse focResponse) {
+        if (focResponse.getStatus() == 1) {
+            defaultView();
+            clearCartItems();
+        }
+        Utils.showDialogMessage(getActivity(), focResponse.getMessage(), "Information");
+    }
+
+
+    @Subscribe
+    public void infoModel(InfoModel infoModel) {
+        Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
+        SharedPreferenceManager.saveString(getContext(), infoModel.getInformation(), ApplicationConstants.SHIFT_BLOCKER);
+
+        if (!canTransact()) {
+            if (cutOffDialog != null) {
+                if (!cutOffDialog.isShowing()) {
+
+                    if (blockerDialog != null) {
+                        if (!blockerDialog.isShowing()) {
+                            blockerDialog.show();
+                        }
+                    } else {
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        break;
+                                }
+                            }
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("You need to execute cutoff before you can transact, Continue?")
+                                .setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener);
+                        blockerDialog = builder.create();
+                        builder.show();
+                    }
+                }
+            } else {
+                if (blockerDialog != null) {
+                    if (!blockerDialog.isShowing()) {
+                        blockerDialog.show();
+                    }
+                } else {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("You need to execute cutoff before you can transact, Continue?")
+                            .setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener);
+                    blockerDialog = builder.create();
+                    builder.show();
+                }
+            }
+        }
+    }
+
 
 
 }

@@ -619,10 +619,13 @@ public abstract class PaymentDialog extends BaseDialog  {
                             errorMessage += "Invalid payment method";
                         }
 
-                        if (TextUtils.isEmpty(guestNameInput.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Invalid name";
+                        if (!isEmployee) {
+                            if (TextUtils.isEmpty(guestNameInput.getText().toString().trim())) {
+                                isValid = false;
+                                errorMessage += "Invalid name";
+                            }
                         }
+
 
                         if (isValid) {
                             submitGuestInfoData(isEmployee ? guestInfoEmployeeId : "",
@@ -948,7 +951,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         spinnerEmplyeeSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                guestInfoEmployeeId = String.valueOf(userList.get(position).getUserId());
+                guestInfoEmployeeId = String.valueOf(userList.get(position).getUsername());
                 guestInfoEmployeeName = String.valueOf(userList.get(position).getName());
             }
 
@@ -1024,7 +1027,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         request.enqueue(new Callback<SaveGuestInfoResponse>() {
             @Override
             public void onResponse(Call<SaveGuestInfoResponse> call, Response<SaveGuestInfoResponse> response) {
-
+                removePaymentSuccess();
             }
 
             @Override

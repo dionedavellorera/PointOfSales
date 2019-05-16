@@ -103,7 +103,7 @@ public class Utils {
 
     public static long getDurationInSecs(String dateStart) {
 
-        DateTimeFormatter f = DateTimeFormat.forPattern("yyyy-MM-dd kk:mm:ss");
+        DateTimeFormatter f = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime startDate = f.parseDateTime(dateStart);
         return startDate.getMillis() / 1000;
 

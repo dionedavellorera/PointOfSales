@@ -128,7 +128,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                 public void onResponse(Call<Object> call, Response<Object> response) {
                                     try {
                                         JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0")) {
+                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
                                             printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
 
                                             BusProvider.getInstance().post(new PrintModel("",
@@ -137,7 +137,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                                     GsonHelper.getGson().toJson(collectionFinalPostModels),
                                                     ""));
 
-
+                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
                                         } else {
                                             Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
                                         }

@@ -15,7 +15,8 @@ public class SaveGuestInfoRequest extends BaseRequest {
                                 String controlNumber) {
         mapValue = new HashMap<>();
 
-        mapValue.put("user_id", emp);
+        mapValue.put("emp_id", emp);
+        mapValue.put("user_id", userId);
         mapValue.put("name", guestName);
         mapValue.put("address", guestAddress);
         mapValue.put("tin", guestTin);

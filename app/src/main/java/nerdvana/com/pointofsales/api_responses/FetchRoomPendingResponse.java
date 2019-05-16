@@ -416,6 +416,9 @@ public class FetchRoomPendingResponse {
     }
 
     public class RoomTransaction {
+        @SerializedName("employee_id")
+        @Expose
+        private String employee_id;
         @SerializedName("employee")
         @Expose
         private Employee employee;
@@ -518,6 +521,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+
+        public String getEmployee_id() {
+            return employee_id;
+        }
+
+        public void setEmployee_id(String employee_id) {
+            this.employee_id = employee_id;
+        }
 
         public Employee getEmployee() {
             return employee;

@@ -44,4 +44,6 @@ dependencies {
 
     implementation files('libs/ePOS2.jar')
     implementation files('libs/ePOSEasySelect.jar')
+
+    implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 }
