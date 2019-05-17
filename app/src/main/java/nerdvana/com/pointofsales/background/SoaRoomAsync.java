@@ -17,6 +17,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
@@ -25,6 +26,7 @@ import nerdvana.com.pointofsales.model.UserModel;
 
 import static nerdvana.com.pointofsales.MainActivity.formatSeconds;
 import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
+import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.getDuration;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
@@ -42,7 +44,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         this.currentDateTime = currentDateTime;
     }
 
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -50,6 +51,10 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+
+        PrinterUtils.addHeader(printModel);
+
 
         TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
         List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
@@ -251,8 +256,18 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
             if (!bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
                 addTextToPrinter(SPrinter.getPrinter(), "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+                if (bookedList.get(0).getCustomer().getAddress() != null) {
+                    addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                }
+
+                if (bookedList.get(0).getCustomer().getTin() != null) {
+                    addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                }
+
+
+//                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+//                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             }
         }
 

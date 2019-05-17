@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -615,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-        addTextToPrinter(SPrinter.getPrinter(), "*", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        addTextToPrinter(SPrinter.getPrinter(), "*", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //        addTextToPrinter(SPrinter.getPrinter(), SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.BRANCH), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //
 //        for (String s : addressArray) {
@@ -628,96 +629,74 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        addTextToPrinter(SPrinter.getPrinter(), "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
 
 
-        addTextToPrinter(SPrinter.getPrinter(), "NERDVANA CORP.", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "1 CANLEY ROAD BRGY BAGONG", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "ILOG PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter()," 671-9782", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
-        addTextToPrinter(SPrinter.getPrinter(), "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
 
-
-        if (!printModel.getType().equalsIgnoreCase("rexreading")
-                && !printModel.getType().equalsIgnoreCase("safekeeping")
-                && !printModel.getType().equalsIgnoreCase("shortover")
-                && !printModel.getType().equalsIgnoreCase("zread")
-                && !printModel.getType().equalsIgnoreCase("backout")) {
-
-            if (!printModel.getType().equalsIgnoreCase("in_transit")) {
-                addTextToPrinter(SPrinter.getPrinter(), printModel.getRoomNumber().equalsIgnoreCase("takeout") ? printModel.getRoomNumber() : "ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
-            }
-
-        }
-
-        //endregion
 
         switch (printModel.getType()) {
-            case "IN_TRANSIT":
+            case "IN_TRANSIT": //ignore header
                 willExecutGlobalPrint = false;
                 new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime).execute();
                 break;
-            case "POST_VOID":
+            case "POST_VOID": //ignore header
                 willExecutGlobalPrint = false;
                 new PostVoidAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "CHANGE_WAKE_UP_CALL":
+            case "CHANGE_WAKE_UP_CALL": //done
                 willExecutGlobalPrint = false;
                 new ChangeWakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "BACKOUT":
+            case "BACKOUT": //done
                 willExecutGlobalPrint = false;
                 new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "SHORTOVER":
+            case "SHORTOVER"://ignore
                 willExecutGlobalPrint = false;
                 new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "CASHRECONCILE":
+            case "CASHRECONCILE"://ignore
                 willExecutGlobalPrint = false;
                 new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "SAFEKEEPING":
+            case "SAFEKEEPING"://ignore
                 willExecutGlobalPrint = false;
                 new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "ZREAD":
+            case "ZREAD"://ignore
                 willExecutGlobalPrint = false;
                 new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                  break;
-            case "REXREADING":
+            case "REXREADING"://ignore
                 willExecutGlobalPrint = false;
                 new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "SWITCH_ROOM":
+            case "SWITCH_ROOM"://done
                 willExecutGlobalPrint = false;
                 new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "PRINT_RECEIPT":
+            case "PRINT_RECEIPT"://done
                 willExecutGlobalPrint = false;
                 new CheckOutAsync(printModel, MainActivity.this, userModel).execute();
                 break;
-            case "DEPOSIT":
+            case "DEPOSIT"://done
                 willExecutGlobalPrint = false;
                 new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "SOA-TO":
+            case "SOA-TO"://done
                 willExecutGlobalPrint = false;
                 new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "CHECKIN":
+            case "CHECKIN"://done
                 willExecutGlobalPrint = false;
                 new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected).execute();
                 break;
-            case "VOID":
+            case "VOID"://done
                 willExecutGlobalPrint = false;
                 new VoidAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "SOA-ROOM":
+            case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
                 new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
-            case "FO":
+            case "FO": //done
                 willExecutGlobalPrint = false;
                 new FoAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
                 break;
@@ -1319,15 +1298,21 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void fetchDiscountSpecialRequest() {
+
+
+
+        BusProvider.getInstance().post(new FetchDiscountSpecialRequest());
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.DISCOUNT_SPECIAL_JSON))) {
-            BusProvider.getInstance().post(new FetchDiscountSpecialRequest());
+
         }
 
     }
 
     @Subscribe
-    public void fetchDiscountSpecialRespone(FetchDiscountReasonResponse fetchDiscountReasonResponse) {
-        SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(fetchDiscountReasonResponse.getResult()), ApplicationConstants.DISCOUNT_SPECIAL_JSON);
+    public void fetchDiscountSpecialRespone(FetchDiscountSpecialResponse fetchDiscountSpecialResponse) {
+
+        Log.d("TETET", "DIONEY");
+        SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(fetchDiscountSpecialResponse.getResult()), ApplicationConstants.DISCOUNT_SPECIAL_JSON);
     }
 
     @Override

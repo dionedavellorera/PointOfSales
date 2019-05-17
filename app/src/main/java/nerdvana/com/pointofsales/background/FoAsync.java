@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.List;
 
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.PrintModel;
@@ -40,6 +41,10 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+
+        PrinterUtils.addHeader(printModel);
+
 
         Double totalAmount = 0.00;
         addTextToPrinter(SPrinter.getPrinter(), "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);

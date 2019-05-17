@@ -11,6 +11,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
@@ -38,6 +39,10 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+
+        PrinterUtils.addHeader(printModel);
+
 
         TypeToken<List<PostedPaymentsModel>> depositToken = new TypeToken<List<PostedPaymentsModel>>() {};
         List<PostedPaymentsModel> depositDetails = GsonHelper.getGson().fromJson(printModel.getData(), depositToken.getType());

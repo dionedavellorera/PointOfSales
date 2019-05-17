@@ -32,6 +32,8 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
 
     @Override
     protected List<ProductsModel> doInBackground(ProductsModel... productsModels) {
+
+
         List<ProductsModel> productsModelList = new ArrayList<>();
 
 

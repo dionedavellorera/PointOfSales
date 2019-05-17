@@ -19,6 +19,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.MainActivity;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
@@ -51,6 +52,9 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         try {
+
+            PrinterUtils.addHeader(printModel);
+
             JSONObject jsonObject = new JSONObject(printModel.getData());
             JSONObject dataJsonObject = jsonObject.getJSONObject("data");
             JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
@@ -257,7 +261,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                    "Void",
+                    "VOID",
                     returnWithTwoDecimal(String.valueOf(dataJsonObject.get("void_amount")))
                     ,
                     40,
@@ -283,7 +287,14 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                 TypeToken<List<FetchDiscountSpecialResponse.Result>> discToken = new TypeToken<List<FetchDiscountSpecialResponse.Result>>() {};
                 List<FetchDiscountSpecialResponse.Result> discountDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.DISCOUNT_SPECIAL_JSON), discToken.getType());
 
+                Log.d("TETETE", "XREADASYNC");
+                Log.d("TETETE", String.valueOf(discountDetails.size()));
+
                 if (discountDetails != null) {
+
+                    Log.d("TURY", discountDetails.get(0).getDiscountCard());
+
+
                     for (FetchDiscountSpecialResponse.Result d : discountDetails) {
                         Integer count = 0;
                         Double amount = 0.00;
@@ -294,7 +305,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                                 if (temp.getString("is_special").equalsIgnoreCase("1") || temp.getString("is_special").equalsIgnoreCase("1.0")) {
                                     amount = Double.valueOf(temp.getString("discount_amount"));
                                     count = Integer.valueOf(temp.getString("count"));
-                                    break;
                                 }
                             }
                         }
@@ -315,6 +325,8 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                                 2),
                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                     }
+
+
                 }
 
 
@@ -329,13 +341,13 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "OTHERS" + "(COUNT)",
-                        String.valueOf(otherDiscCount)
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+//                        "OTHERS" + "(COUNT)",
+//                        String.valueOf(otherDiscCount)
+//                        ,
+//                        40,
+//                        2),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             } else {
 
@@ -375,13 +387,13 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
-                        "OTHERS" + "(COUNT)",
-                        "0"
-                        ,
-                        40,
-                        2),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+//                        "OTHERS" + "(COUNT)",
+//                        "0"
+//                        ,
+//                        40,
+//                        2),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             }
 

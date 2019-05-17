@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
@@ -50,6 +51,9 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+
+        PrinterUtils.addHeader(printModel);
 
         PrintSoaResponse.Result toList = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Result.class)
                 ;
@@ -146,8 +150,18 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
             if (!toList.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
                 addTextToPrinter(SPrinter.getPrinter(), "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+                if (toList.getCustomer().getAddress() != null) {
+                    addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                }
+
+                if (toList.getCustomer().getTin() != null) {
+                    addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                }
+
+
+//                addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+//                addTextToPrinter(SPrinter.getPrinter(), toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             }
         }
 

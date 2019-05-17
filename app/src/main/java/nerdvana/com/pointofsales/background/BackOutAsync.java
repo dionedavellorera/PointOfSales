@@ -7,6 +7,7 @@ import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
@@ -34,6 +35,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+        PrinterUtils.addHeader(printModel);
 
         RoomTableModel selectedRoom = GsonHelper.getGson().fromJson(printModel.getData(), RoomTableModel.class);
 

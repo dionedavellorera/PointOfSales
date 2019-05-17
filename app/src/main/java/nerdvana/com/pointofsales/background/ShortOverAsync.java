@@ -6,7 +6,11 @@ import android.os.AsyncTask;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
@@ -35,7 +39,18 @@ public class ShortOverAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        FetchXReadingViaIdResponse.Result shorover = GsonHelper.getGson().fromJson(printModel.getData(), FetchXReadingViaIdResponse.Result.class);
+        PrinterUtils.addHeader(printModel);
+
+//        FetchXReadingViaIdResponse.Result shorover = GsonHelper.getGson().fromJson(printModel.getData(), FetchXReadingViaIdResponse.Result.class);
+        String shortOver = "0.00";
+        try {
+            JSONObject jsonObject = new JSONObject(printModel.getData());
+
+            shortOver = jsonObject.getString("short_over");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
         addTextToPrinter(SPrinter.getPrinter(), "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
@@ -45,7 +60,7 @@ public class ShortOverAsync extends AsyncTask<Void, Void, Void> {
 
         addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "SHORT / OVER",
-                String.valueOf(shorover.getShortOver())
+                shortOver
                 ,
                 40,
                 2),

@@ -878,16 +878,16 @@ public class FetchOrderPendingResponse {
         private Integer paymentTypeId;
         @SerializedName("rc")
         @Expose
-        private Integer rc;
+        private Double rc;
         @SerializedName("fnb")
         @Expose
-        private Integer fnb;
+        private Double fnb;
         @SerializedName("oth")
         @Expose
-        private Integer oth;
+        private Double oth;
         @SerializedName("ot_hours")
         @Expose
-        private Integer otHours;
+        private Double otHours;
         @SerializedName("ot_amount")
         @Expose
         private Double otAmount;
@@ -929,7 +929,7 @@ public class FetchOrderPendingResponse {
         private Double vat;
         @SerializedName("vat_exempt")
         @Expose
-        private Integer vatExempt;
+        private Double vatExempt;
         @SerializedName("xSkip")
         @Expose
         private Integer xSkip;
@@ -1029,35 +1029,35 @@ public class FetchOrderPendingResponse {
             this.paymentTypeId = paymentTypeId;
         }
 
-        public Integer getRc() {
+        public Double getRc() {
             return rc;
         }
 
-        public void setRc(Integer rc) {
+        public void setRc(Double rc) {
             this.rc = rc;
         }
 
-        public Integer getFnb() {
+        public Double getFnb() {
             return fnb;
         }
 
-        public void setFnb(Integer fnb) {
+        public void setFnb(Double fnb) {
             this.fnb = fnb;
         }
 
-        public Integer getOth() {
+        public Double getOth() {
             return oth;
         }
 
-        public void setOth(Integer oth) {
+        public void setOth(Double oth) {
             this.oth = oth;
         }
 
-        public Integer getOtHours() {
+        public Double getOtHours() {
             return otHours;
         }
 
-        public void setOtHours(Integer otHours) {
+        public void setOtHours(Double otHours) {
             this.otHours = otHours;
         }
 
@@ -1165,11 +1165,11 @@ public class FetchOrderPendingResponse {
             this.vat = vat;
         }
 
-        public Integer getVatExempt() {
+        public Double getVatExempt() {
             return vatExempt;
         }
 
-        public void setVatExempt(Integer vatExempt) {
+        public void setVatExempt(Double vatExempt) {
             this.vatExempt = vatExempt;
         }
 

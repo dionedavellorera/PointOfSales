@@ -133,6 +133,8 @@ import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
 import nerdvana.com.pointofsales.dialogs.RemoveOtDialog;
+import nerdvana.com.pointofsales.dialogs.ReprintXReadingDialog;
+import nerdvana.com.pointofsales.dialogs.ReprintZReadingDialog;
 import nerdvana.com.pointofsales.dialogs.SetupPrinterDialog;
 import nerdvana.com.pointofsales.dialogs.SwitchRoomDialog;
 import nerdvana.com.pointofsales.dialogs.TransactionsDialog;
@@ -342,8 +344,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
-//        fetchXReadViaIdRequest("23");
-//        fetchZReadViaIdRequest("52");
+        fetchXReadViaIdRequest("6");
+//        fetchZReadViaIdRequest("1");
 
         fetchCarRequest();
         fetchVehicleRequest();
@@ -818,6 +820,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         switch (clickedItem.getId()) {
+            case 127://REPRINT Z READ
+                ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
+                reprintZReadingDialog.show();
+                break;
             case 126: //FOC
                 if (canTransact()) doFocFunction();
                 break;
@@ -825,6 +831,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (canTransact()) doBackOutGuestFunction();
                 break;
             case 123: //REPRINT X/Z READING
+                ReprintXReadingDialog reprintXReadingDialog = new ReprintXReadingDialog(getActivity());
+                reprintXReadingDialog.show();
                 break;
             case 9999: //rooms
                 if (hasUnpostedItems()) {
@@ -3782,13 +3790,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void fetchXReadViaIdRequest(String xReadingId) {
-        Log.d("TETETE", "WEE");
         BusProvider.getInstance().post(new FetchXReadingViaIdRequest(xReadingId));
     }
 
     @Subscribe
     public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
-
+        Log.d("WATAFAK", "TEST");
         BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
         BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }
@@ -3804,7 +3811,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
 
 
-                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+//                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
 
 
             }

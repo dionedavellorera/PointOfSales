@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.List;
 
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -36,6 +37,9 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+        PrinterUtils.addHeader(printModel);
+
 
         TypeToken<List<VoidProductModel>> voidToken = new TypeToken<List<VoidProductModel>>() {};
         List<VoidProductModel> voidList = GsonHelper.getGson().fromJson(printModel.getData(), voidToken.getType());

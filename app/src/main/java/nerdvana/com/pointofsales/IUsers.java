@@ -42,7 +42,9 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
+import nerdvana.com.pointofsales.api_responses.FetchXReadListResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
+import nerdvana.com.pointofsales.api_responses.FetchZReadListResponse;
 import nerdvana.com.pointofsales.api_responses.FocTransactionResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
@@ -323,6 +325,14 @@ public interface IUsers {
     @POST("getFoc")
     @FormUrlEncoded
     Call<FocTransactionResponse> focTransactionRequest(@FieldMap Map<String, String> params);
+
+    @POST("fetchXReading")
+    @FormUrlEncoded
+    Call<FetchXReadListResponse> fetchXReadListRequest(@FieldMap Map<String, String> params);
+
+    @POST("fetchZReading")
+    @FormUrlEncoded
+    Call<FetchZReadListResponse> fetchZReadListRequest(@FieldMap Map<String, String> params);
     //region pending
 
     //endregion

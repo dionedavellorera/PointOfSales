@@ -9,6 +9,7 @@ import com.epson.epos2.printer.Printer;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
@@ -39,6 +40,9 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+        PrinterUtils.addHeader(printModel);
+
 
         ViewReceiptResponse.Result toListPV = GsonHelper.getGson().fromJson(printModel.getData(), ViewReceiptResponse.Result.class)
                 ;

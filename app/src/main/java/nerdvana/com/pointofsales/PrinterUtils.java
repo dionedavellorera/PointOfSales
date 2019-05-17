@@ -8,6 +8,8 @@ import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import nerdvana.com.pointofsales.model.PrintModel;
+
 import static nerdvana.com.pointofsales.MainActivity.formatSeconds;
 
 public class PrinterUtils {
@@ -165,6 +167,38 @@ public class PrinterUtils {
     }
 
 
+    public static void addHeader(PrintModel printModel) {
+        addTextToPrinter(SPrinter.getPrinter(), "*", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "NERDVANA CORP.", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "1 CANLEY ROAD BRGY BAGONG", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "ILOG PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter()," 671-9782", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
+        addTextToPrinter(SPrinter.getPrinter(), "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(SPrinter.getPrinter(), "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+        addTextToPrinter(SPrinter.getPrinter(), "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
+
+
+        if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
+                printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
+                printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID")) {
+            if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
+                addTextToPrinter(SPrinter.getPrinter(),"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+            } else {
+                addTextToPrinter(SPrinter.getPrinter(),"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+            }
+        }
+
+        if (printModel.getType().equalsIgnoreCase("CHANGE_WAKE_UP_CALL") || printModel.getType().equalsIgnoreCase("SOA-ROOM") ||
+                printModel.getType().equalsIgnoreCase("SWITCH_ROOM")) {
+            addTextToPrinter(SPrinter.getPrinter(),"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+        }
+
+
+        if (printModel.getType().equalsIgnoreCase("SOA-TO")) {
+            addTextToPrinter(SPrinter.getPrinter(),"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+        }
+    }
 
 
 
