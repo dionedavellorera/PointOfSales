@@ -334,7 +334,7 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchZReadListResponse> fetchZReadListRequest(@FieldMap Map<String, String> params);
     //region pending
-    @POST("backup")
+    @POST("mysqlDump")
     @FormUrlEncoded
     Call<ResponseBody> backupDb(@FieldMap Map<String, String> params);
     //endregion
