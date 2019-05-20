@@ -23,6 +23,8 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResp
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
+import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
+
 public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
     private PrintModel printModel;
@@ -421,34 +423,34 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
     }
 
-    private String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
-        String finalString = "";
-        float column1 = 20;
-        float column2 = 20;
-        if (partOne.length() >= 20) {
-            finalString += partOne.substring(0, 20);
-        } else {
-            finalString += partOne;
-
-            for (int i = 0; i < column1 - partOne.length(); i++) {
-                finalString += " ";
-            }
-        }
-
-        if (partTwo.length() >= 20) {
-            finalString += partTwo.substring(0, 20);
-        } else {
-
-            for (int i = 0; i < column2 - partTwo.length(); i++) {
-                finalString += " ";
-            }
-
-            finalString += partTwo;
-        }
-
-
-        return finalString;
-    }
+//    private String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
+//        String finalString = "";
+//        float column1 = 20;
+//        float column2 = 20;
+//        if (partOne.length() >= 20) {
+//            finalString += partOne.substring(0, 20);
+//        } else {
+//            finalString += partOne;
+//
+//            for (int i = 0; i < column1 - partOne.length(); i++) {
+//                finalString += " ";
+//            }
+//        }
+//
+//        if (partTwo.length() >= 20) {
+//            finalString += partTwo.substring(0, 20);
+//        } else {
+//
+//            for (int i = 0; i < column2 - partTwo.length(); i++) {
+//                finalString += " ";
+//            }
+//
+//            finalString += partTwo;
+//        }
+//
+//
+//        return finalString;
+//    }
 
 
     private void addPrinterSpace(int count) {

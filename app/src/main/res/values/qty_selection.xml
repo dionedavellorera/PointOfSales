@@ -29,4 +29,9 @@
         <item>https://</item>
     </string-array>
 
+    <string-array name="connection_type">
+        <item>NETWORK</item>
+        <item>USB</item>
+        <item>BLUETOOTH</item>
+    </string-array>
 </resources>

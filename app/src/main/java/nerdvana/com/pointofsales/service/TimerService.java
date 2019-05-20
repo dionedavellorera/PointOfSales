@@ -87,7 +87,7 @@ public class TimerService extends Service {
                                     if (response.body().getStatus() == 1) {
                                         if (response.body().getResult().size() > 0) {
                                             DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                                            DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getEarlyEnd());
+                                            DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
                                             shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
 
 

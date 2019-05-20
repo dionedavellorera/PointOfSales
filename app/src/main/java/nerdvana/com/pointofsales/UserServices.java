@@ -6,6 +6,7 @@ import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
+import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
@@ -465,6 +466,13 @@ public class UserServices extends BaseService {
     public void focRequest(FocTransactionRequest focRequest) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FocTransactionResponse> request = iUsers.focTransactionRequest(focRequest.getMapValue());
+        asyncRequest(request);
+    }
+
+    @Subscribe
+    public void backupDatabase(BackupDatabaseRequest backupDatabaseRequest) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
         asyncRequest(request);
     }
 

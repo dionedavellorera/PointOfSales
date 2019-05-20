@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,16 @@ public abstract class SetupPrinterDialog extends BaseDialog {
 
     protected SetupPrinterDialog(@NonNull Context context, boolean cancelable, @NonNull DialogInterface.OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
+    }
+
+    @Override
+    public void setOnDismissListener(@Nullable DialogInterface.OnDismissListener listener) {
+        super.setOnDismissListener(listener);
+        try {
+            Discovery.stop();
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -148,6 +159,9 @@ public abstract class SetupPrinterDialog extends BaseDialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedPrinter = String.valueOf(seriesAdapter.getItem(position).getmModelConstant());
+                Log.d("TETETE", selectedPrinter);
+                Log.d("TETETE", seriesAdapter.getItem(position).getmModelName());
+
             }
 
             @Override
@@ -208,8 +222,11 @@ public abstract class SetupPrinterDialog extends BaseDialog {
             ((MainActivity)context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    Log.d("GGGGGGG", deviceInfo.getTarget());
+
                     spinnerPort.setText(deviceInfo.getTarget());
-                    SharedPreferenceManager.saveString(getContext(), deviceInfo.getTarget(), ApplicationConstants.SELECTED_PORT);
+//                    SharedPreferenceManager.saveString(getContext(), deviceInfo.getTarget(), ApplicationConstants.SELECTED_PORT);
                 }
             });
 

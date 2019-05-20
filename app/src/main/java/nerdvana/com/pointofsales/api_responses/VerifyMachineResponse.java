@@ -63,7 +63,9 @@ public class VerifyMachineResponse {
     }
 
     public class Result {
-
+        @SerializedName("printer_path")
+        @Expose
+        private String printer_path;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -88,6 +90,15 @@ public class VerifyMachineResponse {
 //        @SerializedName("device")
 //        @Expose
 //        private Device device;
+
+
+        public String getPrinter_path() {
+            return printer_path;
+        }
+
+        public void setPrinter_path(String printer_path) {
+            this.printer_path = printer_path;
+        }
 
         public Integer getId() {
             return id;

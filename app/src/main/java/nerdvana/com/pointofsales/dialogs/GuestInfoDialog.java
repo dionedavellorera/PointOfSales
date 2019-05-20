@@ -288,8 +288,8 @@ public abstract class GuestInfoDialog extends BaseDialog {
         });
     }
 
-    private void updateCheckInTime(String roomId, String checkInTime) {
-        UpdateCheckInTimeRequest updateCheckInTimeRequest = new UpdateCheckInTimeRequest(roomId, checkInTime);
+    private void updateCheckInTime(String roomId, String checkInTime, String empId) {
+        UpdateCheckInTimeRequest updateCheckInTimeRequest = new UpdateCheckInTimeRequest(roomId, checkInTime, empId);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<UpdateCheckInTimeResponse> request = iUsers.updateCheckInTime(updateCheckInTimeRequest.getMapValue());
         request.enqueue(new Callback<UpdateCheckInTimeResponse>() {
@@ -327,8 +327,19 @@ public abstract class GuestInfoDialog extends BaseDialog {
                                 finalCheckInDateTime = finalCheckInDate + " " + finalCheckInTime;
 
                                 Log.d("TEKTEKTKE", finalCheckInDateTime);
+                                PasswordDialog passwordDialog = new PasswordDialog(act) {
+                                    @Override
+                                    public void passwordSuccess(String employeeId, String employeeName) {
+                                        updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, employeeId);
+                                    }
 
-                                updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime);
+                                    @Override
+                                    public void passwordFailed() {
+
+                                    }
+                                };
+                                passwordDialog.show();
+
                             }
                         }, jodatime.hourOfDay().get(), jodatime.minuteOfHour().get(), true);
                         timePickerDialog.show();

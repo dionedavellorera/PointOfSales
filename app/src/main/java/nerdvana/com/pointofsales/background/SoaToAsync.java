@@ -100,35 +100,35 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //
         addTextToPrinter(SPrinter.getPrinter(), "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "   VAT EXEMPT",
                 returnWithTwoDecimal(String.valueOf(toList.getVatExempt())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "   DISCOUNT",
                 returnWithTwoDecimal(String.valueOf(toList.getDiscount())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "   ADVANCED DEPOSIT",
                 returnWithTwoDecimal(String.valueOf(toList.getAdvance())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "SUB TOTAL",
                 returnWithTwoDecimal(String.valueOf(toList.getTotal())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "AMOUNT DUE",
                 returnWithTwoDecimal(String.valueOf((Double.valueOf(toList.getTotal())) - (Double.valueOf(toList.getDiscount()) + Double.valueOf(toList.getAdvance()) + Double.valueOf(toList.getVatExempt())))),
                 40,
@@ -137,7 +137,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //
         addPrinterSpace(1);
 //
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
                 "SOA NO:",
                 toList.getSoaCount(),
                 40,
@@ -198,9 +198,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-
-
-
 
     }
 

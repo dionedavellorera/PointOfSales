@@ -61,6 +61,7 @@ public class ApplicationConstants {
 
 
     public static final String SHIFT_BLOCKER = "shift_blocker";
+    public static final String PRINTER_PATH = "printer_path";
 
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 

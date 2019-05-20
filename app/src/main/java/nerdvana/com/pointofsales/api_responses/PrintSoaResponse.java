@@ -1988,8 +1988,49 @@ public class PrintSoaResponse {
 
     }
 
+    public class Area {
+        @SerializedName("room_area")
+        @Expose
+        private String roomArea;
+        @SerializedName("printer_path")
+        @Expose
+        private String printerPath;
+
+        public String getRoomArea() {
+            return roomArea;
+        }
+
+        public void setRoomArea(String roomArea) {
+            this.roomArea = roomArea;
+        }
+
+        public String getPrinterPath() {
+            return printerPath;
+        }
+
+        public void setPrinterPath(String printerPath) {
+            this.printerPath = printerPath;
+        }
+    }
+
+    public class Room {
+        @SerializedName("area")
+        @Expose
+        private Area area;
+
+        public Area getArea() {
+            return area;
+        }
+
+        public void setArea(Area area) {
+            this.area = area;
+        }
+    }
 
     public class Booked {
+        @SerializedName("room")
+        @Expose
+        private Room room;
         @SerializedName("customer")
         @Expose
         private Customer customer;
@@ -2074,6 +2115,14 @@ public class PrintSoaResponse {
         @SerializedName("transaction")
         @Expose
         private Transaction transaction;
+
+        public Room getRoom() {
+            return room;
+        }
+
+        public void setRoom(Room room) {
+            this.room = room;
+        }
 
         public Customer getCustomer() {
             return customer;

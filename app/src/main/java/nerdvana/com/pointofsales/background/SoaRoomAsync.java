@@ -17,6 +17,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
@@ -53,11 +54,22 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
 
+        TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
+        List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
+
+
+        try {
+            SPrinter.getPrinter().connect("TCP:" + bookedList.get(0).getRoom().getArea().getPrinterPath(), Printer.PARAM_DEFAULT);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+
+
         PrinterUtils.addHeader(printModel);
 
 
-        TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
-        List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
+
+
 
         /*Log.d("PEPEDATA", twoColumnsRightGreaterTr(
                 "CASHIER",
@@ -311,6 +323,14 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
+
+        try {
+            SPrinter.getPrinter().connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+
+
 //        try {
 //
 //            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
@@ -325,9 +345,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 //        } catch (Epos2Exception e) {
 //            e.printStackTrace();
 //        }
-
-
-
     }
 
     private void addTextToPrinter(Printer printer, String text,

@@ -1,5 +1,7 @@
 package nerdvana.com.pointofsales;
 
+import android.util.Log;
+
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 
@@ -22,10 +24,11 @@ public class PrinterUtils {
         if (printer != null) {
             StringBuilder textData = new StringBuilder();
             try {
+//                printer.addFeedLine(feedLine);
                 printer.addTextSize(textSizeWidth, textSizeHeight);
                 printer.addTextAlign(alignment);
                 printer.addTextStyle(Printer.PARAM_DEFAULT, isUnderlined, isBold, Printer.PARAM_DEFAULT);
-                printer.addTextSmooth(Printer.TRUE);
+//                printer.addTextSmooth(Printer.TRUE);
                 printer.addText(textData.toString());
                 textData.append(text);
                 printer.addText(textData.toString());
@@ -56,32 +59,24 @@ public class PrinterUtils {
 
     public static String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
         String finalString = "";
-        float column1 = 20;
-        float column2 = 20;
-        if (partOne.length() >= 20) {
-            finalString += partOne.substring(0, 20);
-        } else {
-            finalString += partOne;
-
-            for (int i = 0; i < column1 - partOne.length(); i++) {
-                finalString += " ";
-            }
+        int filler = 0;
+        if (partOne.length() < 20) {
+            filler += (20 - partOne.length());
         }
-
-        if (partTwo.length() >= 20) {
-            finalString += partTwo.substring(0, 20);
-        } else {
-
-            for (int i = 0; i < column2 - partTwo.length(); i++) {
-                finalString += " ";
-            }
-
-            finalString += partTwo;
+        if (partTwo.length() < 20) {
+            filler += (20 - partTwo.length());
         }
-
+        finalString = (partOne.length() > 20 ? partOne.substring(0, 20) : partOne) + repeat(" ", filler) + (partTwo.length() > 20 ? partTwo.substring(0, 20) : partTwo);
+        Log.d("MYSTRING", finalString);
 
         return finalString;
     }
+
+
+    private static String repeat(String str, int i){
+        return new String(new char[i]).replace("\0", str);
+    }
+
 
 
     public static void addPrinterSpace(int count) {

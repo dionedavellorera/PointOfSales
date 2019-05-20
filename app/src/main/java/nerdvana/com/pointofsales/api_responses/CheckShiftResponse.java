@@ -69,7 +69,17 @@ public class CheckShiftResponse {
             return lastTransDate;
         }
 
+        public void setLastTransDate(String lastTransDate) {
+            this.lastTransDate = lastTransDate;
+        }
 
+        public void setsTime(String sTime) {
+            this.sTime = sTime;
+        }
+
+        public void seteTime(String eTime) {
+            this.eTime = eTime;
+        }
 
         public String getEarlyEnd() {
             return earlyEnd;

@@ -344,7 +344,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
-        fetchXReadViaIdRequest("6");
+//        fetchXReadViaIdRequest("6");
 //        fetchZReadViaIdRequest("1");
 
         fetchCarRequest();
@@ -820,9 +820,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         switch (clickedItem.getId()) {
+            case 128: //backup
+
+                break;
             case 127://REPRINT Z READ
-                ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
-                reprintZReadingDialog.show();
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+                        ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
+                        reprintZReadingDialog.show();
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+
+                    }
+                };
+                passwordDialog.show();
+
                 break;
             case 126: //FOC
                 if (canTransact()) doFocFunction();
@@ -831,8 +846,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (canTransact()) doBackOutGuestFunction();
                 break;
             case 123: //REPRINT X/Z READING
-                ReprintXReadingDialog reprintXReadingDialog = new ReprintXReadingDialog(getActivity());
-                reprintXReadingDialog.show();
+                PasswordDialog passwordDialogs = new PasswordDialog(getActivity()) {
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+                        ReprintXReadingDialog reprintXReadingDialog = new ReprintXReadingDialog(getActivity());
+                        reprintXReadingDialog.show();
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+
+                    }
+                };
+                passwordDialogs.show();
+
                 break;
             case 9999: //rooms
                 if (hasUnpostedItems()) {
@@ -3301,6 +3328,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE)),
                     getContext());
+
+
+            Log.d("PRINTER_VAR_1", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER));
+            Log.d("PRINTER_VAR_1", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE));
+
+//            SPrinter printer = new SPrinter(
+//                    Printer.TM_U220,
+//                    Printer.MODEL_SOUTHASIA,
+//                    getContext());
             try {
                 SPrinter.getPrinter().connect(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
             } catch (Epos2Exception e) {

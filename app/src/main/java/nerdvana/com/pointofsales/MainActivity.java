@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.eposprint.Print;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -63,6 +64,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
+import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
@@ -148,6 +150,7 @@ import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
 import nerdvana.com.pointofsales.requests.TestRequest;
 import nerdvana.com.pointofsales.service.TimerService;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -941,16 +944,17 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void loadPrinter() {
-        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT))) {
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PRINTER))) {
             new SPrinter(
                     Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_LANGUAGE)),
                     getApplicationContext());
 
             try {
+
+
                 if (SPrinter.getPrinter() != null) {
                     SPrinter.getPrinter().connect(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
-//                    SPrinter.getPrinter().beginTransaction();
                 } else {
                     Toast.makeText(MainActivity.this, "No Printer", Toast.LENGTH_SHORT).show();
                 }
@@ -981,7 +985,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
             }
         }
-
         Utils.showDialogMessage(MainActivity.this, progressBarModel.getMessage(), "ERROR");
     }
 
@@ -1117,6 +1120,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 128: //BACKUP
+
+                backupDatabase();
+
+                break;
             case 125: //ROOM LIST VIEW POPUP
                 RoomListViewDialog roomListViewDialog = new RoomListViewDialog(MainActivity.this) {
                     @Override
@@ -1342,5 +1350,79 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
         return true;
     }
+
+    private void backupDatabase() {
+        if (dialogProgressBar != null) {
+            if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
+        }
+
+        BackupDatabaseRequest backupDatabaseRequest = new BackupDatabaseRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
+        request.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                if (dialogProgressBar != null) {
+                    if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private String makeErrorMessage(PrinterStatusInfo status) {
+        String msg = "";
+
+        if (status.getOnline() == Printer.FALSE) {
+            msg += getString(R.string.handlingmsg_err_offline);
+        }
+        if (status.getConnection() == Printer.FALSE) {
+            msg += getString(R.string.handlingmsg_err_no_response);
+        }
+        if (status.getCoverOpen() == Printer.TRUE) {
+            msg += getString(R.string.handlingmsg_err_cover_open);
+        }
+        if (status.getPaper() == Printer.PAPER_EMPTY) {
+            msg += getString(R.string.handlingmsg_err_receipt_end);
+        }
+        if (status.getPaperFeed() == Printer.TRUE || status.getPanelSwitch() == Printer.SWITCH_ON) {
+            msg += getString(R.string.handlingmsg_err_paper_feed);
+        }
+        if (status.getErrorStatus() == Printer.MECHANICAL_ERR || status.getErrorStatus() == Printer.AUTOCUTTER_ERR) {
+            msg += getString(R.string.handlingmsg_err_autocutter);
+            msg += getString(R.string.handlingmsg_err_need_recover);
+        }
+        if (status.getErrorStatus() == Printer.UNRECOVER_ERR) {
+            msg += getString(R.string.handlingmsg_err_unrecover);
+        }
+        if (status.getErrorStatus() == Printer.AUTORECOVER_ERR) {
+            if (status.getAutoRecoverError() == Printer.HEAD_OVERHEAT) {
+                msg += getString(R.string.handlingmsg_err_overheat);
+                msg += getString(R.string.handlingmsg_err_head);
+            }
+            if (status.getAutoRecoverError() == Printer.MOTOR_OVERHEAT) {
+                msg += getString(R.string.handlingmsg_err_overheat);
+                msg += getString(R.string.handlingmsg_err_motor);
+            }
+            if (status.getAutoRecoverError() == Printer.BATTERY_OVERHEAT) {
+                msg += getString(R.string.handlingmsg_err_overheat);
+                msg += getString(R.string.handlingmsg_err_battery);
+            }
+            if (status.getAutoRecoverError() == Printer.WRONG_PAPER) {
+                msg += getString(R.string.handlingmsg_err_wrong_paper);
+            }
+        }
+        if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_0) {
+            msg += getString(R.string.handlingmsg_err_battery_real_end);
+        }
+
+        return msg;
+    }
+
 }
 

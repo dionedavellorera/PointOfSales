@@ -305,7 +305,7 @@ public interface IUsers {
     @POST("backOutGuest")
     @FormUrlEncoded
     Call<BackOutGuestResponse> backOutGuest(@FieldMap Map<String, String> params);
-    @POST("updateCheckInTime")
+    @POST("updateCheckIn")
     @FormUrlEncoded
     Call<UpdateCheckInTimeResponse> updateCheckInTime(@FieldMap Map<String, String> params);
 
@@ -334,6 +334,8 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchZReadListResponse> fetchZReadListRequest(@FieldMap Map<String, String> params);
     //region pending
-
+    @POST("backup")
+    @FormUrlEncoded
+    Call<ResponseBody> backupDb(@FieldMap Map<String, String> params);
     //endregion
 }

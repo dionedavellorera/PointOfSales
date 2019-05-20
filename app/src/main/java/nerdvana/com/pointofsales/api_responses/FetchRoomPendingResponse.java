@@ -143,8 +143,35 @@ public class FetchRoomPendingResponse {
 
     }
 
-    public class Room {
+    public class Area {
+        @SerializedName("room_area")
+        @Expose
+        private String roomArea;
+        @SerializedName("printer_path")
+        @Expose
+        private String printerPath;
 
+        public String getRoomArea() {
+            return roomArea;
+        }
+
+        public void setRoomArea(String roomArea) {
+            this.roomArea = roomArea;
+        }
+
+        public String getPrinterPath() {
+            return printerPath;
+        }
+
+        public void setPrinterPath(String printerPath) {
+            this.printerPath = printerPath;
+        }
+    }
+
+    public class Room {
+        @SerializedName("area")
+        @Expose
+        private Area area;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -190,6 +217,23 @@ public class FetchRoomPendingResponse {
 //        @SerializedName("transaction")
 //        @Expose
 //        private Transaction transaction;
+
+
+        public Area getArea() {
+            return area;
+        }
+
+        public void setArea(Area area) {
+            this.area = area;
+        }
+
+        public Integer getcRoomStat() {
+            return cRoomStat;
+        }
+
+        public void setcRoomStat(Integer cRoomStat) {
+            this.cRoomStat = cRoomStat;
+        }
 
         public Integer getId() {
             return id;
@@ -941,6 +985,8 @@ public class FetchRoomPendingResponse {
         @SerializedName("branch_nationality")
         @Expose
         private BranchNationality branchNationality;
+
+
 
 //        public String getStatus() {
 //            return status;
