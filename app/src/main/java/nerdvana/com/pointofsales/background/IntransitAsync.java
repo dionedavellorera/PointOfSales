@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
@@ -14,9 +16,12 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -32,12 +37,19 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
     private Context context;
     private UserModel userModel;
     private String currentDateTime;
+
+    private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
+    private Printer printer;
+
+
     public IntransitAsync(PrintModel printModel, Context context,
-                        UserModel userModel, String currentDateTime) {
+                          UserModel userModel, String currentDateTime,
+                          MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
+        this.asyncFinishCallBack = asyncFinishCallBack;
     }
 
 
@@ -45,10 +57,37 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
 
-        PrinterUtils.addHeader(printModel);
+        try {
+            printer = new Printer(
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                    context);
+            printer.setReceiveEventListener(new ReceiveListener() {
+                @Override
+                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                printer.disconnect();
+                                asyncFinishCallBack.doneProcessing();
+                            } catch (Epos2Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            });
+            PrinterUtils.connect(context, printer);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
 
 
-        addTextToPrinter(SPrinter.getPrinter(), "IN TRANSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        PrinterUtils.addHeader(printModel, printer);
+
+
+        addTextToPrinter(printer, "IN TRANSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
         TypeToken<List<FetchRoomResponse.Result>> intransitToken = new TypeToken<List<FetchRoomResponse.Result>>() {};
         List<FetchRoomResponse.Result> intransitDetails = GsonHelper.getGson().fromJson(printModel.getData(), intransitToken.getType());
 
@@ -58,7 +97,7 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
         t.add("III");
         t.add("IV");
         t.add("V");
-        addTextToPrinter(SPrinter.getPrinter(), intransitReceipt(t), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
+        addTextToPrinter(printer, intransitReceipt(t), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
 
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter dateIn = DateTimeFormat.forPattern("MM/dd");
@@ -107,36 +146,36 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
                     totalFnb += pf.getTotal() * pf.getQty();
                 }
                 temp.add(returnWithTwoDecimal(String.valueOf(totalFnb)));
-                addTextToPrinter(SPrinter.getPrinter(), intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
+                addTextToPrinter(printer, intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
             }
 
         }
 
 
         addPrinterSpace(1);
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr("OCCUPIED ROOMS", String.valueOf(occupiedCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr("SOA ROOMS", String.valueOf(soaCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr("DIRTY ROOMS", String.valueOf(dirtyCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr("DIRTY WITH LINEN ROOMS", String.valueOf(withLinenCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr("CLEAN ROOMS", String.valueOf(cleanCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("OCCUPIED ROOMS", String.valueOf(occupiedCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("SOA ROOMS", String.valueOf(soaCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("DIRTY ROOMS", String.valueOf(dirtyCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("DIRTY WITH LINEN ROOMS", String.valueOf(withLinenCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("CLEAN ROOMS", String.valueOf(cleanCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
         addPrinterSpace(1);
-        addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         try {
 
-            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            printer.addCut(Printer.CUT_FEED);
 
-            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-                SPrinter.getPrinter().clearCommandBuffer();
+            if (printer.getStatus().getConnection() == 1) {
+                printer.sendData(Printer.PARAM_DEFAULT);
+                printer.clearCommandBuffer();
             }
 
 
-//            SPrinter.getPrinter().endTransaction();
+//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

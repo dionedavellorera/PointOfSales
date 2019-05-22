@@ -2,10 +2,14 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
@@ -37,12 +41,22 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     private Context context;
     private UserModel userModel;
     private String currentDateTime;
+
+    private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
+    private Printer printer;
+
+
     public SoaRoomAsync(PrintModel printModel, Context context,
-                        UserModel userModel, String currentDateTime) {
+                        UserModel userModel, String currentDateTime,
+                        MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
+
+        this.asyncFinishCallBack = asyncFinishCallBack;
+
+
     }
 
     @Override
@@ -59,23 +73,66 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
         try {
-            SPrinter.getPrinter().connect("TCP:" + bookedList.get(0).getRoom().getArea().getPrinterPath(), Printer.PARAM_DEFAULT);
+            printer = new Printer(
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                    context);
+            printer.setReceiveEventListener(new ReceiveListener() {
+                @Override
+                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                printer.disconnect();
+                                asyncFinishCallBack.doneProcessing();
+                            } catch (Epos2Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            });
+
+            if (bookedList.get(0).getRoom().getArea().getPrinterPath().isEmpty()) {
+                if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY))) {
+                    try {
+                        if (printer != null) {
+
+                            printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
+                        }
+                    } catch (Epos2Exception e) {
+
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT).isEmpty()) {
+                        Toast.makeText(context, "No Printer", Toast.LENGTH_SHORT).show();
+                    } else {
+                        try {
+                            if (printer != null) {
+                                printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+                            }
+                        } catch (Epos2Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } else {
+                printer.connect("TCP:" + bookedList.get(0).getRoom().getArea().getPrinterPath(), Printer.PARAM_DEFAULT);
+            }
+
+
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
 
 
-        PrinterUtils.addHeader(printModel);
+
+        PrinterUtils.addHeader(printModel, printer);
 
 
-
-
-
-        /*Log.d("PEPEDATA", twoColumnsRightGreaterTr(
-                "CASHIER",
-                userModel.getUsername(), 40, 2));*/
-
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "CASHIER",
 //                        getUserInfo(String.valueOf(bookedList.get(0).getUserId())),
                 userModel.getUsername(),
@@ -83,28 +140,28 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 2)
                 , Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "MACHINE NO",
                 SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "CHECKED-IN",
                 bookedList.get(0).getCheckIn(),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "EXP. CHECK-OUT",
                 bookedList.get(0).getExpectedCheckOut(),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "DURATION",
                 getDuration(bookedList.get(0).getCheckIn()),
                 40,
@@ -114,11 +171,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 //                Double soaTotal = 0.00;
         addPrinterSpace(1);
-        addTextToPrinter(SPrinter.getPrinter(), "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
         addPrinterSpace(1);
-        addTextToPrinter(SPrinter.getPrinter(), "--------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "QTY   Description             Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "--------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "--------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "QTY   Description             Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "--------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         for (PrintSoaResponse.Post soaTrans : bookedList.get(0).getTransaction().getPost()) {
 
             String qty = "";
@@ -137,7 +194,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
             }
 
             if (soaTrans.getVoid() == 0) {
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         qty+ " "+item,
                         String.valueOf(soaTrans.getPrice() * soaTrans.getQty())
                         ,
@@ -148,7 +205,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         }
 
         if (bookedList.get(0).getTransaction().getOtHours() > 0) {
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     String.valueOf(bookedList.get(0).getTransaction().getOtHours()) + " " + "OT HOURS",
                     returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getOtAmount()))
                     ,
@@ -160,37 +217,37 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-        addTextToPrinter(SPrinter.getPrinter(), "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "   VAT EXEMPT",
                 returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getVatExempt())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "   DISCOUNT",
                 returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getDiscount())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "   ADVANCED DEPOSIT",
                 returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getAdvance())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "SUB TOTAL",
                 returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getTotal())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "AMOUNT DUE",
                 returnWithTwoDecimal(String.valueOf((
                         bookedList.get(0).getTransaction().getTotal() + bookedList.get(0).getTransaction().getOtAmount() + bookedList.get(0).getTransaction().getXPersonAmount())
@@ -203,16 +260,16 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(2);
 
-            addTextToPrinter(SPrinter.getPrinter(), "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             for (PrintSoaResponse.Discounts d : bookedList.get(0).getTransaction().getDiscounts()) {
-//                        addTextToPrinter(SPrinter.getPrinter(), d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                        addTextToPrinter(printer, d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 if (d.getDiscountTypeId().equalsIgnoreCase("0")) { //MANUAL
-                    addTextToPrinter(SPrinter.getPrinter(), "    " + d.getDiscountReason().getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(printer, "    " + d.getDiscountReason().getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 } else {
                     if (d.getInfo() != null) {
                         if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
-                            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     d.getDiscountType(),
                                     "NA",
                                     40,
@@ -221,7 +278,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                         } else {
 
                             if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
-                                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         d.getDiscountType(),
                                         "NA",
                                         40,
@@ -230,16 +287,16 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                             } else {
                                 if (d.getInfo().getCardNo() == null) {
 
-                                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             d.getDiscountType(),
                                             d.getInfo().getName().toUpperCase(),
                                             40,
                                             2)
                                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                                    addTextToPrinter(SPrinter.getPrinter(), "    " +d.getInfo().getName().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                                    addTextToPrinter(printer, "    " +d.getInfo().getName().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 } else {
 
-                                    addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             d.getDiscountType(),
                                             d.getInfo().getCardNo().toUpperCase(),
                                             40,
@@ -247,7 +304,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-//                                    addTextToPrinter(SPrinter.getPrinter(), "    " +d.getInfo().getCardNo().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                                    addTextToPrinter(printer, "    " +d.getInfo().getCardNo().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 }
                             }
 
@@ -266,20 +323,20 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
         if (bookedList.get(0).getCustomer() != null) {
             if (!bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
-                addTextToPrinter(SPrinter.getPrinter(), "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(printer, bookedList.get(0).getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
                 if (bookedList.get(0).getCustomer().getAddress() != null) {
-                    addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    addTextToPrinter(printer, bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 }
 
                 if (bookedList.get(0).getCustomer().getTin() != null) {
-                    addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    addTextToPrinter(printer, bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
                 }
 
 
-//                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-//                addTextToPrinter(SPrinter.getPrinter(), bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+//                addTextToPrinter(printer, bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+//                addTextToPrinter(printer, bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             }
         }
 
@@ -287,7 +344,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
         addPrinterSpace(1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "SOA NO:",
                 bookedList.get(0).getTransaction().getSoaCount(),
                 40,
@@ -296,23 +353,23 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
         addPrinterSpace(1);
 
-        addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         try {
 
-            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            printer.addCut(Printer.CUT_FEED);
 
-            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-                SPrinter.getPrinter().clearCommandBuffer();
+            if (printer.getStatus().getConnection() == 1) {
+                printer.sendData(Printer.PARAM_DEFAULT);
+                printer.clearCommandBuffer();
             }
 
 
-//            SPrinter.getPrinter().endTransaction();
+//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
@@ -324,27 +381,33 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
 
 
-        try {
-            SPrinter.getPrinter().connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+        if (!SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY).isEmpty()) {
+            new SPrinter(
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                    context);
+            try {
+                printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT).isEmpty()) {
+                Toast.makeText(context, "No Printer", Toast.LENGTH_SHORT).show();
+            } else {
+                new SPrinter(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
+
+                try {
+                    printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-
-//        try {
-//
-//            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
-//
-//            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-//                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-//                SPrinter.getPrinter().clearCommandBuffer();
-//            }
-//
-//
-////            SPrinter.getPrinter().endTransaction();
-//        } catch (Epos2Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     private void addTextToPrinter(Printer printer, String text,
@@ -386,56 +449,5 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         return finalValue;
 
     }
-
-//    private String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
-//        String finalString = "";
-//        int filler = 0;
-//        if (partOne.length() < 20) {
-//            filler += (20 - partOne.length());
-//            finalString += partOne;
-//        } else {
-//            finalString += partOne.substring(0, 20);
-//        }
-//
-//        if (partTwo.length() < 20) {
-//            filler += (20 - partTwo.length());
-//        }
-//
-//        for (int i=0;i<filler;i++) {
-//            finalString += " ";
-//        }
-//
-//
-//        finalString += (partTwo.length() >= 20 ? partTwo.substring(0, 20) : partTwo);
-//
-//
-//
-////        float column1 = 20;
-////        float column2 = 20;
-////        if (partOne.length() >= 20) {
-////            finalString += partOne.substring(0, 20);
-////        } else {
-////            finalString += partOne;
-////
-////            for (int i = 0; i < column1 - partOne.length(); i++) {
-////                finalString += " ";
-////            }
-////        }
-////
-////        if (partTwo.length() >= 20) {
-////            finalString += partTwo.substring(0, 20);
-////        } else {
-////
-////            for (int i = 0; i < column2 - partTwo.length(); i++) {
-////                finalString += " ";
-////            }
-////
-////            finalString += partTwo;
-////        }
-//
-//
-//        return finalString;
-//    }
-
 
 }

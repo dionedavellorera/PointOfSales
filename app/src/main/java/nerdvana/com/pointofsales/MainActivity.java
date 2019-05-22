@@ -138,6 +138,7 @@ import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
+import nerdvana.com.pointofsales.model.PrintJobModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
@@ -162,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private Loading loadingInterface;
     private SelectionContract centralInterface;
 
+    private AsyncFinishCallBack asyncFinishCallBack;
+
+    private List<PrintJobModel> myPrintJobs;
 
 
     RoomTableModel selected;
@@ -190,11 +194,26 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private Intent timerIntent;
 
     private String currentDateTime = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        myPrintJobs = new ArrayList<>();
+
+
+        asyncFinishCallBack = new AsyncFinishCallBack() {
+            @Override
+            public void doneProcessing() {
+                myPrintJobs.remove(0);
+
+                if (myPrintJobs.size() > 0) {
+                    runTask(myPrintJobs.get(0).getTaskName(), myPrintJobs.get(0).getAsyncTask());
+                }
+            }
+        };
 
         saveDenominationPref();
         savePaymentTypePref();
@@ -206,15 +225,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         loadingInterface = new Loading() {
             @Override
             public void show(boolean willShow) {
-                if (willShow) {
-                    if (dialogProgressBar != null) {
-                        if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
-                    }
-                } else {
-                    if (dialogProgressBar != null) {
-                        if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
-                    }
-                }
+//                if (willShow) {
+//                    if (dialogProgressBar != null) {
+//                        if (!dialogProgressBar.isShowing()) dialogProgressBar.show();
+//                    }
+//                } else {
+//                    if (dialogProgressBar != null) {
+//                        if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
+//                    }
+//                }
             }
         };
 
@@ -451,11 +470,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         if (mHandler != null) { mHandler.removeCallbacks(mRunnable); }
 
-        try {
-            SPrinter.getPrinter().disconnect();
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            SPrinter.getPrinter().disconnect();
+//        } catch (Epos2Exception e) {
+//            e.printStackTrace();
+//        }
         if (timerIntent != null) {
             stopService(timerIntent);
         }
@@ -637,79 +656,77 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         switch (printModel.getType()) {
             case "IN_TRANSIT": //ignore header
                 willExecutGlobalPrint = false;
-                new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime).execute();
+                addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
                 break;
             case "POST_VOID": //ignore header
                 willExecutGlobalPrint = false;
-                new PostVoidAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new PostVoidAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "postvoid");
                 break;
             case "CHANGE_WAKE_UP_CALL": //done
                 willExecutGlobalPrint = false;
-                new ChangeWakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new ChangeWakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "changewakeupcall");
                 break;
             case "BACKOUT": //done
                 willExecutGlobalPrint = false;
-                new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "backout");
                 break;
             case "SHORTOVER"://ignore
                 willExecutGlobalPrint = false;
-                new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "shortover");
                 break;
             case "CASHRECONCILE"://ignore
                 willExecutGlobalPrint = false;
-                new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
                 break;
             case "SAFEKEEPING"://ignore
                 willExecutGlobalPrint = false;
-                new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
                 break;
             case "ZREAD"://ignore
                 willExecutGlobalPrint = false;
-                new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "zread");
                  break;
             case "REXREADING"://ignore
                 willExecutGlobalPrint = false;
-                new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "xread");
                 break;
             case "SWITCH_ROOM"://done
                 willExecutGlobalPrint = false;
-                new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
                 break;
-            case "PRINT_RECEIPT"://done
+            case "PRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
-                new CheckOutAsync(printModel, MainActivity.this, userModel).execute();
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "checkout");
                 break;
             case "DEPOSIT"://done
                 willExecutGlobalPrint = false;
-                new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
                 break;
             case "SOA-TO"://done
                 willExecutGlobalPrint = false;
-                new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soato");
                 break;
             case "CHECKIN"://done
                 willExecutGlobalPrint = false;
-                new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected).execute();
+                addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
                 break;
             case "VOID"://done
                 willExecutGlobalPrint = false;
-                new VoidAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new VoidAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "voiditem");
                 break;
             case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
-                new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soaroom");
                 break;
             case "FO": //done
                 willExecutGlobalPrint = false;
-                new FoAsync(printModel, MainActivity.this, userModel, currentDateTime).execute();
+                addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "fo");
                 break;
         }
 
         try {
-
             if (willExecutGlobalPrint) {
                 SPrinter.getPrinter().addCut(Printer.CUT_FEED);
-
                 if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
                     SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
                     SPrinter.getPrinter().clearCommandBuffer();
@@ -944,26 +961,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void loadPrinter() {
-        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PRINTER))) {
-            new SPrinter(
-                    Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PRINTER)),
-                    Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_LANGUAGE)),
-                    getApplicationContext());
 
-            try {
-
-
-                if (SPrinter.getPrinter() != null) {
-                    SPrinter.getPrinter().connect(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
-                } else {
-                    Toast.makeText(MainActivity.this, "No Printer", Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (Epos2Exception e) {
-                e.printStackTrace();
-            }
-
-        }
+        SPrinter sPrinter = new SPrinter(
+                Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER)),
+                Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_LANGUAGE)),
+                getApplicationContext()
+        );
     }
 
     private void addPrinterSpace(int count) {
@@ -1424,5 +1427,149 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         return msg;
     }
 
+
+    private static String getEposExceptionText(int state) {
+        String return_text = "";
+        switch (state) {
+            case    Epos2Exception.ERR_PARAM:
+                return_text = "ERR_PARAM";
+                break;
+            case    Epos2Exception.ERR_CONNECT:
+                return_text = "ERR_CONNECT";
+                break;
+            case    Epos2Exception.ERR_TIMEOUT:
+                return_text = "ERR_TIMEOUT";
+                break;
+            case    Epos2Exception.ERR_MEMORY:
+                return_text = "ERR_MEMORY";
+                break;
+            case    Epos2Exception.ERR_ILLEGAL:
+                return_text = "ERR_ILLEGAL";
+                break;
+            case    Epos2Exception.ERR_PROCESSING:
+                return_text = "ERR_PROCESSING";
+                break;
+            case    Epos2Exception.ERR_NOT_FOUND:
+                return_text = "ERR_NOT_FOUND";
+                break;
+            case    Epos2Exception.ERR_IN_USE:
+                return_text = "ERR_IN_USE";
+                break;
+            case    Epos2Exception.ERR_TYPE_INVALID:
+                return_text = "ERR_TYPE_INVALID";
+                break;
+            case    Epos2Exception.ERR_DISCONNECT:
+                return_text = "ERR_DISCONNECT";
+                break;
+            case    Epos2Exception.ERR_ALREADY_OPENED:
+                return_text = "ERR_ALREADY_OPENED";
+                break;
+            case    Epos2Exception.ERR_ALREADY_USED:
+                return_text = "ERR_ALREADY_USED";
+                break;
+            case    Epos2Exception.ERR_BOX_COUNT_OVER:
+                return_text = "ERR_BOX_COUNT_OVER";
+                break;
+            case    Epos2Exception.ERR_BOX_CLIENT_OVER:
+                return_text = "ERR_BOX_CLIENT_OVER";
+                break;
+            case    Epos2Exception.ERR_UNSUPPORTED:
+                return_text = "ERR_UNSUPPORTED";
+                break;
+            case    Epos2Exception.ERR_FAILURE:
+                return_text = "ERR_FAILURE";
+                break;
+            default:
+                return_text = String.format("%d", state);
+                break;
+        }
+        return return_text;
+    }
+
+    public interface AsyncFinishCallBack {
+        void doneProcessing();
+    }
+
+    private void addAsync(AsyncTask asyncTask, String taskName) {
+        if (myPrintJobs.size() < 1) {
+            myPrintJobs.add(new PrintJobModel(taskName, asyncTask));
+            runTask(taskName, asyncTask);
+        } else {
+            myPrintJobs.add(new PrintJobModel(taskName, asyncTask));
+        }
+    }
+
+    private void runTask(String taskName, AsyncTask asyncTask) {
+        switch (taskName) {
+            case "fo":
+                FoAsync foAsync = (FoAsync) asyncTask;
+                foAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "checkin":
+                CheckInAsync checkInAsync = (CheckInAsync) asyncTask;
+                checkInAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "checkout":
+                CheckOutAsync checkOutAsync = (CheckOutAsync) asyncTask;
+                checkOutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "soaroom":
+                SoaRoomAsync soaRoomAsync = (SoaRoomAsync) asyncTask;
+                soaRoomAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "intransit":
+                IntransitAsync intransitAsync = (IntransitAsync) asyncTask;
+                intransitAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "postvoid":
+                PostVoidAsync postVoidAsync = (PostVoidAsync) asyncTask;
+                postVoidAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "changewakeupcall":
+                ChangeWakeUpCallAsync changeWakeUpCallAsync = (ChangeWakeUpCallAsync) asyncTask;
+                changeWakeUpCallAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "backout":
+                BackOutAsync backOutAsync = (BackOutAsync) asyncTask;
+                backOutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "shortover":
+                ShortOverAsync shortOverAsync = (ShortOverAsync) asyncTask;
+                shortOverAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "cashreconcile":
+                CashNReconcileAsync cashNReconcileAsync = (CashNReconcileAsync) asyncTask;
+                cashNReconcileAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "safekeeping":
+                SafeKeepingAsync safeKeepingAsync = (SafeKeepingAsync) asyncTask;
+                safeKeepingAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "zread":
+                ZReadAsync zReadAsync = (ZReadAsync) asyncTask;
+                zReadAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "xread":
+                XReadAsync xReadAsync = (XReadAsync) asyncTask;
+                xReadAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "switchroom":
+                SwitchRoomAsync switchRoomAsync = (SwitchRoomAsync) asyncTask;
+                switchRoomAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "deposit":
+                DepositAsync depositAsync =(DepositAsync) asyncTask;
+                depositAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "soato":
+                SoaToAsync soaToAsync = (SoaToAsync) asyncTask;
+                soaToAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "voiditem":
+                VoidAsync voidAsync = (VoidAsync) asyncTask;
+                voidAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+        }
+    }
 }
 

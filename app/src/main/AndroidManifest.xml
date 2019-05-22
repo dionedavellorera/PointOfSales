@@ -6,14 +6,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-
-
-    <!--<uses-permission android:name="android.permission.INTERNET"/>-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>-->
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- <uses-permission android:name="android.permission.INTERNET"/> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".PosApplication"
@@ -25,9 +22,8 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity
-            android:screenOrientation="landscape"
-            android:name=".TakeOutActivity"
-            android:label="@string/title_activity_take_out"
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -35,9 +31,19 @@
                 android:value="nerdvana.com.pointofsales.MainActivity" />
         </activity>
         <activity
+            android:name=".TakeOutActivity"
+            android:label="@string/title_activity_take_out"
+            android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nerdvana.com.pointofsales.MainActivity" />
+        </activity>
+        <activity
             android:name=".SetupActivity"
             android:label="POSitive"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
@@ -47,10 +53,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:screenOrientation="landscape"
             android:name=".PaymentActivity"
             android:label="@string/title_activity_payment"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
@@ -58,10 +64,10 @@
                 android:value="nerdvana.com.pointofsales.MainActivity" />
         </activity>
         <activity
-            android:screenOrientation="landscape"
             android:name=".RoomsActivity"
             android:label="@string/title_activity_rooms"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
@@ -89,10 +95,11 @@
             android:name=".MainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden|adjustPan"></activity>
+            android:windowSoftInputMode="stateHidden|adjustPan" />
 
-        <service android:enabled="true" android:name=".service.TimerService">
-        </service>
+        <service
+            android:name=".service.TimerService"
+            android:enabled="true"></service>
     </application>
 
 </manifest>

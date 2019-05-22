@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/firstLabel"
+            android:textSize="17sp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Model"/>
+
+        <View
+            android:id="@+id/topSeparator"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/firstLabel"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorLtGrey" />
+
+        <RadioGroup
+            android:layout_margin="10dp"
+            android:layout_below="@id/topSeparator"
+            android:id="@+id/printerRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:layout_below="@id/printerRadioGroup"
+            android:id="@+id/secondLabel"
+            android:textSize="17sp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Language"/>
+
+        <View
+            android:id="@+id/secondSeparator"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/secondLabel"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorLtGrey" />
+
+
+        <RadioGroup
+            android:layout_margin="10dp"
+            android:layout_below="@id/secondSeparator"
+            android:id="@+id/languageRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </RelativeLayout>
+</ScrollView>

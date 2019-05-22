@@ -33,8 +33,6 @@ public class AvailableGcAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return new AvailableGcAdapter.ApproveListGcViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_item_available_gc, viewGroup, false));
     }
 
-
-
     static class ApproveListGcViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private ImageView remove;

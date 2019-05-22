@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
@@ -34,69 +36,99 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
     private UserModel userModel;
     private String currentDateTime;
     private RoomTableModel selected;
+
+    private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
+    private Printer printer;
+
     public CheckInAsync(PrintModel printModel, Context context,
                         UserModel userModel, String currentDateTime,
-                        RoomTableModel selected) {
+                        RoomTableModel selected, MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
         this.selected = selected;
+        this.asyncFinishCallBack = asyncFinishCallBack;
     }
 
 
     @Override
     protected Void doInBackground(Void... voids) {
+        try {
+            printer = new Printer(
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                    context);
+            printer.setReceiveEventListener(new ReceiveListener() {
+                @Override
+                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                printer.disconnect();
+                                asyncFinishCallBack.doneProcessing();
+                            } catch (Epos2Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            });
+            PrinterUtils.connect(context, printer);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
 
-        PrinterUtils.addHeader(printModel);
+        PrinterUtils.addHeader(printModel, printer);
 
         TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
         List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
-        addTextToPrinter(SPrinter.getPrinter(), "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(printer, twoColumnsRightGreaterLr(
                 "ROOM TYPE",
                 checkinDetails.get(0).getRoomType().toUpperCase(),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(printer, twoColumnsRightGreaterLr(
                 "RATE DESC.",
                 checkinDetails.get(0).getRoomRate().toUpperCase(),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterLr(
+        addTextToPrinter(printer, twoColumnsRightGreaterLr(
                 "STARTING RATE",
                 roomRatePrice(String.valueOf(checkinDetails.get(0).getRoomRatePriceId())),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "DATE / TIME",
                 convertDateToReadableDate(checkinDetails.get(0).getCreatedAt() != null ? checkinDetails.get(0).getCreatedAt() : "NA"),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "VEHICLE TYPE",
                 fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId() != null ? checkinDetails.get(0).getVehicleId() : "NA")).toUpperCase(),
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "CAR MAKE",
                 checkinDetails.get(0).getCar().getCarMake() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA",
                 40,
                 2)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "PLATE NUMBER",
                 checkinDetails.get(0).getPlateNo() != null ? checkinDetails.get(0).getPlateNo().toUpperCase() : "NA",
                 40,
@@ -104,31 +136,31 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-        addTextToPrinter(SPrinter.getPrinter(),
+        addTextToPrinter(printer,
                 "ROOM BOY:  " + getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-        addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         try {
 
-            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            printer.addCut(Printer.CUT_FEED);
 
-            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-                SPrinter.getPrinter().clearCommandBuffer();
+            if (printer.getStatus().getConnection() == 1) {
+                printer.sendData(Printer.PARAM_DEFAULT);
+                printer.clearCommandBuffer();
             }
 
 
-//            SPrinter.getPrinter().endTransaction();
+//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

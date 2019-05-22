@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -39,12 +41,19 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
     private Context context;
     private UserModel userModel;
     private String currentDateTime;
+
+    private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
+    private Printer printer;
+
+
     public XReadAsync(PrintModel printModel, Context context,
-                        UserModel userModel, String currentDateTime) {
+                      UserModel userModel, String currentDateTime,
+                      MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
+        this.asyncFinishCallBack = asyncFinishCallBack;
     }
 
 
@@ -52,8 +61,35 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         try {
+            try {
+                printer = new Printer(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
+                printer.setReceiveEventListener(new ReceiveListener() {
+                    @Override
+                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    printer.disconnect();
+                                    asyncFinishCallBack.doneProcessing();
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }).start();
+                    }
+                });
+                PrinterUtils.connect(context, printer);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
 
-            PrinterUtils.addHeader(printModel);
+
+
+            PrinterUtils.addHeader(printModel, printer);
 
             JSONObject jsonObject = new JSONObject(printModel.getData());
             JSONObject dataJsonObject = jsonObject.getJSONObject("data");
@@ -61,18 +97,18 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
             JSONObject dutyManager = jsonObject.getJSONObject("data").getJSONObject("duty_manager");
             if (dataJsonObject != null) {
 //                        Log.d("TESXXXXTDATA", jsonObject.toString());
-                addTextToPrinter(SPrinter.getPrinter(), "X READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(SPrinter.getPrinter(), "POSTING DATE: " + dataJsonObject.getString("cut_off_date"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(SPrinter.getPrinter(), "SHIFT : " + (dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//                        addTextToPrinter(SPrinter.getPrinter(), "USER : " + cashierDataObject.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(SPrinter.getPrinter(), "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(SPrinter.getPrinter(), "MANAGER : " + dutyManager.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, "X READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(printer, "POSTING DATE: " + dataJsonObject.getString("cut_off_date"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "SHIFT : " + (dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                        addTextToPrinter(printer, "USER : " + cashierDataObject.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "MANAGER : " + dutyManager.getString("name"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "MACHINE NO.",
                         dataJsonObject.getString("pos_id")
                         ,
@@ -83,7 +119,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                 addPrinterSpace(1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "Gross Sales",
                         returnWithTwoDecimal(dataJsonObject.getString("gross_sales"))
                         ,
@@ -91,7 +127,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "Net Sales",
                         returnWithTwoDecimal(dataJsonObject.getString("net_sales"))
                         ,
@@ -101,7 +137,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                 addPrinterSpace(1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VATable Sales",
                         returnWithTwoDecimal(dataJsonObject.getString("vatable"))
                         ,
@@ -109,7 +145,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VAT EXEMPT SALES",
                         returnWithTwoDecimal(dataJsonObject.getString("vat_exempt_sales"))
                         ,
@@ -117,7 +153,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "12% VAT",
                         returnWithTwoDecimal(dataJsonObject.getString("vat"))
                         ,
@@ -125,7 +161,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "NON VAT",
                         returnWithTwoDecimal(dataJsonObject.getString("vat_exempt"))
                         ,
@@ -133,7 +169,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "SERVICE CHARGE",
                         "0.00"
                         ,
@@ -193,7 +229,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                             paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
 
 
-                            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     payment.getPaymentType(),
                                     "0.00"
                                     ,
@@ -203,7 +239,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         } else {
 
 
-                            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     payment.getPaymentType() + " Sales",
                                     String.valueOf(value)
                                     ,
@@ -212,7 +248,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                             if (payment.getPaymentType().equalsIgnoreCase("card")) {
-                                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "DEPOSIT SALES",
                                         String.valueOf(totalAdvancePayment)
                                         ,
@@ -229,7 +265,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                                 paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
                             } else {
-                                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         payment.getPaymentType(),
                                         String.valueOf(value)
                                         ,
@@ -244,7 +280,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
             }
 
             addPrinterSpace(1);
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CASH OUT",
                     "0.00"
                     ,
@@ -252,7 +288,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                     2),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "REFUND",
                     "0.00"
                     ,
@@ -260,7 +296,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                     2),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "VOID",
                     returnWithTwoDecimal(String.valueOf(dataJsonObject.get("void_amount")))
                     ,
@@ -274,7 +310,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
             JSONArray discountJsonArray = jsonObject.getJSONArray("discount");
             addPrinterSpace(1);
             if (discountJsonArray.length() > 0) {
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "DISCOUNT LIST",
                         ""
                         ,
@@ -310,14 +346,14 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         }
 
 
-                        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                 d.getDiscountCard(),
                                 String.valueOf(amount)
                                 ,
                                 40,
                                 2),
                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                        addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                 d.getDiscountCard() + "(COUNT)",
                                 String.valueOf(count)
                                 ,
@@ -334,14 +370,14 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                 int otherDiscCount = 0;
                 double otherDiscAmount = 0.00;
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "OTHERS",
                         String.valueOf(otherDiscAmount)
                         ,
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "OTHERS" + "(COUNT)",
 //                        String.valueOf(otherDiscCount)
 //                        ,
@@ -351,28 +387,28 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
             } else {
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "SENIOR CITIZEN",
                         "0.00"
                         ,
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "SENIOR CITIZEN" + "(COUNT)",
                         "0"
                         ,
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "PWD",
                         "0.00"
                         ,
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "PWD" + "(COUNT)",
                         "0"
                         ,
@@ -380,14 +416,14 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "OTHERS",
                         "0.00"
                         ,
                         40,
                         2),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "OTHERS" + "(COUNT)",
 //                        "0"
 //                        ,
@@ -399,21 +435,21 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
 
-            addTextToPrinter(SPrinter.getPrinter(), "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
 
 
 
             //short over
-            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            printer.addCut(Printer.CUT_FEED);
 
-            addTextToPrinter(SPrinter.getPrinter(), "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+            addTextToPrinter(printer, "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             addPrinterSpace(1);
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "SHORT / OVER",
                     String.valueOf(jsonObject.getString("short_over"))
                     ,
@@ -422,10 +458,10 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
-            addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
 
@@ -437,15 +473,15 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
         try {
 
-            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            printer.addCut(Printer.CUT_FEED);
 
-            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-                SPrinter.getPrinter().clearCommandBuffer();
+            if (printer.getStatus().getConnection() == 1) {
+                printer.sendData(Printer.PARAM_DEFAULT);
+                printer.clearCommandBuffer();
             }
 
 
-//            SPrinter.getPrinter().endTransaction();
+//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

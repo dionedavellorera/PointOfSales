@@ -90,9 +90,7 @@ public class TimerService extends Service {
                                             DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
                                             shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
 
-
-
-                                            if (secsOfDate >= (endShiftTime.getMillis() / 1000)) {
+                                            if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
                                                 BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
                                             } else {
                                                 BusProvider.getInstance().post(new InfoModel("ALLOW"));
@@ -102,15 +100,15 @@ public class TimerService extends Service {
                                             BusProvider.getInstance().post(new InfoModel("ALLOW"));
                                         }
                                     }
+
                                 }
 
                                 @Override
                                 public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
-
+                                    BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
                                 }
                             });
 
-//                            shiftDisplay = shiftNumber(userList, secsOfDate);
                         }
                     }
                 }.start();

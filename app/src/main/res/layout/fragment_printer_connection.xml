@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/firstLabel"
+            android:textSize="17sp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current"/>
+
+        <View
+            android:id="@+id/topSeparator"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/firstLabel"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorLtGrey" />
+
+        <TextView
+            android:id="@+id/activePrinter"
+            android:layout_margin="10dp"
+            android:layout_below="@id/topSeparator"
+            android:text="TCP:192.168.1.12"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:layout_below="@id/activePrinter"
+            android:id="@+id/secondLabel"
+            android:textSize="17sp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Other Printers"/>
+
+        <View
+            android:id="@+id/secondSeparator"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/secondLabel"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorLtGrey" />
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/secondSeparator"
+            android:id="@+id/listOtherPrinter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+</ScrollView>

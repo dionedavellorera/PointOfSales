@@ -51,6 +51,7 @@ import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
 import nerdvana.com.pointofsales.SPrinter;
+import nerdvana.com.pointofsales.SettingsActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.Utils;
@@ -58,6 +59,7 @@ import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.BackOutGuestRequest;
+import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
@@ -805,7 +807,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
     private boolean canTransact() {
-        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("NOT_ALLOW") ||
+
+        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute end of day")) {
+            Toast.makeText(getContext(), "Please execute end of day", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("NOT_ALLOW") ||
                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("") ||
                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute cutoff")) {
             Toast.makeText(getContext(), "Please execute cutoff", Toast.LENGTH_SHORT).show();
@@ -820,8 +826,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         switch (clickedItem.getId()) {
-            case 128: //backup
+            case 129: //setting for app, new activity
 
+                Intent settingIntent = new Intent(getContext(), SettingsActivity.class);
+                startActivity(settingIntent);
+
+                break;
+            case 128: //backup
+                //check main activity for function
                 break;
             case 127://REPRINT Z READ
                 PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
@@ -2585,7 +2597,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     "room"
                             ));
                         } else {
-                            Log.d("COUNTER", String.valueOf(roomRateCounter.size()));
+//                            Log.d("COUNTER", String.valueOf(roomRateCounter.size()));
                             cartItemList.add(roomRateCounter.size(), new CartItemsModel(
                                     tpost.getControlNo(),
                                     tpost.getRoomId(),
@@ -3329,15 +3341,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE)),
                     getContext());
 
-
-            Log.d("PRINTER_VAR_1", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER));
-            Log.d("PRINTER_VAR_1", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE));
-
-//            SPrinter printer = new SPrinter(
-//                    Printer.TM_U220,
-//                    Printer.MODEL_SOUTHASIA,
-//                    getContext());
             try {
+
+                Log.d("GFGFGFG", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT));
                 SPrinter.getPrinter().connect(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
@@ -3625,12 +3631,26 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 fetchZReadViaIdRequest(ZReadResultDataObject.getString("id"));
                                 Utils.showDialogMessage(getActivity(), "ZREAD SUCCESS", "Information");
                             }
-//                            Log.d("JJJJJ", new JSONObject(result).toString());
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+                        BackupDatabaseRequest backupDatabaseRequest = new BackupDatabaseRequest();
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
+                        request.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
                     }
 
                     @Override
@@ -3880,9 +3900,38 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         SharedPreferenceManager.saveString(getContext(), infoModel.getInformation(), ApplicationConstants.SHIFT_BLOCKER);
 
         if (!canTransact()) {
-            if (cutOffDialog != null) {
-                if (!cutOffDialog.isShowing()) {
 
+            if (infoModel.getInformation().equalsIgnoreCase("please execute end of day")) {
+                Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
+            } else {
+                if (cutOffDialog != null) {
+                    if (!cutOffDialog.isShowing()) {
+                        if (blockerDialog != null) {
+                            if (!blockerDialog.isShowing()) {
+                                blockerDialog.show();
+                            }
+                        } else {
+                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which){
+                                        case DialogInterface.BUTTON_POSITIVE:
+                                            BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                            break;
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            break;
+                                    }
+                                }
+                            };
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage("You need to execute cutoff before you can transact, Continue?")
+                                    .setPositiveButton("Yes", dialogClickListener)
+                                    .setNegativeButton("No", dialogClickListener);
+                            blockerDialog = builder.create();
+                            builder.show();
+                        }
+                    }
+                } else {
                     if (blockerDialog != null) {
                         if (!blockerDialog.isShowing()) {
                             blockerDialog.show();
@@ -3909,33 +3958,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         builder.show();
                     }
                 }
-            } else {
-                if (blockerDialog != null) {
-                    if (!blockerDialog.isShowing()) {
-                        blockerDialog.show();
-                    }
-                } else {
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    break;
-                            }
-                        }
-                    };
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setMessage("You need to execute cutoff before you can transact, Continue?")
-                            .setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener);
-                    blockerDialog = builder.create();
-                    builder.show();
-                }
             }
+
+
         }
     }
 

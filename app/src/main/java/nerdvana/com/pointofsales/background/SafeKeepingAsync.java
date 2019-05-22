@@ -6,12 +6,15 @@ import android.text.TextUtils;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
+import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
@@ -32,26 +35,56 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
     private Context context;
     private UserModel userModel;
     private String currentDateTime;
+
+    private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
+    private Printer printer;
+
     public SafeKeepingAsync(PrintModel printModel, Context context,
-                        UserModel userModel, String currentDateTime) {
+                            UserModel userModel, String currentDateTime,
+                            MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
+        this.asyncFinishCallBack = asyncFinishCallBack;
     }
 
 
 
     @Override
     protected Void doInBackground(Void... voids) {
+        try {
+            printer = new Printer(
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                    context);
+            printer.setReceiveEventListener(new ReceiveListener() {
+                @Override
+                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                printer.disconnect();
+                                asyncFinishCallBack.doneProcessing();
+                            } catch (Epos2Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+            });
+            PrinterUtils.connect(context, printer);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+        PrinterUtils.addHeader(printModel, printer);
 
-        PrinterUtils.addHeader(printModel);
-
-        addTextToPrinter(SPrinter.getPrinter(), "SAFEKEEPING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "SAFEKEEPING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
         TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
         List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
-        addTextToPrinter(SPrinter.getPrinter(), "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(SPrinter.getPrinter(), "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         fixDenoPrint(collectionDetails);
 
 
@@ -59,15 +92,15 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
 
         try {
 
-            SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+            printer.addCut(Printer.CUT_FEED);
 
-            if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-                SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-                SPrinter.getPrinter().clearCommandBuffer();
+            if (printer.getStatus().getConnection() == 1) {
+                printer.sendData(Printer.PARAM_DEFAULT);
+                printer.clearCommandBuffer();
             }
 
 
-//            SPrinter.getPrinter().endTransaction();
+//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
@@ -94,7 +127,7 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                     }
                 }
 
-                addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         String.format("%s  x %s", valueCount, cfm.getAmount()),
                         valueAmount
                         ,
@@ -106,8 +139,8 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
 
-            addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CASH COUNT",
                     String.valueOf(finalAmount)
                     ,
@@ -115,7 +148,7 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                     2),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(SPrinter.getPrinter(), twoColumnsRightGreaterTr(
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CASH OUT",
                     "0.00"
                     ,
@@ -124,10 +157,10 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
-            addTextToPrinter(SPrinter.getPrinter(), "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(SPrinter.getPrinter(), "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(SPrinter.getPrinter(), "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         }
 

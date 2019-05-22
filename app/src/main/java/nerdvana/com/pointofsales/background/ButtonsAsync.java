@@ -48,10 +48,12 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
         buttonsModelList.add(new ButtonsModel(126,"FOC", "",24));
         buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
+        buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
 
         buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
 
-        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",99));
+//        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",99));
+
         Collections.sort(buttonsModelList);
 
 //        Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
