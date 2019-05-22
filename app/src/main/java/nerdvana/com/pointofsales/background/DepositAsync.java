@@ -79,21 +79,23 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
         List<PostedPaymentsModel> depositDetails = GsonHelper.getGson().fromJson(printModel.getData(), depositToken.getType());
 
 
-        addTextToPrinter(printer, "DEPOSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "DEPOSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "MACHINE NO",
                 SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "ROOM TYPE",
                 printModel.getRoomType(),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -107,7 +109,8 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
                     ppm.getPayment_description(),
                     ppm.getAmount(),
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             total += Double.valueOf(ppm.getAmount());
         }

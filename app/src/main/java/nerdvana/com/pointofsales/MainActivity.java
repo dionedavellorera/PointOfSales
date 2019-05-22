@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -133,6 +134,7 @@ import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
+import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.ChangeWakeUpCallPrintModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.InfoModel;
@@ -176,6 +178,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private nerdvana.com.pointofsales.postlogin.RightFrameFragment postLoginRightFrameFragment;
 
 
+
+    android.support.v7.widget.Toolbar toolbar;
+
+
     private TextView timer;
     private Button logout;
     private Button showMap;
@@ -203,6 +209,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         setContentView(R.layout.activity_main);
         myPrintJobs = new ArrayList<>();
 
+
+//        SharedPreferenceManager.saveString(getApplicationContext(), "vc", ApplicationConstants.BRANCH);
 
         asyncFinishCallBack = new AsyncFinishCallBack() {
             @Override
@@ -238,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         };
 
 
-        android.support.v7.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
@@ -284,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
 
 
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranch()), ApplicationConstants.BRANCH);
+//                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranch()), ApplicationConstants.BRANCH);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getPermitNo()), ApplicationConstants.BRANCH_PERMIT);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
@@ -541,6 +549,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
 
         loadPrinter();
+
+        changeTheme();
     }
 
     @Subscribe
@@ -741,13 +751,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
     }
 
-//    private String convertStringToStar(String stringToConvert) {
-//        String finalString = "";
-//
-//
-//
-//        return finalString;
-//    }
 
     private String twoColumns(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
         String finalString = "";
@@ -1369,6 +1372,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (dialogProgressBar != null) {
                     if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
                 }
+
+                Utils.showDialogMessage(MainActivity.this, "Backup completed", "Information");
             }
 
             @Override
@@ -1570,6 +1575,31 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 voidAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
         }
+    }
+
+    private void changeTheme() {
+        BusProvider.getInstance().post(new ChangeThemeModel(""));
+        if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).isEmpty()) {
+            lightTheme();
+        } else {
+            if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                lightTheme();
+            } else {
+                darkTheme();
+            }
+        }
+    }
+
+    private void lightTheme() {
+        toolbar.setBackgroundColor(Color.WHITE);
+        user.setTextColor(Color.BLACK);
+        timer.setTextColor(Color.BLACK);
+    }
+
+    private void darkTheme() {
+        toolbar.setBackgroundColor(Color.BLACK);
+        user.setTextColor(Color.WHITE);
+        timer.setTextColor(Color.WHITE);
     }
 }
 

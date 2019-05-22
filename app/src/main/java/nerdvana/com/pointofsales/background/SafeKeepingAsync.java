@@ -80,7 +80,7 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
         }
         PrinterUtils.addHeader(printModel, printer);
 
-        addTextToPrinter(printer, "SAFEKEEPING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "SAFEKEEPING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
         List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
         addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -132,7 +132,8 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                         valueAmount
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 finalAmount += Double.valueOf(valueAmount);
             }
@@ -145,7 +146,8 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                     String.valueOf(finalAmount)
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -153,7 +155,8 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                     "0.00"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);

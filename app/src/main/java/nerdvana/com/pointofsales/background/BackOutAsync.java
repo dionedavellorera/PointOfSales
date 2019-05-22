@@ -79,7 +79,7 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
 
         RoomTableModel selectedRoom = GsonHelper.getGson().fromJson(printModel.getData(), RoomTableModel.class);
 
-        addTextToPrinter(printer, "BACK OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "BACK OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         if (selectedRoom.getRoomId() != 0) {
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -87,7 +87,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     selectedRoom.getName() != null ? selectedRoom.getName() : "NA"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -95,7 +96,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     selectedRoom.getCheckInTime() != null ? selectedRoom.getCheckInTime() : "NA"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -103,7 +105,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     selectedRoom.getExpectedCheckout() != null ? selectedRoom.getExpectedCheckout() : "NA"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -111,7 +114,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     currentDateTime
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -119,7 +123,7 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     printModel.getRemarks()
                     ,
                     40,
-                    2),
+                    2,context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         } else {
@@ -129,7 +133,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     selectedRoom.getControlNo()
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -137,7 +142,8 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     currentDateTime
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -145,7 +151,7 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     printModel.getRemarks()
                     ,
                     40,
-                    2),
+                    2,context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         }
 

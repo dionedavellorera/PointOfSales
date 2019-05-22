@@ -52,6 +52,7 @@ public class ApplicationConstants {
     public static final String SELECTED_PRINTER = "selected_printer";
     public static final String SELECTED_LANGUAGE = "selected_language";
     public static final String SELECTED_PORT = "selected_port";
+    public static final String MAX_COLUMN_COUNT = "max_column_count";
 
     public static final String DISCARD_STRING = "You still have unposted item/s, It might be discarded, Do you want to continue?";
 
@@ -63,6 +64,7 @@ public class ApplicationConstants {
 
     public static final String SHIFT_BLOCKER = "shift_blocker";
     public static final String PRINTER_PATH = "printer_path";
+    public static final String THEME_SELECTED = "theme_selected";
 
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 

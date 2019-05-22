@@ -86,7 +86,7 @@ public class ShortOverAsync extends AsyncTask<Void, Void, Void> {
         }
 
 
-        addTextToPrinter(printer, "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         addPrinterSpace(1);
 
@@ -97,7 +97,8 @@ public class ShortOverAsync extends AsyncTask<Void, Void, Void> {
                 shortOver
                 ,
                 40,
-                2),
+                2,
+                context),
                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addPrinterSpace(1);

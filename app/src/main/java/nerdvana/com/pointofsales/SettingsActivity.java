@@ -21,6 +21,8 @@ import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.SettingListAdapter;
 import nerdvana.com.pointofsales.fragment.PrinterConnectionFragment;
 import nerdvana.com.pointofsales.fragment.PrinterFragment;
+import nerdvana.com.pointofsales.fragment.ReceiptSetupFragment;
+import nerdvana.com.pointofsales.fragment.ThemeFragment;
 import nerdvana.com.pointofsales.model.ListSettingMenu;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -32,6 +34,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private PrinterFragment printerFragment;
     private PrinterConnectionFragment printerConnectionFragment;
+    private ThemeFragment themeFragment;
+    private ReceiptSetupFragment receiptSetupFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         printerFragment = new PrinterFragment();
         printerConnectionFragment = new PrinterConnectionFragment();
+        themeFragment = new ThemeFragment();
+        receiptSetupFragment = new ReceiptSetupFragment();
 
         listMainItems = findViewById(R.id.listMainItems);
 
@@ -53,6 +59,8 @@ public class SettingsActivity extends AppCompatActivity {
         settingMenuList = new ArrayList<>();
         settingMenuList.add(new ListSettingMenu(0, R.mipmap.baseline_print_black_24, "Printer Model"));
         settingMenuList.add(new ListSettingMenu(1, R.mipmap.baseline_print_black_24, "Printer Connection"));
+        settingMenuList.add(new ListSettingMenu(2, R.mipmap.baseline_print_black_24, "Theme"));
+        settingMenuList.add(new ListSettingMenu(3, R.mipmap.baseline_print_black_24, "Receipt Setup"));
 
 
         Setting setting = new Setting() {
@@ -64,6 +72,11 @@ public class SettingsActivity extends AppCompatActivity {
                         break;
                     case 1: //PRINTER CONNECTION
                         openFragment(printerConnectionFragment);
+                        break;
+                    case 2: //THEME
+                        openFragment(themeFragment);
+                    case 3: //RECEIPT SETUP
+                        openFragment(receiptSetupFragment);
                         break;
                 }
             }

@@ -31,4 +31,12 @@
     <color name="colorRed">#fe2e2e</color>
     <color name="colorGreen">#00d110</color>
 
+
+    <color name="colorSemiDark">#303030</color>
+    <color name="colorSemiDark2">#424242</color>
+    <color name="colorSemiLight">#cccccc</color>
+    <color name="colorSemiLight2">#e5e5e5</color>
+
+
+
 </resources>

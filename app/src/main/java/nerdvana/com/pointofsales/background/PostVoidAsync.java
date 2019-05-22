@@ -89,53 +89,61 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                     toListPV.getCashier() != null ? String.valueOf(toListPV.getCashier().getName()) : "NA "
                     ,
                     40,
-                    2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    2,
+                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CASHIER OUT",
                     toListPV.getCashierOut() != null ? String.valueOf(toListPV.getCashierOut().getName()) : "NA "
                     ,
                     40,
-                    2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    2,
+                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "ROOM BOY IN",
                     String.valueOf(toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomBoyIn().getName() : "NA")
                     ,
                     40,
-                    2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    2,
+                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "ROOM BOY OUT",
                     String.valueOf(toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomBoyOut().getName() : "NA")
                     ,
                     40,
-                    2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    2,
+                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CHECK IN",
                     convertDateToReadableDate(toListPV.getGuestInfo() != null ?toListPV.getGuestInfo().getCheckIn() : "NA")
                     ,
                     40,
-                    2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    2,
+                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CHECK OUT",
                     convertDateToReadableDate(toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getCheckOut() : "NA")
                     ,
                     40,
-                    2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    2,
+                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "RECEIPT NO",
                     toListPV.getReceiptNo() == null ? "NOT YET CHECKOUT" : toListPV.getReceiptNo().toString(),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "MACHINE NO",
                     SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -166,7 +174,8 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                             returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty()))
                             ,
                             40,
-                            2),
+                            2,
+                            context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
             }
@@ -177,7 +186,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                         returnWithTwoDecimal(String.valueOf(toListPV.getOtAmount()))
                         ,
                         40,
-                        2),
+                        2,context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             }
 //
@@ -187,21 +196,24 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                     "   VAT EXEMPT",
                     returnWithTwoDecimal(String.valueOf(toListPV.getVatExempt())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "   DISCOUNT",
                     returnWithTwoDecimal(String.valueOf(toListPV.getDiscount())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "   ADVANCED DEPOSIT",
                     returnWithTwoDecimal(String.valueOf(toListPV.getAdvance())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
@@ -210,49 +222,56 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                     "SUB TOTAL",
                     returnWithTwoDecimal(String.valueOf(toListPV.getTotal())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "AMOUNT DUE",
                     returnWithTwoDecimal(String.valueOf((toListPV.getTotal() + toListPV.getOtAmount() + toListPV.getxPersonAmount()) - (toListPV.getAdvance() + toListPV.getDiscount() + toListPV.getVatExempt()))),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,2,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "TENDERED",
                     returnWithTwoDecimal(String.valueOf(toListPV.getTendered())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CHANGE",
                     returnWithTwoDecimal(String.valueOf((toListPV.getChange() * -1))),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "VATable sales",
                     returnWithTwoDecimal(String.valueOf(toListPV.getVatable())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "VAT-EXEMPT SALES",
                     returnWithTwoDecimal(String.valueOf(toListPV.getVatExemptSales())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "12% VAT",
                     returnWithTwoDecimal(String.valueOf(toListPV.getVat())),
                     40,
-                    2)
+                    2,
+                    context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
@@ -264,7 +283,8 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                             pym.getPaymentDescription(),
                             returnWithTwoDecimal(String.valueOf(pym.getAmount())),
                             40,
-                            2)
+                            2,
+                            context)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
             }

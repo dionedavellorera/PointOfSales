@@ -78,7 +78,7 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
         TypeToken<List<VoidProductModel>> voidToken = new TypeToken<List<VoidProductModel>>() {};
         List<VoidProductModel> voidList = GsonHelper.getGson().fromJson(printModel.getData(), voidToken.getType());
 
-        addTextToPrinter(printer, "VOID SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "VOID SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, "QTY   Description              Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -96,7 +96,7 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
             }
 
             voidTotalAmount += Double.valueOf(vpm.getPrice());
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ vpm.getName(), vpm.getPrice(), 40, 2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ vpm.getName(), vpm.getPrice(), 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         }
 

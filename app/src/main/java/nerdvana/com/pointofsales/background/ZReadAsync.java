@@ -90,7 +90,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
         if (zReadResponse != null) {
 
-            addTextToPrinter(printer, "Z READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+            addTextToPrinter(printer, "Z READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "POSTING DATE: " + zReadResponse.getData().getGeneratedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "MANAGER : " + zReadResponse.getData().getDutyManager().getName(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -104,7 +104,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     String.valueOf(zReadResponse.getData().getPosId())
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -115,7 +116,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getGrossSales()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -123,7 +125,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getNetSales()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
@@ -133,7 +136,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatable()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -141,7 +145,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExemptSales()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -149,7 +154,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVat()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -157,7 +163,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -165,7 +172,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     "0.00"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -215,7 +223,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                     "0.00"
                                     ,
                                     40,
-                                    2),
+                                    2,context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         } else {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -223,7 +231,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                     String.valueOf(value)
                                     ,
                                     40,
-                                    2),
+                                    2,
+                                    context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                             if (payment.getPaymentType().equalsIgnoreCase("card")) {
@@ -232,7 +241,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                         String.valueOf(totalAdvancePayment)
                                         ,
                                         40,
-                                        2),
+                                        2,
+                                        context),
                                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             }
                         }
@@ -249,7 +259,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                         String.valueOf(value)
                                         ,
                                         40,
-                                        2),
+                                        2,
+                                        context),
                                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             }
                         }
@@ -263,7 +274,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     "0.00"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -271,7 +283,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     "0.00"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -279,7 +292,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVoidAmount()))
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
@@ -289,7 +303,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         ""
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -316,7 +331,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                     returnWithTwoDecimal(String.valueOf(amount))
                                     ,
                                     40,
-                                    2),
+                                    2,
+                                    context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -324,7 +340,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                     String.valueOf(count)
                                     ,
                                     40,
-                                    2),
+                                    2,
+                                    context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         }
 
@@ -349,14 +366,16 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         String.valueOf(otherDiscAmount)
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "OTHERS(COUNT)",
                         String.valueOf(otherDiscCount)
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -369,28 +388,32 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         "0.00"
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "SENIOR CITIZEN" + "(COUNT)",
                         "0"
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "PWD",
                         "0.00"
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "PWD" + "(COUNT)",
                         "0"
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -398,14 +421,16 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         "0.00"
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "OTHERS" + "(COUNT)",
                         "0"
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             }
 
@@ -418,7 +443,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -426,7 +452,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -434,7 +461,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     String.valueOf(zReadResponse.getNewGrandTotal())
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -442,7 +470,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     String.valueOf(zReadResponse.getOldGrandTotal())
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -456,7 +485,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     String.valueOf(zReadResponse.getCount())
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
             addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

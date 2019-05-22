@@ -80,14 +80,14 @@ public class ChangeWakeUpCallAsync extends AsyncTask<Void, Void, Void> {
 
         ChangeWakeUpCallPrintModel changeWakeUpCallPrintModel = GsonHelper.getGson().fromJson(printModel.getData(), ChangeWakeUpCallPrintModel.class);
 
-        addTextToPrinter(printer, "CHANGE WAKE UP CALL SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "CHANGE WAKE UP CALL SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "NEW WAKE UP CALL",
                 changeWakeUpCallPrintModel.getNewWakeUpCall()
                 ,
                 40,
-                2),
+                2,context),
                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addPrinterSpace(1);

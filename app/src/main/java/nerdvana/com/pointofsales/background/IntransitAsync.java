@@ -87,7 +87,7 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
         PrinterUtils.addHeader(printModel, printer);
 
 
-        addTextToPrinter(printer, "IN TRANSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "IN TRANSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         TypeToken<List<FetchRoomResponse.Result>> intransitToken = new TypeToken<List<FetchRoomResponse.Result>>() {};
         List<FetchRoomResponse.Result> intransitDetails = GsonHelper.getGson().fromJson(printModel.getData(), intransitToken.getType());
 
@@ -153,11 +153,11 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
 
 
         addPrinterSpace(1);
-        addTextToPrinter(printer, twoColumnsRightGreaterTr("OCCUPIED ROOMS", String.valueOf(occupiedCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, twoColumnsRightGreaterTr("SOA ROOMS", String.valueOf(soaCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, twoColumnsRightGreaterTr("DIRTY ROOMS", String.valueOf(dirtyCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, twoColumnsRightGreaterTr("DIRTY WITH LINEN ROOMS", String.valueOf(withLinenCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, twoColumnsRightGreaterTr("CLEAN ROOMS", String.valueOf(cleanCount), 4, 5), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("OCCUPIED ROOMS", String.valueOf(occupiedCount), 4, 5, context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("SOA ROOMS", String.valueOf(soaCount), 4, 5,context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("DIRTY ROOMS", String.valueOf(dirtyCount), 4, 5,context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("DIRTY WITH LINEN ROOMS", String.valueOf(withLinenCount), 4, 5,context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr("CLEAN ROOMS", String.valueOf(cleanCount), 4, 5, context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
         addPrinterSpace(1);
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
         addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

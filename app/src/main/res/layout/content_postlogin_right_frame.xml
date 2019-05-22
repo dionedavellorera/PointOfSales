@@ -11,14 +11,12 @@
     android:id="@+id/rightFrameConstraint">
 
     
-    <android.support.v7.widget.SearchView
-        android:background="@color/colorSecondary"
-        style="@style/SearchViewStyle"
-        app:iconifiedByDefault="false"
+    <EditText
+        android:paddingLeft="10dp"
         android:id="@+id/search"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:queryHint="Search product here"
+        android:hint="Search product here"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>

@@ -79,7 +79,7 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
         PrinterUtils.addHeader(printModel, printer);
 
 
-        addTextToPrinter(printer, "CASHIER RECONCILE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "CASHIER RECONCILE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         TypeToken<List<CollectionFinalPostModel>> cashrecotoken = new TypeToken<List<CollectionFinalPostModel>>() {};
         List<CollectionFinalPostModel> cashrecodetails = GsonHelper.getGson().fromJson(printModel.getData(), cashrecotoken.getType());
         addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -129,7 +129,8 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
                         valueAmount
                         ,
                         40,
-                        2),
+                        2,
+                        context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 finalAmount += Double.valueOf(valueAmount);
             }
@@ -142,7 +143,8 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
                     String.valueOf(finalAmount)
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -150,7 +152,8 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
                     "0.00"
                     ,
                     40,
-                    2),
+                    2,
+                    context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);

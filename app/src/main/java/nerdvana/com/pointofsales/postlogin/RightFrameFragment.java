@@ -3,6 +3,9 @@ package nerdvana.com.pointofsales.postlogin;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +19,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +54,7 @@ import nerdvana.com.pointofsales.interfaces.ProductsContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.BreadcrumbModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
+import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -58,6 +64,7 @@ import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
 
 public class RightFrameFragment extends Fragment implements AsyncContract, SelectionContract, ProductsContract{
     private View view;
+    private TextView labelQty;
     private RoomTableModel selectedRoom;
     private boolean hasCollapsed = false;
     private boolean isValid = false;
@@ -83,7 +90,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     private String qtySelected = "1";
 
-    private SearchView search;
+    private EditText search;
 
     public static RightFrameFragment newInstance() {
 
@@ -128,23 +135,41 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         setQuantitySpinner();
 
 
-        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        search.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-                if (productsAdapter != null) {
-                    if (productsList.size() > 0) {
-                        productsAdapter.getFilter().filter(s);
-                    }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (productsList.size() > 0) {
+                    productsAdapter.getFilter().filter(s);
                 }
-                return false;
             }
         });
+//        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String s) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String s) {
+//                if (productsAdapter != null) {
+//                    if (productsList.size() > 0) {
+//                        productsAdapter.getFilter().filter(s);
+//                    }
+//
+//                }
+//                return false;
+//            }
+//        });
         return view;
     }
 
@@ -158,9 +183,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private void initializeViews(View view) {
         search = view.findViewById(R.id.search);
 
-        EditText searchEditText = (EditText) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
-        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
+//        EditText searchEditText = (EditText) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+//        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
+//        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
 //
 //        ImageView searchIcon = search.findViewById(android.support.v7.appcompat.R.drawable.search_icon);
 //        searchIcon.setColorFilter(Color.WHITE);
@@ -170,6 +195,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         breadcrumb = view.findViewById(R.id.breadcrumb);
         listProducts = view.findViewById(R.id.listProducts);
         listTableRoomSelection = view.findViewById(R.id.listTableRoomSelection);
+        labelQty = view.findViewById(R.id.labelQty);
         listTableRoomSelection.setNestedScrollingEnabled(false);
         bottomSheet = view.findViewById(R.id.bottom_sheet);
         bottomSheetHeader = view.findViewById(R.id.bottomSheetHeader);
@@ -453,7 +479,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @Subscribe
     public void onReceiveFetchProductsResponse(FetchProductsResponse fetchProductsResponse) {
         refreshProducts.setRefreshing(false);
-        search.setQuery("", false);
+//        search.setQuery("", false);
+        search.setText("");
         new ProductsAsync(this, fetchProductsResponse, getContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -480,5 +507,56 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @Subscribe
     public void apiErrorReceived(ApiError apiError) {
         refreshProducts.setRefreshing(false);
+    }
+
+
+
+    private void changeTheme() {
+        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.THEME_SELECTED).isEmpty()) {
+            lightTheme();
+        } else {
+            if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                lightTheme();
+            } else {
+                darkTheme();
+            }
+        }
+    }
+
+    private void lightTheme() {
+        search.setBackgroundColor(Color.WHITE);
+        search.setTextColor(Color.BLACK);
+        search.setHintTextColor(Color.BLACK);
+        breadcrumb.setTextColor(Color.BLACK);
+        breadcrumb.setBackgroundColor(Color.WHITE);
+        qtySpinner.setBackgroundColor(Color.WHITE);
+        labelQty.setTextColor(Color.BLACK);
+
+        for (Drawable drawable : breadcrumb.getCompoundDrawables()) {
+            if (drawable != null) {
+                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(breadcrumb.getContext(), R.color.colorBlack), PorterDuff.Mode.SRC_IN));
+            }
+        }
+    }
+
+    private void darkTheme() {
+        search.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        search.setTextColor(Color.WHITE);
+        search.setHintTextColor(Color.WHITE);
+        breadcrumb.setTextColor(Color.WHITE);
+        breadcrumb.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        qtySpinner.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        labelQty.setTextColor(Color.WHITE);
+
+        for (Drawable drawable : breadcrumb.getCompoundDrawables()) {
+            if (drawable != null) {
+                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(breadcrumb.getContext(), R.color.colorWhite), PorterDuff.Mode.SRC_IN));
+            }
+        }
+    }
+
+    @Subscribe
+    public void changeTheme(ChangeThemeModel changeThemeModel) {
+        changeTheme();
     }
 }

@@ -60,16 +60,17 @@ public class PrinterUtils {
 
     }
 
-    public static String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
+    public static String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns, Context context) {
         String finalString = "";
         int filler = 0;
-        if (partOne.length() < 20) {
-            filler += (20 - partOne.length());
+        int maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)) / 2);
+        if (partOne.length() < maxColumnDivideTwo) {
+            filler += (maxColumnDivideTwo - partOne.length());
         }
-        if (partTwo.length() < 20) {
-            filler += (20 - partTwo.length());
+        if (partTwo.length() < maxColumnDivideTwo) {
+            filler += (maxColumnDivideTwo - partTwo.length());
         }
-        finalString = (partOne.length() > 20 ? partOne.substring(0, 20) : partOne) + repeat(" ", filler) + (partTwo.length() > 20 ? partTwo.substring(0, 20) : partTwo);
+        finalString = (partOne.length() >= maxColumnDivideTwo ? partOne.substring(0, maxColumnDivideTwo) : partOne) + repeat(" ", filler) + (partTwo.length() >= maxColumnDivideTwo ? partTwo.substring(0, maxColumnDivideTwo) : partTwo);
         Log.d("MYSTRING", finalString);
 
         return finalString;
@@ -199,7 +200,6 @@ public class PrinterUtils {
     }
 
     public static void addHeader(PrintModel printModel, Printer printer) {
-//        addTextToPrinter(SPrinter.getPrinter(), "*", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "NERDVANA CORP.", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "1 CANLEY ROAD BRGY BAGONG", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "ILOG PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

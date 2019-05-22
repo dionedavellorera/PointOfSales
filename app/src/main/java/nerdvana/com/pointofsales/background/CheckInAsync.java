@@ -84,7 +84,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
         TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
         List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
-        addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterLr(
                 "ROOM TYPE",
@@ -111,28 +111,32 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                 "DATE / TIME",
                 convertDateToReadableDate(checkinDetails.get(0).getCreatedAt() != null ? checkinDetails.get(0).getCreatedAt() : "NA"),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "VEHICLE TYPE",
                 fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId() != null ? checkinDetails.get(0).getVehicleId() : "NA")).toUpperCase(),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "CAR MAKE",
                 checkinDetails.get(0).getCar().getCarMake() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA",
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "PLATE NUMBER",
                 checkinDetails.get(0).getPlateNo() != null ? checkinDetails.get(0).getPlateNo().toUpperCase() : "NA",
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 

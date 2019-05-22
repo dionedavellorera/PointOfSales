@@ -78,7 +78,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
         }
         PrinterUtils.addHeader(printModel, printer);
         Double totalAmount = 0.00;
-        addTextToPrinter(printer, "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        addTextToPrinter(printer, "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, "QTY   Description               Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -96,7 +96,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
             }
 
             totalAmount += Double.valueOf(r.getPrice());
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), r.getPrice(), 40, 2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), r.getPrice(), 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         }
 
         addTextToPrinter(printer, "TOTAL: " + String.valueOf(totalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);

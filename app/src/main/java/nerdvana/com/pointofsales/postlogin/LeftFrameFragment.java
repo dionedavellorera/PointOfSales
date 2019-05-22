@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -152,6 +153,7 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
+import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.ForVoidDiscountModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
@@ -201,6 +203,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private CheckInDialog checkInDialog;
 
 //    private List<RoomRateMain> roomRateMainList;
+
+    private TextView depositLabel;
+    private TextView subTotalLabel;
+    private TextView discountLabel;
+    private TextView totalLabel;
 
     private TextView total;
     private TextView discount;
@@ -257,6 +264,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void initializeViews(View view) {
         roomRateCounter = new ArrayList<>();
+        depositLabel = view.findViewById(R.id.depositLabel);
+        discountLabel = view.findViewById(R.id.discountLabel);
+        subTotalLabel = view.findViewById(R.id.subTotalLabel);
+        totalLabel = view.findViewById(R.id.totalLabel);
+
+
+
+
         total = view.findViewById(R.id.totalValue);
         discount = view.findViewById(R.id.discountValue);
         deposit = view.findViewById(R.id.depositValue);
@@ -3965,5 +3980,69 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
 
+    private void changeTheme() {
+        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.THEME_SELECTED).isEmpty()) {
+            lightTheme();
+        } else {
+            if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                lightTheme();
+            } else {
+                darkTheme();
+            }
+        }
+    }
 
+    private void lightTheme() {
+
+        header.setBackgroundColor(Color.WHITE);
+        subTotal.setBackgroundColor(Color.WHITE);
+        deposit.setBackgroundColor(Color.WHITE);
+        discount.setBackgroundColor(Color.WHITE);
+
+        totalLabel.setBackgroundColor(Color.WHITE);
+        depositLabel.setBackgroundColor(Color.WHITE);
+        discountLabel.setBackgroundColor(Color.WHITE);
+        subTotalLabel.setBackgroundColor(Color.WHITE);
+        total.setBackgroundColor(Color.WHITE);
+
+
+
+        header.setTextColor(Color.BLACK);
+        subTotal.setTextColor(Color.BLACK);
+        discount.setTextColor(Color.BLACK);
+        deposit.setTextColor(Color.BLACK);
+
+        total.setTextColor(Color.BLACK);
+        depositLabel.setTextColor(Color.BLACK);
+        discountLabel.setTextColor(Color.BLACK);
+        subTotalLabel.setTextColor(Color.BLACK);
+        totalLabel.setTextColor(Color.BLACK);
+    }
+
+    private void darkTheme() {
+        header.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        subTotal.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        deposit.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        discount.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        depositLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        discountLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        subTotalLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        totalLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        total.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        header.setTextColor(Color.WHITE);
+        total.setTextColor(Color.WHITE);
+        subTotal.setTextColor(Color.WHITE);
+        discount.setTextColor(Color.WHITE);
+        deposit.setTextColor(Color.WHITE);
+
+        depositLabel.setTextColor(Color.WHITE);
+        discountLabel.setTextColor(Color.WHITE);
+        subTotalLabel.setTextColor(Color.WHITE);
+        totalLabel.setTextColor(Color.WHITE);
+    }
+
+    @Subscribe
+    public void changeTheme(ChangeThemeModel changeThemeModel) {
+        changeTheme();
+    }
 }
