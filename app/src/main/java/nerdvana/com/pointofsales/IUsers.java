@@ -337,5 +337,8 @@ public interface IUsers {
     @POST("mysqlDump")
     @FormUrlEncoded
     Call<ResponseBody> backupDb(@FieldMap Map<String, String> params);
+    @POST("rePatch")
+    @FormUrlEncoded
+    Call<ResponseBody> repatchData(@FieldMap Map<String, String> params);
     //endregion
 }

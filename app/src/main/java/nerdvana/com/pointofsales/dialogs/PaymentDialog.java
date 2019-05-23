@@ -151,6 +151,8 @@ public abstract class PaymentDialog extends BaseDialog  {
     private Spinner spinnerOnline;
     private String onlineId;
 
+    FetchPaymentResponse.Result f;
+
 
     //gift check
     private EditText voucherNumber;
@@ -195,7 +197,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         this.act = context;
         this.guestReceiptInfoModel = guestReceiptInfoModel;
         this.controlNumber = controlNumber;
-        this.paymentList = paymentList;
+        this.paymentList = new ArrayList<>(paymentList);
         paymentMethod = paymentList.get(0);
         this.isCheckout = isCheckout;
         this.postedPaymentList = postedPaymentList;
@@ -356,10 +358,11 @@ public abstract class PaymentDialog extends BaseDialog  {
 
         }
 
-        FetchPaymentResponse.Result f = new FetchPaymentResponse.Result();
+        f = new FetchPaymentResponse.Result();
         f.setCoreId("999");
         f.setPaymentType("GUEST");
         paymentList.add(f);
+
 
 
         checkEmployee.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1018,9 +1021,9 @@ public abstract class PaymentDialog extends BaseDialog  {
         itemTouchhelper.attachToRecyclerView(listPostedPayments);
     }
 
-    private void submitGuestInfoData(String userId, String guestName, String guestAddress, String guestTin, String controlNumber) {
+    private void submitGuestInfoData(String userId, final String gn, final String ga, final String gt, String controlNumber) {
 
-        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, guestName, guestAddress, guestTin, controlNumber);
+        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, gn, ga, gt, controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<SaveGuestInfoResponse> request = iUsers.saveGuestInfo(saveGuestInfoRequest.getMapValue());
 
@@ -1028,6 +1031,11 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onResponse(Call<SaveGuestInfoResponse> call, Response<SaveGuestInfoResponse> response) {
                 removePaymentSuccess();
+                guestName.setText(gn);
+                guestAddress.setText(ga);
+                guestTin.setText(gt);
+
+                Utils.showDialogMessage(act, "Guest info saved", "Information");
             }
 
             @Override

@@ -83,7 +83,7 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
         TypeToken<List<CollectionFinalPostModel>> cashrecotoken = new TypeToken<List<CollectionFinalPostModel>>() {};
         List<CollectionFinalPostModel> cashrecodetails = GsonHelper.getGson().fromJson(printModel.getData(), cashrecotoken.getType());
         addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         fixDenoPrint(cashrecodetails);
 
 
@@ -97,8 +97,6 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
                 printer.clearCommandBuffer();
             }
 
-
-//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
@@ -158,9 +156,9 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
             addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         }
 

@@ -154,6 +154,7 @@ import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
+import nerdvana.com.pointofsales.model.ClearSearchData;
 import nerdvana.com.pointofsales.model.ForVoidDiscountModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
@@ -176,6 +177,10 @@ import retrofit2.Response;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
+
+    private String kitchenPath = "";
+    private String printerPath = "";
+
     private AlertDialog blockerDialog;
     private CollectionDialog cutOffDialog;
     private Data data;
@@ -1359,7 +1364,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
                             @Override
                             public void save(String remarks) {
-                                BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model)));
+                                BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
                                 BusProvider.getInstance().post(new AddProductToRequest(
                                         model, String.valueOf(selectedRoom.getRoomId()),
                                         String.valueOf(selectedRoom.getAreaId()),
@@ -1399,7 +1404,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
                                 @Override
                                 public void save(String remarks) {
-                                    BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model)));
+                                    BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
 
                                     BusProvider.getInstance().post(new AddRoomPriceRequest(
                                             model,
@@ -2294,74 +2299,78 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (cartItemList.size() == 0) {
                     //no order and prompt to cancel order, disregard all payments
-                    if (selectedRoom.isTakeOut()) {
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        checkoutRoom("",
-                                                selectedRoom.getControlNo(),
-                                                "");
-                                        break;
+                    if (selectedRoom != null) {
+                        if (selectedRoom.isTakeOut()) {
+                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which){
+                                        case DialogInterface.BUTTON_POSITIVE:
+                                            checkoutRoom("",
+                                                    selectedRoom.getControlNo(),
+                                                    "");
+                                            break;
 
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        dismiss();
-                                        break;
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            dismiss();
+                                            break;
+                                    }
                                 }
-                            }
-                        };
+                            };
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
-                                .setPositiveButton("Yes", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener).show();
-                    } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
+                                    .setPositiveButton("Yes", dialogClickListener)
+                                    .setNegativeButton("No", dialogClickListener).show();
+                        } else {
 
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        dismiss();
-                                        break;
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        dismiss();
-                                        break;
+                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which){
+                                        case DialogInterface.BUTTON_POSITIVE:
+                                            dismiss();
+                                            break;
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            dismiss();
+                                            break;
+                                    }
                                 }
-                            }
-                        };
+                            };
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
-                                .setPositiveButton("Ok", dialogClickListener).show();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
+                                    .setPositiveButton("Ok", dialogClickListener).show();
 
+                        }
                     }
+
 
                 } else {
                     if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
                         if (paymentsToPost.size() > 0) {
-                            if (selectedRoom.isTakeOut()) {
-                                postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
-                            } else {
-                                postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
+                            if (selectedRoom != null) {
+                                if (selectedRoom.isTakeOut()) {
+                                    postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
+                                } else {
+                                    postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
+                                }
                             }
+
                         } else {
-
-                            if (selectedRoom.isTakeOut()) {
-                                checkoutRoom("",
-                                        selectedRoom.getControlNo(),
-                                        "");
-                            } else {
-                                checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
-                                        "",
-                                        roomboy);
+                            if (selectedRoom != null) {
+                                if (selectedRoom.isTakeOut()) {
+                                    checkoutRoom("",
+                                            selectedRoom.getControlNo(),
+                                            "");
+                                } else {
+                                    checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                            "",
+                                            roomboy);
+                                }
                             }
-
-
                             Toast.makeText(getContext(), "No payment to post, will proceed to checkout", Toast.LENGTH_SHORT).show();
                         }
-
                         dismiss();
                     } else {
 
@@ -2429,6 +2438,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
+
+        kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
+        printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
+
+
+        Log.d("TOPENDINGROOM", kitchenPath);
+        Log.d("TOPENDINGROOM", printerPath);
+
+
+        BusProvider.getInstance().post(new ClearSearchData("d"));
         forVoidDiscountModels = new ArrayList<>();
         guestReceiptInfoModel = null;
         checkoutSwipe.setRefreshing(false);
@@ -2448,12 +2467,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     if (r.getTransaction().getEmployee_id() != null && !TextUtils.isEmpty(r.getTransaction().getEmployee_id())) {
                         employeeId = r.getTransaction().getEmployee_id();
                     }
+                    if (r.getTransaction().getCustomerTrans() != null) {
+                        if (r.getTransaction().getCustomerTrans() != null) {
+                            guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(), r.getTransaction().getCustomerTrans().getAddress(), r.getTransaction().getCustomerTrans().getTin());
+                        }
+                    }
 
                 }
 
-                if (r.getCustomer() != null) {
-                    guestReceiptInfoModel = new GuestReceiptInfoModel(r.getCustomer().getCustomer(), r.getCustomer().getAddress(), r.getCustomer().getTin());
-                }
+
 
 
                 //regionpayments
@@ -2849,7 +2871,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void save(String remarks) {
 
-                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model)));
+                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model),kitchenPath, printerPath));
                 BusProvider.getInstance().post(new AddRoomPriceRequest(
                         model,
                         roomId, new ArrayList<VoidProductModel>(),
@@ -3027,7 +3049,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
-//        Toast.makeText(getContext(), "FOP RESP", Toast.LENGTH_SHORT).show();
+
+        kitchenPath = fetchOrderPendingViaControlNoResponse.getResult().getArea().getKitchenPath();
+        printerPath = fetchOrderPendingViaControlNoResponse.getResult().getArea().getPrinterPath();
+
+        Log.d("TOPENDING", kitchenPath);
+        Log.d("TOPENDING", printerPath);
+
+        BusProvider.getInstance().post(new ClearSearchData("d"));
         forVoidDiscountModels = new ArrayList<>();
         guestReceiptInfoModel = null;
         checkoutSwipe.setRefreshing(false);
@@ -3994,33 +4023,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void lightTheme() {
 
-        header.setBackgroundColor(Color.WHITE);
-        subTotal.setBackgroundColor(Color.WHITE);
-        deposit.setBackgroundColor(Color.WHITE);
-        discount.setBackgroundColor(Color.WHITE);
+        header.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        subTotal.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        deposit.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        discount.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
 
-        totalLabel.setBackgroundColor(Color.WHITE);
-        depositLabel.setBackgroundColor(Color.WHITE);
-        discountLabel.setBackgroundColor(Color.WHITE);
-        subTotalLabel.setBackgroundColor(Color.WHITE);
-        total.setBackgroundColor(Color.WHITE);
+        totalLabel.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        depositLabel.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        discountLabel.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        subTotalLabel.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        total.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        listCheckoutItems.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
 
 
-
-        header.setTextColor(Color.BLACK);
-        subTotal.setTextColor(Color.BLACK);
-        discount.setTextColor(Color.BLACK);
-        deposit.setTextColor(Color.BLACK);
-
-        total.setTextColor(Color.BLACK);
-        depositLabel.setTextColor(Color.BLACK);
-        discountLabel.setTextColor(Color.BLACK);
-        subTotalLabel.setTextColor(Color.BLACK);
-        totalLabel.setTextColor(Color.BLACK);
+        header.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        subTotal.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        discount.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        deposit.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        total.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        depositLabel.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        discountLabel.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        subTotalLabel.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        totalLabel.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
     }
 
     private void darkTheme() {
-        header.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        listCheckoutItems.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        header.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
         subTotal.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
         deposit.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
         discount.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
@@ -4029,16 +4058,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         subTotalLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
         totalLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
         total.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
-        header.setTextColor(Color.WHITE);
-        total.setTextColor(Color.WHITE);
-        subTotal.setTextColor(Color.WHITE);
-        discount.setTextColor(Color.WHITE);
-        deposit.setTextColor(Color.WHITE);
 
-        depositLabel.setTextColor(Color.WHITE);
-        discountLabel.setTextColor(Color.WHITE);
-        subTotalLabel.setTextColor(Color.WHITE);
-        totalLabel.setTextColor(Color.WHITE);
+        header.setTextColor(getResources().getColor(R.color.darkFont));
+        total.setTextColor(getResources().getColor(R.color.darkFont));
+        subTotal.setTextColor(getResources().getColor(R.color.darkFont));
+        discount.setTextColor(getResources().getColor(R.color.darkFont));
+        deposit.setTextColor(getResources().getColor(R.color.darkFont));
+        depositLabel.setTextColor(getResources().getColor(R.color.darkFont));
+        discountLabel.setTextColor(getResources().getColor(R.color.darkFont));
+        subTotalLabel.setTextColor(getResources().getColor(R.color.darkFont));
+        totalLabel.setTextColor(getResources().getColor(R.color.darkFont));
     }
 
     @Subscribe

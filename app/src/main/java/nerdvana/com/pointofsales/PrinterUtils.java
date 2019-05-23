@@ -210,13 +210,16 @@ public class PrinterUtils {
         addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
 
 
+        Log.d("DIONEDAVE", printModel.getType());
+        Log.d("DIONEDAVE", printModel.getRoomNumber());
         if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
                 printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
-                printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID")) {
+                printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID") ||
+                printModel.getType().equalsIgnoreCase("SOA-ROOM")) {
             if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
-                addTextToPrinter(SPrinter.getPrinter(),"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+                addTextToPrinter(printer,"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
             } else {
-                addTextToPrinter(SPrinter.getPrinter(),"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,2,2);
+                addTextToPrinter(printer,"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
             }
         }
 

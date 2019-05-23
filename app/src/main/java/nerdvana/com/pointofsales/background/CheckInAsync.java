@@ -86,25 +86,28 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
         List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
         addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterLr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "ROOM TYPE",
                 checkinDetails.get(0).getRoomType().toUpperCase(),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterLr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "RATE DESC.",
                 checkinDetails.get(0).getRoomRate().toUpperCase(),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterLr(
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "STARTING RATE",
                 roomRatePrice(String.valueOf(checkinDetails.get(0).getRoomRatePriceId())),
                 40,
-                2)
+                2,
+                context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -140,8 +143,17 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-        addTextToPrinter(printer,
-                "ROOM BOY:  " + getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                "ROOM BOY",
+                getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),
+                40,
+                2,
+                context)
+                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+//        addTextToPrinter(printer,
+//                "ROOM BOY:  " + getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
@@ -149,9 +161,9 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
         addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         try {

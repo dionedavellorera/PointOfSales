@@ -32,11 +32,17 @@
     <color name="colorGreen">#00d110</color>
 
 
+    <!-- dark theme colors -->
+    <color name="darkMain">#000000</color>
     <color name="colorSemiDark">#303030</color>
     <color name="colorSemiDark2">#424242</color>
+    <color name="darkFont">#ffffff</color>
+
+
+    <!-- light theme colors -->
+    <color name="lightPrimary">#cccccc</color>
+    <color name="lightPrimaryFont">#000000</color>
+    <color name="lightSecondary">#cccccc</color>
     <color name="colorSemiLight">#cccccc</color>
-    <color name="colorSemiLight2">#e5e5e5</color>
-
-
-
+    <color name="colorSemiLight2">#cccccc</color>
 </resources>

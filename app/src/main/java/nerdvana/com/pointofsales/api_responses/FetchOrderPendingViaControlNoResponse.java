@@ -122,7 +122,43 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+    public class Area {
+        @SerializedName("room_area")
+        @Expose
+        private String roomArea;
 
+        @SerializedName("printer_path")
+        @Expose
+        private String printerPath;
+
+        @SerializedName("kitchen_path")
+        @Expose
+        private String kitchenPath;
+
+        public String getRoomArea() {
+            return roomArea;
+        }
+
+        public void setRoomArea(String roomArea) {
+            this.roomArea = roomArea;
+        }
+
+        public String getPrinterPath() {
+            return printerPath;
+        }
+
+        public void setPrinterPath(String printerPath) {
+            this.printerPath = printerPath;
+        }
+
+        public String getKitchenPath() {
+            return kitchenPath;
+        }
+
+        public void setKitchenPath(String kitchenPath) {
+            this.kitchenPath = kitchenPath;
+        }
+    }
 
     public class Payment {
 
@@ -1417,6 +1453,9 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
     public class Result {
+        @SerializedName("area")
+        @Expose
+        private Area area;
         @SerializedName("customer")
         @Expose
         private Customer customer;
@@ -1546,6 +1585,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("vat_exempt_sales")
         @Expose
         private Double vatExemptSales;
+
+        public Area getArea() {
+            return area;
+        }
+
+        public void setArea(Area area) {
+            this.area = area;
+        }
 
         public Customer getCustomer() {
             return customer;

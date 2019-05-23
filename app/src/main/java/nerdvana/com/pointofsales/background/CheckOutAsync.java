@@ -132,9 +132,9 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "QTY   Description               Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
                 if (soaTrans.getVoid() == 0) {
                     String qty = "";
@@ -220,7 +220,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     40,
                     2,
                     context)
-                    ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,2,1);
+                    ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "TENDERED",
@@ -232,14 +232,14 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CHANGE",
-                    returnWithTwoDecimal(String.valueOf((toList1.getChange() * -1))),
+                    returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))),
                     40,
                     2,
                     context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "VATable sales",
+                    "VATABLE SALES",
                     returnWithTwoDecimal(String.valueOf(toList1.getVatable())),
                     40,
                     2,
@@ -278,14 +278,14 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
             if (toList1.getCustomer() != null) {
                 if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
-                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                    addTextToPrinter(printer, toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    addTextToPrinter(printer, toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     if (toList1.getCustomer().getAddress() != null) {
-                        addTextToPrinter(printer, toList1.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(printer, toList1.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     }
 
                     if (toList1.getCustomer().getTin() != null) {
-                        addTextToPrinter(printer, toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                        addTextToPrinter(printer, toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     }
 
                 }
@@ -386,7 +386,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CHANGE",
-                    returnWithTwoDecimal(String.valueOf((toList1.getChange() * -1)))
+                    returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange())))
                     ,
                     40,
                     2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);

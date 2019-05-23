@@ -179,7 +179,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         addTextToPrinter(printer, "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addPrinterSpace(1);
         addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, "QTY   Description          Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "QTY   Description         Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         for (PrintSoaResponse.Post soaTrans : bookedList.get(0).getTransaction().getPost()) {
 
@@ -335,22 +335,31 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
         addPrinterSpace(1);
 
-        if (bookedList.get(0).getCustomer() != null) {
-            if (!bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
-                addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addTextToPrinter(printer, bookedList.get(0).getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
 
-                if (bookedList.get(0).getCustomer().getAddress() != null) {
-                    addTextToPrinter(printer, bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+        if (bookedList.get(0).getTransaction() != null) {
+            if (bookedList.get(0).getTransaction().getCustomerTrans() != null) {
+
+                if (!bookedList.get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("to be filled")) {
+
+                    addPrinterSpace(1);
+                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+                    addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                    if (bookedList.get(0).getTransaction().getCustomerTrans().getTin() != null) {
+                        addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    }
+
+                    if (bookedList.get(0).getTransaction().getCustomerTrans().getAddress() != null) {
+                        addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    }
+
+
                 }
 
-                if (bookedList.get(0).getCustomer().getTin() != null) {
-                    addTextToPrinter(printer, bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                }
 
 
-//                addTextToPrinter(printer, bookedList.get(0).getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-//                addTextToPrinter(printer, bookedList.get(0).getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             }
         }
 
@@ -369,9 +378,9 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         addPrinterSpace(1);
 
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         try {

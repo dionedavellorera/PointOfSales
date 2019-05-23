@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -94,6 +95,27 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
+
+        if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
+            ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
+            ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+            ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
+            ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+        } else {
+            if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
+                ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
+                ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+            } else {
+                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiDark2));
+                ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
+                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiDark2));
+                ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
+            }
+        }
+
+
         final ProductsModel productsModel = productsFilteredList.get(i);
         ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
             @Override

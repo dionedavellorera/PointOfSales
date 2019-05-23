@@ -1,5 +1,7 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -15,7 +17,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
@@ -25,11 +29,12 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<ButtonsModel> buttonsModelList;
     private ButtonsContract buttonsContract;
     private List<String> shortcutString;
-    public ButtonsAdapter(List<ButtonsModel> buttonsModelList, ButtonsContract buttonsContract) {
+    private Context context;
+    public ButtonsAdapter(List<ButtonsModel> buttonsModelList, ButtonsContract buttonsContract, Context context) {
         this.buttonsModelList = buttonsModelList;
         this.buttonsContract = buttonsContract;
-
-         this.shortcutString = new ArrayList<>();
+        this.context = context;
+        this.shortcutString = new ArrayList<>();
     }
 
     @NonNull
@@ -62,6 +67,20 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         });
 
+        if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
+            ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightSecondary));
+            ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightPrimaryFont));
+        } else {
+            if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightSecondary));
+                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightPrimaryFont));
+            } else {
+                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiDark2));
+                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.darkFont));
+            }
+        }
+
+
         String firstString = buttonsModelList.get(i).getName().substring(0, 1);
         String remainingString = buttonsModelList.get(i).getName().substring(1);
         String finalString = String.format("<b><u>%s</b></u>%s", firstString, remainingString);
@@ -92,4 +111,8 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public int getItemCount() {
         return buttonsModelList.size();
     }
+
+
+
+
 }

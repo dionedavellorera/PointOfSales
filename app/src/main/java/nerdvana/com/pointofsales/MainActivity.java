@@ -726,11 +726,16 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
+
+                Log.d("DIONEDAVE1", printModel.getType());
+                Log.d("DIONEDAVE1", printModel.getRoomNumber());
+
+
                 addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soaroom");
                 break;
             case "FO": //done
                 willExecutGlobalPrint = false;
-                addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "fo");
+                addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath()), "fo");
                 break;
         }
 
@@ -1591,15 +1596,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void lightTheme() {
-        toolbar.setBackgroundColor(Color.WHITE);
-        user.setTextColor(Color.BLACK);
-        timer.setTextColor(Color.BLACK);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        user.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        timer.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
     }
 
     private void darkTheme() {
         toolbar.setBackgroundColor(Color.BLACK);
-        user.setTextColor(Color.WHITE);
-        timer.setTextColor(Color.WHITE);
+        user.setTextColor(getResources().getColor(R.color.darkFont));
+        timer.setTextColor(getResources().getColor(R.color.darkFont));
     }
 }
 

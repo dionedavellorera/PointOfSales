@@ -89,10 +89,10 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                 "MANUAL",
                 "http://www.twentyonepilots.com/sites/g/files/g2000004896/f/styles/media_gallery_large/public/Sample-image10-highres.jpg?itok=-UQ2667f",
                 1));
-        buttonsModelList.add(new ButtonsModel(1001,"SELECTION", "",2));
+        buttonsModelList.add(new ButtonsModel(1001,"CUSTOM", "",2));
 //        buttonsModelList.add(new ButtonsModel(1002,"CARD", "",3));
 
-        buttonsAdapter = new ButtonsAdapter(buttonsModelList, this);
+        buttonsAdapter = new ButtonsAdapter(buttonsModelList, this, getContext());
         listDiscounts.setLayoutManager(new GridLayoutManager(getContext(),4,  GridLayoutManager.VERTICAL, false));
         listDiscounts.setAdapter(buttonsAdapter);
 

@@ -29,13 +29,16 @@ import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
+import nerdvana.com.pointofsales.api_requests.RepatchDataRequest;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.TimerModel;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -78,8 +81,25 @@ public class TimerService extends Service {
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
 
                         if (secsOfDate % 10 == 0) {
-                            CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
+//                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//                            Call<ResponseBody> repatchData = iUsers.repatchData(
+//                                    repatchDataRequest.getMapValue());
+//                            repatchData.enqueue(new Callback<ResponseBody>() {
+//                                @Override
+//                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                                }
+//                            });
+
+
+                            CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
+//                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             Call<CheckShiftResponse> request = iUsers.checkShift(checkShiftRequest.getMapValue());
                             request.enqueue(new Callback<CheckShiftResponse>() {
                                 @Override
@@ -99,6 +119,8 @@ public class TimerService extends Service {
                                             shiftDisplay = "0";
                                             BusProvider.getInstance().post(new InfoModel("ALLOW"));
                                         }
+                                    } else {
+                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
                                     }
 
                                 }

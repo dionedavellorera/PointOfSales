@@ -146,9 +146,9 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                     context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "QTY   Description             Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             for (ViewReceiptResponse.Post_ soaTrans : toListPV.getPost()) {
 
                 String qty = "";
@@ -291,108 +291,13 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
 
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, "VOID", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,2,2);
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
 
             addFooterToPrinter();
-
-//                    try {
-//                        printer.addCut(Printer.CUT_FEED);
-//                    } catch (Epos2Exception e) {
-//                        e.printStackTrace();
-//                    }
-
-//                    addTextToPrinter(printer, "PAYMENT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-//
-//                    addPrinterSpace(1);
-//
-//                    addTextToPrinter(printer, twoColumnsRightGreater(
-//                            "ROOM NO",
-//                            String.valueOf(printModel.getRoomNumber())
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                    addTextToPrinter(printer, twoColumnsRightGreater(
-//                            "ROOM TYPE",
-//                            printModel.getRoomType()
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                    addTextToPrinter(printer, twoColumnsRightGreater(
-//                            "CASHIER",
-//                            toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA"
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                    addTextToPrinter(printer, twoColumnsRightGreater(
-//                            "ROOM BOY",
-//                            String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                    addPrinterSpace(1);
-//
-//                    addTextToPrinter(printer, twoColumnsRightGreater(
-//                            "CHECK IN",
-//                            convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckIn() : "NA" )
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                    addTextToPrinter(printer, twoColumnsRightGreater(
-//                            "CHECK OUT",
-//                            convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                    List<Integer> tempArray = new ArrayList<>();
-//                    String paymentType = "";
-//                    for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
-//                        if (!tempArray.contains(pym.getPaymentTypeId())) {
-//                            tempArray.add(pym.getPaymentTypeId());
-//                            paymentType = pym.getPaymentDescription();
-//                        }
-//                    }
-//
-//                    addPrinterSpace(1);
-//
-//                    addTextToPrinter(printer, twoColumns(
-//                            "PAYMENT TYPE",
-//                            tempArray.size() > 1 ? "MULTIPLE" : paymentType
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                    addPrinterSpace(1);
-//
-//                    addTextToPrinter(printer, twoColumns(
-//                            "AMOUNT DUE",
-//                            returnWithTwoDecimal(String.valueOf(toList1.getTotal() - (toList1.getAdvance() + toList1.getDiscount()))),
-//                            40,
-//                            2), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,2,1);
-//
-//                    addTextToPrinter(printer, twoColumns(
-//                            "TENDERED",
-//                            returnWithTwoDecimal(String.valueOf(toList1.getTendered()))
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                    addTextToPrinter(printer, twoColumns(
-//                            "CHANGE",
-//                            returnWithTwoDecimal(String.valueOf((toList1.getChange() * -1)))
-//                            ,
-//                            40,
-//                            2), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
 
             try {
 
@@ -403,8 +308,6 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                     printer.clearCommandBuffer();
                 }
 
-
-//            printer.endTransaction();
             } catch (Epos2Exception e) {
                 e.printStackTrace();
             }

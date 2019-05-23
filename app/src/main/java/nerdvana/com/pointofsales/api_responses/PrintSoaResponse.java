@@ -1586,8 +1586,46 @@ public class PrintSoaResponse {
         }
     }
 
-    public class Transaction {
+    public class CustomerTrans {
+        @SerializedName("customer")
+        @Expose
+        private String customer;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
 
+        public String getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(String customer) {
+            this.customer = customer;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+    }
+
+    public class Transaction {
+        @SerializedName("customer")
+        @Expose
+        private CustomerTrans customerTrans;
         @SerializedName("soa_count")
         @Expose
         private String soaCount;
@@ -1697,6 +1735,14 @@ public class PrintSoaResponse {
         @SerializedName("discounts")
         @Expose
         private List<Discounts> discounts;
+
+        public CustomerTrans getCustomerTrans() {
+            return customerTrans;
+        }
+
+        public void setCustomerTrans(CustomerTrans customerTrans) {
+            this.customerTrans = customerTrans;
+        }
 
         public void setDiscounts(List<Discounts> discounts) {
             this.discounts = discounts;

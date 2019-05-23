@@ -150,6 +150,17 @@ public class FetchRoomPendingResponse {
         @SerializedName("printer_path")
         @Expose
         private String printerPath;
+        @SerializedName("kitchen_path")
+        @Expose
+        private String kitchenPath;
+
+        public String getKitchenPath() {
+            return kitchenPath;
+        }
+
+        public void setKitchenPath(String kitchenPath) {
+            this.kitchenPath = kitchenPath;
+        }
 
         public String getRoomArea() {
             return roomArea;
@@ -459,7 +470,46 @@ public class FetchRoomPendingResponse {
         }
     }
 
+    public class CustomerTrans {
+        @SerializedName("customer")
+        @Expose
+        private String customer;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public String getCustomer() {
+            return customer;
+        }
+
+        public void setCustomer(String customer) {
+            this.customer = customer;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+    }
+
     public class RoomTransaction {
+        @SerializedName("customer")
+        @Expose
+        private CustomerTrans customerTrans;
         @SerializedName("employee_id")
         @Expose
         private String employee_id;
@@ -565,6 +615,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+
+        public CustomerTrans getCustomerTrans() {
+            return customerTrans;
+        }
+
+        public void setCustomerTrans(CustomerTrans customerTrans) {
+            this.customerTrans = customerTrans;
+        }
 
         public String getEmployee_id() {
             return employee_id;

@@ -38,14 +38,19 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
     private Printer printer;
     private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
 
+    private String kitchPath;
+    private String printerPath;
     public FoAsync(PrintModel printModel, Context context,
                    UserModel userModel, String currentDateTime,
-                   MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
+                   MainActivity.AsyncFinishCallBack asyncFinishCallBack,
+                   String kitchPath, String printerPath) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
         this.asyncFinishCallBack = asyncFinishCallBack;
+        this.kitchPath = kitchPath;
+        this.printerPath = printerPath;
     }
 
     @Override
@@ -72,16 +77,23 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                     }).start();
                 }
             });
-            PrinterUtils.connect(context, printer);
+
+
+            if (TextUtils.isEmpty(kitchPath)) {
+                printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
+            } else {
+                printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+            }
+//            PrinterUtils.connect(context, printer);
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
         PrinterUtils.addHeader(printModel, printer);
         Double totalAmount = 0.00;
         addTextToPrinter(printer, "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, "QTY   Description               Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, "----------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
         TypeToken<List<AddRateProductModel>> token = new TypeToken<List<AddRateProductModel>>() {};
         List<AddRateProductModel> aprm = GsonHelper.getGson().fromJson(printModel.getData(), token.getType());
@@ -104,9 +116,9 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
         addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         try {
             printer.addCut(Printer.CUT_FEED);
             if (printer.getStatus().getConnection() == 1) {

@@ -84,7 +84,7 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     rateList.add(pr.getRoomRate());
 //                    totalRoom += pr.getTotal();
                 }
-                ((RoomListViewAdapter.RoomDataHolder) holder).room.setText(String.format("%s(%s)", roomDataList.get(i).getRoomName(), roomDataList.get(i).getRoomNo()));
+                ((RoomListViewAdapter.RoomDataHolder) holder).room.setText(String.format("%s", roomDataList.get(i).getRoomNo()));
                 ((RoomListViewAdapter.RoomDataHolder) holder).status.setText(roomDataList.get(i).getStatus().getRoomStatus());
                 ((RoomListViewAdapter.RoomDataHolder) holder).rate.setText(TextUtils.join(",", rateList));
                 ((RoomListViewAdapter.RoomDataHolder) holder).wakeUpCall.setText(roomDataList.get(i).getTransaction().getWakeUpCall());

@@ -94,9 +94,9 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "POSTING DATE: " + zReadResponse.getData().getGeneratedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "MANAGER : " + zReadResponse.getData().getDutyManager().getName(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "DESCRIPTION                      VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, "DESCRIPTION                VALUE", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -112,7 +112,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
             addPrinterSpace(1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "Gross Sales",
+                    "GROSS SALES",
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getGrossSales()))
                     ,
                     40,
@@ -121,7 +121,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "Net Sales",
+                    "NET SALES",
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getNetSales()))
                     ,
                     40,
@@ -132,7 +132,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
             addPrinterSpace(1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "VATable SALES",
+                    "VATABLE SALES",
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatable()))
                     ,
                     40,
@@ -176,11 +176,6 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
-
-//                    zReadResponse.getResult().getPayment()
-
-//                    JSONArray paymentJsonArray = jsonObject.getJSONArray("payment");
 
             addPrinterSpace(1);
 
@@ -237,7 +232,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                             if (payment.getPaymentType().equalsIgnoreCase("card")) {
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        "Deposit Sales",
+                                        "DEPOSIT SALES",
                                         String.valueOf(totalAdvancePayment)
                                         ,
                                         40,
@@ -288,7 +283,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "Void",
+                    "VOID",
                     returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVoidAmount()))
                     ,
                     40,
@@ -436,7 +431,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
 
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "BEGINNING TRANS",
@@ -475,7 +470,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-            addTextToPrinter(printer, "---------------------------------------", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addPrinterSpace(1);
 
@@ -489,9 +484,9 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED BY " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
 

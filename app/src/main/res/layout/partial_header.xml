@@ -11,8 +11,8 @@
         android:padding="5dp"
         android:layout_centerVertical="true"
         android:id="@+id/backButton"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:src="@mipmap/sharp_close_white_24"
         android:tint="@color/colorWhite"/>
     <TextView

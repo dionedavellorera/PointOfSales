@@ -75,6 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
                         break;
                     case 2: //THEME
                         openFragment(themeFragment);
+                        break;
                     case 3: //RECEIPT SETUP
                         openFragment(receiptSetupFragment);
                         break;

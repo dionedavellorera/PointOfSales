@@ -97,7 +97,7 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
         t.add("III");
         t.add("IV");
         t.add("V");
-        addTextToPrinter(printer, intransitReceipt(t), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
+        addTextToPrinter(printer, intransitReceipt(t), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
 
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTimeFormatter dateIn = DateTimeFormat.forPattern("MM/dd");
@@ -146,7 +146,7 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
                     totalFnb += pf.getTotal() * pf.getQty();
                 }
                 temp.add(returnWithTwoDecimal(String.valueOf(totalFnb)));
-                addTextToPrinter(printer, intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 2, 1);
+                addTextToPrinter(printer, intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
             }
 
         }
@@ -160,9 +160,9 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
         addTextToPrinter(printer, twoColumnsRightGreaterTr("CLEAN ROOMS", String.valueOf(cleanCount), 4, 5, context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
         addPrinterSpace(1);
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
         try {
@@ -188,7 +188,7 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
 
     private String intransitReceipt(List<String> details) {
         String finalString = "";
-        float maxColumn = 40;
+        float maxColumn = Float.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT));
         float perColumn = maxColumn / details.size();
         for (int i = 0; i < details.size(); i++) {
             if (details.size() >= perColumn) {

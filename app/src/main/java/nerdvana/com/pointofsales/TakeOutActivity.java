@@ -60,7 +60,6 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         TypeToken<List<FetchRoomAreaResponse.Result>> areaToken = new TypeToken<List<FetchRoomAreaResponse.Result>>() {};
         roomAreaList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.ROOM_AREA_JSON), areaToken.getType());
 
-
         listTableRoomSelection = findViewById(R.id.listTableRoomSelection);
         fab = findViewById(R.id.fab);
         setRoomsTableAdapter();

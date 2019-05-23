@@ -55,6 +55,7 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.BreadcrumbModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
+import nerdvana.com.pointofsales.model.ClearSearchData;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -521,36 +522,40 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                 darkTheme();
             }
         }
+
+        setProductAdapter();
     }
 
     private void lightTheme() {
-        search.setBackgroundColor(Color.WHITE);
-        search.setTextColor(Color.BLACK);
-        search.setHintTextColor(Color.BLACK);
-        breadcrumb.setTextColor(Color.BLACK);
-        breadcrumb.setBackgroundColor(Color.WHITE);
-        qtySpinner.setBackgroundColor(Color.WHITE);
-        labelQty.setTextColor(Color.BLACK);
+        listProducts.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        search.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        search.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        search.setHintTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        breadcrumb.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        breadcrumb.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        qtySpinner.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        labelQty.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
 
         for (Drawable drawable : breadcrumb.getCompoundDrawables()) {
             if (drawable != null) {
-                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(breadcrumb.getContext(), R.color.colorBlack), PorterDuff.Mode.SRC_IN));
+                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(breadcrumb.getContext(), R.color.lightPrimaryFont), PorterDuff.Mode.SRC_IN));
             }
         }
     }
 
     private void darkTheme() {
-        search.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        search.setTextColor(Color.WHITE);
-        search.setHintTextColor(Color.WHITE);
-        breadcrumb.setTextColor(Color.WHITE);
-        breadcrumb.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        qtySpinner.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        labelQty.setTextColor(Color.WHITE);
+        listProducts.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
+        search.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        search.setTextColor(getResources().getColor(R.color.darkFont));
+        search.setHintTextColor(getResources().getColor(R.color.darkFont));
+        breadcrumb.setTextColor(getResources().getColor(R.color.darkFont));
+        breadcrumb.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        qtySpinner.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        labelQty.setTextColor(getResources().getColor(R.color.darkFont));
 
         for (Drawable drawable : breadcrumb.getCompoundDrawables()) {
             if (drawable != null) {
-                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(breadcrumb.getContext(), R.color.colorWhite), PorterDuff.Mode.SRC_IN));
+                drawable.setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(breadcrumb.getContext(), R.color.darkFont), PorterDuff.Mode.SRC_IN));
             }
         }
     }
@@ -559,4 +564,10 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     public void changeTheme(ChangeThemeModel changeThemeModel) {
         changeTheme();
     }
+
+    @Subscribe
+    public void clearText(ClearSearchData clearSearchData) {
+        search.setText("");
+    }
+
 }

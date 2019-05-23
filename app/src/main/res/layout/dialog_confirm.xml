@@ -8,6 +8,7 @@
     <include layout="@layout/partial_header" />
 
     <TextView
+        android:layout_margin="5dp"
         android:textStyle="bold"
         android:textSize="17sp"
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
         android:text="Provide remarks(optional)"/>
 
     <EditText
+        android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="3"
@@ -23,6 +25,7 @@
         android:id="@+id/remarks"/>
 
     <Button
+        android:layout_margin="10dp"
         android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
