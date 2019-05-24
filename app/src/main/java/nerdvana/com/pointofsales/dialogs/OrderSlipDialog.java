@@ -36,10 +36,16 @@ public class OrderSlipDialog extends BaseDialog {
     private Button reprintFoodOrderSlip;
     List<OrderSlipModel.OrderSlipProduct> tempOsp;
     private String roomNumber;
-    public OrderSlipDialog(@NonNull Context context, List<OrderSlipModel> orderList, String roomNumber) {
+    private String kitchenPath;
+    private String printerPath;
+    public OrderSlipDialog(@NonNull Context context, List<OrderSlipModel> orderList,
+                           String roomNumber, String kitchenPath,
+                           String printerPath) {
         super(context);
         this.orderList = orderList;
         this.roomNumber = roomNumber;
+        this.kitchenPath = kitchenPath;
+        this.printerPath = printerPath;
     }
 
     public OrderSlipDialog(@NonNull Context context, int themeResId) {
@@ -119,7 +125,9 @@ public class OrderSlipDialog extends BaseDialog {
                     BusProvider.getInstance().post(
                             new PrintModel("",
                                     !TextUtils.isEmpty(roomNumber) ? roomNumber : "",
-                                    "FO", GsonHelper.getGson().toJson(reprintList)));
+                                    "FO", GsonHelper.getGson().toJson(reprintList),
+                                    kitchenPath,
+                                    printerPath));
                 }
             }
         });

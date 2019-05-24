@@ -79,6 +79,9 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
             });
 
 
+            Log.d("FDFDFD1", kitchPath);
+            Log.d("FDFDFD2", printerPath);
+
             if (TextUtils.isEmpty(kitchPath)) {
                 printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
             } else {

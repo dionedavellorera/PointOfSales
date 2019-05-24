@@ -1226,20 +1226,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         roomNumber = selectedRoom.getName();
                     }
                 }
-                OrderSlipDialog orderSlipDialog = new OrderSlipDialog(getActivity(), orderSlipList, roomNumber);
+                OrderSlipDialog orderSlipDialog = new OrderSlipDialog(getActivity(), orderSlipList, roomNumber, kitchenPath, printerPath);
                 if (selectedRoom != null) {
-                    if (selectedRoom.isTakeOut()) {
-                        if (!orderSlipDialog.isShowing()) orderSlipDialog.show();
-                    } else {
-                        if (selectedRoom.getStatus().equalsIgnoreCase("2") || selectedRoom.getStatus().equalsIgnoreCase("17")) {
-                            if (!orderSlipDialog.isShowing()) orderSlipDialog.show();
-                        } else {
-                            Utils.showDialogMessage(getActivity(), "Room not yet occupied / SOA", "Information");
-                        }
-                    }
-
+                    if (!orderSlipDialog.isShowing()) orderSlipDialog.show();
                 } else {
-
                     Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
                 break;
@@ -1505,7 +1495,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     @Override
                     public void yesClicked() {
 
-                        final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                        final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                             @Override
                             public void save(final String remarks) {
 
@@ -1584,7 +1574,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 };
                 alertYesNo.show();
             } else {
-                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                     @Override
                     public void save(final String remarks) {
                         PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
@@ -1780,7 +1770,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void switchRoomConfirm(final String roomRatePriceId, final String qty,
                                           final String price, final String rateName,
                                           final String roomId, List<RoomRateMain> roomRateMainList) {
-                ConfirmWithRemarksDialog cfrmDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                ConfirmWithRemarksDialog cfrmDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                     @Override
                     public void save(final String remarks) {
 //                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
@@ -1801,17 +1791,60 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
-
-                                BusProvider.getInstance().post(
-                                        new SwitchRoomRequest(
-                                                String.valueOf(selectedRoom.getRoomId()),
-                                                roomRatePriceId,
-                                                remarks,
-                                                roomId,
-                                                employeeId,
-                                                voidModel
-                                        )
+                                SwitchRoomRequest switchRoomRequest = new SwitchRoomRequest(
+                                        String.valueOf(selectedRoom.getRoomId()),
+                                        roomRatePriceId,
+                                        remarks,
+                                        roomId,
+                                        employeeId,
+                                        voidModel
                                 );
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<SwitchRoomResponse> request = iUsers.switchRoom(switchRoomRequest.getMapValue());
+
+
+                                request.enqueue(new Callback<SwitchRoomResponse>() {
+                                    @Override
+                                    public void onResponse(Call<SwitchRoomResponse> call, Response<SwitchRoomResponse> response) {
+                                        if (response.body().getStatus() == 0) {
+                                            Utils.showDialogMessage(getActivity(), response.body().getMesage(), "Warning");
+                                        } else {
+                                            if (response.body().getResults() != null) {
+                                                if (response.body().getResults().getBooked().size() > 0) {
+
+
+                                                    SwitchRoomPrintModel switchRoomPrintModel =
+                                                            new SwitchRoomPrintModel(
+                                                                    selectedRoom.getName(),
+                                                                    selectedRoom.getRoomType(),
+                                                                    response.body().getResults().getBooked().get(0).getRoomNumber(),
+                                                                    response.body().getResults().getBooked().get(0).getRoomType(),
+                                                                    response.body().getResults().getBooked().get(0).getCheckInTime(),
+                                                                    response.body().getResults().getBooked().get(0).getUser_id());
+
+                                                    BusProvider.getInstance().post(
+                                                            new PrintModel(
+                                                                    "",
+                                                                    response.body().getResults().getBooked().get(0).getRoomNumber(),
+                                                                    "SWITCH_ROOM" ,
+                                                                    GsonHelper.getGson().toJson(switchRoomPrintModel),
+                                                                    "",
+                                                                    "",
+                                                                    remarks));
+
+                                                    fetchRoomViaIdRequest(String.valueOf(response.body().getResults().getBooked().get(0).getRoomId()));
+                                                    Utils.showDialogMessage(getActivity(), "Switch room succeeded", "Success");
+                                                }
+
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<SwitchRoomResponse> call, Throwable t) {
+
+                                    }
+                                });
 
 
                             }
@@ -1821,14 +1854,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             }
                         };
-
                         passwordDialog.show();
-
-
-
-
-
-
                     }
                 };
 
@@ -2438,15 +2464,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
-
-        kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
-        printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
-
-
-        Log.d("TOPENDINGROOM", kitchenPath);
-        Log.d("TOPENDINGROOM", printerPath);
-
-
         BusProvider.getInstance().post(new ClearSearchData("d"));
         forVoidDiscountModels = new ArrayList<>();
         guestReceiptInfoModel = null;
@@ -2460,6 +2477,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
+
+            kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
+            printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
+
 
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
 
@@ -3050,8 +3071,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
 
-        kitchenPath = fetchOrderPendingViaControlNoResponse.getResult().getArea().getKitchenPath();
-        printerPath = fetchOrderPendingViaControlNoResponse.getResult().getArea().getPrinterPath();
+
 
         Log.d("TOPENDING", kitchenPath);
         Log.d("TOPENDING", printerPath);
@@ -3084,6 +3104,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         orderSlipList = new ArrayList<>();
         Double totalAmount = 0.00;
         if (fetchOrderPendingViaControlNoResponse.getResult() != null) {
+
+            if (fetchOrderPendingViaControlNoResponse.getResult().getArea() != null) {
+                kitchenPath = fetchOrderPendingViaControlNoResponse.getResult().getArea().getKitchenPath();
+                printerPath = fetchOrderPendingViaControlNoResponse.getResult().getArea().getPrinterPath();
+            }
+
+
+
             if (fetchOrderPendingViaControlNoResponse.getResult().getEmployeeId() != null) {
 
                 employeeId = fetchOrderPendingViaControlNoResponse.getResult().getEmployeeId().toString();

@@ -70,8 +70,6 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
     private Activity act;
 
-    private Button changeTime;
-    private Button changeDate;
     private Button changeCheckInTime;
 
     private String dateSet = "";
@@ -120,45 +118,9 @@ public abstract class GuestInfoDialog extends BaseDialog {
                 String.format("%s:%s:00", String.valueOf(finalChDate.getHourOfDay()), String.valueOf(finalChDate.getMinuteOfHour()));
 
 
-        changeDate = findViewById(R.id.changeDate);
-
-
-        changeDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickerDialog datePickerDialog =
-                        new DatePickerDialog(act, new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                dateSet = String.format("%s-%s-%s", String.valueOf(year < 10 ? "0" + year : year), String.valueOf((month + 1) < 10 ? "0" + (month +1) : (month + 1)) , String.valueOf(dayOfMonth < 10 ? "0" + dayOfMonth : dayOfMonth));
-                            }
-                        }, jodatime.getYear(), jodatime.getMonthOfYear() -1, jodatime.getDayOfMonth());
-                datePickerDialog.show();
-            }
-
-
-        });
-
-        changeTime = findViewById(R.id.changeTime);
-
-        changeTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final TimePickerDialog timePickerDialog = new TimePickerDialog(act, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        timeSet = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute : minute)));
-                    }
-                }, jodatime.hourOfDay().get(), jodatime.minuteOfHour().get(), true);
-                timePickerDialog.show();
-            }
-        });
-
         wakeUpCall = findViewById(R.id.wakeUpCallValue);
 
         wakeUpCall.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getWakeUpCall())));
-
-
 
         checkInTime = findViewById(R.id.checkInTimeValue);
         checkInTime.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString())));
@@ -168,16 +130,47 @@ public abstract class GuestInfoDialog extends BaseDialog {
         updateGuestInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finalTime = dateSet + " " + timeSet; //24hrs time 23:23:00
-                Log.d("MYDATA", finalTime);
-                if (dtf.parseDateTime(finalTime).isBefore(checkInJodaTime) || dtf.parseDateTime(finalTime).isAfter(checkOutJodaTime)) {
-                    Utils.showDialogMessage(act, "Please check wake up call time", "Error");
-                } else {
-                    Log.d("MYDATA", finalTime);
-                    updateGuestInfo(finalTime);
-                }
+
+                DatePickerDialog datePickerDialog =
+                        new DatePickerDialog(act, new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, final int year, final int month, final int dayOfMonth) {
+
+
+                                final TimePickerDialog timePickerDialog = new TimePickerDialog(act, new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                        dateSet = String.format("%s-%s-%s", String.valueOf(year < 10 ? "0" + year : year), String.valueOf((month + 1) < 10 ? "0" + (month +1) : (month + 1)) , String.valueOf(dayOfMonth < 10 ? "0" + dayOfMonth : dayOfMonth));
+                                        timeSet = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute : minute)));
+
+                                        finalTime = dateSet + " " + timeSet;
+
+                                        //finalTime = dateSet + " " + timeSet; //24hrs time 23:23:00
+                                        if (dtf.parseDateTime(finalTime).isBefore(checkInJodaTime)) {
+                                            Utils.showDialogMessage(act, "Wake up call time invalid, time set before check in time", "Error");
+                                        } else if(dtf.parseDateTime(finalTime).isAfter(checkOutJodaTime)) {
+                                            Utils.showDialogMessage(act, "Wake up call time invalid, time set after check out time", "Error");
+                                        } else {
+                                            updateGuestInfo(finalTime);
+                                        }
+                                    }
+                                }, jodatime.hourOfDay().get(), jodatime.minuteOfHour().get(), true);
+                                timePickerDialog.show();
+
+
+                            }
+                        }, jodatime.getYear(), jodatime.getMonthOfYear() -1, jodatime.getDayOfMonth());
+                datePickerDialog.show();
+
+
+
+
+
+
             }
         });
+
+
 
         roomNumber = findViewById(R.id.roomNumberValue);
         roomNumber.setText(fetchRoomPendingResult.getBooked().get(0).getRoomNo());
@@ -278,7 +271,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
             public void onResponse(Call<WakeUpCallUpdateResponse> call, Response<WakeUpCallUpdateResponse> response) {
                 dismiss();
                 refresh(GsonHelper.getGson().toJson(changeWakeUpCallPrintModel));
-
+                Utils.showDialogMessage(act, "Wake up call successfully changed", "Information");
             }
 
             @Override
@@ -297,6 +290,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
             public void onResponse(Call<UpdateCheckInTimeResponse> call, Response<UpdateCheckInTimeResponse> response) {
                 dismiss();
                 refresh();
+                Utils.showDialogMessage(act, "Check in time successfully changed", "Information");
             }
 
             @Override
@@ -304,7 +298,6 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
             }
         });
-
     }
 
     public abstract void refresh();
@@ -323,10 +316,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 finalCheckInTime = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute  : minute)));
-
                                 finalCheckInDateTime = finalCheckInDate + " " + finalCheckInTime;
-
-                                Log.d("TEKTEKTKE", finalCheckInDateTime);
                                 PasswordDialog passwordDialog = new PasswordDialog(act) {
                                     @Override
                                     public void passwordSuccess(String employeeId, String employeeName) {

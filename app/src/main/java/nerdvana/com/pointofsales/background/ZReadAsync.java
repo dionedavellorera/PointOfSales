@@ -462,7 +462,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "OLD GRAND TOTAL",
-                    String.valueOf(zReadResponse.getOldGrandTotal())
+                    returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal()))
                     ,
                     40,
                     2,
@@ -477,7 +477,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "Z-READ NO",
-                    String.valueOf(zReadResponse.getCount())
+                    returnWithTwoDecimal(String.valueOf(zReadResponse.getCount()))
                     ,
                     40,
                     2,
@@ -515,5 +515,22 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
 
         return null;
+    }
+
+    private String returnWithTwoDecimal(String amount) {
+        String finalValue = "";
+        if (amount.contains(".")) {
+            String[] tempArray = amount.split("\\.");
+            if (tempArray[1].length() > 2) {
+                finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
+            } else {
+                finalValue = tempArray[0] + "." + tempArray[1];
+            }
+        } else {
+            finalValue = amount;
+        }
+
+        return finalValue;
+
     }
 }

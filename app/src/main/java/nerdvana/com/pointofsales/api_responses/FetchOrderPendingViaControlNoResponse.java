@@ -160,6 +160,31 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+    public class CardDetail {
+        @SerializedName("credit_card_id")
+        @Expose
+        private String creditCardId;
+        @SerializedName("card_number")
+        @Expose
+        private String cardNumber;
+
+        public String getCreditCardId() {
+            return creditCardId;
+        }
+
+        public void setCreditCardId(String creditCardId) {
+            this.creditCardId = creditCardId;
+        }
+
+        public String getCardNumber() {
+            return cardNumber;
+        }
+
+        public void setCardNumber(String cardNumber) {
+            this.cardNumber = cardNumber;
+        }
+    }
+
     public class Payment {
 
         @SerializedName("id")
@@ -210,6 +235,17 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("currency")
         @Expose
         private Currency currency;
+        @SerializedName("card_detail")
+        @Expose
+        private CardDetail cardDetail;
+
+        public CardDetail getCardDetail() {
+            return cardDetail;
+        }
+
+        public void setCardDetail(CardDetail cardDetail) {
+            this.cardDetail = cardDetail;
+        }
 
         public Currency getCurrency() {
             return currency;

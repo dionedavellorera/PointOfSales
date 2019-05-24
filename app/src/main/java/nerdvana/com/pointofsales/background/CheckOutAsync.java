@@ -212,6 +212,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
+
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "AMOUNT DUE",
                     returnWithTwoDecimal(String.valueOf(
@@ -238,6 +239,67 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     context)
                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+
+            addPrinterSpace(1);
+            List<Integer> tmpArr = new ArrayList<>();
+            String pymType = "";
+            List<String> ccardArray = new ArrayList<>();
+            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                    tmpArr.add(pym.getPaymentTypeId());
+                    pymType = pym.getPaymentDescription();
+                }
+                
+                if (pym.getPaymentTypeId() == 2) {
+                    if (pym.getCardDetail() != null) {
+                        if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
+                            int starCount = 0;
+                            String finalData = "";
+                            if (pym.getCardDetail().getCardNumber().length() < 3) {
+                                finalData += pym.getCardDetail().getCardNumber();
+                            } else {
+                                starCount = pym.getCardDetail().getCardNumber().length() - 3;
+                                finalData += new String(new char[starCount]).replace("\0", "*");
+                                finalData += pym.getCardDetail().getCardNumber().substring(starCount);
+                            }
+
+                            if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "MASTER",
+                                        ""
+                                        ,
+                                        40,
+                                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            } else {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "VISA",
+                                        ""
+                                        ,
+                                        40,
+                                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            }
+
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    pym.getPaymentDescription(),
+                                    finalData
+                                    ,
+                                    40,
+                                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        }
+                    }
+                }
+            }
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "PAYMENT TYPE",
+                    tmpArr.size() > 1 ? "MULTIPLE" : pymType
+                    ,
+                    40,
+                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+            addPrinterSpace(1);
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "VATABLE SALES",
                     returnWithTwoDecimal(String.valueOf(toList1.getVatable())),
@@ -375,7 +437,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     returnWithTwoDecimal(String.valueOf(toList1.getTotal() - (toList1.getAdvance() + toList1.getDiscount()))),
                     40,
                     2,
-                    context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,2,1);
+                    context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "TENDERED",

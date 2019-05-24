@@ -220,30 +220,13 @@
                     android:layout_height="wrap_content"
                     android:text="08:00 PM"/>
 
-                <Button
-                    android:padding="5dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/button_selector"
-                    android:id="@+id/changeTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Change time"/>
 
                 <Button
                     android:padding="5dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/button_selector"
-                    android:id="@+id/changeDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Change date"/>
-
-                <Button
-                    android:padding="5dp"
-                    android:layout_margin="5dp"
+                    android:layout_margin="10dp"
                     android:background="@drawable/button_selector"
                     android:id="@+id/changeCheckInTime"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Update Check in time"/>
 
@@ -254,7 +237,7 @@
                     android:id="@+id/updateGuestInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="UPDATE GUEST INFO"/>
+                    android:text="CHANGE WAKE UP CALL"/>
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

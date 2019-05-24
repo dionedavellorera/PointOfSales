@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -133,22 +134,21 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
             if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
 //                intransitCount += 1;
                 List<String> temp = new ArrayList<>();
-                temp.add(r.getRoomNo());
+                temp.add(r.getRoomNo()); //ROOM NUMBER
 
                 DateTime jodatime = dtf.parseDateTime(r.getTransaction().getCheckIn());
 
-                temp.add(dateIn.print(jodatime));
-                temp.add(timeIn.print(jodatime));
-                temp.add(returnWithTwoDecimal(String.valueOf(r.getTransaction().getTransaction().getAdvance())));
+                temp.add(dateIn.print(jodatime)); //DATE IN
+                temp.add(timeIn.print(jodatime)); //TIME IN
+                temp.add(returnWithTwoDecimal(String.valueOf(r.getTransaction().getTransaction().getAdvance()))); //ADVANCE PAYMENT
 
                 Double totalFnb = 0.00;
                 for (FetchRoomResponse.PostFood pf : r.getTransaction().getTransaction().getPostFood()) {
                     totalFnb += pf.getTotal() * pf.getQty();
                 }
-                temp.add(returnWithTwoDecimal(String.valueOf(totalFnb)));
+                temp.add(returnWithTwoDecimal(String.valueOf(totalFnb))); //FNB
                 addTextToPrinter(printer, intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
             }
-
         }
 
 
@@ -174,8 +174,6 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
                 printer.clearCommandBuffer();
             }
 
-
-//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
@@ -189,7 +187,8 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
     private String intransitReceipt(List<String> details) {
         String finalString = "";
         float maxColumn = Float.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT));
-        float perColumn = maxColumn / details.size();
+        int perColumn = (int)maxColumn / details.size();
+
         for (int i = 0; i < details.size(); i++) {
             if (details.size() >= perColumn) {
                 finalString += details.get(i);

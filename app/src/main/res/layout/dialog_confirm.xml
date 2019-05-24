@@ -8,6 +8,7 @@
     <include layout="@layout/partial_header" />
 
     <TextView
+        android:id="@+id/header"
         android:layout_margin="5dp"
         android:textStyle="bold"
         android:textSize="17sp"

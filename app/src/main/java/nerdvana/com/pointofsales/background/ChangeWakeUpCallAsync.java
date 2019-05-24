@@ -83,7 +83,7 @@ public class ChangeWakeUpCallAsync extends AsyncTask<Void, Void, Void> {
         addTextToPrinter(printer, "CHANGE WAKE UP CALL SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "NEW WAKE UP CALL",
+                "",
                 changeWakeUpCallPrintModel.getNewWakeUpCall()
                 ,
                 40,

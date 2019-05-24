@@ -17,23 +17,19 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/listMainItems"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"/>
     </RelativeLayout>
+
 
     <View
         android:layout_width="1dp"
         android:layout_height="match_parent"
         android:background="#d3d3d3"/>
 
-    <RelativeLayout
-        android:padding="5dp"
+
+    <FrameLayout
+        android:id="@+id/settingFrame"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7">
-        <FrameLayout
-            android:id="@+id/settingFrame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
-
+        android:layout_weight="0.7"/>
 </LinearLayout>

@@ -119,6 +119,8 @@
 
 
     <android.support.design.widget.FloatingActionButton
+        android:src="@mipmap/baseline_print_black_24"
+        android:tint="@color/colorWhite"
         android:id="@+id/fab"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"

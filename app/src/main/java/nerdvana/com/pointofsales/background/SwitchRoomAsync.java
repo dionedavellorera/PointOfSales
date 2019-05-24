@@ -89,6 +89,9 @@ public class SwitchRoomAsync extends AsyncTask<Void, Void, Void> {
 
         addTextToPrinter(printer, "CHECK IN TIME : " + convertDateToReadableDate(switchRoomPrintModel.getCheckInTime()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
+        addTextToPrinter(printer, "REMARKS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, printModel.getRemarks(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
         addPrinterSpace(1);
 
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);

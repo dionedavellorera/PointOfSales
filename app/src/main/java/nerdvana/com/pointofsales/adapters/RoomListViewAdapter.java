@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.dialogs.AvailableGcDialog;
@@ -88,7 +89,7 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ((RoomListViewAdapter.RoomDataHolder) holder).status.setText(roomDataList.get(i).getStatus().getRoomStatus());
                 ((RoomListViewAdapter.RoomDataHolder) holder).rate.setText(TextUtils.join(",", rateList));
                 ((RoomListViewAdapter.RoomDataHolder) holder).wakeUpCall.setText(roomDataList.get(i).getTransaction().getWakeUpCall());
-                ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText("----");
+                ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText(PrinterUtils.getDuration(roomDataList.get(i).getTransaction().getCheckIn()));
                 ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeIn.setText(roomDataList.get(i).getTransaction().getCheckIn());
                 ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
                 ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());

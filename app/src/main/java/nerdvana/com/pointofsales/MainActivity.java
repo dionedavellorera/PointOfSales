@@ -190,6 +190,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private UserModel userModel;
 
+    private View separator;
+    private View separator2;
+
     private List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
 
     private boolean doubleBackToExitPressedOnce;
@@ -207,6 +210,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        separator = findViewById(R.id.separator);
+        separator2 = findViewById(R.id.separator2);
+
         myPrintJobs = new ArrayList<>();
 
 
@@ -624,11 +631,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void print(PrintModel printModel) {
         boolean willExecutGlobalPrint = true;
-//        try {
-//            SPrinter.getPrinter().beginTransaction();
-//        } catch (Epos2Exception e) {
-//            e.printStackTrace();
-//        }
         //regionheader
         String[] address = SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.BRANCH_ADDRESS).split(" ");
         ArrayList<String> addressArray = new ArrayList<>();
@@ -644,24 +646,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 temp = "";
             }
         }
-
-
-
-
-//        addTextToPrinter(SPrinter.getPrinter(), "*", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(SPrinter.getPrinter(), SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.BRANCH), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//
-//        for (String s : addressArray) {
-//            addTextToPrinter(SPrinter.getPrinter(), s, Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        }
-//        addTextToPrinter(SPrinter.getPrinter(), SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.BRANCH_TELEPHONE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(SPrinter.getPrinter(), "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-//        addTextToPrinter(SPrinter.getPrinter(), "VAT REG TIN NO: " + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.TIN_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(SPrinter.getPrinter(), "PERMIT NO: " + SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
-//        addTextToPrinter(SPrinter.getPrinter(), "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
-
-
-
 
         switch (printModel.getType()) {
             case "IN_TRANSIT": //ignore header
@@ -726,11 +710,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
-
-                Log.d("DIONEDAVE1", printModel.getType());
-                Log.d("DIONEDAVE1", printModel.getRoomNumber());
-
-
                 addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soaroom");
                 break;
             case "FO": //done
@@ -1596,13 +1575,17 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void lightTheme() {
+        separator.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
+        separator2.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
         toolbar.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
         user.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
         timer.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
     }
 
     private void darkTheme() {
-        toolbar.setBackgroundColor(Color.BLACK);
+        separator.setBackgroundColor(getResources().getColor(R.color.darkFont));
+        separator2.setBackgroundColor(getResources().getColor(R.color.darkFont));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.darkMain));
         user.setTextColor(getResources().getColor(R.color.darkFont));
         timer.setTextColor(getResources().getColor(R.color.darkFont));
     }
