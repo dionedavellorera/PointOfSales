@@ -249,7 +249,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     tmpArr.add(pym.getPaymentTypeId());
                     pymType = pym.getPaymentDescription();
                 }
-                
+
                 if (pym.getPaymentTypeId() == 2) {
                     if (pym.getCardDetail() != null) {
                         if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
