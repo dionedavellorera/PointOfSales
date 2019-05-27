@@ -23,9 +23,11 @@ import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
+import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
+import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
@@ -336,7 +338,70 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 }
             }
 
+
+            if (toList1.getDiscountsList().size() > 0) {
+                addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
+//                        addTextToPrinter(printer, d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    if (d.getId().equalsIgnoreCase("0")) { //MANUAL
+//                        addTextToPrinter(printer, "    " + d.getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    } else {
+                        if (d.getInfo() != null) {
+                            if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        d.getDiscountType(),
+                                        "NA",
+                                        40,
+                                        2,
+                                        context)
+                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            } else {
+
+                                if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            d.getDiscountType(),
+                                            "NA",
+                                            40,
+                                            2,
+                                            context)
+                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+
+                                    if (d.getInfo().getCardNo() != null) {
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                d.getDiscountType(),
+                                                d.getInfo().getCardNo().toUpperCase(),
+                                                40,
+                                                2,
+                                                context)
+                                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+
+                                    if (d.getInfo().getName() != null) {
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                "NAME",
+                                                d.getInfo().getName().toUpperCase(),
+                                                40,
+                                                2,
+                                                context)
+                                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                }
+
+            }
+
+
             addPrinterSpace(1);
+
+
 
             if (toList1.getCustomer() != null) {
                 if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
@@ -354,7 +419,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
             }
             addPrinterSpace(1);
 
-            addFooterToPrinter();
+            addFooterToPrinter(toList1.getCreatedAt(), PrinterUtils.yearPlusFive(toList1.getCreatedAt()));
 
             try {
                 printer.addCut(Printer.CUT_FEED);
@@ -534,7 +599,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void addFooterToPrinter() {
+    private void addFooterToPrinter(String currentDate, String currentDatePlus5) {
 
         if (printer != null) {
             addTextToPrinter(printer, "THIS IS NOT AN OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -544,8 +609,8 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "Address : 1 CANLEY ROAD BRGY BAGONG ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "TIN: 009-772-500-000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "ACCRE No. : ******", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Date issued : 01/01/2019", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Valid until : 01/01/2024", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Date issued : " + currentDate, Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Valid until : " + currentDatePlus5, Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //            addTextToPrinter(printer, "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);
             addTextToPrinter(printer, "THIS INVOICE RECEIPT SHALL BE VALID FOR FIVE(5) YEARS FROM THE DATE OF THE PERMIT TO USE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

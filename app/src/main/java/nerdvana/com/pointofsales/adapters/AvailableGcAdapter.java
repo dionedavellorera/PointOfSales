@@ -48,11 +48,7 @@ public class AvailableGcAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
-
-
         if(holder instanceof AvailableGcAdapter.ApproveListGcViewHolder){
-
-
             ((ApproveListGcViewHolder) holder).remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -61,7 +57,6 @@ public class AvailableGcAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             });
             ((AvailableGcAdapter.ApproveListGcViewHolder) holder).name.setText(approveList.get(i).getSeriesNumber() + " - " + String.valueOf(approveList.get(i).getAmount()));
         }
-
     }
 
     @Override

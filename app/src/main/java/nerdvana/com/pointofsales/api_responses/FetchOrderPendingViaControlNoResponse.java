@@ -1084,7 +1084,48 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+    public class Info {
+        @SerializedName("card_no")
+        @Expose
+        private String cardNo;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("address")
+        @Expose
+        private String address;
+
+        public void setCardNo(String cardNo) {
+            this.cardNo = cardNo;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public String getCardNo() {
+            return cardNo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+    }
+
+
+
     public class Discounts {
+        @SerializedName("info")
+        @Expose
+        private Info info;
         @SerializedName("void_by")
         @Expose
         private String void_by;
@@ -1097,6 +1138,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("discount_amount")
         @Expose
         private Double discountAmount;
+
+        public Info getInfo() {
+            return info;
+        }
+
+        public void setInfo(Info info) {
+            this.info = info;
+        }
 
         public String getVoid_by() {
             return void_by;

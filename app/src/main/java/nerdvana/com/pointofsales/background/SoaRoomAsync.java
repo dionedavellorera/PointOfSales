@@ -67,6 +67,15 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
+//        try {
+//            printer.addHLine(0, 65535,Printer.LINE_MEDIUM);
+//        } catch (Epos2Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        addTextToPrinter(printer, "SIGNATURE"
+//                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+
 
         TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
         List<PrintSoaResponse.Booked> bookedList = GsonHelper.getGson().fromJson(printModel.getData(), bookedToken.getType());
@@ -297,18 +306,8 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                         context)
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             } else {
-                                if (d.getInfo().getCardNo() == null) {
 
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            d.getDiscountType(),
-                                            d.getInfo().getName().toUpperCase(),
-                                            40,
-                                            2,
-                                            context)
-                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                                    addTextToPrinter(printer, "    " +d.getInfo().getName().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                } else {
-
+                                if (d.getInfo().getCardNo() != null) {
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             d.getDiscountType(),
                                             d.getInfo().getCardNo().toUpperCase(),
@@ -316,9 +315,19 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                             2,
                                             context)
                                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
 
 
-//                                    addTextToPrinter(printer, "    " +d.getInfo().getCardNo().toUpperCase(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                if (d.getInfo().getName() != null) {
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            "NAME",
+                                            d.getInfo().getName().toUpperCase(),
+                                            40,
+                                            2,
+                                            context)
+                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
                                 }
                             }
 

@@ -109,7 +109,6 @@ public class TimerService extends Service {
                                             DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
                                             DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
                                             shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
-
                                             if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
                                                 BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
                                             } else {

@@ -2285,180 +2285,185 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void doCheckoutFunction() {
-        PaymentDialog checkoutDialog = new PaymentDialog(getActivity(),
-                paymentTypeList,
-                true,
-                postedPaymentsList,
-                totalBalance,
-                currencyList,
-                creditCardList,
-                arOnlineList,
-                discountPayment,
-                selectedRoom.getControlNo(),
-                guestReceiptInfoModel) {
-            @Override
-            public void removePaymentSuccess() {
-                if (selectedRoom != null) {
-                    if (selectedRoom.isTakeOut()) {
-                        fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                    } else {
-                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                    }
-                }
-            }
-
-            @Override
-            public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
-
-
-                //regionpayment checkout chain
-                List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
-                boolean isReadyForCheckOut = false;
-                Double totalPayments = 0.00;
-                for (PostedPaymentsModel ppm : postedPaymentLit) {
-                    if (!ppm.isIs_posted()) {
-                        paymentsToPost.add(ppm);
-                    }
-
-                    totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
-                }
-
-                if (cartItemList.size() == 0) {
-                    //no order and prompt to cancel order, disregard all payments
+        if (selectedRoom != null) {
+            PaymentDialog checkoutDialog = new PaymentDialog(getActivity(),
+                    paymentTypeList,
+                    true,
+                    postedPaymentsList,
+                    totalBalance,
+                    currencyList,
+                    creditCardList,
+                    arOnlineList,
+                    discountPayment,
+                    selectedRoom.getControlNo(),
+                    guestReceiptInfoModel) {
+                @Override
+                public void removePaymentSuccess() {
                     if (selectedRoom != null) {
                         if (selectedRoom.isTakeOut()) {
-                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    switch (which){
-                                        case DialogInterface.BUTTON_POSITIVE:
-                                            checkoutRoom("",
-                                                    selectedRoom.getControlNo(),
-                                                    "");
-                                            break;
-
-                                        case DialogInterface.BUTTON_NEGATIVE:
-                                            dismiss();
-                                            break;
-                                    }
-                                }
-                            };
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
-                                    .setPositiveButton("Yes", dialogClickListener)
-                                    .setNegativeButton("No", dialogClickListener).show();
+                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
                         } else {
-
-                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    switch (which){
-                                        case DialogInterface.BUTTON_POSITIVE:
-                                            dismiss();
-                                            break;
-                                        case DialogInterface.BUTTON_NEGATIVE:
-                                            dismiss();
-                                            break;
-                                    }
-                                }
-                            };
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
-                                    .setPositiveButton("Ok", dialogClickListener).show();
-
+                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
                         }
                     }
+                }
+
+                @Override
+                public void paymentSuccess(final List<PostedPaymentsModel> postedPaymentLit, final String roomboy) {
 
 
-                } else {
-                    if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
-                        if (paymentsToPost.size() > 0) {
-                            if (selectedRoom != null) {
-                                if (selectedRoom.isTakeOut()) {
-                                    postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
-                                } else {
-                                    postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
-                                }
-                            }
-
-                        } else {
-                            if (selectedRoom != null) {
-                                if (selectedRoom.isTakeOut()) {
-                                    checkoutRoom("",
-                                            selectedRoom.getControlNo(),
-                                            "");
-                                } else {
-                                    checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
-                                            "",
-                                            roomboy);
-                                }
-                            }
-                            Toast.makeText(getContext(), "No payment to post, will proceed to checkout", Toast.LENGTH_SHORT).show();
+                    //regionpayment checkout chain
+                    List<PostedPaymentsModel> paymentsToPost = new ArrayList<>();
+                    boolean isReadyForCheckOut = false;
+                    Double totalPayments = 0.00;
+                    for (PostedPaymentsModel ppm : postedPaymentLit) {
+                        if (!ppm.isIs_posted()) {
+                            paymentsToPost.add(ppm);
                         }
-                        dismiss();
-                    } else {
 
-                        Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
-                    }
-                }
-                //endregion
-
-
-            }
-
-            @Override
-            public void paymentFailed() {
-
-            }
-        };
-        if (selectedRoom != null) {
-            if (selectedRoom.isTakeOut()) {
-                if (paymentTypeList.size() > 0) {
-                    if (currentRoomStatus.equalsIgnoreCase("1")) {
-                        checkoutDialog.show();
-                    } else {
-
-                        Utils.showDialogMessage(getActivity(), "Please soa room first", "Information");
+                        totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
                     }
 
-                } else {
+                    if (cartItemList.size() == 0) {
+                        //no order and prompt to cancel order, disregard all payments
+                        if (selectedRoom != null) {
+                            if (selectedRoom.isTakeOut()) {
+                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which){
+                                            case DialogInterface.BUTTON_POSITIVE:
+                                                checkoutRoom("",
+                                                        selectedRoom.getControlNo(),
+                                                        "");
+                                                break;
 
-                    Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
+                                            case DialogInterface.BUTTON_NEGATIVE:
+                                                dismiss();
+                                                break;
+                                        }
+                                    }
+                                };
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("You have no orders, this will cancel your transaction. are you sure?")
+                                        .setPositiveButton("Yes", dialogClickListener)
+                                        .setNegativeButton("No", dialogClickListener).show();
+                            } else {
+
+                                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        switch (which){
+                                            case DialogInterface.BUTTON_POSITIVE:
+                                                dismiss();
+                                                break;
+                                            case DialogInterface.BUTTON_NEGATIVE:
+                                                dismiss();
+                                                break;
+                                        }
+                                    }
+                                };
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setMessage("You have no orders / room rate, cannot proceed to checkout")
+                                        .setPositiveButton("Ok", dialogClickListener).show();
+
+                            }
+                        }
+
+
+                    } else {
+                        if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
+                            if (paymentsToPost.size() > 0) {
+                                if (selectedRoom != null) {
+                                    if (selectedRoom.isTakeOut()) {
+                                        postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
+                                    } else {
+                                        postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
+                                    }
+                                }
+
+                            } else {
+                                if (selectedRoom != null) {
+                                    if (selectedRoom.isTakeOut()) {
+                                        checkoutRoom("",
+                                                selectedRoom.getControlNo(),
+                                                "");
+                                    } else {
+                                        checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
+                                                "",
+                                                roomboy);
+                                    }
+                                }
+                                Toast.makeText(getContext(), "No payment to post, will proceed to checkout", Toast.LENGTH_SHORT).show();
+                            }
+                            dismiss();
+                        } else {
+
+                            Utils.showDialogMessage(getActivity(), "Payment is less than balance", "Warning");
+                        }
+                    }
+                    //endregion
+
+
                 }
-            } else {
-                if (currentRoomStatus.equalsIgnoreCase("17")) {
+
+                @Override
+                public void paymentFailed() {
+
+                }
+            };
+            if (selectedRoom != null) {
+                if (selectedRoom.isTakeOut()) {
                     if (paymentTypeList.size() > 0) {
-
-                        boolean isValid = false;
-
-                        for (CartItemsModel cim : cartItemList) {
-                            if (!cim.isProduct()) {
-                                isValid = true;
-                            }
-                        }
-
-                        if (isValid) {
+                        if (currentRoomStatus.equalsIgnoreCase("1")) {
                             checkoutDialog.show();
                         } else {
 
-                            Utils.showDialogMessage(getActivity(), "Cannot checkout a room without a room rate, add one first", "Information");
+                            Utils.showDialogMessage(getActivity(), "Please soa room first", "Information");
                         }
+
                     } else {
 
                         Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
-
                     }
                 } else {
-                    Utils.showDialogMessage(getActivity(), "Please print SOA first", "Information");
+                    if (currentRoomStatus.equalsIgnoreCase("17")) {
+                        if (paymentTypeList.size() > 0) {
+
+                            boolean isValid = false;
+
+                            for (CartItemsModel cim : cartItemList) {
+                                if (!cim.isProduct()) {
+                                    isValid = true;
+                                }
+                            }
+
+                            if (isValid) {
+                                checkoutDialog.show();
+                            } else {
+
+                                Utils.showDialogMessage(getActivity(), "Cannot checkout a room without a room rate, add one first", "Information");
+                            }
+                        } else {
+
+                            Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
+
+                        }
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "Please print SOA first", "Information");
+                    }
                 }
+
+            } else {
+
+                Utils.showDialogMessage(getActivity(), "No room selected", "Information");
             }
-
         } else {
-
             Utils.showDialogMessage(getActivity(), "No room selected", "Information");
         }
+
 
     }
 

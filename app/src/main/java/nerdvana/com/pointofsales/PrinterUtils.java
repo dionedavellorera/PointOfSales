@@ -110,22 +110,31 @@ public class PrinterUtils {
         }
     }
 
+    public static String yearPlusFive(String date) {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        String res = "";
+        try {
+            DateTime jodatime = dtf.parseDateTime(date);
+//            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            res = dtfOut.print(jodatime.plusYears(5));
+        } catch (Exception e) {
+            res  = "NA";
+        }
+        return res.toUpperCase();
+    }
+
     public static String convertDateToReadableDate(String createdAt) {
         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String res = "";
         try {
             DateTime jodatime = dtf.parseDateTime(createdAt);
             DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
-
-
             res = dtfOut.print(jodatime);
         } catch (Exception e) {
             res  = "NA";
         }
-
-
         return res.toUpperCase();
-
     }
 
     public static String twoColumnsRightGreaterLr(String partOne, String partTwo, int maxTextCountPerLine, int columns) {
