@@ -19,8 +19,608 @@ public class FetchProductsResponse {
         this.result = result;
     }
 
-    public class Result {
+    public class BranchProduct {
+        @SerializedName("id")
+        @Expose
+        private int id;
+        @SerializedName("core_id")
+        @Expose
+        private int coreId;
+        @SerializedName("product")
+        @Expose
+        private String product;
+        @SerializedName("product_initial")
+        @Expose
+        private String productInitial;
+        @SerializedName("product_barcode")
+        @Expose
+        private String productBarcode;
+        @SerializedName("product_tags")
+        @Expose
+        private String productTags;
+        @SerializedName("qty")
+        @Expose
+        private int qty;
+        @SerializedName("tax_rate")
+        @Expose
+        private double taxRate;
+        @SerializedName("min")
+        @Expose
+        private int min;
+        @SerializedName("image_file")
+        @Expose
+        private String imageFile;
+        @SerializedName("is_available")
+        @Expose
+        private int isAvailable;
+        @SerializedName("is_fixed_asset")
+        @Expose
+        private int isFixedAsset;
+        @SerializedName("is_raw")
+        @Expose
+        private int isRaw;
+        @SerializedName("is_promo")
+        @Expose
+        private int isPromo;
+        @SerializedName("flag")
+        @Expose
+        private int flag;
+        @SerializedName("price_id")
+        @Expose
+        private int price_id;
+        @SerializedName("amount")
+        @Expose
+        private double amount;
+        @SerializedName("mark_up")
+        @Expose
+        private double markUp;
+        @SerializedName("created_by")
+        @Expose
+        private String createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deletedAt")
+        @Expose
+        private String deletedAt;
 
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(int coreId) {
+            this.coreId = coreId;
+        }
+
+        public String getProduct() {
+            return product;
+        }
+
+        public void setProduct(String product) {
+            this.product = product;
+        }
+
+        public String getProductInitial() {
+            return productInitial;
+        }
+
+        public void setProductInitial(String productInitial) {
+            this.productInitial = productInitial;
+        }
+
+        public String getProductBarcode() {
+            return productBarcode;
+        }
+
+        public void setProductBarcode(String productBarcode) {
+            this.productBarcode = productBarcode;
+        }
+
+        public String getProductTags() {
+            return productTags;
+        }
+
+        public void setProductTags(String productTags) {
+            this.productTags = productTags;
+        }
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
+
+        public double getTaxRate() {
+            return taxRate;
+        }
+
+        public void setTaxRate(double taxRate) {
+            this.taxRate = taxRate;
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+        public void setMin(int min) {
+            this.min = min;
+        }
+
+        public String getImageFile() {
+            return imageFile;
+        }
+
+        public void setImageFile(String imageFile) {
+            this.imageFile = imageFile;
+        }
+
+        public int getIsAvailable() {
+            return isAvailable;
+        }
+
+        public void setIsAvailable(int isAvailable) {
+            this.isAvailable = isAvailable;
+        }
+
+        public int getIsFixedAsset() {
+            return isFixedAsset;
+        }
+
+        public void setIsFixedAsset(int isFixedAsset) {
+            this.isFixedAsset = isFixedAsset;
+        }
+
+        public int getIsRaw() {
+            return isRaw;
+        }
+
+        public void setIsRaw(int isRaw) {
+            this.isRaw = isRaw;
+        }
+
+        public int getIsPromo() {
+            return isPromo;
+        }
+
+        public void setIsPromo(int isPromo) {
+            this.isPromo = isPromo;
+        }
+
+        public int getFlag() {
+            return flag;
+        }
+
+        public void setFlag(int flag) {
+            this.flag = flag;
+        }
+
+        public int getPrice_id() {
+            return price_id;
+        }
+
+        public void setPrice_id(int price_id) {
+            this.price_id = price_id;
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(double amount) {
+            this.amount = amount;
+        }
+
+        public double getMarkUp() {
+            return markUp;
+        }
+
+        public void setMarkUp(double markUp) {
+            this.markUp = markUp;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public String getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(String deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+    }
+
+    public class BranchAlaCart {
+        @SerializedName("id")
+        @Expose
+        private int id;
+        @SerializedName("product_id")
+        @Expose
+        private int productId;
+        @SerializedName("product_alacart_id")
+        @Expose
+        private int productAlacarId;
+        @SerializedName("currency_id")
+        @Expose
+        private int currencyId;
+        @SerializedName("qty")
+        @Expose
+        private int qty;
+        @SerializedName("price")
+        @Expose
+        private double price;
+        @SerializedName("created_by")
+        @Expose
+        private String createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deletedAt")
+        @Expose
+        private String deletedAt;
+        @SerializedName("branch_product")
+        @Expose
+        private BranchProduct branchProduct;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getProductId() {
+            return productId;
+        }
+
+        public void setProductId(int productId) {
+            this.productId = productId;
+        }
+
+        public int getProductAlacarId() {
+            return productAlacarId;
+        }
+
+        public void setProductAlacarId(int productAlacarId) {
+            this.productAlacarId = productAlacarId;
+        }
+
+        public int getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(int currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
+
+        public double getPrice() {
+            return price;
+        }
+
+        public void setPrice(double price) {
+            this.price = price;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public String getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(String deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        public BranchProduct getBranchProduct() {
+            return branchProduct;
+        }
+
+        public void setBranchProduct(BranchProduct branchProduct) {
+            this.branchProduct = branchProduct;
+        }
+    }
+
+    public class BranchList {
+        @SerializedName("id")
+        @Expose
+        private int id;
+        @SerializedName("product_group_id")
+        @Expose
+        private int productGroupId;
+        @SerializedName("currency_id")
+        @Expose
+        private int currencyId;
+        @SerializedName("price")
+        @Expose
+        private double Price;
+        @SerializedName("created_by")
+        @Expose
+        private String createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deletedAt")
+        @Expose
+        private String deletedAt;
+        @SerializedName("branch_product")
+        @Expose
+        private BranchProduct branchProduct;
+
+        public BranchProduct getBranchProduct() {
+            return branchProduct;
+        }
+
+        public void setBranchProduct(BranchProduct branchProduct) {
+            this.branchProduct = branchProduct;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getProductGroupId() {
+            return productGroupId;
+        }
+
+        public void setProductGroupId(int productGroupId) {
+            this.productGroupId = productGroupId;
+        }
+
+        public int getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(int currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public double getPrice() {
+            return Price;
+        }
+
+        public void setPrice(double price) {
+            Price = price;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public String getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(String deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+    }
+
+    public class BranchGroup {
+        @SerializedName("id")
+        @Expose
+        private int id;
+        @SerializedName("core_id")
+        @Expose
+        private int coreId;
+        @SerializedName("product_id")
+        @Expose
+        private int productId;
+        @SerializedName("group_name")
+        @Expose
+        private String groupName;
+        @SerializedName("currency_id")
+        @Expose
+        private int currencyId;
+        @SerializedName("qty")
+        @Expose
+        private int qty;
+        @SerializedName("created_by")
+        @Expose
+        private String createdBy;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+        @SerializedName("deletedAt")
+        @Expose
+        private String deletedAt;
+        @SerializedName("branch_list")
+        @Expose
+        private List<BranchList> branchLists;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(int coreId) {
+            this.coreId = coreId;
+        }
+
+        public int getProductId() {
+            return productId;
+        }
+
+        public void setProductId(int productId) {
+            this.productId = productId;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public void setGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
+        public int getCurrencyId() {
+            return currencyId;
+        }
+
+        public void setCurrencyId(int currencyId) {
+            this.currencyId = currencyId;
+        }
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
+        }
+
+        public void setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+
+        public String getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(String deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        public List<BranchList> getBranchLists() {
+            return branchLists;
+        }
+
+        public void setBranchLists(List<BranchList> branchLists) {
+            this.branchLists = branchLists;
+        }
+    }
+
+    public class Result {
+        @SerializedName("branch_group")
+        @Expose
+        private List<BranchGroup> branchGroupList;
+        @SerializedName("branch_alacart")
+        @Expose
+        private List<BranchAlaCart> branchAlaCartList;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -90,6 +690,22 @@ public class FetchProductsResponse {
         @SerializedName("branch_departments")
         @Expose
         private List<BranchDepartment> branchDepartments;
+
+        public List<BranchGroup> getBranchGroupList() {
+            return branchGroupList;
+        }
+
+        public void setBranchGroupList(List<BranchGroup> branchGroupList) {
+            this.branchGroupList = branchGroupList;
+        }
+
+        public List<BranchAlaCart> getBranchAlaCartList() {
+            return branchAlaCartList;
+        }
+
+        public void setBranchAlaCartList(List<BranchAlaCart> branchAlaCartList) {
+            this.branchAlaCartList = branchAlaCartList;
+        }
 
         public Integer getId() {
             return id;

@@ -12,6 +12,7 @@ public class PosApplication extends SugarApp {
         super.onCreate();
 
         new SocketManager(this);
+        new SocketManagerTwo(this);
         Bus mBus = BusProvider.getInstance();
         PosManager autopilotManager = new PosManager(this, mBus);
         mBus.register(autopilotManager);

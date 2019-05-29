@@ -129,7 +129,12 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_SYMBOL_LEFT) + " " +
                 String.valueOf(productsModel.getPrice()) + " " +
                         SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_SYMBOL_RIGHT));
-        ImageLoader.loadImage(productsModel.getImageUrls()[0], ((ProductsViewHolder)holder).imageUrl);
+        if (productsModel.getImageUrls().length > 0) {
+            ImageLoader.loadImage(productsModel.getImageUrls()[0], ((ProductsViewHolder)holder).imageUrl);
+        } else {
+            ImageLoader.loadImage("htttp://www.google.com/img.png", ((ProductsViewHolder)holder).imageUrl);
+        }
+
     }
 
 

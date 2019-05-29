@@ -82,12 +82,24 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
             Log.d("FDFDFD1", kitchPath);
             Log.d("FDFDFD2", printerPath);
 
-            if (TextUtils.isEmpty(kitchPath)) {
+            boolean hasConnected = false;
+            if (!TextUtils.isEmpty(printerPath)) {
                 printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
-            } else {
-                printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+                hasConnected = true;
             }
-//            PrinterUtils.connect(context, printer);
+
+            if (!hasConnected) {
+                if (!TextUtils.isEmpty(kitchPath)) {
+                    printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+                    hasConnected = true;
+                }
+            }
+
+            if (!hasConnected) {
+                printer.disconnect();
+                Toast.makeText(context, "No printer available", Toast.LENGTH_SHORT).show();
+            }
+
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

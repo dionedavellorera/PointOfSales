@@ -239,7 +239,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                                     productsModel.getMarkUp(),
                                     productsModel.getIsPriceChanged(),
                                     productsModel.getDepartment(),
-                                    productsModel.getUnitPrice()));
+                                    productsModel.getUnitPrice(),
+                                    productsModel.getBranchAlaCartList(),
+                                    productsModel.getBranchGroupList()));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -384,7 +386,6 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     public void productClicked(ProductsModel productsModel) {
         productsModel.setQty(Integer.valueOf(qtySelected));
         if (categoryClickedArray.size() > 0) {
-
             if (productsModel.getProductsList().size() != 0) {
 //                    categoryClickedArray.add(new BreadcrumbModel(productsModel.getName(), position, new ArrayList<ProductsModel>(productsList)));
 //
@@ -442,7 +443,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                             productsModel.getMarkUp(),
                             productsModel.getIsPriceChanged(),
                             productsModel.getDepartment(),
-                            productsModel.getUnitPrice()));
+                            productsModel.getUnitPrice(),
+                            productsModel.getBranchAlaCartList(),
+                            productsModel.getBranchGroupList()));
         }
     }
 

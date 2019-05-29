@@ -52,7 +52,6 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
             }
 
             if (r.getType() != null) {
-
                 if (r.getType().getParent() != null) {
                     for (RoomRateMain p : r.getType().getParent().getRoomRate()) {
                         if (!tempList.contains(p.getRoomRatePriceId())) {

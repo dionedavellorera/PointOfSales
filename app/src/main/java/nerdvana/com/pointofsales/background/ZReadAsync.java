@@ -453,7 +453,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "NEW GRAND TOTAL",
-                    String.valueOf(zReadResponse.getNewGrandTotal())
+                    returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal()))
                     ,
                     40,
                     2,

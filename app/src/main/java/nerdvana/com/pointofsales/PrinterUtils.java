@@ -221,6 +221,7 @@ public class PrinterUtils {
 
         Log.d("DIONEDAVE", printModel.getType());
         Log.d("DIONEDAVE", printModel.getRoomNumber());
+
         if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
                 printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
                 printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID") ||

@@ -267,7 +267,6 @@ public abstract class PaymentDialog extends BaseDialog  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        setContentView(R.layout.dialog_payment);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
         relGuestInfo = findViewById(R.id.relGuestInfo);
         guestName = findViewById(R.id.guestName);

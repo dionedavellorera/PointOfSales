@@ -100,7 +100,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                 ;
 //
 //
-        addTextToPrinter(printer, toList.getCreatedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//        addTextToPrinter(printer, toList.getCreatedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
         addPrinterSpace(1);
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "MACHINE NO",
@@ -109,9 +109,8 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                 2,
                 context)
                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//
+
+
         addTextToPrinter(printer, "SOA-TAKE OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -183,7 +182,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                 context)
                 ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 //
-        addPrinterSpace(1);
+        addPrinterSpace(2);
 //
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "SOA NO:",
@@ -195,31 +194,48 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //
         addPrinterSpace(1);
 
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                "VATABLE SALES",
+                returnWithTwoDecimal(String.valueOf(toList.getVatable())),
+                40,
+                2,
+                context)
+                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                "VAT-EXEMPT SALES",
+                returnWithTwoDecimal(String.valueOf(toList.getVatExemptSales())),
+                40,
+                2,
+                context)
+                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                "12% VAT",
+                returnWithTwoDecimal(String.valueOf(toList.getVat())),
+                40,
+                2,context)
+                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+        addPrinterSpace(1);
+
         if (toList.getCustomer() != null) {
             if (!toList.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
-                addPrinterSpace(1);
                 addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(printer, toList.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                addTextToPrinter(printer, toList.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 if (toList.getCustomer().getAddress() != null) {
-                    addTextToPrinter(printer, toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    addTextToPrinter(printer, toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 }
 
                 if (toList.getCustomer().getTin() != null) {
-                    addTextToPrinter(printer, toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+                    addTextToPrinter(printer, toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 }
 
-
-//                addTextToPrinter(printer, toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-//                addTextToPrinter(printer, toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
             }
         }
 
-
-
         addPrinterSpace(1);
-//                addTextToPrinter(printer, "STATEMENT OF ACCOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
         addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -227,9 +243,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
         try {
-
             printer.addCut(Printer.CUT_FEED);
-
             if (printer.getStatus().getConnection() == 1) {
                 printer.sendData(Printer.PARAM_DEFAULT);
                 printer.clearCommandBuffer();

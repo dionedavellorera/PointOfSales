@@ -41,9 +41,10 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
             String[]images = {};
             if (r.getImageFile() != null) {
                 images = new String[]{"http://192.168.1.90/pos/uploads/company/product/" + r.getImageFile()};
-            } else {
-                images = new String[]{"http://autopilot.vcourt.biz/acctmanagementsys/images/vc_logov2.png"};
             }
+//            else {
+//                images = new String[]{"http://autopilot.vcourt.biz/acctmanagementsys/images/vc_logov2.png"};
+//            }
             DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             DateTime companyUpdatedAt = new DateTime(df.parseDateTime(r.getUpdatedAt()));
             Double amount = r.getAmount();
@@ -79,7 +80,9 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                     r.getMarkUp(),
                     0,
                     branchDepartment,
-                    amount));
+                    amount,
+                    r.getBranchAlaCartList(),
+                    r.getBranchGroupList()));
         }
 
 //        for (int i = 0; i < 20; i++) {

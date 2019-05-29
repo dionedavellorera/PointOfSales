@@ -127,6 +127,7 @@ import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
+import nerdvana.com.pointofsales.dialogs.DialogBundleComposition;
 import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
 import nerdvana.com.pointofsales.dialogs.FocDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
@@ -572,6 +573,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void productsClicked(ProductsModel productsModel) {
+//        if (productsModel.getBranchAlaCartList().size() > 0) {
+//            Toast.makeText(getContext(), "HAS ALACART LIST", Toast.LENGTH_SHORT).show();
+//        }
+
+        if (productsModel.getBranchGroupList().size() > 0) {
+//            Toast.makeText(getContext(), "HAS BRANC GROUP LIST", Toast.LENGTH_SHORT).show();
+
+            DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList());
+            dialogBundleComposition.show();
+        }
+
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
                 cartItemList.add(new CartItemsModel(
@@ -598,7 +610,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 checkoutAdapter.notifyDataSetChanged();
 //                listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
             } else {
-
                 if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
                         currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
                         currentRoomStatus.equalsIgnoreCase("32") ||
@@ -2994,8 +3005,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
     private void postCheckoutPayment(List<PostedPaymentsModel> ppm, String roomId, String  controlNumber, final String roomBoy) {
-//        Log.d("CHECKOUTDATA", new AddPaymentRequest(ppm, roomId, "0", controlNumber).toString());
-//        BusProvider.getInstance().post(new AddPaymentRequest(ppm, roomId, "0", controlNumber));
         AddPaymentRequest addPaymentRequest = new AddPaymentRequest(ppm, roomId, "0", controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<AddPaymentResponse> request = iUsers.sendAddPayment(addPaymentRequest.getMapValue());
@@ -3061,13 +3070,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     Utils.showDialogMessage(getActivity(), "No item/s to print", "Information");
                 }
             }
-
-
-
         }
     }
-
-
 
     private void printSoaRequest(String roomId, String controlNumber) {
         BusProvider.getInstance().post(new PrintSoaRequest(roomId, controlNumber));
@@ -3309,6 +3313,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
 
+//            clearCartItems();
+//            defaultView();
 
 //            Utils.showDialogMessage(getActivity(), "CHECK OUT SUCCESS", "Information");
 //            clearCartItems();
@@ -3624,11 +3630,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
             @Override
             public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
-                BusProvider.getInstance().post(new PrintModel(
-                        "", roomName,
-                        "PRINT_RECEIPT",
-                        GsonHelper.getGson().toJson(response.body().getResult()),
-                        roomType));
+
+                if (selectedRoom != null) {
+                    if (selectedRoom.isTakeOut()) {
+                        BusProvider.getInstance().post(new PrintModel(
+                                "", "takeout",
+                                "PRINT_RECEIPT",
+                                GsonHelper.getGson().toJson(response.body().getResult()),
+                                roomType));
+                    } else {
+                        BusProvider.getInstance().post(new PrintModel(
+                                "", roomName,
+                                "PRINT_RECEIPT",
+                                GsonHelper.getGson().toJson(response.body().getResult()),
+                                roomType));
+                    }
+
+                }
+
 
                 clearCartItems();
                 defaultView();

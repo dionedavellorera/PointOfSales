@@ -4,6 +4,8 @@ import com.orm.SugarRecord;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
+
 public class ProductsModel extends SugarRecord<ProductsModel> {
     private String name;
     private String shortName;
@@ -25,6 +27,9 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
     private String department;
     private double unitPrice;
 
+    private List<FetchProductsResponse.BranchAlaCart> branchAlaCartList;
+    private List<FetchProductsResponse.BranchGroup> branchGroupList;
+
 
     public ProductsModel() {}
 
@@ -36,7 +41,11 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
                          int lowStackCount, int productStatus,
                          int productId, Double markUp,
                          int isPriceChanged, String department,
-                         double unitPrice) {
+                         double unitPrice,
+                         List<FetchProductsResponse.BranchAlaCart> branchAlaCartList,
+                         List<FetchProductsResponse.BranchGroup> branchGroupList) {
+        this.branchAlaCartList = branchAlaCartList;
+        this.branchGroupList = branchGroupList;
         this.name = name;
         this.price = price;
         this.vat = vat;
@@ -54,6 +63,18 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
         this.isPriceChanged = isPriceChanged;
         this.department = department;
         this.unitPrice = unitPrice;
+    }
+
+    public boolean isRoom() {
+        return isRoom;
+    }
+
+    public List<FetchProductsResponse.BranchAlaCart> getBranchAlaCartList() {
+        return branchAlaCartList;
+    }
+
+    public List<FetchProductsResponse.BranchGroup> getBranchGroupList() {
+        return branchGroupList;
     }
 
     public double getUnitPrice() {

@@ -338,6 +338,10 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                 Log.d("TETETE", "XREADASYNC");
                 Log.d("TETETE", String.valueOf(discountDetails.size()));
 
+
+                double otherDiscAmount = 0.00;
+
+
                 if (discountDetails != null) {
 
                     Log.d("TURY", discountDetails.get(0).getDiscountCard());
@@ -351,12 +355,19 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                             for (int i = 0; i < discountJsonArray.length(); i++) {
                                 JSONObject temp = discountJsonArray.getJSONObject(i);
                                 if (temp.getString("is_special").equalsIgnoreCase("1") || temp.getString("is_special").equalsIgnoreCase("1.0")) {
-                                    amount = Double.valueOf(temp.getString("discount_amount"));
-                                    count = Integer.valueOf(temp.getString("count"));
+
+                                    if (temp.getString("discount_type_id").equalsIgnoreCase(String.valueOf(d.getId()))) {
+                                        amount = Double.valueOf(temp.getString("discount_amount"));
+                                        count = Integer.valueOf(temp.getString("count"));
+
+                                    }
+
+
+                                } else {
+                                    otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
                                 }
                             }
                         }
-
 
                         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                 d.getDiscountCard(),
@@ -374,15 +385,16 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                                 2,
                                 context),
                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
                     }
-
-
                 }
 
 
 
                 int otherDiscCount = 0;
-                double otherDiscAmount = 0.00;
+//                double otherDiscAmount = 0.00;
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "OTHERS",

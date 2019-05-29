@@ -1242,6 +1242,9 @@ public class PrintSoaResponse {
     }
 
     public class Result {
+        @SerializedName("vat_exempt_sales")
+        @Expose
+        private Double vatExemptSales;
         @SerializedName("customer")
         @Expose
         private Customer customer;
@@ -1299,6 +1302,14 @@ public class PrintSoaResponse {
         @SerializedName("post")
         @Expose
         private List<SoaToPost> toPostList;
+
+        public Double getVatExemptSales() {
+            return vatExemptSales;
+        }
+
+        public void setVatExemptSales(Double vatExemptSales) {
+            this.vatExemptSales = vatExemptSales;
+        }
 
         public Customer getCustomer() {
             return customer;

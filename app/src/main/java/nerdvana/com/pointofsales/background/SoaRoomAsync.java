@@ -67,14 +67,8 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-//        try {
-//            printer.addHLine(0, 65535,Printer.LINE_MEDIUM);
-//        } catch (Epos2Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        addTextToPrinter(printer, "SIGNATURE"
-//                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+
+
 
 
         TypeToken<List<PrintSoaResponse.Booked>> bookedToken = new TypeToken<List<PrintSoaResponse.Booked>>() {};
@@ -102,6 +96,13 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                     }).start();
                 }
             });
+
+
+
+//            addTextToPrinter(printer, "_____________________"
+//                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+//            addTextToPrinter(printer, "SIGNATURE"
+//                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
 
             if (bookedList.get(0).getRoom().getArea().getPrinterPath().isEmpty()) {
                 if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY))) {
@@ -133,6 +134,17 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
         } catch (Epos2Exception e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            printer.addHLine(1, 65535, Printer.LINE_MEDIUM);
+            printer.addHLine(1, 65535, Printer.LINE_MEDIUM_DOUBLE);
+            printer.addHLine(1, 65535, Printer.LINE_THICK);
+            printer.addHLine(1, 65535, Printer.LINE_THIN);
+        } catch (Epos2Exception e) {
+            Log.d("PRINTER_ERROR", e.getMessage());
             e.printStackTrace();
         }
 
@@ -259,7 +271,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "SUB TOTAL",
-                returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getTotal())),
+                returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getTotal() + bookedList.get(0).getTransaction().getOtAmount() + bookedList.get(0).getTransaction().getXPersonAmount())),
                 40,
                 2,
                 context)
@@ -350,7 +362,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 if (!bookedList.get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("to be filled")) {
 
-                    addPrinterSpace(1);
                     addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 

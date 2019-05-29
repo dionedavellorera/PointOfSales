@@ -51,6 +51,7 @@ public class SocketManager {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            Log.d("SOCKET_CONNECTION", "CONNECTED TO SOCKET ONE");
                             isConnected = true;
 //                            BusProvider.getInstance().post(new SocketConnectionModel("T"));
                         }
@@ -82,8 +83,6 @@ public class SocketManager {
                             BusProvider.getInstance().post(new UpdateDataModel("y"));
                         }
                         Log.d("DATATEST", data.getString("locale_id"));
-//                        BusProvider.getInstance().post(new NotifListModel("Test"));
-//                        Log.d("SOCKET_MESSAGE_INSPECT", data.getString("message"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
