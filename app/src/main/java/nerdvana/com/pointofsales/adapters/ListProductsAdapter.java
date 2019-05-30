@@ -21,9 +21,10 @@ import nerdvana.com.pointofsales.dialogs.DialogBundleComposition;
 
 public class ListProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<FetchProductsResponse.BranchList> branchLists;
-
-    public ListProductsAdapter(List<FetchProductsResponse.BranchList> branchLists) {
+    private DialogBundleComposition.Product product;
+    public ListProductsAdapter(List<FetchProductsResponse.BranchList> branchLists, DialogBundleComposition.Product product) {
         this.branchLists = branchLists;
+        this.product = product;
     }
 
     @NonNull
@@ -56,7 +57,7 @@ public class ListProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((ListProductsAdapter.ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    category.clicked(i);
+                    product.clicked(i);
                 }
             });
 
