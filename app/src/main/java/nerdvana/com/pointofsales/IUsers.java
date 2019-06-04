@@ -12,6 +12,7 @@ import nerdvana.com.pointofsales.api_responses.CheckEndOfDayResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CheckPermissionResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
@@ -341,4 +342,12 @@ public interface IUsers {
     @FormUrlEncoded
     Call<ResponseBody> repatchData(@FieldMap Map<String, String> params);
     //endregion
+
+    @POST("testSend")
+    @FormUrlEncoded
+    Call<ResponseBody> testSend(@FieldMap Map<String, String> params);
+
+    @POST("checkPermission")
+    @FormUrlEncoded
+    Call<CheckPermissionResponse> checkPermission(@FieldMap Map<String, String> params);
 }

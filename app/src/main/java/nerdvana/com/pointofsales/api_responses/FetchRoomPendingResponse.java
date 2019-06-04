@@ -1374,8 +1374,131 @@ public class FetchRoomPendingResponse {
     }
 
 
-    public class Post {
+    public class BPostProduct {
+        @SerializedName("product")
+        @Expose
+        private String product;
+        @SerializedName("product_initial")
+        @Expose
+        private String productInitial;
 
+        public String getProduct() {
+            return product;
+        }
+
+        public void setProduct(String product) {
+            this.product = product;
+        }
+
+        public String getProductInitial() {
+            return productInitial;
+        }
+
+        public void setProductInitial(String productInitial) {
+            this.productInitial = productInitial;
+        }
+    }
+
+    public class PostAlaCart {
+        @SerializedName("department")
+        @Expose
+        private String department;
+        @SerializedName("product")
+        @Expose
+        private BPostProduct postAlaCartProduct;
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public BPostProduct getPostAlaCartProduct() {
+            return postAlaCartProduct;
+        }
+
+        public void setPostAlaCartProduct(BPostProduct postAlaCartProduct) {
+            this.postAlaCartProduct = postAlaCartProduct;
+        }
+    }
+
+    public class PostGroupInfo {
+        @SerializedName("group_name")
+        @Expose
+        private String groupName;
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public void setGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
+
+    }
+
+    public class PostGroupItem {
+        @SerializedName("department")
+        @Expose
+        private String department;
+        @SerializedName("product")
+        @Expose
+        private BPostProduct postGroupItemProduct;
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+        public BPostProduct getPostGroupItemProduct() {
+            return postGroupItemProduct;
+        }
+
+        public void setPostGroupItemProduct(BPostProduct postGroupItemProduct) {
+            this.postGroupItemProduct = postGroupItemProduct;
+        }
+    }
+
+    public class PostGroup {
+        @SerializedName("group_info")
+        @Expose
+        private PostGroupInfo postGroupInfo;
+
+        public PostGroupInfo getPostGroupInfo() {
+            return postGroupInfo;
+        }
+
+        public void setPostGroupInfo(PostGroupInfo postGroupInfo) {
+            this.postGroupInfo = postGroupInfo;
+        }
+
+        @SerializedName("item")
+        @Expose
+        private List<PostGroupItem> postGroupItems;
+
+        public List<PostGroupItem> getPostGroupItems() {
+            return postGroupItems;
+        }
+
+        public void setPostGroupItems(List<PostGroupItem> postGroupItems) {
+            this.postGroupItems = postGroupItems;
+        }
+
+
+    }
+
+    public class Post {
+        @SerializedName("group")
+        @Expose
+        private List<PostGroup> postGroupList;
+        @SerializedName("alacart")
+        @Expose
+        private List<PostAlaCart> postAlaCartList;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -1475,6 +1598,42 @@ public class FetchRoomPendingResponse {
         @SerializedName("discounts")
         @Expose
         private List<Discount> discounts;
+
+        public List<PostGroup> getPostGroupList() {
+            return postGroupList;
+        }
+
+        public void setPostGroupList(List<PostGroup> postGroupList) {
+            this.postGroupList = postGroupList;
+        }
+
+        public List<PostAlaCart> getPostAlaCartList() {
+            return postAlaCartList;
+        }
+
+        public void setPostAlaCartList(List<PostAlaCart> postAlaCartList) {
+            this.postAlaCartList = postAlaCartList;
+        }
+
+        public void setRoomRateId(Object roomRateId) {
+            this.roomRateId = roomRateId;
+        }
+
+        public Integer getxSkip() {
+            return xSkip;
+        }
+
+        public void setxSkip(Integer xSkip) {
+            this.xSkip = xSkip;
+        }
+
+        public Integer get_void() {
+            return _void;
+        }
+
+        public void set_void(Integer _void) {
+            this._void = _void;
+        }
 
         public String getDepartment() {
             return department;

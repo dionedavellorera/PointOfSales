@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,6 +104,7 @@ import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
+import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
@@ -165,6 +168,7 @@ import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
+import nerdvana.com.pointofsales.model.SelectedProductsInBundleModel;
 import nerdvana.com.pointofsales.model.SwitchRoomPrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
@@ -220,6 +224,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private TextView deposit;
     private TextView subTotal;
     private TextView header;
+    private CardView cardHeader;
+    private RelativeLayout cardHeaderRoot;
     private TextView noItems;
 
 
@@ -288,6 +294,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         noItems = view.findViewById(R.id.notItems);
         header = view.findViewById(R.id.header);
+        cardHeader = view.findViewById(R.id.cardHeader);
+        cardHeaderRoot = view.findViewById(R.id.cardHeaderRoot);
         header.setOnClickListener(this);
 
         roomAreaList = new ArrayList<>();
@@ -396,7 +404,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void setProductAdapter() {
 
-        checkoutAdapter = new CheckoutAdapter(cartItemList, this);
+        checkoutAdapter = new CheckoutAdapter(cartItemList, this, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 //        linearLayoutManager.setReverseLayout(true);
 //        linearLayoutManager.setStackFromEnd(true);
@@ -518,7 +526,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             cartItemList.clear();
             cartItemList = new ArrayList<>();
 
-            checkoutAdapter = new CheckoutAdapter(cartItemList, this);
+            checkoutAdapter = new CheckoutAdapter(cartItemList, this, getContext());
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 //            linearLayoutManager.setReverseLayout(true);
 //            linearLayoutManager.setStackFromEnd(true);
@@ -572,52 +580,85 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     @Subscribe
-    public void productsClicked(ProductsModel productsModel) {
-//        if (productsModel.getBranchAlaCartList().size() > 0) {
-//            Toast.makeText(getContext(), "HAS ALACART LIST", Toast.LENGTH_SHORT).show();
-//        }
-
-        if (productsModel.getBranchGroupList().size() > 0) {
-//            Toast.makeText(getContext(), "HAS BRANC GROUP LIST", Toast.LENGTH_SHORT).show();
-
-            DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList());
-            dialogBundleComposition.show();
-        }
-
+    public void productsClicked(final ProductsModel productsModel) {
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
-                cartItemList.add(new CartItemsModel(
-                        "",
-                        selectedRoom.getRoomId(),
-                        productsModel.getProductId(),
-                        0,
-                        0,
-                        0,
-                        productsModel.getShortName(),
-                        true,
-                        productsModel.getPrice(),
-                        productsModel.getProductId(),
-                        productsModel.getQty(),
-                        false,
-                        productsModel.getMarkUp(),
-                        productsModel.getIsPriceChanged(),
-                        productsModel.getUnitPrice(),
-                        false,
-                        "",
-                        false,
-                        "to"
-                ));
-                checkoutAdapter.notifyDataSetChanged();
-//                listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
-            } else {
-                if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                        currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
-                        currentRoomStatus.equalsIgnoreCase("32") ||
-                        currentRoomStatus.equalsIgnoreCase("4")) {
+                if (productsModel.getBranchGroupList().size() > 0) {
+                    DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList(), productsModel.getPrice()) {
+                        @Override
+                        public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
+                            ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                            ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
+                            ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
+                            ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
+                            for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
+                                groupCompoList = new ArrayList<>();
+                                groupCompoProductsList = new ArrayList<>();
+                                for (SelectedProductsInBundleModel.BundleProductModel bpm : sipm.getBundleProductModelList()) {
+                                    groupCompoProductsList.add(
+                                            new AddRateProductModel(
+                                                    String.valueOf(bpm.getProductId()),
+                                                    "0",
+                                                    String.valueOf(bpm.getQty()),
+                                                    SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                    String.valueOf(bpm.getAmount()),
+                                                    0,
+                                                    bpm.getName(),
+                                                    new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                    new ArrayList<AddRateProductModel.Group>()
+                                            ));
 
-                    cartItemList.add(roomRateCounter.size(), new CartItemsModel(
-                            "",
-                            selectedRoom.getRoomId(),
+                                }
+                                groupLst.add(new AddRateProductModel.Group(new AddRateProductModel.GroupCompo(sipm.getGroupId(), sipm.getGroupName(), sipm.getTotalQtySelected(),groupCompoProductsList)));
+                            }
+
+                            if (productsModel.getBranchAlaCartList().size() > 0) {
+                                for (FetchProductsResponse.BranchAlaCart balac : productsModel.getBranchAlaCartList()) {
+                                    alaCartes.add(new AddRateProductModel.AlaCarte(
+                                            String.valueOf(balac.getBranchProduct().getCoreId()),
+                                            "0",
+                                            String.valueOf(balac.getQty()),
+                                            SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                            String.valueOf(balac.getPrice()),
+                                            0,
+                                            balac.getBranchProduct().getProductInitial()
+
+                                    ));
+                                }
+                            }
+
+                            if (selectedProductsInBundleModelList.size() > 0) {
+                                cartItemList.add(new CartItemsModel(
+                                        selectedRoom.getControlNo(),
+                                        0,
+                                        productsModel.getProductId(),
+                                        0,
+                                        0,
+                                        0,
+                                        productsModel.getShortName(),
+                                        true,
+                                        productsModel.getPrice(),
+                                        productsModel.getProductId(),
+                                        productsModel.getQty(),
+                                        false,
+                                        productsModel.getMarkUp(),
+                                        productsModel.getIsPriceChanged(),
+                                        productsModel.getUnitPrice(),
+                                        false,
+                                        "",
+                                        false,
+                                        "to",
+                                        alaCartes,
+                                        groupLst
+                                ));
+                            }
+                        }
+                    };
+                    dialogBundleComposition.show();
+                } else {
+                    cartItemList.add(new CartItemsModel(
+                            selectedRoom.getControlNo(),
+                            0,
                             productsModel.getProductId(),
                             0,
                             0,
@@ -634,9 +675,121 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             false,
                             "",
                             false,
-                            "room"
+                            "to",
+                            new ArrayList<AddRateProductModel.AlaCarte>(),
+                            new ArrayList<AddRateProductModel.Group>()
                     ));
+                }
 
+                checkoutAdapter.notifyDataSetChanged();
+//                listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
+            } else {
+                if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                        currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
+                        currentRoomStatus.equalsIgnoreCase("32") ||
+                        currentRoomStatus.equalsIgnoreCase("4")) {
+
+                    if (productsModel.getBranchGroupList().size() > 0) {
+                        DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList(), productsModel.getPrice()) {
+                            @Override
+                            public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
+                                ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                                ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
+                                ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
+                                ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
+                                for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
+                                    groupCompoList = new ArrayList<>();
+                                    groupCompoProductsList = new ArrayList<>();
+                                    for (SelectedProductsInBundleModel.BundleProductModel bpm : sipm.getBundleProductModelList()) {
+                                        groupCompoProductsList.add(
+                                                new AddRateProductModel(
+                                                        String.valueOf(bpm.getProductId()),
+                                                        "0",
+                                                        String.valueOf(bpm.getQty()),
+                                                        SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                        String.valueOf(bpm.getAmount()),
+                                                        0,
+                                                        bpm.getName(),
+                                                        new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                        new ArrayList<AddRateProductModel.Group>()
+                                                ));
+
+                                    }
+                                    groupLst.add(new AddRateProductModel.Group(new AddRateProductModel.GroupCompo(sipm.getGroupId(), sipm.getGroupName(), sipm.getTotalQtySelected(),groupCompoProductsList)));
+                                }
+
+                                if (productsModel.getBranchAlaCartList().size() > 0) {
+                                    for (FetchProductsResponse.BranchAlaCart balac : productsModel.getBranchAlaCartList()) {
+
+                                        alaCartes.add(new AddRateProductModel.AlaCarte(
+                                                String.valueOf(balac.getProductId()),
+                                                "0",
+                                                String.valueOf(balac.getQty()),
+                                                SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                String.valueOf(balac.getPrice()),
+                                                0,
+                                                balac.getBranchProduct().getProductInitial()
+
+                                        ));
+                                    }
+                                }
+
+                                if (selectedProductsInBundleModelList.size() > 0) {
+                                    cartItemList.add(
+                                            roomRateCounter.size(),
+                                            new CartItemsModel(
+                                                    "",
+                                                    selectedRoom.getRoomId(),
+                                                    productsModel.getProductId(),
+                                                    0,
+                                                    0,
+                                                    0,
+                                                    productsModel.getName(),
+                                                    true,
+                                                    productsModel.getPrice(),
+                                                    productsModel.getProductId(),
+                                                    productsModel.getQty(),
+                                                    false,
+                                                    0.00,
+                                                    0,
+                                                    productsModel.getPrice(),
+                                                    false,
+                                                    "",
+                                                    false,
+                                                    "room",
+                                                    alaCartes,
+                                                    groupLst)
+                                    );
+                                }
+
+                            }
+                        };
+                        dialogBundleComposition.show();
+                    } else {
+                        cartItemList.add(roomRateCounter.size(), new CartItemsModel(
+                                "",
+                                selectedRoom.getRoomId(),
+                                productsModel.getProductId(),
+                                0,
+                                0,
+                                0,
+                                productsModel.getShortName(),
+                                true,
+                                productsModel.getPrice(),
+                                productsModel.getProductId(),
+                                productsModel.getQty(),
+                                false,
+                                productsModel.getMarkUp(),
+                                productsModel.getIsPriceChanged(),
+                                productsModel.getUnitPrice(),
+                                false,
+                                "",
+                                false,
+                                "room",
+                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                new ArrayList<AddRateProductModel.Group>()
+                        ));
+                    }
                     checkoutAdapter.notifyDataSetChanged();
 //                    listCheckoutItems.scrollToPosition(checkoutAdapter.getItemCount() - 1);
 
@@ -651,20 +804,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (noItems.getVisibility() == View.VISIBLE) noItems.setVisibility(View.GONE);
 
 
-
-
-//        new CheckoutItemsAsync(
-//                "",
-//                productsModel,
-//                ).execute();
-//        new CheckoutItemsAsync(this,
-//                cartItemList,
-//                productsModel,
-//                getContext(),
-//                getTableRecord().size() < 1 ? "" : getTableRecord().get(0).getTransactionId(),
-//                5,
-//                selectedRoomNumber())
-//                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -794,7 +933,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         if (selectedRoom != null) {
             if (!employeeId.isEmpty()) {
-                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "78") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         if (selectedRoom.isTakeOut()) {
@@ -867,7 +1006,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 //check main activity for function
                 break;
             case 127://REPRINT Z READ
-                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "74") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
@@ -889,7 +1028,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (canTransact()) doBackOutGuestFunction();
                 break;
             case 123: //REPRINT X/Z READING
-                PasswordDialog passwordDialogs = new PasswordDialog(getActivity()) {
+                PasswordDialog passwordDialogs = new PasswordDialog(getActivity(), "74") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         ReprintXReadingDialog reprintXReadingDialog = new ReprintXReadingDialog(getActivity());
@@ -1339,9 +1478,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                                BusProvider.getInstance().post(new AddProductToRequest(model, String.valueOf(selectedRoom.getRoomId())));
                         final ArrayList<AddRateProductModel> model = new ArrayList<>();
                         final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-//                        model.add(new AddRateProductModel(productId, roomRatePriceId, quantity, tax));
                         for (CartItemsModel cim : cartItemList) {
                             if (!cim.isPosted() && cim.isProduct()) {
+                                if (cim.getType().equalsIgnoreCase("alacarte")) {
+
+                                }
+                                if (cim.getType().equalsIgnoreCase("group")) {
+
+                                }
                                 model.add(new AddRateProductModel(
                                         String.valueOf(cim.getProductId()),
                                         "0",
@@ -1349,7 +1493,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
                                         String.valueOf(cim.getUnitPrice()),
                                         cim.getIsPriceChanged(),
-                                        cim.getName()
+                                        cim.getName(),
+                                        cim.getAlaCarteList(),
+                                        cim.getGroupList()
                                 ));
                             }
 
@@ -1362,6 +1508,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 ));
                             }
                         }
+
                         ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
                             @Override
                             public void save(String remarks) {
@@ -1387,8 +1534,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 selectedRoom.getStatus().equalsIgnoreCase("32") ||
                                 selectedRoom.getStatus().equalsIgnoreCase("59")) {
                             final ArrayList<AddRateProductModel> model = new ArrayList<>();
+
                             for (CartItemsModel cim : cartItemList) {
                                 if (!cim.isPosted() && cim.isProduct()) {
+
                                     model.add(new AddRateProductModel(
                                             String.valueOf(cim.getProductId()),
                                             "0",
@@ -1396,7 +1545,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
                                             String.valueOf(cim.getUnitPrice()),
                                             cim.getIsPriceChanged(),
-                                            cim.getName()
+                                            cim.getName(),
+                                            cim.getAlaCarteList(),
+                                            cim.getGroupList()
                                     ));
                                 }
                             }
@@ -1510,7 +1661,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             @Override
                             public void save(final String remarks) {
 
-                                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                                PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
                                     @Override
                                     public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -1588,7 +1739,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                     @Override
                     public void save(final String remarks) {
-                        PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                        PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
                             @Override
                             public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -1798,7 +1949,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             }
                         }
 
-                        final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                        final PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "69") {
 
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
@@ -2006,11 +2157,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
-            final PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "65") {
                 @Override
                 public void passwordSuccess(final String employeeId, String employeeName) {
-
-
                     if (selectedRoom != null) {
 
                         if (selectedRoom.isTakeOut()) {
@@ -2023,27 +2172,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             selectedRoom.getControlNo(),
                                             model,
                                             remarks));
-
                                     showLoading();
                                 }
                             };
                             confirmWithRemarksDialog.show();
-
                         } else {
-
                             ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
                                 @Override
                                 public void save(String remarks) {
-                                    BusProvider.getInstance().post(new PrintModel("", "ROOM# "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
+                                    BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
                                     BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             model, remarks,
                                             employeeId));
-
                                     showLoading();
                                 }
                             };
                             confirmWithRemarksDialog.show();
-
                         }
                     }
                 }
@@ -2493,13 +2637,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
-
             kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
             printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
-
-
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
-
                 if (r.getTransaction() != null) {
                     if (r.getTransaction().getEmployee_id() != null && !TextUtils.isEmpty(r.getTransaction().getEmployee_id())) {
                         employeeId = r.getTransaction().getEmployee_id();
@@ -2509,12 +2649,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(), r.getTransaction().getCustomerTrans().getAddress(), r.getTransaction().getCustomerTrans().getTin());
                         }
                     }
-
                 }
-
-
-
-
                 //regionpayments
                 overTimeValue =  r.getTransaction().getOtHours();
                 if (r.getTransaction().getPayments().size() > 0) {
@@ -2648,6 +2783,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
                     if (tpost.getVoid() == 0) {
                         if (tpost.getRoomRateId() != null) {
+
                             roomRateCounter.add(1);
                             cartItemList.add(0, new CartItemsModel(
                                     tpost.getControlNo(),
@@ -2668,10 +2804,62 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     false,
                                     String.valueOf(tpost.getId()),
                                     false,
-                                    "room"
+                                    "room",
+                                    new ArrayList<AddRateProductModel.AlaCarte>(),
+                                    new ArrayList<AddRateProductModel.Group>()
                             ));
                         } else {
-//                            Log.d("COUNTER", String.valueOf(roomRateCounter.size()));
+
+                            ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                            ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
+                            ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
+                            ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
+
+                            if (tpost.getPostGroupList() != null) {
+                                for (FetchRoomPendingResponse.PostGroup sipm : tpost.getPostGroupList()) {
+                                    groupCompoList = new ArrayList<>();
+                                    groupCompoProductsList = new ArrayList<>();
+                                    if (sipm.getPostGroupInfo() != null) {
+                                        for (FetchRoomPendingResponse.PostGroupItem bpm : sipm.getPostGroupItems()) {
+                                            groupCompoProductsList.add(
+                                                    new AddRateProductModel(
+                                                            "",
+                                                            "0",
+                                                            "",
+                                                            SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                            "",
+                                                            0,
+                                                            bpm.getPostGroupItemProduct().getProduct(),
+                                                            new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                            new ArrayList<AddRateProductModel.Group>()
+                                                    ));
+
+                                        }
+                                        groupLst.add(
+                                                new AddRateProductModel.Group(
+                                                        new AddRateProductModel.GroupCompo(
+                                                                0,
+                                                                sipm.getPostGroupInfo().getGroupName(),
+                                                                0,
+                                                                groupCompoProductsList)));
+                                    }
+                                }
+                            }
+
+
+                            for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
+                                alaCartes.add(new AddRateProductModel.AlaCarte(
+                                        "",
+                                        "0",
+                                        "",
+                                        SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                        "0.00",
+                                        0,
+                                        balac.getPostAlaCartProduct().getProduct()
+                                ));
+                            }
+
+
                             cartItemList.add(roomRateCounter.size(), new CartItemsModel(
                                     tpost.getControlNo(),
                                     tpost.getRoomId(),
@@ -2691,7 +2879,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     false,
                                     String.valueOf(tpost.getId()),
                                     false,
-                                    "room"
+                                    "room",
+                                    alaCartes,
+                                    groupLst
                             ));
                         }
 
@@ -2700,7 +2890,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
                 //endregion
                 //region ot
-//                r.getTransaction().getOtHours()
                 if (r.getTransaction().getOtHours() > 0) {
                     cartItemList.add(new CartItemsModel(
                             r.getTransaction().getControlNo(),
@@ -2721,7 +2910,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             false,
                             "",
                             false,
-                            "ot"
+                            "ot",
+                            new ArrayList<AddRateProductModel.AlaCarte>(),
+                            new ArrayList<AddRateProductModel.Group>()
                     ));
                 }
 
@@ -2733,10 +2924,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
 
 
-        checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
+        checkoutAdapter = new CheckoutAdapter(this.cartItemList, this, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-//        linearLayoutManager.setReverseLayout(true);
-//        linearLayoutManager.setStackFromEnd(true);
         listCheckoutItems.setLayoutManager(linearLayoutManager);
         listCheckoutItems.setAdapter(checkoutAdapter);
         checkoutAdapter.notifyDataSetChanged();
@@ -2903,7 +3092,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 final String roomId, String amount,
                                 String roomRateDesc) {
         final ArrayList<AddRateProductModel> model = new ArrayList<>();
-        model.add(new AddRateProductModel(productId, roomRatePriceId, quantity, tax, amount, 0, roomRateDesc));
+        model.add(
+                new AddRateProductModel(
+                        productId, roomRatePriceId,
+                        quantity, tax, amount,
+                        0, roomRateDesc,
+                        new ArrayList<AddRateProductModel.AlaCarte>(),
+                        new ArrayList<AddRateProductModel.Group>()));
         ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
             @Override
             public void save(String remarks) {
@@ -3255,7 +3450,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 false,
                                 String.valueOf(tpost.getId()),
                                 false,
-                                "to"
+                                "to",
+                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                new ArrayList<AddRateProductModel.Group>()
                         ));
                         totalAmount += tpost.getTotal();
                     }
@@ -3266,7 +3463,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
 
-            checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
+            checkoutAdapter = new CheckoutAdapter(this.cartItemList, this, getContext());
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 //            linearLayoutManager.setReverseLayout(true);
 //            linearLayoutManager.setStackFromEnd(true);
@@ -3313,18 +3510,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
 
-//            clearCartItems();
-//            defaultView();
-
-//            Utils.showDialogMessage(getActivity(), "CHECK OUT SUCCESS", "Information");
-//            clearCartItems();
-//            defaultView();
-
-//            if (checkOutResponse.getResult().getData().getBooked() != null) {
-//                BusProvider.getInstance().post(new ButtonsModel(999, "ROOMS", "", 1));
-//            } else {
-//                BusProvider.getInstance().post(new ButtonsModel(998, "TAKE ORDER", "", 2));
-//            }
 
         }
 
@@ -3707,7 +3892,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void zReadRequest() {
 
-        PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "END OF DAY PROCESS \n") {
+        PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "END OF DAY PROCESS \n", "76") {
             @Override
             public void passwordSuccess(String employeeId, String employeeName) {
                 ZReadRequest zReadRequest = new ZReadRequest(employeeId);
@@ -3784,7 +3969,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void xReadRequest() {
 
-        PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+        PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "72") {
             @Override
             public void passwordSuccess(String employeeId, String employeeName) {
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -3867,7 +4052,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             @Override
                             public void removeOtSuccess(final String oldOtValue, final String remainingOt) {
 
-                                PasswordDialog passwordDialog = new PasswordDialog(getActivity()) {
+                                PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "71") {
                                     @Override
                                     public void passwordSuccess(String employeeId, String employeeName) {
                                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -4075,17 +4260,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void lightTheme() {
 
-        header.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
-        subTotal.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        deposit.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        discount.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
+        listCheckoutItems.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        header.setBackgroundColor(getResources().getColor(R.color.lightTextHeader));
+        cardHeader.setCardBackgroundColor(getResources().getColor(R.color.lightListBg));
+        cardHeaderRoot.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        subTotal.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        deposit.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        discount.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        depositLabel.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        discountLabel.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        subTotalLabel.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        totalLabel.setBackgroundColor(getResources().getColor(R.color.lightTextHeader));
+        total.setBackgroundColor(getResources().getColor(R.color.lightTextHeader));
 
-        totalLabel.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
-        depositLabel.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        discountLabel.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        subTotalLabel.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        total.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
-        listCheckoutItems.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
 
 
         header.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
@@ -4100,16 +4287,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void darkTheme() {
-        listCheckoutItems.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        header.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
-        subTotal.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        deposit.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        discount.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        depositLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        discountLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        subTotalLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        totalLabel.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
-        total.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        listCheckoutItems.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        header.setBackgroundColor(getResources().getColor(R.color.darkTextHeader));
+        cardHeader.setCardBackgroundColor(getResources().getColor(R.color.darkListBg));
+        cardHeaderRoot.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        subTotal.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        deposit.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        discount.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        depositLabel.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        discountLabel.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        subTotalLabel.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        totalLabel.setBackgroundColor(getResources().getColor(R.color.darkTextHeader));
+        total.setBackgroundColor(getResources().getColor(R.color.darkTextHeader));
 
         header.setTextColor(getResources().getColor(R.color.darkFont));
         total.setTextColor(getResources().getColor(R.color.darkFont));

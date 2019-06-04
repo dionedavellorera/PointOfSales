@@ -16,6 +16,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -28,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,6 +94,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private String qtySelected = "1";
 
     private EditText search;
+    private CardView cardSearch;
+    private RelativeLayout cardSearchRelContainer;
+    private ImageView srchImage;
 
     public static RightFrameFragment newInstance() {
 
@@ -183,7 +188,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @SuppressLint("ClickableViewAccessibility")
     private void initializeViews(View view) {
         search = view.findViewById(R.id.search);
-
+        cardSearch = view.findViewById(R.id.cardSearch);
+        cardSearchRelContainer = view.findViewById(R.id.cardSearchRelContainer);
+        srchImage = view.findViewById(R.id.srchImage);
 //        EditText searchEditText = (EditText) search.findViewById(android.support.v7.appcompat.R.id.search_src_text);
 //        searchEditText.setTextColor(getResources().getColor(R.color.colorWhite));
 //        searchEditText.setHintTextColor(getResources().getColor(R.color.colorWhite));
@@ -327,7 +334,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private void setProductAdapter() {
         //set products adapter with 5 columns (grid layout)
         productsAdapter = new ProductsAdapter(productsList, this, getContext());
-        listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
+        listProducts.setLayoutManager(new GridLayoutManager(getContext(), 4));
         listProducts.setAdapter(productsAdapter);
         productsAdapter.notifyDataSetChanged();
 
@@ -530,14 +537,17 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     private void lightTheme() {
-        listProducts.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        search.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
+        cardSearch.setCardBackgroundColor(getResources().getColor(R.color.lightListBg));
+        cardSearchRelContainer.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        srchImage.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        search.setBackgroundColor(getResources().getColor(R.color.lightListBg));
+        qtySpinner.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
+        labelQty.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
+
+        labelQty.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
         search.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
         search.setHintTextColor(getResources().getColor(R.color.lightPrimaryFont));
         breadcrumb.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
-        breadcrumb.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
-        qtySpinner.setBackgroundColor(getResources().getColor(R.color.lightSecondary));
-        labelQty.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
 
         for (Drawable drawable : breadcrumb.getCompoundDrawables()) {
             if (drawable != null) {
@@ -547,14 +557,18 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     }
 
     private void darkTheme() {
-        listProducts.setBackgroundColor(getResources().getColor(R.color.colorSemiDark));
-        search.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
+        cardSearch.setCardBackgroundColor(getResources().getColor(R.color.darkListBg));
+        cardSearchRelContainer.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        srchImage.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        search.setBackgroundColor(getResources().getColor(R.color.darkListBg));
+        qtySpinner.setBackgroundColor(getResources().getColor(R.color.darkMainBg));
+        labelQty.setBackgroundColor(getResources().getColor(R.color.darkMainBg));
+
+        labelQty.setTextColor(getResources().getColor(R.color.darkFont));
         search.setTextColor(getResources().getColor(R.color.darkFont));
         search.setHintTextColor(getResources().getColor(R.color.darkFont));
         breadcrumb.setTextColor(getResources().getColor(R.color.darkFont));
-        breadcrumb.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
-        qtySpinner.setBackgroundColor(getResources().getColor(R.color.colorSemiDark2));
-        labelQty.setTextColor(getResources().getColor(R.color.darkFont));
+
 
         for (Drawable drawable : breadcrumb.getCompoundDrawables()) {
             if (drawable != null) {

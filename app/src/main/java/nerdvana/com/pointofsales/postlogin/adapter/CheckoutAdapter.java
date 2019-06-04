@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -24,9 +26,11 @@ import nerdvana.com.pointofsales.model.ProductsModel;
 public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<CartItemsModel> cartItemsList;
     private CheckoutItemsContract checkoutItemsContract;
-    public CheckoutAdapter(List<CartItemsModel> cartItemsList, CheckoutItemsContract checkoutItemsContract) {
+    private Context context;
+    public CheckoutAdapter(List<CartItemsModel> cartItemsList, CheckoutItemsContract checkoutItemsContract, Context context) {
         this.cartItemsList = cartItemsList;
         this.checkoutItemsContract = checkoutItemsContract;
+        this.context = context;
     }
 
     @NonNull
@@ -44,6 +48,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView totalPrice;
         private ImageView iconStatus;
         private ConstraintLayout rootView;
+        private LinearLayout rootView1;
 
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -53,6 +58,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             totalPrice = itemView.findViewById(R.id.totalPrice);
             iconStatus = itemView.findViewById(R.id.iconStatus);
             rootView = itemView.findViewById(R.id.rootView);
+            rootView1 = itemView.findViewById(R.id.rootView1);
         }
 
     }
@@ -81,6 +87,13 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     return false;
                 }
             });
+
+            TextView tv = new TextView(context);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            tv.setLayoutParams(layoutParams);
+            ((ProductsViewHolder)holder).rootView1.addView(tv);
+            Log.d("BUNDLESIZEALAC", String.valueOf(cartItem.getAlaCarteList().size()));
+            Log.d("BUNDLESIZEALAC", String.valueOf(cartItem.getGroupList().size()));
 
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki

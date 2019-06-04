@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -177,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private nerdvana.com.pointofsales.postlogin.LeftFrameFragment postLoginLeftFrameFragment;
     private nerdvana.com.pointofsales.postlogin.RightFrameFragment postLoginRightFrameFragment;
 
+    private ConstraintLayout mainContainerBg;
 
 
     android.support.v7.widget.Toolbar toolbar;
@@ -210,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-
+        mainContainerBg = findViewById(R.id.mainContainerBg);
         separator = findViewById(R.id.separator);
         separator2 = findViewById(R.id.separator2);
 
@@ -298,22 +300,20 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             @Override
             public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
 
-
-//                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranch()), ApplicationConstants.BRANCH);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getPermitNo()), ApplicationConstants.BRANCH_PERMIT);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getTax()), ApplicationConstants.TAX_RATE);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getId()), ApplicationConstants.BRANCH_ID);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchCode()), ApplicationConstants.BRANCH_CODE);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getTelephone()), ApplicationConstants.BRANCH_TELEPHONE);
-                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getInfo().getSafeKeepingAmount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
-                SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(String.valueOf(response.body().getResult().getShift())), ApplicationConstants.SHIFT_DETAILS);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getPermitNo()), ApplicationConstants.BRANCH_PERMIT);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getTax()), ApplicationConstants.TAX_RATE);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getId()), ApplicationConstants.BRANCH_ID);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getBranchCode()), ApplicationConstants.BRANCH_CODE);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getTelephone()), ApplicationConstants.BRANCH_TELEPHONE);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getSafeKeepingAmount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
+                SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(String.valueOf(response.body().getResult().getBranchInfo().getShift())), ApplicationConstants.SHIFT_DETAILS);
 
 
 
-                SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult().getShift()), ApplicationConstants.SHIFT_INFO_ARRAY);
+                SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult().getBranchInfo().getShift()), ApplicationConstants.SHIFT_INFO_ARRAY);
 
                 fetchTimeRequest();
 
@@ -1575,17 +1575,21 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void lightTheme() {
+        mainContainerBg.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.lightHeaderBg));
+
         separator.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
         separator2.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
-        toolbar.setBackgroundColor(getResources().getColor(R.color.lightPrimary));
-        user.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
-        timer.setTextColor(getResources().getColor(R.color.lightPrimaryFont));
+        user.setTextColor(getResources().getColor(R.color.darkFont));
+        timer.setTextColor(getResources().getColor(R.color.darkFont));
     }
 
     private void darkTheme() {
+        mainContainerBg.setBackgroundColor(getResources().getColor(R.color.darkMainBg));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.darkHeaderBg));
+
         separator.setBackgroundColor(getResources().getColor(R.color.darkFont));
         separator2.setBackgroundColor(getResources().getColor(R.color.darkFont));
-        toolbar.setBackgroundColor(getResources().getColor(R.color.darkMain));
         user.setTextColor(getResources().getColor(R.color.darkFont));
         timer.setTextColor(getResources().getColor(R.color.darkFont));
     }

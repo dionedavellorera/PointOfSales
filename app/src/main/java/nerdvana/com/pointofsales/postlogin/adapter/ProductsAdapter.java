@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.lang.reflect.Array;
@@ -83,12 +84,14 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView price;
         private ImageView imageUrl;
         private CardView rootView;
+        private RelativeLayout productBg;
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             price = itemView.findViewById(R.id.price);
             imageUrl = itemView.findViewById(R.id.image);
             rootView = itemView.findViewById(R.id.rootView);
+            productBg = itemView.findViewById(R.id.productBg);
         }
     }
 
@@ -108,9 +111,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
                 ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
             } else {
-                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiDark2));
+                ((ProductsViewHolder)holder).productBg.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
                 ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
-                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiDark2));
+                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
                 ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
             }
         }

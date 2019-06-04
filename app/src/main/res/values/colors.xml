@@ -33,6 +33,15 @@
 
 
     <!-- dark theme colors -->
+    <color name="darkHeaderBg">#0E2559</color>
+    <color name="darkMainBg">#0F120E</color>
+    <color name="darkListBg">#252525</color>
+    <color name="darkTextHeader">#363638</color>
+    <color name="darkColorAccent">#2FD1AA</color>
+    <color name="darkColorAccentFont">#000000</color>
+
+
+
     <color name="darkMain">#000000</color>
     <color name="colorSemiDark">#303030</color>
     <color name="colorSemiDark2">#424242</color>
@@ -40,6 +49,16 @@
 
 
     <!-- light theme colors -->
+    <color name="lightHeaderBg">#0E2559</color>
+    <color name="lightMainBg">#CAE6E9</color>
+    <color name="lightListBg">#FFFFFF</color>
+    <color name="lightTextHeader">#A2BABA</color>
+    <color name="lightColorAccent">#24A1F1</color>
+    <color name="lightColorAccentFont">#000000</color>
+
+
+
+
     <color name="lightPrimary">#cccccc</color>
     <color name="lightPrimaryFont">#000000</color>
     <color name="lightSecondary">#cccccc</color>

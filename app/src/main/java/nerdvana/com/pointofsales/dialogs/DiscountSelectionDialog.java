@@ -103,7 +103,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         VoidItemContract voidItemContract = new VoidItemContract() {
             @Override
             public void remove(final String post_id, String name, String amount, final int position) {
-                PasswordDialog passwordDialog = new PasswordDialog(activity) {
+                PasswordDialog passwordDialog = new PasswordDialog(activity, "65") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         VoidDiscountRequest voidDiscountRequest = new VoidDiscountRequest(controlNumber, post_id, employeeId);

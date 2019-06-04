@@ -38,6 +38,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
+import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
@@ -180,7 +181,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 if (TextUtils.isEmpty(controlNumber)) {
                     Toast.makeText(getContext(), "Please select transaction to void", Toast.LENGTH_SHORT).show();
                 } else {
-                    PasswordDialog passwordDialog = new PasswordDialog(act) {
+                    PasswordDialog passwordDialog = new PasswordDialog(act, "65") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             postVoidRequest(controlNumber, employeeId);
@@ -308,7 +309,9 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 false,
                                 String.valueOf(tpost.getId()),
                                 false,
-                                ""
+                                "",
+                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                new ArrayList<AddRateProductModel.Group>()
                         ));
                     } else {
                         cartItemList.add(roomRateCounter.size(), new CartItemsModel(
@@ -330,13 +333,15 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 false,
                                 String.valueOf(tpost.getId()),
                                 false,
-                                ""
+                                "",
+                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                new ArrayList<AddRateProductModel.Group>()
                         ));
                     }
                 }
             }
 
-            CheckoutAdapter checkoutAdapter = new CheckoutAdapter(this.cartItemList, this);
+            CheckoutAdapter checkoutAdapter = new CheckoutAdapter(this.cartItemList, this, getContext());
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
             listTransactionDetails.setLayoutManager(linearLayoutManager);
             listTransactionDetails.setAdapter(checkoutAdapter);

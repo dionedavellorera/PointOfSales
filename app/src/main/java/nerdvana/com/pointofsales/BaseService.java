@@ -29,19 +29,19 @@ public class BaseService {
             public void onResponse(Call<T> call, Response<T> response) {
 
 
-//                BusProvider.getInstance().post(response.body());
-                try {
-                    BusProvider.getInstance().post(response.body());
-                } catch (Exception e) {
-                    BusProvider.getInstance().post(new ApiError(e.getMessage()+ "\n" + call.request().url().encodedPath() + " \n" + call.request().url().query()));
-                    BusProvider.getInstance().post(new ProgressBarModel(false, e.getMessage() + "\n" + call.request().url().encodedPath() + " \n" + call.request().url().query()));
-                }
+                BusProvider.getInstance().post(response.body());
+//                try {
+//                    BusProvider.getInstance().post(response.body());
+//                } catch (Exception e) {
+//                    BusProvider.getInstance().post(new ApiError(e.getMessage()+ "\n" + call.request().url().encodedPath() + " \n" + call.request().url().query()));
+//                    BusProvider.getInstance().post(new ProgressBarModel(false, e.getMessage() + "\n" + call.request().url().encodedPath() + " \n" + call.request().url().query()));
+//                }
             }
 
             @Override
             public void onFailure(Call<T> call, Throwable t) {
-                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
-                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
+//                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
+//                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
             }
         });
 

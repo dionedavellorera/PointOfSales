@@ -68,15 +68,15 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
 
         if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
-            ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightSecondary));
-            ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightPrimaryFont));
+            ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightColorAccent));
+            ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightColorAccentFont));
         } else {
             if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
-                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightSecondary));
-                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightPrimaryFont));
+                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightColorAccent));
+                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightColorAccentFont));
             } else {
-                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiDark2));
-                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.darkFont));
+                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkColorAccent));
+                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.darkColorAccentFont));
             }
         }
 

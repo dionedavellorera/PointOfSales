@@ -1,128 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootView"
-    android:background="@drawable/checkoutitems_selector">
-    <android.support.constraint.Guideline
-        android:id="@+id/guideOne"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.4"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    android:id="@+id/rootView1">
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="This is a sample text this is a sample text"
-        android:textColor="@color/colorBlack"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/iconStatus"
-        app:layout_constraintRight_toLeftOf="@id/guideOne"
-        app:layout_constraintTop_toTopOf="parent" />
-    <android.support.constraint.Guideline
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/guideTwo"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.55"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/rootView"
+        android:background="@drawable/checkoutitems_selector">
+        <android.support.constraint.Guideline
+            android:id="@+id/guideOne"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideThree"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_percent="0.8029197"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:text="This is a sample text this is a sample text"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/iconStatus"
+            app:layout_constraintRight_toLeftOf="@id/guideOne"
+            app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.Guideline
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/guideTwo"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.55"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/quantity"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="100"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/guideOne"
-        app:layout_constraintRight_toLeftOf="@id/guideTwo"
-        app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.Guideline
+            android:id="@+id/guideThree"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintGuide_percent="0.8029197"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/price"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="100.00"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/guideTwo"
-        app:layout_constraintRight_toLeftOf="@id/guideThree"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/quantity"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="100"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/guideOne"
+            app:layout_constraintRight_toLeftOf="@id/guideTwo"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.constraint.Guideline
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/bottomGuide"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.95"/>
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="100.00"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/guideTwo"
+            app:layout_constraintRight_toLeftOf="@id/guideThree"
+            app:layout_constraintTop_toTopOf="parent" />
 
-
-    <TextView
-        android:id="@+id/totalPrice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="1100.00"
-        android:textSize="16sp"
-        app:layout_constraintLeft_toRightOf="@id/guideThree"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <android.support.constraint.Guideline
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/bottomGuide"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.95"/>
 
 
+        <TextView
+            android:id="@+id/totalPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="1100.00"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toRightOf="@id/guideThree"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <View
-        android:visibility="gone"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/bottomGuide"
-        app:layout_constraintTop_toTopOf="@id/bottomGuide"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorLtGrey"/>
 
-    <ImageView
-        android:layout_margin="5dp"
-        android:tint="@color/colorGreen"
-        android:id="@+id/iconStatus"
-        android:visibility="visible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:src="@drawable/check_all"/>
-</android.support.constraint.ConstraintLayout>
+
+        <View
+            android:visibility="gone"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/bottomGuide"
+            app:layout_constraintTop_toTopOf="@id/bottomGuide"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorLtGrey"/>
+
+        <ImageView
+            android:layout_margin="5dp"
+            android:tint="@color/colorGreen"
+            android:id="@+id/iconStatus"
+            android:visibility="visible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/check_all"/>
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

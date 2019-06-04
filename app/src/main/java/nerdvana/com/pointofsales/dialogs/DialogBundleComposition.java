@@ -1,30 +1,47 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.ListMenuAdapter;
 import nerdvana.com.pointofsales.adapters.ListProductsAdapter;
 import nerdvana.com.pointofsales.adapters.SelectedProductsAdapter;
+import nerdvana.com.pointofsales.api_requests.TestSend;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
+import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.SelectedProductsInBundleModel;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-public class DialogBundleComposition extends BaseDialog {
+public abstract class DialogBundleComposition extends BaseDialog {
     private boolean onBind = false;
     private List<FetchProductsResponse.BranchGroup> branchGroupList;
     private List<SelectedProductsInBundleModel> selectedProductsInBundleModelList;
@@ -37,10 +54,19 @@ public class DialogBundleComposition extends BaseDialog {
     private Category category;
     private Product product;
     private TextView selectionTitle;
+    private Context act;
+    private FloatingActionButton nextButton;
+    private FloatingActionButton backButton;
+    private int pageIndicator = 0;
     private List<SelectedProductsInBundleModel.BundleProductModel> bundleProductModelList;;
-    public DialogBundleComposition(@NonNull Context context, List<FetchProductsResponse.BranchGroup> branchGroupList) {
+    private double bundleAmount;
+    public DialogBundleComposition(@NonNull Context context,
+                                   List<FetchProductsResponse.BranchGroup> branchGroupList,
+                                   double bundleAmount) {
         super(context);
+        this.act = context;
         this.branchGroupList = branchGroupList;
+        this.bundleAmount = bundleAmount;
     }
 
     @Override
@@ -50,23 +76,39 @@ public class DialogBundleComposition extends BaseDialog {
         selectedProductsInBundleModelList = new ArrayList<>();
         branchLists = new ArrayList<>();
         listMenu = findViewById(R.id.listMenu);
+        nextButton = findViewById(R.id.nextButton);
+        backButton = findViewById(R.id.backButtonNavigation);
         listProducts = findViewById(R.id.listProducts);
         selectionTitle = findViewById(R.id.selectionTitle);
         listSelectedProducts = findViewById(R.id.listSelectedProducts);
 
 
         bundleProductModelList = new ArrayList<>();
-
-
-
         int index = 0;
         for (FetchProductsResponse.BranchGroup branchGroup : branchGroupList) {
             selectedProductsInBundleModelList.add(new SelectedProductsInBundleModel(branchGroup.getCoreId(),
                     branchGroup.getGroupName(),
                     index,
-                    new ArrayList<SelectedProductsInBundleModel.BundleProductModel>()));
+                    new ArrayList<SelectedProductsInBundleModel.BundleProductModel>(),
+                    branchGroup.getQty(),
+                    0,
+                    bundleAmount));
             index++;
         }
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                previousPage();
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                proceedToNext();
+            }
+        });
 
 
         product = new Product() {
@@ -76,40 +118,85 @@ public class DialogBundleComposition extends BaseDialog {
 
                 if (selectedProductsAdapter != null) {
                     for (SelectedProductsInBundleModel sib : selectedProductsInBundleModelList) {
+                        boolean shouldStop = false;
                         if (sib.getGroupId() == branchLists.get(position).getProductGroupId()) {
 
                                 if (sib.getBundleProductModelList().size() < 1) {
-                                    sib.getBundleProductModelList()
-                                            .add(
-                                                    new SelectedProductsInBundleModel.BundleProductModel(
-                                                            branchLists.get(position).getBranchProduct().getProduct(),
-                                                            branchLists.get(position).getBranchProduct().getImageFile(),
-                                                            1));
-                                } else {
-                                    boolean isExisting = false;
-                                    for (SelectedProductsInBundleModel.BundleProductModel bpm : sib.getBundleProductModelList()) {
-                                        if (bpm.getName().equals(branchLists.get(position).getBranchProduct().getProduct())) {
-                                            bpm.setQty(bpm.getQty() + 1);
-                                            isExisting = true;
-                                        }
-                                    }
-                                    if (!isExisting){
+
+                                    if (sib.getTotalQtySelected() < sib.getMaxQty()) {
+                                        sib.setTotalQtySelected(sib.getTotalQtySelected() + 1);
+
                                         sib.getBundleProductModelList()
                                                 .add(
                                                         new SelectedProductsInBundleModel.BundleProductModel(
                                                                 branchLists.get(position).getBranchProduct().getProduct(),
                                                                 branchLists.get(position).getBranchProduct().getImageFile(),
-                                                                1));
+                                                                1,
+                                                                branchLists.get(position).getBranchProduct().getCoreId(),
+                                                                branchLists.get(position).getBranchProduct().getAmount()));
+
+                                        selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
+
+                                        if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
+
+                                    } else {
+                                        Utils.showDialogMessage(act, "Bundle group max qty exceeded, cannot add", "Information" );
+                                        shouldStop = true;
+                                        break;
+                                    }
+
+                                } else {
+                                    boolean isExisting = false;
+                                    for (SelectedProductsInBundleModel.BundleProductModel bpm : sib.getBundleProductModelList()) {
+                                        if (bpm.getName().equals(branchLists.get(position).getBranchProduct().getProduct())) {
+                                            if (sib.getTotalQtySelected() < sib.getMaxQty()) {
+                                                bpm.setQty(bpm.getQty() + 1);
+                                                sib.setTotalQtySelected(sib.getTotalQtySelected() + 1);
+
+                                                selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
+
+                                                if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
+                                                isExisting = true;
+                                            }else {
+                                                isExisting = true;
+                                                Utils.showDialogMessage(act, "Bundle group max qty exceeded, cannot add", "Information" );
+                                                shouldStop = true;
+                                                break;
+                                            }
+
+                                        }
+                                    }
+                                    if (!isExisting){
+                                        if (sib.getTotalQtySelected() < sib.getMaxQty()) {
+                                            sib.setTotalQtySelected(sib.getTotalQtySelected() + 1);
+                                            sib.getBundleProductModelList()
+                                                    .add(
+                                                            new SelectedProductsInBundleModel.BundleProductModel(
+                                                                    branchLists.get(position).getBranchProduct().getProduct(),
+                                                                    branchLists.get(position).getBranchProduct().getImageFile(),
+                                                                    1,
+                                                                    branchLists.get(position).getBranchProduct().getCoreId(),
+                                                                    branchLists.get(position).getBranchProduct().getAmount()));
+
+                                            selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
+
+                                            if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
+
+                                        }else {
+                                            Utils.showDialogMessage(act, "Bundle group max qty exceeded, cannot add", "Information" );
+                                            shouldStop = true;
+                                            break;
+                                        }
+
                                     }
                                 }
-
-
 
                                 if (selectedProductsAdapter != null) {
                                     selectedProductsAdapter.notifyDataSetChanged();
                                 }
-
-
+                                if (shouldStop) {
+                                    break;
+                                }
                         }
                     }
                 }
@@ -120,7 +207,7 @@ public class DialogBundleComposition extends BaseDialog {
         category = new Category() {
             @Override
             public void clicked(int position) {
-
+                pageIndicator = position;
                 bundleProductModelList = selectedProductsInBundleModelList.get(position).getBundleProductModelList();
                 selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
                 LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -130,7 +217,7 @@ public class DialogBundleComposition extends BaseDialog {
 
 
                 branchLists = branchGroupList.get(position).getBranchLists();
-                selectionTitle.setText(branchGroupList.get(position).getGroupName());
+                selectionTitle.setText(String.format("%s(%s)", branchGroupList.get(position).getGroupName(), String.valueOf(selectedProductsInBundleModelList.get(position).getMaxQty() - selectedProductsInBundleModelList.get(position).getTotalQtySelected())));
                 ListProductsAdapter listProductsAdapter = new ListProductsAdapter(branchGroupList.get(position).getBranchLists(), product);
                 listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
                 listProducts.setAdapter(listProductsAdapter);
@@ -153,6 +240,115 @@ public class DialogBundleComposition extends BaseDialog {
         listSelectedProducts.setLayoutManager(llm2);
         listSelectedProducts.setAdapter(selectedProductsAdapter);
         selectedProductsAdapter.notifyDataSetChanged();
+
+        previousPage();
+    }
+
+    private void previousPage() {
+
+        if (pageIndicator > 0) {
+            pageIndicator -= 1;
+
+        } else {
+//            Utils.showDialogMessage(act, "Reached the start", "Information");
+        }
+
+        bundleProductModelList = selectedProductsInBundleModelList.get(pageIndicator).getBundleProductModelList();
+        selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
+        LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        listSelectedProducts.setLayoutManager(llm2);
+        listSelectedProducts.setAdapter(selectedProductsAdapter);
+        selectedProductsAdapter.notifyDataSetChanged();
+
+
+        branchLists = branchGroupList.get(pageIndicator).getBranchLists();
+        selectionTitle.setText(String.format("%s(%s)", branchGroupList.get(pageIndicator).getGroupName(), String.valueOf(selectedProductsInBundleModelList.get(pageIndicator).getMaxQty() - selectedProductsInBundleModelList.get(pageIndicator).getTotalQtySelected())));
+        ListProductsAdapter listProductsAdapter = new ListProductsAdapter(branchGroupList.get(pageIndicator).getBranchLists(), product);
+        listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
+        listProducts.setAdapter(listProductsAdapter);
+        listProductsAdapter.notifyDataSetChanged();
+
+
+
+    }
+
+    private void proceedToNext() {
+
+        if (pageIndicator < selectedProductsInBundleModelList.size() - 1) {
+            pageIndicator += 1;
+            bundleProductModelList = selectedProductsInBundleModelList.get(pageIndicator).getBundleProductModelList();
+            selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
+            LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            listSelectedProducts.setLayoutManager(llm2);
+            listSelectedProducts.setAdapter(selectedProductsAdapter);
+            selectedProductsAdapter.notifyDataSetChanged();
+
+
+            branchLists = branchGroupList.get(pageIndicator).getBranchLists();
+            selectionTitle.setText(String.format("%s(%s)", branchGroupList.get(pageIndicator).getGroupName(), String.valueOf(branchGroupList.get(pageIndicator).getQty())));
+            ListProductsAdapter listProductsAdapter = new ListProductsAdapter(branchGroupList.get(pageIndicator).getBranchLists(), product);
+            listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
+            listProducts.setAdapter(listProductsAdapter);
+            listProductsAdapter.notifyDataSetChanged();
+        } else {
+
+            boolean hasCompletedData = true;
+            for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
+                if (sipm.getMaxQty() != sipm.getTotalQtySelected()) {
+                    hasCompletedData = false;
+                    Utils.showDialogMessage(act, "Please complete " + sipm.getGroupName(), "Information");
+                    break;
+                }
+            }
+
+
+            if (hasCompletedData) {
+
+                bundleCompleted(selectedProductsInBundleModelList);
+                dismiss();
+                Utils.showDialogMessage(act, "send data", "information");
+//                ArrayList<AddRateProductModel> addRateProductList = new ArrayList<>();
+//                for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
+//                    for (SelectedProductsInBundleModel.BundleProductModel bpm : sipm.getBundleProductModelList()) {
+//                        addRateProductList.add(
+//                                new AddRateProductModel(
+//                                        String.valueOf(bpm.getProductId()),
+//                                        "",
+//                                        String.valueOf(bpm.getQty()),
+//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+//                                        String.valueOf(bpm.getAmount()),
+//                                        0,
+//                                        bpm.getName(),
+//                                        String.valueOf(sipm.getGroupId()),
+//                                        sipm.getGroupName(),
+//                                        bundleAmount
+//                                )
+//                        );
+//                    }
+//                }
+
+
+//                TestSend testSend = new TestSend(GsonHelper.getGson().toJson(addRateProductList));
+//                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//                Call<ResponseBody> request = iUsers.testSend(testSend.getMapValue());
+//                request.enqueue(new Callback<ResponseBody>() {
+//                    @Override
+//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                    }
+//                });
+            }
+
+//            Utils.showDialogMessage(act, "Reached the end", "Information");
+        }
+
+
+
     }
 
     @Override
@@ -173,4 +369,6 @@ public class DialogBundleComposition extends BaseDialog {
     public interface Product {
         void clicked(int position);
     }
+
+    public abstract void bundleCompleted(List<SelectedProductsInBundleModel> sipm);
 }

@@ -233,7 +233,7 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
 
     private void sendDiscount() {
 
-        PasswordDialog passwordDialog = new PasswordDialog(context) {
+        PasswordDialog passwordDialog = new PasswordDialog(context, "64") {
 
             @Override
             public void passwordSuccess(String employeeId, String employeeName) {
@@ -253,9 +253,6 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         "",
                                         controlNumber,
                                         roomId);
-
-                        Log.d("ERQREQREQ", autoDiscountRequest.toString());
-
                         break;
                     case "employee":
                         autoDiscountRequest =
@@ -285,8 +282,6 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         etSeniorPwdAddress.getText().toString(),
                                         controlNumber,
                                         roomId);
-
-                        Log.d("ERQREQREQ", autoDiscountRequest.toString());
                         break;
                 }
 
@@ -302,7 +297,6 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                             Utils.showDialogMessage(context, "Discounting success" ,"Information");
                             discountSuccess();
                         }
-
                     }
 
                     @Override

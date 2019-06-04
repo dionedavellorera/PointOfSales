@@ -1,5 +1,7 @@
 package nerdvana.com.pointofsales.model;
 
+import java.util.List;
+
 public class CartItemsModel {
     private String controlNo;
     private int roomId;
@@ -20,6 +22,9 @@ public class CartItemsModel {
     private String postId;
     private boolean forVoid;
     private String type;
+
+    private List<AddRateProductModel.AlaCarte> alaCarteList;
+    private List<AddRateProductModel.Group> groupList;
     public CartItemsModel(String controlNo, int roomId,
                           int productId, int roomTypeId,
                           int roomRateId, int roomRatePriceId,
@@ -29,7 +34,9 @@ public class CartItemsModel {
                           Double markUp, int isPriceChanged,
                           Double unitPrice, boolean isSelected,
                           String postId, boolean forVoid,
-                          String type) {
+                          String type,
+                          List<AddRateProductModel.AlaCarte> alaCarteList,
+                          List<AddRateProductModel.Group> groupList) {
         this.controlNo = controlNo;
         this.roomId = roomId;
         this.productId = productId;
@@ -49,6 +56,16 @@ public class CartItemsModel {
         this.postId = postId;
         this.forVoid = forVoid;
         this.type = type;
+        this.alaCarteList = alaCarteList;
+        this.groupList = groupList;
+    }
+
+    public List<AddRateProductModel.AlaCarte> getAlaCarteList() {
+        return alaCarteList;
+    }
+
+    public List<AddRateProductModel.Group> getGroupList() {
+        return groupList;
     }
 
     public String getType() {

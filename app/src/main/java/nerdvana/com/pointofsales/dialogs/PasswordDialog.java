@@ -12,14 +12,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.epson.epos2.cashchanger.DirectIOListener;
+
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.CheckPermissionRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
+import nerdvana.com.pointofsales.api_responses.CheckPermissionResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,15 +35,19 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     private Button proceed;
     private Context context;
     private String headerAppend = "";
-    public PasswordDialog(@NonNull Context context) {
+    private String actionId = "";
+    public PasswordDialog(@NonNull Context context, String actionId) {
         super(context);
         this.context = context;
+        this.actionId = actionId;
     }
 
-    public PasswordDialog(@NonNull Context context, String headerAppend) {
+    public PasswordDialog(@NonNull Context context, String headerAppend,
+                          String actionId) {
         super(context);
         this.context = context;
         this.headerAppend = headerAppend;
+        this.actionId = actionId;
     }
 
     public PasswordDialog(@NonNull Context context, int themeResId) {
@@ -82,6 +91,27 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     }
 
     private void sendLoginRequest(String username, String password) {
+//        CheckPermissionRequest checkPermissionRequest =  new CheckPermissionRequest(username, password, actionId);
+//        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//        Call<CheckPermissionResponse> request = iUsers.checkPermission(checkPermissionRequest.getMapValue());
+//        request.enqueue(new Callback<CheckPermissionResponse>() {
+//            @Override
+//            public void onResponse(Call<CheckPermissionResponse> call, Response<CheckPermissionResponse> response) {
+//                if (response.body().getStatus() == 0) {
+//                    Utils.showDialogMessage(((MainActivity)context), response.body().getMessage(), "Warning!");
+//                } else {
+//                    TODO :
+//                    passwordSuccess("656", "DIONEY");
+//                }
+//                dismiss();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<CheckPermissionResponse> call, Throwable t) {
+//
+//            }
+//        });
+
         LoginRequest loginRequest = new LoginRequest(username, password);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<LoginResponse> request = iUsers.sendLoginRequest(loginRequest.getMapValue());

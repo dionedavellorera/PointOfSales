@@ -317,7 +317,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 finalCheckInTime = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute  : minute)));
                                 finalCheckInDateTime = finalCheckInDate + " " + finalCheckInTime;
-                                PasswordDialog passwordDialog = new PasswordDialog(act) {
+                                PasswordDialog passwordDialog = new PasswordDialog(act, "60") {
                                     @Override
                                     public void passwordSuccess(String employeeId, String employeeName) {
                                         updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, employeeId);

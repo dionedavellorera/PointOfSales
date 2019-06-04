@@ -92,7 +92,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     }
 
     private void darkTheme() {
-        mainContainer.setBackgroundColor(getResources().getColor(R.color.darkMain));
+        mainContainer.setBackgroundColor(getResources().getColor(R.color.darkListBg));
     }
 
     @Subscribe
