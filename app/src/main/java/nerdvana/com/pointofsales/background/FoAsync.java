@@ -20,6 +20,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -124,6 +125,34 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
             totalAmount += Double.valueOf(r.getPrice());
             addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), r.getPrice(), 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            if (r.getAlaCarteList().size() > 0) {
+                for (AddRateProductModel.AlaCarte palac : r.getAlaCarteList()) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "   "+palac.getQty()+ " "+palac.getProduct_initial(),
+                            ""
+                            ,
+                            40,
+                            2,
+                            context),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+            }
+
+            if (r.getGroupList().size() > 0) {
+                for (AddRateProductModel.Group postGroup : r.getGroupList()) {
+                    for (AddRateProductModel arpm : postGroup.getGroupCompoList().getItem()) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "   "+arpm.getQty()+ " "+ arpm.getProduct_initial(),
+                                ""
+                                ,
+                                40,
+                                2,
+                                context),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                }
+            }
         }
 
         addTextToPrinter(printer, "TOTAL: " + String.valueOf(totalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);

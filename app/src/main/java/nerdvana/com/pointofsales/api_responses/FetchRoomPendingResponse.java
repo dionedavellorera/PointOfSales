@@ -506,7 +506,139 @@ public class FetchRoomPendingResponse {
         }
     }
 
+    public class FreebyRoomRatePrice {
+        @SerializedName("room_rate")
+        @Expose
+        private FreebyRoomRate freebyRoomRate;
+        @SerializedName("room_rate_id")
+        @Expose
+        private int roomRateId;
+        @SerializedName("amount")
+        @Expose
+        private double amount;
+        @SerializedName("flag")
+        @Expose
+        private int flag;
+
+        public FreebyRoomRate getFreebyRoomRate() {
+            return freebyRoomRate;
+        }
+
+        public void setFreebyRoomRate(FreebyRoomRate freebyRoomRate) {
+            this.freebyRoomRate = freebyRoomRate;
+        }
+
+        public int getRoomRateId() {
+            return roomRateId;
+        }
+
+        public void setRoomRateId(int roomRateId) {
+            this.roomRateId = roomRateId;
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(double amount) {
+            this.amount = amount;
+        }
+
+        public int getFlag() {
+            return flag;
+        }
+
+        public void setFlag(int flag) {
+            this.flag = flag;
+        }
+    }
+
+    public class FreebyRoomRate {
+        @SerializedName("room_rate")
+        @Expose
+        private String roomRate;
+
+        public String getRoomRate() {
+            return roomRate;
+        }
+
+        public void setRoomRate(String roomRate) {
+            this.roomRate = roomRate;
+        }
+    }
+    public class Freebies {
+        @SerializedName("room_rate_price")
+        @Expose
+        private FreebyRoomRatePrice freebyRoomRatePrice;
+        @SerializedName("control_no")
+        @Expose
+        private String controlNo;
+        @SerializedName("price_rate_room_id")
+        @Expose
+        private int priceRateRoomId;
+        @SerializedName("post_trans_id")
+        @Expose
+        private int postTransId;
+        @SerializedName("qty")
+        @Expose
+        private int qty;
+        @SerializedName("flag")
+        @Expose
+        private int flag;
+
+        public FreebyRoomRatePrice getFreebyRoomRatePrice() {
+            return freebyRoomRatePrice;
+        }
+
+        public void setFreebyRoomRatePrice(FreebyRoomRatePrice freebyRoomRatePrice) {
+            this.freebyRoomRatePrice = freebyRoomRatePrice;
+        }
+
+        public String getControlNo() {
+            return controlNo;
+        }
+
+        public void setControlNo(String controlNo) {
+            this.controlNo = controlNo;
+        }
+
+        public int getPriceRateRoomId() {
+            return priceRateRoomId;
+        }
+
+        public void setPriceRateRoomId(int priceRateRoomId) {
+            this.priceRateRoomId = priceRateRoomId;
+        }
+
+        public int getPostTransId() {
+            return postTransId;
+        }
+
+        public void setPostTransId(int postTransId) {
+            this.postTransId = postTransId;
+        }
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
+
+        public int getFlag() {
+            return flag;
+        }
+
+        public void setFlag(int flag) {
+            this.flag = flag;
+        }
+    }
+
     public class RoomTransaction {
+        @SerializedName("freebies")
+        @Expose
+        private List<Freebies> freebiesList;
         @SerializedName("customer")
         @Expose
         private CustomerTrans customerTrans;
@@ -615,6 +747,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+
+        public List<Freebies> getFreebiesList() {
+            return freebiesList;
+        }
+
+        public void setFreebiesList(List<Freebies> freebiesList) {
+            this.freebiesList = freebiesList;
+        }
 
         public CustomerTrans getCustomerTrans() {
             return customerTrans;
@@ -1400,12 +1540,23 @@ public class FetchRoomPendingResponse {
     }
 
     public class PostAlaCart {
+        @SerializedName("qty")
+        @Expose
+        private int qty;
         @SerializedName("department")
         @Expose
         private String department;
         @SerializedName("product")
         @Expose
         private BPostProduct postAlaCartProduct;
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
 
         public String getDepartment() {
             return department;
@@ -1440,12 +1591,23 @@ public class FetchRoomPendingResponse {
     }
 
     public class PostGroupItem {
+        @SerializedName("qty")
+        @Expose
+        private int qty;
         @SerializedName("department")
         @Expose
         private String department;
         @SerializedName("product")
         @Expose
         private BPostProduct postGroupItemProduct;
+
+        public int getQty() {
+            return qty;
+        }
+
+        public void setQty(int qty) {
+            this.qty = qty;
+        }
 
         public String getDepartment() {
             return department;

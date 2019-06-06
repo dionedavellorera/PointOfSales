@@ -133,6 +133,7 @@ import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
 import nerdvana.com.pointofsales.dialogs.DialogBundleComposition;
 import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
 import nerdvana.com.pointofsales.dialogs.FocDialog;
+import nerdvana.com.pointofsales.dialogs.FreebiesDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
 import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
@@ -656,6 +657,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     dialogBundleComposition.show();
                 } else {
+
+                    ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                    if (productsModel.getBranchAlaCartList().size() > 0) {
+                        for (FetchProductsResponse.BranchAlaCart balac : productsModel.getBranchAlaCartList()) {
+                            alaCartes.add(new AddRateProductModel.AlaCarte(
+                                    String.valueOf(balac.getBranchProduct().getCoreId()),
+                                    "0",
+                                    String.valueOf(balac.getQty()),
+                                    SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                    String.valueOf(balac.getPrice()),
+                                    0,
+                                    balac.getBranchProduct().getProductInitial()
+
+                            ));
+                        }
+                    }
+
+
                     cartItemList.add(new CartItemsModel(
                             selectedRoom.getControlNo(),
                             0,
@@ -676,7 +695,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             "",
                             false,
                             "to",
-                            new ArrayList<AddRateProductModel.AlaCarte>(),
+                            alaCartes,
                             new ArrayList<AddRateProductModel.Group>()
                     ));
                 }
@@ -766,6 +785,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         };
                         dialogBundleComposition.show();
                     } else {
+
+                        ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                        if (productsModel.getBranchAlaCartList().size() > 0) {
+                            for (FetchProductsResponse.BranchAlaCart balac : productsModel.getBranchAlaCartList()) {
+                                alaCartes.add(new AddRateProductModel.AlaCarte(
+                                        String.valueOf(balac.getBranchProduct().getCoreId()),
+                                        "0",
+                                        String.valueOf(balac.getQty()),
+                                        SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                        String.valueOf(balac.getPrice()),
+                                        0,
+                                        balac.getBranchProduct().getProductInitial()
+
+                                ));
+                            }
+                        }
+
+
                         cartItemList.add(roomRateCounter.size(), new CartItemsModel(
                                 "",
                                 selectedRoom.getRoomId(),
@@ -786,7 +823,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 "",
                                 false,
                                 "room",
-                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                alaCartes,
                                 new ArrayList<AddRateProductModel.Group>()
                         ));
                     }
@@ -996,8 +1033,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
         switch (clickedItem.getId()) {
-            case 129: //setting for app, new activity
+            case 130: //CHECK FOR ROOM FREEBIES / ROOM BUNDLE
+                if (fetchRoomPendingResult != null) {
+                    if (fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList().size() > 0) {
+                        FreebiesDialog freebiesDialog = new FreebiesDialog(getActivity(), fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList()) {
+                            @Override
+                            public void freebySelected() {
 
+                            }
+                        };
+                        freebiesDialog.show();
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "No freebies", "Information");
+                    }
+                }
+                break;
+            case 129: //setting for app, new activity
                 Intent settingIntent = new Intent(getContext(), SettingsActivity.class);
                 startActivity(settingIntent);
 
@@ -2637,6 +2688,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
+            Log.d("MYLIST", String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getFreebiesList().size()));
             kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
             printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
@@ -2825,7 +2877,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                     new AddRateProductModel(
                                                             "",
                                                             "0",
-                                                            "",
+                                                            String.valueOf(bpm.getQty()),
                                                             SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
                                                             "",
                                                             0,
@@ -2851,7 +2903,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 alaCartes.add(new AddRateProductModel.AlaCarte(
                                         "",
                                         "0",
-                                        "",
+                                        String.valueOf(balac.getQty()),
                                         SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
                                         "0.00",
                                         0,
@@ -3042,29 +3094,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         roomAreaList, nationalityList, fetchRoomPendingResult) {
                     @Override
                     public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
-
-
-                        Log.d("CHECKNREQU", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-                                welcomeGuestRequest.getRoomRatePriceId(),
-                                "").toString());
-
-
                         BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
                                 welcomeGuestRequest.getRoomRatePriceId(),
                                 ""));
-
-
-//                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-//                            @Override
-//                            public void save(String remarks) {
-//                                BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-//                                        welcomeGuestRequest.getRoomRatePriceId(),
-//                                        remarks));
-//                            }
-//                        };
-//
-//                        confirmWithRemarksDialog.show();
-
                     }
                 };
                 if (!checkInDialog.isShowing()) checkInDialog.show();

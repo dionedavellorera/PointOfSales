@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/rootView1">
-
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -132,5 +132,9 @@
             android:layout_height="15dp"
             android:src="@drawable/check_all"/>
     </android.support.constraint.ConstraintLayout>
-
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/linearBundle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

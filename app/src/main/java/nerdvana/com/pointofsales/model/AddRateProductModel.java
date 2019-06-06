@@ -13,12 +13,8 @@ public class AddRateProductModel {
     private String price;
     private int is_price_changed;
     private String product_initial;
-
     private List<AlaCarte> alacart;
     private List<Group> group;
-
-
-
     public static class AlaCarte {
         private String product_id;
         private String room_rate_price_id;

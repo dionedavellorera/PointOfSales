@@ -37,6 +37,7 @@ import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomRatePriceIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomViaIdResponse;
@@ -350,4 +351,9 @@ public interface IUsers {
     @POST("checkPermission")
     @FormUrlEncoded
     Call<CheckPermissionResponse> checkPermission(@FieldMap Map<String, String> params);
+
+
+    @POST("fetchRoomRatePriceId")
+    @FormUrlEncoded
+    Call<FetchRoomRatePriceIdResponse> fetchRoomRatePriceId(@FieldMap Map<String, String> params);
 }

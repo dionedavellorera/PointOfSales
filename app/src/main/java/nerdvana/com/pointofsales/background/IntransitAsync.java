@@ -132,22 +132,25 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
             }
 
             if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
-//                intransitCount += 1;
-                List<String> temp = new ArrayList<>();
-                temp.add(r.getRoomNo()); //ROOM NUMBER
 
-                DateTime jodatime = dtf.parseDateTime(r.getTransaction().getCheckIn());
+                if (r.getTransaction() != null) {
+                    List<String> temp = new ArrayList<>();
+                    temp.add(r.getRoomNo()); //ROOM NUMBER
 
-                temp.add(dateIn.print(jodatime)); //DATE IN
-                temp.add(timeIn.print(jodatime)); //TIME IN
-                temp.add(returnWithTwoDecimal(String.valueOf(r.getTransaction().getTransaction().getAdvance()))); //ADVANCE PAYMENT
+                    DateTime jodatime = dtf.parseDateTime(r.getTransaction().getCheckIn());
 
-                Double totalFnb = 0.00;
-                for (FetchRoomResponse.PostFood pf : r.getTransaction().getTransaction().getPostFood()) {
-                    totalFnb += pf.getTotal() * pf.getQty();
+                    temp.add(dateIn.print(jodatime)); //DATE IN
+                    temp.add(timeIn.print(jodatime)); //TIME IN
+                    temp.add(returnWithTwoDecimal(String.valueOf(r.getTransaction().getTransaction().getAdvance()))); //ADVANCE PAYMENT
+
+                    Double totalFnb = 0.00;
+                    for (FetchRoomResponse.PostFood pf : r.getTransaction().getTransaction().getPostFood()) {
+                        totalFnb += pf.getTotal() * pf.getQty();
+                    }
+                    temp.add(returnWithTwoDecimal(String.valueOf(totalFnb))); //FNB
+                    addTextToPrinter(printer, intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                 }
-                temp.add(returnWithTwoDecimal(String.valueOf(totalFnb))); //FNB
-                addTextToPrinter(printer, intransitReceipt(temp), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+
             }
         }
 

@@ -44,14 +44,15 @@ public abstract class BaseDialog extends Dialog {
         setContentView(layout);
         backButton = findViewById(R.id.backButton);
         headerText = findViewById(R.id.displayHeader);
-
         headerText.setText(header);
-
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 cancel();
             }
         });
+
+        Context context = getContext();
+
     }
 }

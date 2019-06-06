@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -49,11 +51,13 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private TextView name;
         private ImageView imageUrl;
         private CardView rootView;
+        private RelativeLayout relView;
         public ButtonsViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             imageUrl = itemView.findViewById(R.id.image);
             rootView = itemView.findViewById(R.id.rootView);
+            relView = itemView.findViewById(R.id.relView);
         }
     }
 
@@ -67,16 +71,30 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         });
 
+        final int sdk = android.os.Build.VERSION.SDK_INT;
         if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
-            ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightColorAccent));
-            ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightColorAccentFont));
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+            } else {
+                ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+            }
+
+            ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColorStateList(R.color.light_text_color));
         } else {
             if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
-                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightColorAccent));
-                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.lightColorAccentFont));
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+                } else {
+                    ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+                }
+                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColorStateList(R.color.light_text_color));
             } else {
-                ((ButtonsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkColorAccent));
-                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColor(R.color.darkColorAccentFont));
+                if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_dark));
+                } else {
+                    ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_dark));
+                }
+                ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColorStateList(R.color.dark_text_color));
             }
         }
 

@@ -19,6 +19,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -137,6 +138,36 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         2,
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                if (soaTrans.getPostAlaCartList().size() > 0) {
+                    for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
+                                ""
+                                ,
+                                40,
+                                2,
+                                context),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                }
+
+                if (soaTrans.getPostGroupList().size() > 0) {
+                    for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
+                        for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
+                                    ""
+                                    ,
+                                    40,
+                                    2,
+                                    context),
+                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        }
+
+                    }
+                }
+
             }
         }
 //

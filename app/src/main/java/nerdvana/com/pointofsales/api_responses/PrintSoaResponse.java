@@ -41,7 +41,12 @@ public class PrintSoaResponse {
     }
 
     public class Post {
-
+        @SerializedName("group")
+        @Expose
+        private List<FetchRoomPendingResponse.PostGroup> postGroupList;
+        @SerializedName("alacart")
+        @Expose
+        private List<FetchRoomPendingResponse.PostAlaCart> postAlaCartList;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -174,6 +179,22 @@ public class PrintSoaResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+
+        public List<FetchRoomPendingResponse.PostGroup> getPostGroupList() {
+            return postGroupList;
+        }
+
+        public void setPostGroupList(List<FetchRoomPendingResponse.PostGroup> postGroupList) {
+            this.postGroupList = postGroupList;
+        }
+
+        public List<FetchRoomPendingResponse.PostAlaCart> getPostAlaCartList() {
+            return postAlaCartList;
+        }
+
+        public void setPostAlaCartList(List<FetchRoomPendingResponse.PostAlaCart> postAlaCartList) {
+            this.postAlaCartList = postAlaCartList;
+        }
 
         public Integer getId() {
             return id;
@@ -994,6 +1015,12 @@ public class PrintSoaResponse {
     }
 
     public class SoaToPost {
+        @SerializedName("group")
+        @Expose
+        private List<FetchRoomPendingResponse.PostGroup> postGroupList;
+        @SerializedName("alacart")
+        @Expose
+        private List<FetchRoomPendingResponse.PostAlaCart> postAlaCartList;
         @SerializedName("control_no")
         @Expose
         private String controlNo;
@@ -1051,6 +1078,22 @@ public class PrintSoaResponse {
         @SerializedName("product")
         @Expose
         private ToProduct toProduct;
+
+        public List<FetchRoomPendingResponse.PostGroup> getPostGroupList() {
+            return postGroupList;
+        }
+
+        public void setPostGroupList(List<FetchRoomPendingResponse.PostGroup> postGroupList) {
+            this.postGroupList = postGroupList;
+        }
+
+        public List<FetchRoomPendingResponse.PostAlaCart> getPostAlaCartList() {
+            return postAlaCartList;
+        }
+
+        public void setPostAlaCartList(List<FetchRoomPendingResponse.PostAlaCart> postAlaCartList) {
+            this.postAlaCartList = postAlaCartList;
+        }
 
         public ToProduct getToProduct() {
             return toProduct;

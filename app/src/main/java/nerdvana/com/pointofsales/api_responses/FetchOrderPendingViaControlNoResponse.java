@@ -379,7 +379,12 @@ public class FetchOrderPendingViaControlNoResponse {
 
 
     public class Post {
-
+        @SerializedName("group")
+        @Expose
+        private List<FetchRoomPendingResponse.PostGroup> postGroupList;
+        @SerializedName("alacart")
+        @Expose
+        private List<FetchRoomPendingResponse.PostAlaCart> postAlaCartList;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -485,6 +490,22 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+
+        public List<FetchRoomPendingResponse.PostGroup> getPostGroupList() {
+            return postGroupList;
+        }
+
+        public void setPostGroupList(List<FetchRoomPendingResponse.PostGroup> postGroupList) {
+            this.postGroupList = postGroupList;
+        }
+
+        public List<FetchRoomPendingResponse.PostAlaCart> getPostAlaCartList() {
+            return postAlaCartList;
+        }
+
+        public void setPostAlaCartList(List<FetchRoomPendingResponse.PostAlaCart> postAlaCartList) {
+            this.postAlaCartList = postAlaCartList;
+        }
 
         public Integer getId() {
             return id;

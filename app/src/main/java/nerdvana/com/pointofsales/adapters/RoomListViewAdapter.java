@@ -81,25 +81,34 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 List<String> rateList = new ArrayList<>();
                 Double totalRoom = 0.00;
-                for (FetchRoomResponse.PostRoom pr : roomDataList.get(i).getTransaction().getTransaction().getPostRoom()) {
-                    rateList.add(pr.getRoomRate());
-//                    totalRoom += pr.getTotal();
+                if (roomDataList.get(i).getTransaction() != null) {
+                    if (roomDataList.get(i).getTransaction().getTransaction() != null) {
+                        for (FetchRoomResponse.PostRoom pr : roomDataList.get(i).getTransaction().getTransaction().getPostRoom()) {
+                            rateList.add(pr.getRoomRate());
+                        }
+
+                        Double totalFnb = 0.00;
+                        for (FetchRoomResponse.PostFood pf : roomDataList.get(i).getTransaction().getTransaction().getPostFood()) {
+                            totalFnb += pf.getTotal() * pf.getQty();
+                        }
+                        ((RoomDataHolder) holder).fnb.setText(String.valueOf(totalFnb));
+                    }
                 }
+
                 ((RoomListViewAdapter.RoomDataHolder) holder).room.setText(String.format("%s", roomDataList.get(i).getRoomNo()));
                 ((RoomListViewAdapter.RoomDataHolder) holder).status.setText(roomDataList.get(i).getStatus().getRoomStatus());
                 ((RoomListViewAdapter.RoomDataHolder) holder).rate.setText(TextUtils.join(",", rateList));
-                ((RoomListViewAdapter.RoomDataHolder) holder).wakeUpCall.setText(roomDataList.get(i).getTransaction().getWakeUpCall());
-                ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText(PrinterUtils.getDuration(roomDataList.get(i).getTransaction().getCheckIn()));
-                ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeIn.setText(roomDataList.get(i).getTransaction().getCheckIn());
-                ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
-                ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
-                ((RoomDataHolder) holder).remarks.setText("-----");
-                ((RoomDataHolder) holder).deposit.setText(String.valueOf(roomDataList.get(i).getTransaction().getTransaction().getAdvance()));
-                Double totalFnb = 0.00;
-                for (FetchRoomResponse.PostFood pf : roomDataList.get(i).getTransaction().getTransaction().getPostFood()) {
-                    totalFnb += pf.getTotal() * pf.getQty();
+                if (roomDataList.get(i).getTransaction() != null) {
+                    ((RoomListViewAdapter.RoomDataHolder) holder).wakeUpCall.setText(roomDataList.get(i).getTransaction().getWakeUpCall());
+                    ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText(PrinterUtils.getDuration(roomDataList.get(i).getTransaction().getCheckIn()));
+                    ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeIn.setText(roomDataList.get(i).getTransaction().getCheckIn());
+                    ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
+                    ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
+                    ((RoomDataHolder) holder).remarks.setText("-----");
+                    ((RoomDataHolder) holder).deposit.setText(String.valueOf(roomDataList.get(i).getTransaction().getTransaction().getAdvance()));
                 }
-                ((RoomDataHolder) holder).fnb.setText(String.valueOf(totalFnb));
+
+
             } else {
 
                 ((RoomListViewAdapter.RoomDataHolder)holder).row.getLayoutParams().height = 0;

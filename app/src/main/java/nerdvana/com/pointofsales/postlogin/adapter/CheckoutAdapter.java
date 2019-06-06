@@ -20,6 +20,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
+import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 
@@ -49,6 +50,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private ImageView iconStatus;
         private ConstraintLayout rootView;
         private LinearLayout rootView1;
+        private LinearLayout linearBundle;
 
         public ProductsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,6 +61,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             iconStatus = itemView.findViewById(R.id.iconStatus);
             rootView = itemView.findViewById(R.id.rootView);
             rootView1 = itemView.findViewById(R.id.rootView1);
+            linearBundle = itemView.findViewById(R.id.linearBundle);
         }
 
     }
@@ -76,10 +79,6 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((ProductsViewHolder) holder).iconStatus.setVisibility(View.VISIBLE);
             }
 
-
-
-
-
             ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -88,16 +87,36 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
 
-            TextView tv = new TextView(context);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            tv.setLayoutParams(layoutParams);
-            ((ProductsViewHolder)holder).rootView1.addView(tv);
-            Log.d("BUNDLESIZEALAC", String.valueOf(cartItem.getAlaCarteList().size()));
-            Log.d("BUNDLESIZEALAC", String.valueOf(cartItem.getGroupList().size()));
+            if (cartItem.getAlaCarteList().size() > 0) {
+                ((ProductsViewHolder)holder).linearBundle.removeAllViews();
+                for (AddRateProductModel.AlaCarte alaCarte : cartItem.getAlaCarteList()) {
+                    TextView tv = new TextView(context);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    tv.setPadding(30,0,0,0);
+                    tv.setLayoutParams(params);
+                    tv.setText(String.format("(%s) %s", alaCarte.getQty(), alaCarte.getProduct_initial()));
+                    ((ProductsViewHolder)holder).linearBundle.addView(tv);
+                }
+            }
 
+            if (cartItem.getGroupList().size() > 0) {
+                for (AddRateProductModel.Group grp : cartItem.getGroupList()) {
+                    for (AddRateProductModel arpm : grp.getGroupCompoList().getItem()) {
+                        TextView tv = new TextView(context);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        tv.setPadding(30,0,0,0);
+                        tv.setLayoutParams(params);
+                        tv.setText(String.format("(%s) %s", arpm.getQty(), arpm.getProduct_initial()));
+                        ((ProductsViewHolder)holder).linearBundle.addView(tv);
+                    }
+                }
+            }
+
+            if (cartItem.getAlaCarteList().size() < 1 && cartItem.getGroupList().size() < 1) {
+                ((ProductsViewHolder)holder).linearBundle.removeAllViews();
+            }
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
-
             ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
 
             if (cartItem.getType().equalsIgnoreCase("ot")) {

@@ -100,21 +100,23 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int i) {
 
         if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
-            ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
+            ((ProductsViewHolder)holder).productBg.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+            ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+            ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
             ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
-            ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
             ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
         } else {
             if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
-                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
+                ((ProductsViewHolder)holder).productBg.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
                 ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
-                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.colorSemiLight));
                 ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
             } else {
                 ((ProductsViewHolder)holder).productBg.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
                 ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-                ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
                 ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
                 ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
             }
         }

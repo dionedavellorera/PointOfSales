@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -189,6 +190,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private Button showMap;
     private Button showTakeOuts;
     private TextView user;
+    private TextView role;
+    private CardView cardRole;
 
     private UserModel userModel;
 
@@ -336,6 +339,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         showMap = findViewById(R.id.showMap);
         showMap.setOnClickListener(this);
         user = findViewById(R.id.user);
+        role = findViewById(R.id.role);
+        cardRole = findViewById(R.id.cardRole);
         showTakeOuts = findViewById(R.id.showTakeOuts);
         showTakeOuts.setOnClickListener(this);
     }
@@ -359,7 +364,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //                logout.setVisibility(View.VISIBLE);
                 user.setVisibility(View.VISIBLE);
                 user.setText(String.format("%s - %s", userModel.getUsername(), userModel.getUserGroup()) + ApplicationConstants.VERSION);
-                currentText = String.format("%s - %s", userModel.getUsername(), userModel.getUserGroup());
+                currentText = String.format("%s", userModel.getUsername());
                 openFragment(R.id.leftFrame, postLoginLeftFrameFragment);
 
                 openFragment(R.id.rightFrame, postLoginRightFrameFragment);
@@ -1177,7 +1182,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         currentDateTime = timerModel.getTime();
         timer.setText(timerModel.getTime());
 
-        user.setText(currentText + " SHIFT : " + timerModel.getShiftNumber());
+        user.setText(currentText);
+        role.setText(String.format("%s SHIFT : %s", userModel.getUserGroup().toUpperCase(), timerModel.getShiftNumber()));
+
     }
 
     private void fetchTimeRequest() {
@@ -1575,6 +1582,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void lightTheme() {
+        cardRole.setCardBackgroundColor(getResources().getColor(R.color.lightColorAccent));
+        role.setBackgroundColor(getResources().getColor(R.color.lightColorAccent));
+        role.setTextColor(getResources().getColor(R.color.lightColorAccentFont));
+
         mainContainerBg.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
         toolbar.setBackgroundColor(getResources().getColor(R.color.lightHeaderBg));
 
@@ -1585,6 +1596,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void darkTheme() {
+        cardRole.setCardBackgroundColor(getResources().getColor(R.color.darkColorAccent));
+        role.setBackgroundColor(getResources().getColor(R.color.darkColorAccent));
+        role.setTextColor(getResources().getColor(R.color.darkColorAccentFont));
+
         mainContainerBg.setBackgroundColor(getResources().getColor(R.color.darkMainBg));
         toolbar.setBackgroundColor(getResources().getColor(R.color.darkHeaderBg));
 
@@ -1592,6 +1607,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         separator2.setBackgroundColor(getResources().getColor(R.color.darkFont));
         user.setTextColor(getResources().getColor(R.color.darkFont));
         timer.setTextColor(getResources().getColor(R.color.darkFont));
+
     }
 }
 
