@@ -59,8 +59,8 @@
         <TextView
             android:id="@+id/quantity"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
             android:padding="5dp"
             android:text="100"
             android:textSize="16sp"
@@ -70,10 +70,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:gravity="center_vertical"
             android:id="@+id/price"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_height="0dp"
             android:padding="5dp"
             android:text="100.00"
             android:textSize="16sp"
@@ -97,7 +97,7 @@
         <TextView
             android:id="@+id/totalPrice"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:gravity="center"
             android:padding="5dp"
             android:text="1100.00"

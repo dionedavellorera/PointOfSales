@@ -56,12 +56,12 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-
         try {
             printer = new Printer(
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
                     context);
+
             printer.setReceiveEventListener(new ReceiveListener() {
                 @Override
                 public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
@@ -78,10 +78,6 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                     }).start();
                 }
             });
-
-
-            Log.d("FDFDFD1", kitchPath);
-            Log.d("FDFDFD2", printerPath);
 
             boolean hasConnected = false;
             if (!TextUtils.isEmpty(printerPath)) {
@@ -154,6 +150,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 }
             }
         }
+
 
         addTextToPrinter(printer, "TOTAL: " + String.valueOf(totalAmount), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
         addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);

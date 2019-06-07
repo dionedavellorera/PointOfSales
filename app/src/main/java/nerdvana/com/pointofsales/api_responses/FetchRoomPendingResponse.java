@@ -567,6 +567,9 @@ public class FetchRoomPendingResponse {
         }
     }
     public class Freebies {
+        @SerializedName("id")
+        @Expose
+        private int id;
         @SerializedName("room_rate_price")
         @Expose
         private FreebyRoomRatePrice freebyRoomRatePrice;
@@ -585,6 +588,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("flag")
         @Expose
         private int flag;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
 
         public FreebyRoomRatePrice getFreebyRoomRatePrice() {
             return freebyRoomRatePrice;

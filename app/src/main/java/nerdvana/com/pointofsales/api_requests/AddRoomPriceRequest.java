@@ -14,7 +14,9 @@ public class AddRoomPriceRequest extends BaseRequest {
     public AddRoomPriceRequest(ArrayList<AddRateProductModel> addRateProductList,
                                String roomId,
                                ArrayList<VoidProductModel> voidList,
-                               String remarks, String managerId) {
+                               String remarks, String managerId,
+                               String postTransId,
+                               String freebieId) {
         mapValue = new HashMap<>();
         mapValue.put("room_id", roomId);
         mapValue.put("user_id", userId);
@@ -26,10 +28,19 @@ public class AddRoomPriceRequest extends BaseRequest {
         mapValue.put("emp_id", managerId);
         mapValue.put("remarks", remarks);
         mapValue.put("branch_code", branchCode);
+        mapValue.put("post_trans_id", postTransId);
+        mapValue.put("freebie_id", freebieId);
 
     }
 
     public Map<String, String> getMapValue() {
         return mapValue;
+    }
+
+    @Override
+    public String toString() {
+        return "AddRoomPriceRequest{" +
+                "mapValue=" + mapValue +
+                '}';
     }
 }

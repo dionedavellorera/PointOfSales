@@ -18,6 +18,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomRatePriceIdRequest;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomRatePriceIdResponse;
+import nerdvana.com.pointofsales.model.RoomTableModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,9 +27,16 @@ public abstract class FreebiesDialog extends BaseDialog {
     private List<FetchRoomPendingResponse.Freebies> freebiesList;
     private FreebiesListAdapter freebiesListAdapter;
     private RecyclerView listFreebies;
-    public FreebiesDialog(@NonNull Context context, List<FetchRoomPendingResponse.Freebies> freebiesList) {
+    private RoomBundleSelectionDialog roomBundleSelectionDialog;
+    private RoomTableModel selectedRoom;
+    private String postTransId;
+    public FreebiesDialog(@NonNull Context context,
+                          List<FetchRoomPendingResponse.Freebies> freebiesList,
+                          RoomTableModel selectedRoom) {
         super(context);
         this.freebiesList = freebiesList;
+        this.selectedRoom = selectedRoom;
+
     }
 
     @Override
@@ -36,10 +44,13 @@ public abstract class FreebiesDialog extends BaseDialog {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_freebies, "FREEBIES");
         listFreebies = findViewById(R.id.listFreebies);
+
+
+
+
         Freeby freeby = new Freeby() {
             @Override
-            public void clicked(int position) {
-                Log.d("DDSDS", "CLICKED");
+            public void clicked(final int position) {
                 FetchRoomRatePriceIdRequest fetchRoomRatePriceIdRequest = new FetchRoomRatePriceIdRequest(String.valueOf(freebiesList.get(position).getPriceRateRoomId()));
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                 Call<FetchRoomRatePriceIdResponse> request = iUsers.fetchRoomRatePriceId(
@@ -48,13 +59,18 @@ public abstract class FreebiesDialog extends BaseDialog {
                     @Override
                     public void onResponse(Call<FetchRoomRatePriceIdResponse> call, Response<FetchRoomRatePriceIdResponse> response) {
                         if (response.body().getResult() != null) {
-                            Log.d("TES34343T", String.valueOf(response.body().getResult().getProductBundleList().size()));
+
+                            roomBundleSelectionDialog = new RoomBundleSelectionDialog(
+                                    getContext(),
+                                    response.body().getResult(),
+                                    selectedRoom,
+                                    String.valueOf(freebiesList.get(position).getPostTransId()),
+                                    String.valueOf(freebiesList.get(position).getId()));
+                            roomBundleSelectionDialog.show();
                         }
                     }
-
                     @Override
                     public void onFailure(Call<FetchRoomRatePriceIdResponse> call, Throwable t) {
-
                     }
                 });
             }
@@ -65,8 +81,6 @@ public abstract class FreebiesDialog extends BaseDialog {
         listFreebies.setLayoutManager(llm);
         listFreebies.setAdapter(freebiesListAdapter);
         freebiesListAdapter.notifyDataSetChanged();
-
-
     }
 
     public abstract void freebySelected();

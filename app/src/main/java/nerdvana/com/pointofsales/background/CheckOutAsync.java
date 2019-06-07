@@ -56,11 +56,21 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+
+
         try {
             printer = new Printer(
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
                     context);
+
+            try {
+                printer.addPulse(Printer.DRAWER_HIGH, Printer.PULSE_100);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+
             printer.setReceiveEventListener(new ReceiveListener() {
                 @Override
                 public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {

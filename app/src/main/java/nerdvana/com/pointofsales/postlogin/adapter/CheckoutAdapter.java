@@ -17,8 +17,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
@@ -98,7 +100,6 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     ((ProductsViewHolder)holder).linearBundle.addView(tv);
                 }
             }
-
             if (cartItem.getGroupList().size() > 0) {
                 for (AddRateProductModel.Group grp : cartItem.getGroupList()) {
                     for (AddRateProductModel arpm : grp.getGroupCompoList().getItem()) {
@@ -115,6 +116,8 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             if (cartItem.getAlaCarteList().size() < 1 && cartItem.getGroupList().size() < 1) {
                 ((ProductsViewHolder)holder).linearBundle.removeAllViews();
             }
+
+
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
             ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
@@ -141,10 +144,82 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
             if (cartItem.isSelected()) {
-                ((ProductsViewHolder) holder).rootView.setSelected(true);
+//                ((ProductsViewHolder) holder).rootView.setSelected(true);
+                ((ProductsViewHolder) holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.darkColorAccent));
             } else {
-                ((ProductsViewHolder) holder).rootView.setSelected(false);
+                if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
+                    ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                } else {
+                    if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                        ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                        ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                        ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                        ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                        ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                        ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                        ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    } else {
+                        ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                        ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                        ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                        ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                        ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                        ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                        ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    }
+                }
+
+
+//                ((ProductsViewHolder) holder).rootView.setSelected(false);
             }
+
+
+            if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
+                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+                ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+                ((ProductsViewHolder)holder).quantity.setTextColor(Color.BLACK);
+                ((ProductsViewHolder)holder).totalPrice.setTextColor(Color.BLACK);
+            } else {
+                if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                    ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
+                    ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+                    ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+                    ((ProductsViewHolder)holder).quantity.setTextColor(Color.BLACK);
+                    ((ProductsViewHolder)holder).totalPrice.setTextColor(Color.BLACK);
+                } else {
+                    ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
+                    ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
+                    ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
+                    ((ProductsViewHolder)holder).quantity.setTextColor(Color.WHITE);
+                    ((ProductsViewHolder)holder).totalPrice.setTextColor(Color.WHITE);
+                }
+            }
+
         }
     }
 

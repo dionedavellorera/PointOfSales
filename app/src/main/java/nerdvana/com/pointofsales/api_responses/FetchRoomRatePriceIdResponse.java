@@ -41,6 +41,9 @@ public class FetchRoomRatePriceIdResponse {
     }
 
     public class Product {
+        @SerializedName("amount")
+        @Expose
+        private double amount;
         @SerializedName("id")
         @Expose
         private int id;
@@ -52,13 +55,34 @@ public class FetchRoomRatePriceIdResponse {
         private String product;
         @SerializedName("product_initial")
         @Expose
-        private int productInitial;
+        private String productInitial;
         @SerializedName("branch_alacart")
         @Expose
         private List<FetchProductsResponse.BranchAlaCart> branchAlaCart;
         @SerializedName("branch_group")
         @Expose
         private List<FetchProductsResponse.BranchGroup> branchGroup;
+
+        @SerializedName("mark_up")
+        @Expose
+        private double markUp;
+
+        public double getMarkUp() {
+            return markUp;
+        }
+
+        public void setMarkUp(double markUp) {
+            this.markUp = markUp;
+        }
+
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(double amount) {
+            this.amount = amount;
+        }
 
         public int getId() {
             return id;
@@ -84,11 +108,11 @@ public class FetchRoomRatePriceIdResponse {
             this.product = product;
         }
 
-        public int getProductInitial() {
+        public String getProductInitial() {
             return productInitial;
         }
 
-        public void setProductInitial(int productInitial) {
+        public void setProductInitial(String productInitial) {
             this.productInitial = productInitial;
         }
 
@@ -119,6 +143,7 @@ public class FetchRoomRatePriceIdResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+
 
         public int getId() {
             return id;
