@@ -60,6 +60,9 @@ public abstract class DialogBundleComposition extends BaseDialog {
     private int pageIndicator = 0;
     private List<SelectedProductsInBundleModel.BundleProductModel> bundleProductModelList;;
     private double bundleAmount;
+
+    private Minus minus;
+
     public DialogBundleComposition(@NonNull Context context,
                                    List<FetchProductsResponse.BranchGroup> branchGroupList,
                                    double bundleAmount) {
@@ -82,11 +85,21 @@ public abstract class DialogBundleComposition extends BaseDialog {
         selectionTitle = findViewById(R.id.selectionTitle);
         listSelectedProducts = findViewById(R.id.listSelectedProducts);
 
+        minus = new Minus() {
+            @Override
+            public void clicked(int position) {
+                if ((bundleProductModelList.get(position).getQty() - 1) == 0) {
+                    bundleProductModelList.remove(position);
+                    selectedProductsAdapter.notifyDataSetChanged();
+                }
+            }
+        };
 
         bundleProductModelList = new ArrayList<>();
         int index = 0;
         for (FetchProductsResponse.BranchGroup branchGroup : branchGroupList) {
-            selectedProductsInBundleModelList.add(new SelectedProductsInBundleModel(branchGroup.getCoreId(),
+            selectedProductsInBundleModelList.add(new SelectedProductsInBundleModel(
+                    branchGroup.getCoreId(),
                     branchGroup.getGroupName(),
                     index,
                     new ArrayList<SelectedProductsInBundleModel.BundleProductModel>(),
@@ -115,20 +128,17 @@ public abstract class DialogBundleComposition extends BaseDialog {
             @Override
             public void clicked(int position) {
                 onBind = true;
-
                 if (selectedProductsAdapter != null) {
+
                     for (SelectedProductsInBundleModel sib : selectedProductsInBundleModelList) {
                         boolean shouldStop = false;
                         if (sib.getGroupId() == branchLists.get(position).getProductGroupId()) {
 
                                 if (sib.getBundleProductModelList().size() < 1) {
-
                                     if (sib.getTotalQtySelected() < sib.getMaxQty()) {
                                         sib.setTotalQtySelected(sib.getTotalQtySelected() + 1);
-
                                         sib.getBundleProductModelList()
-                                                .add(
-                                                        new SelectedProductsInBundleModel.BundleProductModel(
+                                                .add(new SelectedProductsInBundleModel.BundleProductModel(
                                                                 branchLists.get(position).getBranchProduct().getProduct(),
                                                                 branchLists.get(position).getBranchProduct().getImageFile(),
                                                                 1,
@@ -136,9 +146,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                                                 branchLists.get(position).getBranchProduct().getAmount()));
 
                                         selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
-
                                         if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
-
                                     } else {
                                         Utils.showDialogMessage(act, "Bundle group max qty exceeded, cannot add", "Information" );
                                         shouldStop = true;
@@ -152,12 +160,18 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                             if (sib.getTotalQtySelected() < sib.getMaxQty()) {
                                                 bpm.setQty(bpm.getQty() + 1);
                                                 sib.setTotalQtySelected(sib.getTotalQtySelected() + 1);
-
                                                 selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
-
                                                 if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
                                                 isExisting = true;
-                                            }else {
+                                            }
+//                                            else if(sib.getTotalQtySelected() == sib.getMaxQty()) {
+//                                                bpm.setQty(bpm.getQty() + 1);
+//                                                sib.setTotalQtySelected(sib.getTotalQtySelected() + 1);
+//                                                selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
+//                                                if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
+//                                                isExisting = true;
+//                                            }
+                                            else {
                                                 isExisting = true;
                                                 Utils.showDialogMessage(act, "Bundle group max qty exceeded, cannot add", "Information" );
                                                 shouldStop = true;
@@ -182,7 +196,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
 
                                             if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
 
-                                        }else {
+                                        } else {
                                             Utils.showDialogMessage(act, "Bundle group max qty exceeded, cannot add", "Information" );
                                             shouldStop = true;
                                             break;
@@ -194,9 +208,8 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                 if (selectedProductsAdapter != null) {
                                     selectedProductsAdapter.notifyDataSetChanged();
                                 }
-                                if (shouldStop) {
-                                    break;
-                                }
+
+                            break;
                         }
                     }
                 }
@@ -209,7 +222,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
             public void clicked(int position) {
                 pageIndicator = position;
                 bundleProductModelList = selectedProductsInBundleModelList.get(position).getBundleProductModelList();
-                selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
+                selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList, minus);
                 LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
                 listSelectedProducts.setLayoutManager(llm2);
                 listSelectedProducts.setAdapter(selectedProductsAdapter);
@@ -217,9 +230,12 @@ public abstract class DialogBundleComposition extends BaseDialog {
 
 
                 branchLists = branchGroupList.get(position).getBranchLists();
+
                 selectionTitle.setText(String.format("%s(%s)", branchGroupList.get(position).getGroupName(), String.valueOf(selectedProductsInBundleModelList.get(position).getMaxQty() - selectedProductsInBundleModelList.get(position).getTotalQtySelected())));
-                ListProductsAdapter listProductsAdapter = new ListProductsAdapter(branchGroupList.get(position).getBranchLists(), product);
-                listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
+                ListProductsAdapter listProductsAdapter = new ListProductsAdapter(
+                        branchGroupList.get(position).getBranchLists(), product);
+                listProducts.setLayoutManager(new GridLayoutManager(getContext(),
+                        5));
                 listProducts.setAdapter(listProductsAdapter);
                 listProductsAdapter.notifyDataSetChanged();
             }
@@ -235,7 +251,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
 
 
         listSelectedProducts.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.HORIZONTAL));
-        selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
+        selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList, minus);
         LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         listSelectedProducts.setLayoutManager(llm2);
         listSelectedProducts.setAdapter(selectedProductsAdapter);
@@ -253,22 +269,21 @@ public abstract class DialogBundleComposition extends BaseDialog {
 //            Utils.showDialogMessage(act, "Reached the start", "Information");
         }
 
-        bundleProductModelList = selectedProductsInBundleModelList.get(pageIndicator).getBundleProductModelList();
-        selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
-        LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        listSelectedProducts.setLayoutManager(llm2);
-        listSelectedProducts.setAdapter(selectedProductsAdapter);
-        selectedProductsAdapter.notifyDataSetChanged();
+        if (selectedProductsInBundleModelList.size() > 0) {
+            bundleProductModelList = selectedProductsInBundleModelList.get(pageIndicator).getBundleProductModelList();
+            selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList, minus);
+            LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            listSelectedProducts.setLayoutManager(llm2);
+            listSelectedProducts.setAdapter(selectedProductsAdapter);
+            selectedProductsAdapter.notifyDataSetChanged();
 
-
-        branchLists = branchGroupList.get(pageIndicator).getBranchLists();
-        selectionTitle.setText(String.format("%s(%s)", branchGroupList.get(pageIndicator).getGroupName(), String.valueOf(selectedProductsInBundleModelList.get(pageIndicator).getMaxQty() - selectedProductsInBundleModelList.get(pageIndicator).getTotalQtySelected())));
-        ListProductsAdapter listProductsAdapter = new ListProductsAdapter(branchGroupList.get(pageIndicator).getBranchLists(), product);
-        listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
-        listProducts.setAdapter(listProductsAdapter);
-        listProductsAdapter.notifyDataSetChanged();
-
-
+            branchLists = branchGroupList.get(pageIndicator).getBranchLists();
+            selectionTitle.setText(String.format("%s(%s)", branchGroupList.get(pageIndicator).getGroupName(), String.valueOf(selectedProductsInBundleModelList.get(pageIndicator).getMaxQty() - selectedProductsInBundleModelList.get(pageIndicator).getTotalQtySelected())));
+            ListProductsAdapter listProductsAdapter = new ListProductsAdapter(branchGroupList.get(pageIndicator).getBranchLists(), product);
+            listProducts.setLayoutManager(new GridLayoutManager(getContext(), 5));
+            listProducts.setAdapter(listProductsAdapter);
+            listProductsAdapter.notifyDataSetChanged();
+        }
 
     }
 
@@ -277,7 +292,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
         if (pageIndicator < selectedProductsInBundleModelList.size() - 1) {
             pageIndicator += 1;
             bundleProductModelList = selectedProductsInBundleModelList.get(pageIndicator).getBundleProductModelList();
-            selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList);
+            selectedProductsAdapter = new SelectedProductsAdapter(bundleProductModelList, minus);
             LinearLayoutManager llm2 = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
             listSelectedProducts.setLayoutManager(llm2);
             listSelectedProducts.setAdapter(selectedProductsAdapter);
@@ -291,7 +306,6 @@ public abstract class DialogBundleComposition extends BaseDialog {
             listProducts.setAdapter(listProductsAdapter);
             listProductsAdapter.notifyDataSetChanged();
         } else {
-
             boolean hasCompletedData = true;
             for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
                 if (sipm.getMaxQty() != sipm.getTotalQtySelected()) {
@@ -300,51 +314,12 @@ public abstract class DialogBundleComposition extends BaseDialog {
                     break;
                 }
             }
-
-
             if (hasCompletedData) {
-
+//                Utils.showDialogMessage(act, "Please show summary", "Information");
                 bundleCompleted(selectedProductsInBundleModelList);
                 dismiss();
-                Utils.showDialogMessage(act, "send data", "information");
-//                ArrayList<AddRateProductModel> addRateProductList = new ArrayList<>();
-//                for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
-//                    for (SelectedProductsInBundleModel.BundleProductModel bpm : sipm.getBundleProductModelList()) {
-//                        addRateProductList.add(
-//                                new AddRateProductModel(
-//                                        String.valueOf(bpm.getProductId()),
-//                                        "",
-//                                        String.valueOf(bpm.getQty()),
-//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-//                                        String.valueOf(bpm.getAmount()),
-//                                        0,
-//                                        bpm.getName(),
-//                                        String.valueOf(sipm.getGroupId()),
-//                                        sipm.getGroupName(),
-//                                        bundleAmount
-//                                )
-//                        );
-//                    }
-//                }
 
-
-//                TestSend testSend = new TestSend(GsonHelper.getGson().toJson(addRateProductList));
-//                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-//                Call<ResponseBody> request = iUsers.testSend(testSend.getMapValue());
-//                request.enqueue(new Callback<ResponseBody>() {
-//                    @Override
-//                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-//
-//                    }
-//                });
             }
-
-//            Utils.showDialogMessage(act, "Reached the end", "Information");
         }
 
 
@@ -367,6 +342,10 @@ public abstract class DialogBundleComposition extends BaseDialog {
     }
 
     public interface Product {
+        void clicked(int position);
+    }
+
+    public interface Minus {
         void clicked(int position);
     }
 

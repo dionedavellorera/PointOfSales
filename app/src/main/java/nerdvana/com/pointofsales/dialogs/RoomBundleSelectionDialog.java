@@ -35,24 +35,28 @@ import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.SelectedProductsInBundleModel;
+import nerdvana.com.pointofsales.model.UpdateProductModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
 
-public class RoomBundleSelectionDialog extends BaseDialog {
+public abstract class RoomBundleSelectionDialog extends BaseDialog {
     private RecyclerView bundleList;
     private FetchRoomRatePriceIdResponse.Result result;
     private RoomTableModel selectedRoom;
     private String postTransId;
     private String freebieId;
+    private FreebiesDialog.Freeby freeby;
     public RoomBundleSelectionDialog(@NonNull Context context,
                                      FetchRoomRatePriceIdResponse.Result result,
                                      RoomTableModel selectedRoom,
                                      String postTransId,
-                                     String freebieId) {
+                                     String freebieId,
+                                     FreebiesDialog.Freeby freeby) {
         super(context);
         this.result = result;
         this.selectedRoom = selectedRoom;
         this.postTransId = postTransId;
         this.freebieId = freebieId;
+        this.freeby = freeby;
     }
 
     @Override
@@ -63,20 +67,37 @@ public class RoomBundleSelectionDialog extends BaseDialog {
 
         BundleProductSelection bundleProductSelection = new BundleProductSelection() {
             @Override
-            public void selected(int position) {
-
+            public void selected(final int position) {
                 final FetchRoomRatePriceIdResponse.ProductBundle b =  result.getProductBundleList().get(position);
-
-
-                if (result.getProductBundleList().get(position).getProduct().getBranchAlaCart().size() == 0 &&
-                        result.getProductBundleList().get(position).getProduct().getBranchGroup().size() == 0) {
+                if (result.getProductBundleList().get(position).getProduct().getBranchGroup().size() < 1) {
                     final ArrayList<AddRateProductModel> model = new ArrayList<>();
+
+                    DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                    DateTime companyUpdatedAt = new DateTime(df.parseDateTime(result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getUpdatedAt()));
+                    Double amount = result.getProductBundleList().get(position).getProduct().getAmount();
+
+
+                    if (result.getProductBundleList().get(position).getProduct().getBranchAlaCart().size() > 0) {
+                        amount = result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getAmount();
+
+                        if (result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getBranchPrice() != null) {
+                            DateTime branchUpdatedAt =
+                                    new DateTime(
+                                            df.parseDateTime(
+                                                    result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getUpdatedAt()));
+                            if (branchUpdatedAt.isAfter(companyUpdatedAt)) {
+                                amount = result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getBranchPrice().getAmount();
+                                amount = ((amount * (result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getBranchPrice().getMarkUp() + 1))) * Double.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE));
+                            }
+                        }
+
+                    }
                     model.add(new AddRateProductModel(
                             String.valueOf(b.getProduct().getCoreId()),
                             "0",
                             String.valueOf(b.getQty()),
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                            String.valueOf(b.getProduct().getAmount()),
+                            String.valueOf(amount),
                             0,
                             b.getProduct().getProduct(),
                             new ArrayList<AddRateProductModel.AlaCarte>(),
@@ -95,11 +116,10 @@ public class RoomBundleSelectionDialog extends BaseDialog {
                                         new ArrayList<VoidProductModel>(),
                                         remarks,
                                         postTransId,
-                                        freebieId));
+                                        freebieId,
+                                        new ArrayList<UpdateProductModel>()));
                             } else {
-
 //                                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
-
                                 BusProvider.getInstance().post(new AddRoomPriceRequest(
                                         model,
                                         String.valueOf(selectedRoom.getRoomId()),
@@ -107,10 +127,12 @@ public class RoomBundleSelectionDialog extends BaseDialog {
                                         remarks,
                                         "",
                                         postTransId,
-                                        freebieId));
-
-
+                                        freebieId,
+                                        new ArrayList<UpdateProductModel>()));
                             }
+
+//                            freeby.clicked(position);
+                            completed();
                         }
                     };
                     confirmWithRemarksDialog.show();
@@ -118,12 +140,8 @@ public class RoomBundleSelectionDialog extends BaseDialog {
 
 
                 } else {
-
                     String[]images = {};
-
                     images = new String[]{"http://192.168.1.90/pos/uploads/company/product/etst.png"};
-
-
 
                     final ProductsModel productsModel = new ProductsModel(
                             b.getProduct().getProduct(),
@@ -154,6 +172,7 @@ public class RoomBundleSelectionDialog extends BaseDialog {
                             productsModel.getPrice()) {
                         @Override
                         public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
+
                             ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
                             ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
                             ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
@@ -220,7 +239,8 @@ public class RoomBundleSelectionDialog extends BaseDialog {
                                                     new ArrayList<VoidProductModel>(),
                                                     remarks,
                                                     postTransId,
-                                                    freebieId));
+                                                    freebieId,
+                                                    new ArrayList<UpdateProductModel>()));
                                         } else {
 
 //                                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
@@ -232,39 +252,19 @@ public class RoomBundleSelectionDialog extends BaseDialog {
                                                     remarks,
                                                     "",
                                                     postTransId,
-                                                    freebieId));
+                                                    freebieId,
+                                                    new ArrayList<UpdateProductModel>()));
 
 
                                         }
+
+                                        completed();
                                     }
                                 };
                                 confirmWithRemarksDialog.show();
 
-
-//                                cartItemList.add(new CartItemsModel(
-//                                        selectedRoom.getControlNo(),
-//                                        0,
-//                                        productsModel.getProductId(),
-//                                        0,
-//                                        0,
-//                                        0,
-//                                        productsModel.getShortName(),
-//                                        true,
-//                                        productsModel.getPrice(),
-//                                        productsModel.getProductId(),
-//                                        productsModel.getQty(),
-//                                        false,
-//                                        productsModel.getMarkUp(),
-//                                        productsModel.getIsPriceChanged(),
-//                                        productsModel.getUnitPrice(),
-//                                        false,
-//                                        "",
-//                                        false,
-//                                        "to",
-//                                        alaCartes,
-//                                        groupLst
-//                                ));
                             }
+                            completed();
                         }
                     };
                     dialogBundleComposition.show();
@@ -277,6 +277,8 @@ public class RoomBundleSelectionDialog extends BaseDialog {
         bundleList.setLayoutManager(llm);
         bundleList.setAdapter(bundleSelectionAdapter);
     }
+
+    public abstract void completed();
 
     public interface BundleProductSelection {
         void selected(int position);

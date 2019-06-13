@@ -45,6 +45,7 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
@@ -394,44 +395,22 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         productsModel.setQty(Integer.valueOf(qtySelected));
         if (categoryClickedArray.size() > 0) {
             if (productsModel.getProductsList().size() != 0) {
-//                    categoryClickedArray.add(new BreadcrumbModel(productsModel.getName(), position, new ArrayList<ProductsModel>(productsList)));
-//
-//                    if (categoryClickedArray.size() < 1) {
-//                        breadcrumbString += String.format("%s %s", "", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-//                        breadcrumb.setText(breadcrumbString);
-//                    } else {
-//                        breadcrumbString += String.format(" %s %s", "»", categoryClickedArray.get(categoryClickedArray.size() - 1).getName());
-//                        breadcrumb.setText(breadcrumbString);
-//                    }
                 repopulateList(productsModel.getProductsList());
                 productsAdapter.notifyDataSetChanged();
 
             } else {
                 BusProvider.getInstance().post(productsModel);
-//                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
             }
         } else {
 
             if (productsModel.getProductsList().size() != 0) {
-//                    if (categoryClickedArray.size() < 1) {
-//                        breadcrumbString += String.format("%s %s", "", productsList.get(position).getName());
-//                        breadcrumb.setText(breadcrumbString);
-//                    } else {
-//                        breadcrumbString += String.format(" %s %s", "»", productsList.get(position).getName());
-//                        breadcrumb.setText(breadcrumbString);
-//                    }
-//
-//                    categoryClickedArray.add(new BreadcrumbModel(productsList.get(position).getName(), position, productsList));
                 repopulateList(productsModel.getProductsList());
                 productsAdapter.notifyDataSetChanged();
             } else {
                 BusProvider.getInstance().post(productsModel);
-//                Toast.makeText(getContext(), productsModel.getName(), Toast.LENGTH_SHORT).show();
             }
         }
-
         qtySpinner.setSelection(0, true);
-
     }
 
     private void repopulateList(List<ProductsModel> tempProduct) {

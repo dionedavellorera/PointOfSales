@@ -11,7 +11,7 @@ public class CheckPermissionRequest extends BaseRequest {
         mapValue.put("email", username);
         mapValue.put("password", password);
         mapValue.put("pos_id", machineNumber);
-        mapValue.put("action_id", actionId);
+        mapValue.put("access_id", actionId);
     }
 
     public Map<String, String> getMapValue() {

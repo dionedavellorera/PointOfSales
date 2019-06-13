@@ -219,9 +219,6 @@ public class PrinterUtils {
         addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
 
 
-        Log.d("DIONEDAVE", printModel.getType());
-        Log.d("DIONEDAVE", printModel.getRoomNumber());
-
         if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
                 printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
                 printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID") ||

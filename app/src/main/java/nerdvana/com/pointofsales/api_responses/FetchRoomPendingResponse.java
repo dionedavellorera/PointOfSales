@@ -566,6 +566,125 @@ public class FetchRoomPendingResponse {
             this.roomRate = roomRate;
         }
     }
+
+    public class TransactionPostFreebyCore {
+        @SerializedName("qty")
+        @Expose
+        private String qty;
+        @SerializedName("sub_category")
+        @Expose
+        private String subCategory;
+        @SerializedName("department")
+        @Expose
+        private String department;
+//        @SerializedName("product")
+//        @Expose
+//        private TransactionPostFreebyCoreProduct transactionPostFreebyCoreProduct;
+
+        public String getQty() {
+            return qty;
+        }
+
+        public void setQty(String qty) {
+            this.qty = qty;
+        }
+
+        public String getSubCategory() {
+            return subCategory;
+        }
+
+        public void setSubCategory(String subCategory) {
+            this.subCategory = subCategory;
+        }
+
+        public String getDepartment() {
+            return department;
+        }
+
+        public void setDepartment(String department) {
+            this.department = department;
+        }
+
+//        public TransactionPostFreebyCoreProduct getTransactionPostFreebyCoreProduct() {
+//            return transactionPostFreebyCoreProduct;
+//        }
+//
+//        public void setTransactionPostFreebyCoreProduct(TransactionPostFreebyCoreProduct transactionPostFreebyCoreProduct) {
+//            this.transactionPostFreebyCoreProduct = transactionPostFreebyCoreProduct;
+//        }
+    }
+
+    public class TransactionPostFreebyCoreProduct {
+        @SerializedName("product")
+        @Expose
+        private String product;
+        @SerializedName("product_initial")
+        @Expose
+        private String productInitial;
+
+        public String getProduct() {
+            return product;
+        }
+
+        public void setProduct(String product) {
+            this.product = product;
+        }
+
+        public String getProductInitial() {
+            return productInitial;
+        }
+
+        public void setProductInitial(String productInitial) {
+            this.productInitial = productInitial;
+        }
+    }
+
+    public class TransactionPostFreebies {
+        @SerializedName("qty")
+        @Expose
+        private String qty;
+        @SerializedName("product")
+        @Expose
+        private TransactionPostFreebyCoreProduct transactionPostFreebyCoreProduct;
+        @SerializedName("alacart")
+        @Expose
+        private List<PostAlaCart> transactionPostAlaCart;
+        @SerializedName("group")
+        private List<PostGroup> transactionPostGroup;
+
+        public String getQty() {
+            return qty;
+        }
+
+        public void setQty(String qty) {
+            this.qty = qty;
+        }
+
+        public TransactionPostFreebyCoreProduct getTransactionPostFreebyCoreProduct() {
+            return transactionPostFreebyCoreProduct;
+        }
+
+        public void setTransactionPostFreebyCoreProduct(TransactionPostFreebyCoreProduct transactionPostFreebyCoreProduct) {
+            this.transactionPostFreebyCoreProduct = transactionPostFreebyCoreProduct;
+        }
+
+        public List<PostAlaCart> getTransactionPostAlaCart() {
+            return transactionPostAlaCart;
+        }
+
+        public void setTransactionPostAlaCart(List<PostAlaCart> transactionPostAlaCart) {
+            this.transactionPostAlaCart = transactionPostAlaCart;
+        }
+
+        public List<PostGroup> getTransactionPostGroup() {
+            return transactionPostGroup;
+        }
+
+        public void setTransactionPostGroup(List<PostGroup> transactionPostGroup) {
+            this.transactionPostGroup = transactionPostGroup;
+        }
+    }
+
     public class Freebies {
         @SerializedName("id")
         @Expose
@@ -1666,6 +1785,9 @@ public class FetchRoomPendingResponse {
     }
 
     public class Post {
+        @SerializedName("freebie")
+        @Expose
+        private TransactionPostFreebies transactionPostFreebies;
         @SerializedName("group")
         @Expose
         private List<PostGroup> postGroupList;
@@ -1771,6 +1893,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("discounts")
         @Expose
         private List<Discount> discounts;
+
+        public TransactionPostFreebies getTransactionPostFreebies() {
+            return transactionPostFreebies;
+        }
+
+        public void setTransactionPostFreebies(TransactionPostFreebies transactionPostFreebies) {
+            this.transactionPostFreebies = transactionPostFreebies;
+        }
 
         public List<PostGroup> getPostGroupList() {
             return postGroupList;

@@ -198,7 +198,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         showPRogress();
         BusProvider.getInstance().post(new LoginRequest(
                 username,
-                password
+                password,
+                ""
         ));
     }
 
@@ -211,7 +212,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 //            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
         } else {
             //success
-
             UserModel userModel = new UserModel(loginResponse.getResult().get(0).getName(),
                     true,
                     SystemConstants.SYS_ROOM,
@@ -219,8 +219,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH),
                     SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE),
                     String.valueOf(loginResponse.getResult().get(0).getId()),
-                    String.valueOf(loginResponse.getResult().get(0).getUserGroup().getUserGroup()),
-                    String.valueOf(loginResponse.getResult().get(0).getUserGroup().getId()));
+                    String.valueOf(loginResponse.getResult().get(0).getRols().getRole()),
+                    String.valueOf(loginResponse.getResult().get(0).getRols().getId()));
             SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
             SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
 

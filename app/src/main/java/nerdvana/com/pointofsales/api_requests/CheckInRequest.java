@@ -20,6 +20,7 @@ public class CheckInRequest extends BaseRequest {
         mapValue.put("currency_value", currencyValue);
         mapValue.put("branch_code", branchCode);
         mapValue.put("branch_id", branchId);
+        mapValue.put("post_trans_id", "0");
     }
 
     public Map<String, String> getMapValue() {

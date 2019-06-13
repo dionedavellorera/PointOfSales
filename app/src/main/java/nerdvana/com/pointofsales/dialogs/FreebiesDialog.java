@@ -30,6 +30,7 @@ public abstract class FreebiesDialog extends BaseDialog {
     private RoomBundleSelectionDialog roomBundleSelectionDialog;
     private RoomTableModel selectedRoom;
     private String postTransId;
+    private Freeby freeby;
     public FreebiesDialog(@NonNull Context context,
                           List<FetchRoomPendingResponse.Freebies> freebiesList,
                           RoomTableModel selectedRoom) {
@@ -47,8 +48,7 @@ public abstract class FreebiesDialog extends BaseDialog {
 
 
 
-
-        Freeby freeby = new Freeby() {
+        freeby = new Freeby() {
             @Override
             public void clicked(final int position) {
                 FetchRoomRatePriceIdRequest fetchRoomRatePriceIdRequest = new FetchRoomRatePriceIdRequest(String.valueOf(freebiesList.get(position).getPriceRateRoomId()));
@@ -65,7 +65,14 @@ public abstract class FreebiesDialog extends BaseDialog {
                                     response.body().getResult(),
                                     selectedRoom,
                                     String.valueOf(freebiesList.get(position).getPostTransId()),
-                                    String.valueOf(freebiesList.get(position).getId()));
+                                    String.valueOf(freebiesList.get(position).getId()),
+                                    freeby) {
+                                @Override
+                                public void completed() {
+                                    roomBundleSelectionDialog.dismiss();
+                                    freebySelected();
+                                }
+                            };
                             roomBundleSelectionDialog.show();
                         }
                     }

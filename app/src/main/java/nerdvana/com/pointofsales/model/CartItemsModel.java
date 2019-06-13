@@ -2,6 +2,8 @@ package nerdvana.com.pointofsales.model;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
+
 public class CartItemsModel {
     private String controlNo;
     private int roomId;
@@ -22,9 +24,12 @@ public class CartItemsModel {
     private String postId;
     private boolean forVoid;
     private String type;
+    private boolean isUpdated;
 
     private List<AddRateProductModel.AlaCarte> alaCarteList;
     private List<AddRateProductModel.Group> groupList;
+    private FetchRoomPendingResponse.TransactionPostFreebies transactionPostFreebies;
+
     public CartItemsModel(String controlNo, int roomId,
                           int productId, int roomTypeId,
                           int roomRateId, int roomRatePriceId,
@@ -36,7 +41,10 @@ public class CartItemsModel {
                           String postId, boolean forVoid,
                           String type,
                           List<AddRateProductModel.AlaCarte> alaCarteList,
-                          List<AddRateProductModel.Group> groupList) {
+                          List<AddRateProductModel.Group> groupList,
+                          boolean isUpdated,
+                          FetchRoomPendingResponse.TransactionPostFreebies transactionPostFreebies) {
+        this.transactionPostFreebies = transactionPostFreebies;
         this.controlNo = controlNo;
         this.roomId = roomId;
         this.productId = productId;
@@ -58,6 +66,19 @@ public class CartItemsModel {
         this.type = type;
         this.alaCarteList = alaCarteList;
         this.groupList = groupList;
+        this.isUpdated = isUpdated;
+    }
+
+    public FetchRoomPendingResponse.TransactionPostFreebies getTransactionPostFreebies() {
+        return transactionPostFreebies;
+    }
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
     }
 
     public List<AddRateProductModel.AlaCarte> getAlaCarteList() {

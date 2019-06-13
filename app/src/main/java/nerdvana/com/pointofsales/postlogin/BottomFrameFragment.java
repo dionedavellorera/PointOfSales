@@ -21,14 +21,22 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
+import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.MainActivity;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_requests.FetchBranchInfoRequest;
+import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.background.ButtonsAsync;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BottomFrameFragment extends Fragment implements ButtonsContract, AsyncContract {
     private View view;
@@ -56,7 +64,27 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
         buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>(), this, getContext());
         listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
         listButtons.setAdapter(buttonsAdapter);
-        new ButtonsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        FetchBranchInfoRequest fetchBranchInfoRequest = new FetchBranchInfoRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchBranchInfoResponse> request = iUsers.fetchBranchInfo(fetchBranchInfoRequest.getMapValue());
+        request.enqueue(new Callback<FetchBranchInfoResponse>() {
+            @Override
+            public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
+
+                SharedPreferenceManager.saveString(getContext(), String.valueOf(response.body().getResult().getCompanyInfo().getIsRoom()), ApplicationConstants.IS_SYSTEM_ROOM);
+                SharedPreferenceManager.saveString(getContext(), String.valueOf(response.body().getResult().getCompanyInfo().getIsTable()), ApplicationConstants.IS_SYSTEM_TABLE);
+
+
+                new ButtonsAsync(BottomFrameFragment.this, getContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+            @Override
+            public void onFailure(Call<FetchBranchInfoResponse> call, Throwable t) {
+
+            }
+        });
+
     }
 
     @Override

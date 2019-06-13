@@ -31,6 +31,19 @@
         android:text=""
         android:textColor="@color/colorBlack" />
 
+    <ImageView
+        android:tint="@color/colorGreen"
+        android:src="@mipmap/baseline_remove_circle_outline_black_24"
+        app:layout_anchorGravity="right"
+        app:layout_anchor="@id/name"
+        android:id="@+id/minusQty"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:padding="7dp"
+        android:text=""
+        android:textColor="@color/colorBlack" />
+
 
 
 

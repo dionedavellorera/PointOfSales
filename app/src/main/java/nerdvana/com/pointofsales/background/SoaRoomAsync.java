@@ -229,6 +229,8 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                         2,
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
                 if (soaTrans.getPostAlaCartList().size() > 0) {
                     for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
                         addTextToPrinter(printer, twoColumnsRightGreaterTr(

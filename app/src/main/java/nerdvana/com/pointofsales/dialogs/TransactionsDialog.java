@@ -311,7 +311,9 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 false,
                                 "",
                                 new ArrayList<AddRateProductModel.AlaCarte>(),
-                                new ArrayList<AddRateProductModel.Group>()
+                                new ArrayList<AddRateProductModel.Group>(),
+                                false,
+                                null
                         ));
                     } else {
                         cartItemList.add(roomRateCounter.size(), new CartItemsModel(
@@ -335,7 +337,9 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 false,
                                 "",
                                 new ArrayList<AddRateProductModel.AlaCarte>(),
-                                new ArrayList<AddRateProductModel.Group>()
+                                new ArrayList<AddRateProductModel.Group>(),
+                                false,
+                                null
                         ));
                     }
                 }

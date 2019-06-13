@@ -12,6 +12,8 @@ public class ApplicationConstants {
     public static final String VERSION = "1.0.3";
     public static final String BRANCH = "branch";
     public static final String BRANCH_PERMIT = "branch_permit";
+    public static final String IS_SYSTEM_ROOM = "is_room";
+    public static final String IS_SYSTEM_TABLE = "is_table";
     public static final String CODE = "code";
     public static final String SERIAL_NUMBER = "serial_number";
     public static final String API_BASE_URL = "api_base_url";

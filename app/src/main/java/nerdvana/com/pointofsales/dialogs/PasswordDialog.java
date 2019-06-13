@@ -112,7 +112,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
 //            }
 //        });
 
-        LoginRequest loginRequest = new LoginRequest(username, password);
+        LoginRequest loginRequest = new LoginRequest(username, password, actionId);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<LoginResponse> request = iUsers.sendLoginRequest(loginRequest.getMapValue());
         request.enqueue(new Callback<LoginResponse>() {
@@ -120,7 +120,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body().getStatus() == 0) {
                     //fail
-                    Utils.showDialogMessage(((MainActivity)context), "Incorrect credentials given", "Warning!");
+                    Utils.showDialogMessage(((MainActivity)context), response.body().getMessage(), "Warning!");
 //                    Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()), response.body().getResult().get(0).getName());

@@ -101,9 +101,9 @@ public class LoginResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
-        @SerializedName("user_group")
+        @SerializedName("role")
         @Expose
-        private UserGroup userGroup;
+        private Role role;
 
         public Integer getId() {
             return id;
@@ -201,14 +201,61 @@ public class LoginResponse {
             this.deletedAt = deletedAt;
         }
 
-        public UserGroup getUserGroup() {
-            return userGroup;
+        public Role getRols() {
+            return role;
         }
 
-        public void setUserGroup(UserGroup userGroup) {
-            this.userGroup = userGroup;
+        public void setRole(Role role) {
+            this.role = role;
         }
 
+    }
+
+    public class Role {
+        @SerializedName("id")
+        @Expose
+        private int id;
+        @SerializedName("core_id")
+        @Expose
+        private int coreId;
+        @SerializedName("role")
+        @Expose
+        private String role;
+        @SerializedName("group")
+        @Expose
+        private UserGroup group;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getCoreId() {
+            return coreId;
+        }
+
+        public void setCoreId(int coreId) {
+            this.coreId = coreId;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public UserGroup getGroup() {
+            return group;
+        }
+
+        public void setGroup(UserGroup group) {
+            this.group = group;
+        }
     }
 
 

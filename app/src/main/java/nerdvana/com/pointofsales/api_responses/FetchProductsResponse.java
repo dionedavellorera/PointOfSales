@@ -20,6 +20,9 @@ public class FetchProductsResponse {
     }
 
     public class BranchProduct {
+        @SerializedName("branch_price")
+        @Expose
+        private BranchPrice branchPrice;
         @SerializedName("id")
         @Expose
         private int id;
@@ -86,6 +89,14 @@ public class FetchProductsResponse {
         @SerializedName("deletedAt")
         @Expose
         private String deletedAt;
+
+        public BranchPrice getBranchPrice() {
+            return branchPrice;
+        }
+
+        public void setBranchPrice(BranchPrice branchPrice) {
+            this.branchPrice = branchPrice;
+        }
 
         public int getId() {
             return id;
@@ -264,7 +275,9 @@ public class FetchProductsResponse {
         }
     }
 
+
     public class BranchAlaCart {
+
         @SerializedName("id")
         @Expose
         private int id;

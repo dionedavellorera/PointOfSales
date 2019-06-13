@@ -116,6 +116,7 @@ import nerdvana.com.pointofsales.background.CheckOutAsync;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.DepositAsync;
 import nerdvana.com.pointofsales.background.FoAsync;
+import nerdvana.com.pointofsales.background.FranchiseCheckoutAsync;
 import nerdvana.com.pointofsales.background.IntransitAsync;
 import nerdvana.com.pointofsales.background.PostVoidAsync;
 import nerdvana.com.pointofsales.background.RoomStatusAsync;
@@ -302,6 +303,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         request.enqueue(new Callback<FetchBranchInfoResponse>() {
             @Override
             public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
+
+
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getCompanyInfo().getIsRoom()), ApplicationConstants.IS_SYSTEM_ROOM);
+                SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getCompanyInfo().getIsTable()), ApplicationConstants.IS_SYSTEM_TABLE);
 
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getPermitNo()), ApplicationConstants.BRANCH_PERMIT);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
@@ -651,8 +656,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 temp = "";
             }
         }
-
         switch (printModel.getType()) {
+            case "FRANCHISE_OR":
+                willExecutGlobalPrint = false;
+                addAsync(new FranchiseCheckoutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "franchise_or");
+                break;
             case "IN_TRANSIT": //ignore header
                 willExecutGlobalPrint = false;
                 addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
@@ -1497,6 +1505,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void runTask(String taskName, AsyncTask asyncTask) {
         switch (taskName) {
+            case "franchise_or":
+                FranchiseCheckoutAsync franchiseCheckoutAsync = (FranchiseCheckoutAsync) asyncTask;
+                franchiseCheckoutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "fo":
                 FoAsync foAsync = (FoAsync) asyncTask;
                 foAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);

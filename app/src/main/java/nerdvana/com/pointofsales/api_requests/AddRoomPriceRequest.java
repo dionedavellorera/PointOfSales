@@ -1,11 +1,13 @@
 package nerdvana.com.pointofsales.api_requests;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
+import nerdvana.com.pointofsales.model.UpdateProductModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
 
 public class AddRoomPriceRequest extends BaseRequest {
@@ -16,7 +18,8 @@ public class AddRoomPriceRequest extends BaseRequest {
                                ArrayList<VoidProductModel> voidList,
                                String remarks, String managerId,
                                String postTransId,
-                               String freebieId) {
+                               String freebieId,
+                               ArrayList<UpdateProductModel> updateProductModelArrayList) {
         mapValue = new HashMap<>();
         mapValue.put("room_id", roomId);
         mapValue.put("user_id", userId);
@@ -30,6 +33,7 @@ public class AddRoomPriceRequest extends BaseRequest {
         mapValue.put("branch_code", branchCode);
         mapValue.put("post_trans_id", postTransId);
         mapValue.put("freebie_id", freebieId);
+        mapValue.put("update", GsonHelper.getGson().toJson(updateProductModelArrayList));
 
     }
 

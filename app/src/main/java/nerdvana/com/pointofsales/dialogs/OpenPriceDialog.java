@@ -21,12 +21,18 @@ public abstract class OpenPriceDialog extends BaseDialog {
     private EditText newPrice;
     private EditText newQty;
     private Button submit;
+    private TextView qtyLabel;
     private CartItemsModel cartItemsModel;
+    private Boolean isPosted;
     private int selectedItemPosition = 0;
-    public OpenPriceDialog(@NonNull Context context, CartItemsModel cartItemsModel, int position) {
+    public OpenPriceDialog(@NonNull Context context,
+                           CartItemsModel cartItemsModel,
+                           int position,
+                           boolean isPosted) {
         super(context);
         this.cartItemsModel = cartItemsModel;
         this.selectedItemPosition = position;
+        this.isPosted = isPosted;
     }
 
     public OpenPriceDialog(@NonNull Context context, int themeResId) {
@@ -46,6 +52,7 @@ public abstract class OpenPriceDialog extends BaseDialog {
         oldPrice = findViewById(R.id.oldPrice);
         newPrice = findViewById(R.id.newPrice);
         newQty = findViewById(R.id.newQty);
+        qtyLabel = findViewById(R.id.qtyLabel);
         submit = findViewById(R.id.submit);
         name.setText(cartItemsModel.getName());
         oldPrice.setText(String.valueOf(cartItemsModel.getAmount()));
@@ -60,6 +67,11 @@ public abstract class OpenPriceDialog extends BaseDialog {
 
             }
         });
+
+        if (isPosted) {
+            newQty.setVisibility(View.GONE);
+            qtyLabel.setVisibility(View.GONE);
+        }
     }
 
     public abstract void openPriceChangeSuccess(int quantity, Double newPrice, int position);

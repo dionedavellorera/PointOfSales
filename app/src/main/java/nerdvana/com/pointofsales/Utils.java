@@ -145,4 +145,17 @@ public class Utils {
 
         return formattedTime;
     }
+
+    public static String getSystemType(Context context) {
+        if (SharedPreferenceManager.getString(context, ApplicationConstants.IS_SYSTEM_TABLE).equalsIgnoreCase("0") &&
+                SharedPreferenceManager.getString(context, ApplicationConstants.IS_SYSTEM_ROOM).equalsIgnoreCase("0")) {
+            return "franchise";
+        } else if (SharedPreferenceManager.getString(context, ApplicationConstants.IS_SYSTEM_TABLE).equalsIgnoreCase("1")) {
+            return "table";
+        } else if (SharedPreferenceManager.getString(context, ApplicationConstants.IS_SYSTEM_ROOM).equalsIgnoreCase("1")) {
+            return "room";
+        } else {
+            return "not_supported";
+        }
+    }
 }

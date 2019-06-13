@@ -20,19 +20,16 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
-import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
-import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
-import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
-public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
-
+public class FranchiseCheckoutAsync extends AsyncTask<Void, Void, Void>
+{
     private PrintModel printModel;
     private Context context;
     private UserModel userModel;
@@ -41,7 +38,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
     private Printer printer;
 
 
-    public CheckOutAsync(PrintModel printModel, Context context, UserModel userModel, MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
+    public FranchiseCheckoutAsync(PrintModel printModel, Context context, UserModel userModel, MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
@@ -93,7 +90,30 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
         }
 
 
-        PrinterUtils.addHeader(printModel, printer);
+//        PrinterUtils.addHeader(printModel, printer);
+
+        addTextToPrinter(printer, "NERDVANA CORP.", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "1 CANLEY ROAD BRGY BAGONG", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "ILOG PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer," 671-9782", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
+        addTextToPrinter(printer, "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+        addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1 ,1 );
+
+
+//        if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
+//                printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
+//                printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID") ||
+//                printModel.getType().equalsIgnoreCase("SOA-ROOM")) {
+//            if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
+//                addTextToPrinter(printer,"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+//            } else {
+//                addTextToPrinter(printer,"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+//            }
+//        }
+
+
 
         FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
                 ;
@@ -105,29 +125,29 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     40,
                     2,
                     context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "ROOM BOY",
-                    String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-                    ,
-                    40,
-                    2,
-                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "ROOM BOY",
+//                    String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
+//                    ,
+//                    40,
+//                    2,
+//                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CHECK IN",
-                    convertDateToReadableDate(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA")
-                    ,
-                    40,
-                    2,
-                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CHECK OUT",
-                    convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
-                    ,
-                    40,
-                    2,
-                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "CHECK IN",
+//                    convertDateToReadableDate(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA")
+//                    ,
+//                    40,
+//                    2,
+//                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "CHECK OUT",
+//                    convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
+//                    ,
+//                    40,
+//                    2,
+//                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "RECEIPT NO",
@@ -480,97 +500,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
 
-            addTextToPrinter(printer, "PAYMENT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-
-            addPrinterSpace(1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "ROOM NO",
-                    String.valueOf(printModel.getRoomNumber())
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "ROOM TYPE",
-                    printModel.getRoomType() != null ? printModel.getRoomType() : ""
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CASHIER",
-                    toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA"
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "ROOM BOY",
-                    String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-            addPrinterSpace(1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CHECK IN",
-                    convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckIn() : "NA" )
-                    ,
-                    40,
-                    2,
-                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CHECK OUT",
-                    convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
-                    ,
-                    40,
-                    2,
-                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-            List<Integer> tempArray = new ArrayList<>();
-            String paymentType = "";
-            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
-                if (!tempArray.contains(pym.getPaymentTypeId())) {
-                    tempArray.add(pym.getPaymentTypeId());
-                    paymentType = pym.getPaymentDescription();
-                }
-            }
-
-            addPrinterSpace(1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "PAYMENT TYPE",
-                    tempArray.size() > 1 ? "MULTIPLE" : paymentType
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-            addPrinterSpace(1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "AMOUNT DUE",
-                    returnWithTwoDecimal(String.valueOf(toList1.getTotal() - (toList1.getAdvance() + toList1.getDiscount()))),
-                    40,
-                    2,
-                    context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "TENDERED",
-                    returnWithTwoDecimal(String.valueOf(toList1.getTendered()))
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CHANGE",
-                    returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange())))
-                    ,
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
+//
 
         } else {
             Log.d("DATANUL"," DATAI SNULL");

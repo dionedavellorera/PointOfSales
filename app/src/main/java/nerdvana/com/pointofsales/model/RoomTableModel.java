@@ -34,6 +34,11 @@ public class RoomTableModel {
 
     private String checkInTime;
 
+    public RoomTableModel(String controlNumber, boolean isTakeOut) {
+        this.controlNo = controlNumber;
+        this.isTakeOut = isTakeOut;
+    }
+
     public RoomTableModel(int roomId, int roomTypeId,
                           String roomType, int roomTypeParentId,
                           String roomTypeParent, int areaId,

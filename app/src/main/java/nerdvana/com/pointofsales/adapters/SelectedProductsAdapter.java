@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,8 +23,12 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<FetchProductsResponse.BranchGroup> branchGroupList;
     private DialogBundleComposition.Category category;
     private List<SelectedProductsInBundleModel.BundleProductModel> selectedProductsInBundleModels;
-    public SelectedProductsAdapter(List<SelectedProductsInBundleModel.BundleProductModel> selectedProductsInBundleModels) {
+    private DialogBundleComposition.Minus minus;
+    public SelectedProductsAdapter(
+            List<SelectedProductsInBundleModel.BundleProductModel> selectedProductsInBundleModels,
+            DialogBundleComposition.Minus minus) {
         this.selectedProductsInBundleModels = selectedProductsInBundleModels;
+        this.minus = minus;
     }
 
     @NonNull
@@ -36,11 +41,14 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
         private TextView name;
         private TextView count;
         private CoordinatorLayout row;
+        private ImageView minusQty;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             row = itemView.findViewById(R.id.row);
             count = itemView.findViewById(R.id.count);
+            minusQty = itemView.findViewById(R.id.minusQty);
+
         }
     }
 
@@ -51,6 +59,12 @@ public class SelectedProductsAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (holder instanceof SelectedProductsAdapter.ListViewHolder) {
             ((SelectedProductsAdapter.ListViewHolder) holder).name.setText(selectedProductsInBundleModels.get(i).getName());
             ((SelectedProductsAdapter.ListViewHolder) holder).count.setText(String.valueOf(selectedProductsInBundleModels.get(i).getQty()));
+            ((ListViewHolder) holder).minusQty.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    minus.clicked(i);
+                }
+            });
         }
 
     }

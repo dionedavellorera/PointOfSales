@@ -6,7 +6,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class FetchBranchInfoResponse {
-
     @SerializedName("result")
     @Expose
     private Result result;
