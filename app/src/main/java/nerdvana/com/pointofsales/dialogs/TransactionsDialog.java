@@ -207,6 +207,13 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 }
             }
         });
+
+        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+            isTo.setChecked(true);
+            isTo.setEnabled(false);
+            roomSpinner.setVisibility(View.GONE);
+        }
+
     }
 
 

@@ -34,6 +34,7 @@ import nerdvana.com.pointofsales.api_responses.DiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.model.DiscountListModel;
 import nerdvana.com.pointofsales.model.DiscountModel;
@@ -57,16 +58,19 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     private Context context;
     private String controlNumber = "";
     private String roomId = "";
+    private FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingData;
     private ArrayList<DiscountModel> discountModelList;
     public ManualDiscountDialog(@NonNull Context context,
                                 FetchRoomPendingResponse.Result fetchRoomPendingData,
                                 String controlNumber,
-                                String roomId) {
+                                String roomId,
+                                FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingData) {
         super(context);
         this.context = context;
         this.fetchRoomPendingData = fetchRoomPendingData;
         this.controlNumber = controlNumber;
         this.roomId = roomId;
+        this.fetchOrderPendingData = fetchOrderPendingData;
     }
 
 
@@ -189,136 +193,172 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     }
 
     private void fixDepartmentData() {
+        if (fetchRoomPendingData == null) { //TAKEOUT
+            for (FetchOrderPendingViaControlNoResponse.Post result : fetchOrderPendingData.getPost()) {
+                if (result.getVoid() == 0) {
+                    if (result.getProductId() != 0) { //ROOM RATE
 
-        for (FetchRoomPendingResponse.Post result : fetchRoomPendingData.getBooked().get(0).getTransaction().getPost()) {
 
-            if (result.getVoid() == 0) {
-                if (result.getProductId() == 0) { //ROOM RATE
-                    //DEPARTMENT == STATIC ROOM RATE
-                    boolean isExisting = false;
-                    DiscountListModel temp = null;
+                        //DEPARTMENT == getDepartment()
+                        boolean isExisting = false;
+                        DiscountListModel temp = null;
 
-                    for (DiscountListModel dcm : discountList) {
-                        if (dcm.getDepartment().equalsIgnoreCase("ROOM RATE")) {
-                            isExisting = true;
-                            temp = dcm;
-                            break;
+                        for (DiscountListModel dcm : discountList) {
+                            String tmp = "OTHERS";
+                            if (result.getDepartment() != null) {
+                                tmp = result.getDepartment().toUpperCase();
+                            }
+                            if (dcm.getDepartment().equalsIgnoreCase(
+                                    tmp)) {
+                                isExisting = true;
+                                temp = dcm;
+                                break;
+                            }
+                        }
+
+                        if (!isExisting) {
+
+                            ArrayList<DiscountListModel.DiscountProduct> myProd= new ArrayList<>();
+
+                            DiscountListModel.DiscountProduct discProduct =
+                                    new DiscountListModel.DiscountProduct(
+                                            String.valueOf(result.getId()),
+                                            result.getControlNo(),
+                                            String.valueOf(result.getPrice()),
+                                            String.valueOf(result.getTotal()),
+                                            String.valueOf(result.getDiscount()),
+                                            result.getProduct().getProduct(),
+                                            true);
+
+                            myProd.add(discProduct);
+                            discountList.add(new DiscountListModel(
+                                    result.getDepartment() == null ? "OTHERS" : result.getDepartment(),
+                                    myProd,
+                                    new ArrayList<FetchRoomPendingResponse.Discount>(),
+                                    true
+                            ));
                         }
                     }
-
-                    if (!isExisting) {
-                        ArrayList<DiscountListModel.DiscountProduct> myProd= new ArrayList<>();
-
-                        DiscountListModel.DiscountProduct discProduct =
-                                new DiscountListModel.DiscountProduct(
-                                        String.valueOf(result.getId()),
-                                        result.getControlNo(),
-                                        String.valueOf(result.getPrice()),
-                                        String.valueOf(result.getTotal()),
-                                        String.valueOf(result.getDiscount()),
-                                        result.getRoomRate().toUpperCase(),
-                                        true);
-                        myProd.add(discProduct);
-
-
-                        ArrayList<FetchRoomPendingResponse.Discount> myDiscs = new ArrayList<FetchRoomPendingResponse.Discount>();
-
-                        for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
-                            myDiscs.add(dc);
-                        }
-                        discountList.add(new DiscountListModel(
-                                "ROOM RATE",
-                                myProd,
-                                myDiscs,
-                                true
-                        ));
-
-
-                    } else {
-                        for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
-                            temp.getDiscountList().add(dc);
-                        }
-                        DiscountListModel.DiscountProduct discProduct =
-                                new DiscountListModel.DiscountProduct(
-                                        String.valueOf(result.getId()),
-                                        result.getControlNo(),
-                                        String.valueOf(result.getPrice()),
-                                        String.valueOf(result.getTotal()),
-                                        String.valueOf(result.getDiscount()),
-                                        result.getRoomRate().toUpperCase(),
-                                        true);
-
-                        temp.getDiscountProductList().add(discProduct);
-                    }
-                } else { // PRODUCT
-                    //DEPARTMENT == getDepartment()
-                    boolean isExisting = false;
-                    DiscountListModel temp = null;
-
-                    for (DiscountListModel dcm : discountList) {
-                        String tmp = "OTHERS";
-                        if (result.getDepartment() != null) {
-                            tmp = result.getDepartment().toUpperCase();
-                        }
-                        if (dcm.getDepartment().equalsIgnoreCase(
-                                tmp)) {
-                            isExisting = true;
-                            temp = dcm;
-                            break;
-                        }
-                    }
-
-                    if (!isExisting) {
-
-                        ArrayList<DiscountListModel.DiscountProduct> myProd= new ArrayList<>();
-
-                        DiscountListModel.DiscountProduct discProduct =
-                                new DiscountListModel.DiscountProduct(
-                                        String.valueOf(result.getId()),
-                                        result.getControlNo(),
-                                        String.valueOf(result.getPrice()),
-                                        String.valueOf(result.getTotal()),
-                                        String.valueOf(result.getDiscount()),
-                                        result.getProduct().getProduct(),
-                                        true);
-
-                        myProd.add(discProduct);
-
-
-                        ArrayList<FetchRoomPendingResponse.Discount> myDiscs = new ArrayList<FetchRoomPendingResponse.Discount>();
-
-                        for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
-                            myDiscs.add(dc);
-                        }
-                        discountList.add(new DiscountListModel(
-                                result.getDepartment() == null ? "OTHERS" : result.getDepartment(),
-                                myProd,
-                                myDiscs,
-                                true
-                        ));
-
-
-                    } else {
-                        for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
-                            temp.getDiscountList().add(dc);
-                        }
-                        DiscountListModel.DiscountProduct discProduct =
-                                new DiscountListModel.DiscountProduct(
-                                        String.valueOf(result.getId()),
-                                        result.getControlNo(),
-                                        String.valueOf(result.getPrice()),
-                                        String.valueOf(result.getTotal()),
-                                        String.valueOf(result.getDiscount()),
-                                        result.getProduct().getProduct(),
-                                        true);
-
-                        temp.getDiscountProductList().add(discProduct);
-                    }
-
 
                 }
             }
+        } else {
+            for (FetchRoomPendingResponse.Post result : fetchRoomPendingData.getBooked().get(0).getTransaction().getPost()) {
+                if (result.getVoid() == 0) {
+                    if (result.getProductId() == 0) { //ROOM RATE
+                        //DEPARTMENT == STATIC ROOM RATE
+                        boolean isExisting = false;
+                        DiscountListModel temp = null;
+
+                        for (DiscountListModel dcm : discountList) {
+                            if (dcm.getDepartment().equalsIgnoreCase("ROOM RATE")) {
+                                isExisting = true;
+                                temp = dcm;
+                                break;
+                            }
+                        }
+                        if (!isExisting) {
+                            ArrayList<DiscountListModel.DiscountProduct> myProd= new ArrayList<>();
+                            DiscountListModel.DiscountProduct discProduct =
+                                    new DiscountListModel.DiscountProduct(
+                                            String.valueOf(result.getId()),
+                                            result.getControlNo(),
+                                            String.valueOf(result.getPrice()),
+                                            String.valueOf(result.getTotal()),
+                                            String.valueOf(result.getDiscount()),
+                                            result.getRoomRate().toUpperCase(),
+                                            true);
+                            myProd.add(discProduct);
+                            ArrayList<FetchRoomPendingResponse.Discount> myDiscs = new ArrayList<FetchRoomPendingResponse.Discount>();
+                            for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
+                                myDiscs.add(dc);
+                            }
+                            discountList.add(new DiscountListModel(
+                                    "ROOM RATE",
+                                    myProd,
+                                    myDiscs,
+                                    true
+                            ));
+                        } else {
+                            for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
+                                temp.getDiscountList().add(dc);
+                            }
+                            DiscountListModel.DiscountProduct discProduct =
+                                    new DiscountListModel.DiscountProduct(
+                                            String.valueOf(result.getId()),
+                                            result.getControlNo(),
+                                            String.valueOf(result.getPrice()),
+                                            String.valueOf(result.getTotal()),
+                                            String.valueOf(result.getDiscount()),
+                                            result.getRoomRate().toUpperCase(),
+                                            true);
+
+                            temp.getDiscountProductList().add(discProduct);
+                        }
+                    } else { // PRODUCT
+                        //DEPARTMENT == getDepartment()
+                        boolean isExisting = false;
+                        DiscountListModel temp = null;
+
+                        for (DiscountListModel dcm : discountList) {
+                            String tmp = "OTHERS";
+                            if (result.getDepartment() != null) {
+                                tmp = result.getDepartment().toUpperCase();
+                            }
+                            if (dcm.getDepartment().equalsIgnoreCase(
+                                    tmp)) {
+                                isExisting = true;
+                                temp = dcm;
+                                break;
+                            }
+                        }
+
+                        if (!isExisting) {
+
+                            ArrayList<DiscountListModel.DiscountProduct> myProd= new ArrayList<>();
+
+                            DiscountListModel.DiscountProduct discProduct =
+                                    new DiscountListModel.DiscountProduct(
+                                            String.valueOf(result.getId()),
+                                            result.getControlNo(),
+                                            String.valueOf(result.getPrice()),
+                                            String.valueOf(result.getTotal()),
+                                            String.valueOf(result.getDiscount()),
+                                            result.getProduct().getProduct(),
+                                            true);
+
+                            myProd.add(discProduct);
+                            ArrayList<FetchRoomPendingResponse.Discount> myDiscs = new ArrayList<FetchRoomPendingResponse.Discount>();
+                            for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
+                                myDiscs.add(dc);
+                            }
+                            discountList.add(new DiscountListModel(
+                                    result.getDepartment() == null ? "OTHERS" : result.getDepartment(),
+                                    myProd,
+                                    myDiscs,
+                                    true
+                            ));
+                        } else {
+                            for (FetchRoomPendingResponse.Discount dc : result.getDiscounts()) {
+                                temp.getDiscountList().add(dc);
+                            }
+                            DiscountListModel.DiscountProduct discProduct =
+                                    new DiscountListModel.DiscountProduct(
+                                            String.valueOf(result.getId()),
+                                            result.getControlNo(),
+                                            String.valueOf(result.getPrice()),
+                                            String.valueOf(result.getTotal()),
+                                            String.valueOf(result.getDiscount()),
+                                            result.getProduct().getProduct(),
+                                            true);
+
+                            temp.getDiscountProductList().add(discProduct);
+                        }
+                    }
+                }
+            }
         }
+
 
 
         setDepartmentList(discountList);

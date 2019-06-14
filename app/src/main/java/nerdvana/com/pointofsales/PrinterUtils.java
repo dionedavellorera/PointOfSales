@@ -167,11 +167,16 @@ public class PrinterUtils {
     }
 
     public static String getDuration(String dateTime) {
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        DateTime today = new DateTime();
-        DateTime yesterday = formatter.parseDateTime(dateTime);
-        Duration duration = new Duration(yesterday, today);
-        return formatSeconds(duration.getStandardSeconds());
+        long secs = 0;
+        if (dateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            DateTime today = new DateTime();
+            DateTime yesterday = formatter.parseDateTime(dateTime);
+            Duration duration = new Duration(yesterday, today);
+            secs = duration.getStandardSeconds();
+        }
+
+        return formatSeconds(secs);
     }
 
 

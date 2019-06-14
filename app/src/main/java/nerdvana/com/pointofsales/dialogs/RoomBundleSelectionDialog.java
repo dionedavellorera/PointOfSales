@@ -45,17 +45,20 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
     private String postTransId;
     private String freebieId;
     private FreebiesDialog.Freeby freeby;
+    private int qtySelected = 1;
     public RoomBundleSelectionDialog(@NonNull Context context,
                                      FetchRoomRatePriceIdResponse.Result result,
                                      RoomTableModel selectedRoom,
                                      String postTransId,
                                      String freebieId,
-                                     FreebiesDialog.Freeby freeby) {
+                                     FreebiesDialog.Freeby freeby,
+                                     int qtySelected) {
         super(context);
         this.result = result;
         this.selectedRoom = selectedRoom;
         this.postTransId = postTransId;
         this.freebieId = freebieId;
+        this.qtySelected = qtySelected;
         this.freeby = freeby;
     }
 
@@ -169,7 +172,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                     DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(
                             getContext(),
                             productsModel.getBranchGroupList(),
-                            productsModel.getPrice()) {
+                            productsModel.getPrice(),
+                            qtySelected) {
                         @Override
                         public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
 

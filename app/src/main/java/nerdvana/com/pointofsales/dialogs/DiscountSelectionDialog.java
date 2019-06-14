@@ -30,6 +30,7 @@ import nerdvana.com.pointofsales.api_requests.VoidDiscountRequest;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.VoidDiscountResponse;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
@@ -58,13 +59,15 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
     private LeftFrameFragment.Data data;
     VoidDiscountsAdapter voidDiscountsAdapter;
     private List<ForVoidDiscountModel> forVoidDiscountModels;
+    private FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingResult;
     public DiscountSelectionDialog(@NonNull Context context,
                                    Activity activity,
                                    FetchRoomPendingResponse.Result fetchRoomPendingResult,
                                    String controlNumber,
                                    String roomId,
                                    List<ForVoidDiscountModel> forVoidDiscountModels,
-                                   LeftFrameFragment.Data data) {
+                                   LeftFrameFragment.Data data,
+                                   FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingResult) {
         super(context);
         this.data = data;
         this.activity = activity;
@@ -72,6 +75,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         this.controlNumber = controlNumber;
         this.roomId = roomId;
         this.forVoidDiscountModels = forVoidDiscountModels;
+        this.fetchOrderPendingResult = fetchOrderPendingResult;
     }
 
     @Override
@@ -158,7 +162,6 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                             } else {
                                 fetchPending("room");
                             }
-
                             dismiss();
                         }
                     };
@@ -167,21 +170,40 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
 
             switch (buttonsModel.getId()) {
                 case 1000:
-                    if (fetchRoomPendingResult != null) {
-                        ManualDiscountDialog manualDiscountDialog = new ManualDiscountDialog(activity, fetchRoomPendingResult, controlNumber, roomId) {
-                            @Override
-                            public void discountSuccess() {
-                                if (!TextUtils.isEmpty(controlNumber)) {
-                                    fetchPending("to");
-                                } else {
-                                    fetchPending("room");
+                    if (!TextUtils.isEmpty(controlNumber)) { //TAKEOUT
+                        if (fetchOrderPendingResult != null) {
+                            ManualDiscountDialog manualDiscountDialog = new ManualDiscountDialog(activity, null, controlNumber, roomId, fetchOrderPendingResult) {
+                                @Override
+                                public void discountSuccess() {
+                                    if (!TextUtils.isEmpty(controlNumber)) {
+                                        fetchPending("to");
+                                    } else {
+                                        fetchPending("room");
+                                    }
                                 }
-                            }
-                        };
-                        if (!manualDiscountDialog.isShowing()) manualDiscountDialog.show();
+                            };
+                            if (!manualDiscountDialog.isShowing()) manualDiscountDialog.show();
+                        } else {
+                            Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
+                        }
                     } else {
-                        Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
+                        if (fetchRoomPendingResult != null) {
+                            ManualDiscountDialog manualDiscountDialog = new ManualDiscountDialog(activity, fetchRoomPendingResult, controlNumber, roomId, null) {
+                                @Override
+                                public void discountSuccess() {
+                                    if (!TextUtils.isEmpty(controlNumber)) {
+                                        fetchPending("to");
+                                    } else {
+                                        fetchPending("room");
+                                    }
+                                }
+                            };
+                            if (!manualDiscountDialog.isShowing()) manualDiscountDialog.show();
+                        } else {
+                            Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
+                        }
                     }
+
                     break;
                 case 1001:
                     SelectionDiscountDialog selectionDiscountDialog =

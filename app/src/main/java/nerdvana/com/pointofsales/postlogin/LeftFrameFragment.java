@@ -69,11 +69,13 @@ import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
+import nerdvana.com.pointofsales.api_requests.FetchBranchInfoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCarRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchGuestTypeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchNationalityRequest;
+import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomPendingRequest;
@@ -98,11 +100,13 @@ import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
+import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchGuestTypeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchNationalityResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
@@ -200,6 +204,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private List<ForVoidDiscountModel> forVoidDiscountModels = new ArrayList<>();
 
     private FetchRoomPendingResponse.Result fetchRoomPendingResult = null;
+    private FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingRresult = null;
 
 
     GuestReceiptInfoModel guestReceiptInfoModel;
@@ -346,16 +351,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         initializeViews(view);
         setProductAdapter();
-//        setButtonsAdapter();
-
-
-//        printReceiptFromCheckout("VCHI-2019-00000020",
-//                "TEST",
-//                "STANDARD");
-
-
-//        printReceiptFromCheckout("VCHI-2019-00000078", "XXX", "DDD");
-
 
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.userSettings), UserModel.class);
         if (userModel != null) {
@@ -406,6 +401,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
         });
+
+        detectSystem();
         return view;
     }
 
@@ -594,7 +591,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case "franchise":
                 if (productsModel.getBranchGroupList().size() > 0) {
-                    DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList(), productsModel.getPrice()) {
+                    DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(
+                            getActivity(),
+                            productsModel.getBranchGroupList(),
+                            productsModel.getPrice(),
+                            productsModel.getQty()) {
                         @Override
                         public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
                             dismiss();
@@ -625,7 +626,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             if (productsModel.getBranchAlaCartList().size() > 0) {
                                 for (FetchProductsResponse.BranchAlaCart balac : productsModel.getBranchAlaCartList()) {
-
                                     DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
                                     DateTime companyUpdatedAt = new DateTime(df.parseDateTime(balac.getBranchProduct().getUpdatedAt()));
                                     Double amount = balac.getBranchProduct().getAmount();
@@ -751,7 +751,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (selectedRoom != null) {
                     if (selectedRoom.isTakeOut()) {
                         if (productsModel.getBranchGroupList().size() > 0) {
-                            DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList(), productsModel.getPrice()) {
+                            DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(
+                                    getActivity(),
+                                    productsModel.getBranchGroupList(),
+                                    productsModel.getPrice(),
+                                    productsModel.getQty()) {
                                 @Override
                                 public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
                                     dismiss();
@@ -906,7 +910,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 currentRoomStatus.equalsIgnoreCase("4")) {
 
                             if (productsModel.getBranchGroupList().size() > 0) {
-                                DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(getActivity(), productsModel.getBranchGroupList(), productsModel.getPrice()) {
+                                DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(
+                                        getActivity(),
+                                        productsModel.getBranchGroupList(),
+                                        productsModel.getPrice(),
+                                        productsModel.getQty()) {
                                     @Override
                                     public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
                                         dismiss();
@@ -1058,9 +1066,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
                 break;
         }
-
-
-
         if (noItems.getVisibility() == View.VISIBLE) noItems.setVisibility(View.GONE);
     }
 
@@ -1269,7 +1274,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         freebiesDialog = new FreebiesDialog(
                                 getActivity(),
                                 fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList(),
-                                selectedRoom) {
+                                selectedRoom,
+                                1) {
                             @Override
                             public void freebySelected() {
                                 freebiesDialog.dismiss();
@@ -1474,32 +1480,138 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 116: //cancel selected room / TO
                 defaultView();
                 clearCartItems();
+
+                detectSystem();
                 break;
             case 115://DISCOUNT
-                if (canTransact()) {
-                    if (selectedRoom != null) {
-                        if (hasUnpostedItems()) {
-                            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                                @Override
-                                public void yesClicked() {
+                switch (Utils.getSystemType(getContext())) {
+                    case "not_supported":
+                        Utils.showDialogMessage(getActivity(), "System not supported", "Information");
+                        break;
+                    case "franchise":
+                        if (selectedRoom == null) {
+                            Utils.showDialogMessage(getActivity(), "No transaction", "Information");
+                            return;
+                        } else {
+                            if (cartItemList.size() > 0) {
+                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                                final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                                for (CartItemsModel cim : cartItemList) {
+                                    if (!cim.isPosted()) {
+
+                                        if (cim.isUpdated()) {
+                                            updateModel.add(new UpdateProductModel(
+                                                    cim.getPostId(),
+                                                    cim.getName(),
+                                                    String.valueOf(cim.getUnitPrice()),
+                                                    String.valueOf(cim.getQuantity())
+                                            ));
+                                        } else {
+                                            model.add(new AddRateProductModel(
+                                                    String.valueOf(cim.getProductId()),
+                                                    "0",
+                                                    String.valueOf(cim.getQuantity()),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                    String.valueOf(cim.getUnitPrice()),
+                                                    cim.getIsPriceChanged(),
+                                                    cim.getName(),
+                                                    cim.getAlaCarteList(),
+                                                    cim.getGroupList()
+                                            ));
+                                        }
+                                    }
+                                    if (cim.isForVoid()) {
+                                        voidModel.add(new VoidProductModel(
+                                                cim.getPostId(),
+                                                cim.getName(),
+                                                String.valueOf(cim.getAmount()),
+                                                String.valueOf(cim.getQuantity())
+                                        ));
+                                    }
+                                }
+
+                                AddProductToRequest addProductToRequest = new AddProductToRequest(
+                                        model,
+                                        "",
+                                        "",
+                                        selectedRoom.getControlNo(),
+                                        voidModel,
+                                        "",
+                                        "0",
+                                        "0",
+                                        updateModel);
+
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<AddProductToResponse> request = iUsers.addProductTo(addProductToRequest.getMapValue());
+                                request.enqueue(new Callback<AddProductToResponse>() {
+                                    @Override
+                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+
+                                        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo());
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+                                        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+                                            @Override
+                                            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+                                                fetchOrderPendingViaControlNumberFunction(response.body());
+
+
+                                                //return dione
+                                                doDiscountFunction();
+
+
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+
+                                    }
+                                });
+                            } else {
+                                Utils.showDialogMessage(getActivity(), "No product selected", "Information");
+                            }
+                        }
+                        break;
+                    case "table":
+                        break;
+                    case "room":
+                        if (canTransact()) {
+                            if (selectedRoom != null) {
+                                if (hasUnpostedItems()) {
+                                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                        @Override
+                                        public void yesClicked() {
+                                            doDiscountFunction();
+                                        }
+
+                                        @Override
+                                        public void noClicked() {
+
+                                        }
+                                    };
+                                    alertYesNo.show();
+                                } else {
                                     doDiscountFunction();
                                 }
 
-                                @Override
-                                public void noClicked() {
 
-                                }
-                            };
-                            alertYesNo.show();
-                        } else {
-                            doDiscountFunction();
+                            } else {
+                                Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+                            }
                         }
-
-
-                    } else {
-                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
-                    }
+                        break;
                 }
+
+
+
 
 
                 break;
@@ -1765,82 +1877,122 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 100: //SAVE TRANSACTION:
-                if (selectedRoom != null) {
-                    if (selectedRoom.isTakeOut()) {
-                        final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                        final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-                        final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-                        for (CartItemsModel cim : cartItemList) {
-                            if (!cim.isPosted()) {
 
-                                if (cim.isUpdated()) {
-                                    updateModel.add(new UpdateProductModel(
-                                            cim.getPostId(),
-                                            cim.getName(),
-                                            String.valueOf(cim.getUnitPrice()),
-                                            String.valueOf(cim.getQuantity())
-                                    ));
-                                } else {
-                                    model.add(new AddRateProductModel(
-                                            String.valueOf(cim.getProductId()),
-                                            "0",
-                                            String.valueOf(cim.getQuantity()),
-                                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                            String.valueOf(cim.getUnitPrice()),
-                                            cim.getIsPriceChanged(),
-                                            cim.getName(),
-                                            cim.getAlaCarteList(),
-                                            cim.getGroupList()
-                                    ));
-                                }
-
-                            }
+                switch (Utils.getSystemType(getContext())) {
+                    case "not_supported":
+                        Utils.showDialogMessage(getActivity(), "System not supported", "Information");
+                        break;
+                    case "franchise":
+                        if (selectedRoom == null) {
+                            //create new and add
+                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                            GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
+                            Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
+                            request.enqueue(new Callback<GetOrderResponse>() {
+                                @Override
+                                public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
+                                    selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
+                                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
 
 
+                                    final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                                    final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                                    final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                                    for (CartItemsModel cim : cartItemList) {
+                                        if (!cim.isPosted()) {
 
-                            if (cim.isForVoid()) {
-                                voidModel.add(new VoidProductModel(
-                                        cim.getPostId(),
-                                        cim.getName(),
-                                        String.valueOf(cim.getAmount()),
-                                        String.valueOf(cim.getQuantity())
-                                ));
-                            }
-                        }
+                                            if (cim.isUpdated()) {
+                                                updateModel.add(new UpdateProductModel(
+                                                        cim.getPostId(),
+                                                        cim.getName(),
+                                                        String.valueOf(cim.getUnitPrice()),
+                                                        String.valueOf(cim.getQuantity())
+                                                ));
+                                            } else {
+                                                model.add(new AddRateProductModel(
+                                                        String.valueOf(cim.getProductId()),
+                                                        "0",
+                                                        String.valueOf(cim.getQuantity()),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                        String.valueOf(cim.getUnitPrice()),
+                                                        cim.getIsPriceChanged(),
+                                                        cim.getName(),
+                                                        cim.getAlaCarteList(),
+                                                        cim.getGroupList()
+                                                ));
+                                            }
 
-                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                            @Override
-                            public void save(String remarks) {
-                                BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
-                                BusProvider.getInstance().post(
-                                        new AddProductToRequest(
+                                        }
+
+
+
+                                        if (cim.isForVoid()) {
+                                            voidModel.add(new VoidProductModel(
+                                                    cim.getPostId(),
+                                                    cim.getName(),
+                                                    String.valueOf(cim.getAmount()),
+                                                    String.valueOf(cim.getQuantity())
+                                            ));
+                                        }
+                                    }
+
+                                    if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
+                                        Utils.showDialogMessage(getActivity(), "Please select item/s to save", "Information");
+                                    } else {
+//                                        BusProvider.getInstance().post(
+//                                                new AddProductToRequest(
+//                                                        model,
+//                                                        "",
+//                                                        "1",
+//                                                        selectedRoom.getControlNo(),
+//                                                        voidModel,
+//                                                        "",
+//                                                        "0",
+//                                                        "0",
+//                                                        updateModel));
+
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<AddProductToResponse> request = iUsers.addProductTo(new AddProductToRequest(
                                                 model,
-                                                String.valueOf(selectedRoom.getRoomId()),
-                                                String.valueOf(selectedRoom.getAreaId()),
+                                                "",
+                                                "1",
                                                 selectedRoom.getControlNo(),
                                                 voidModel,
-                                                remarks,
+                                                "",
                                                 "0",
                                                 "0",
-                                        updateModel));
-                                showLoading();
-                            }
-                        };
+                                                updateModel).getMapValue());
 
-                        if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
-                            Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
+                                        request.enqueue(new Callback<AddProductToResponse>() {
+                                            @Override
+                                            public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+                                                detectSystem();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+
+                                            }
+                                        });
+
+
+                                    }
+
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<GetOrderResponse> call, Throwable t) {
+
+                                }
+                            });
+
+
                         } else {
-                            confirmWithRemarksDialog.show();
-                        }
-                    } else {
-                        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
-                                selectedRoom.getStatus().equalsIgnoreCase("4") ||
-                                selectedRoom.getStatus().equalsIgnoreCase("32") ||
-                                selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                            //just add
                             final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                            final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
                             final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-
                             for (CartItemsModel cim : cartItemList) {
                                 if (!cim.isPosted()) {
 
@@ -1866,38 +2018,203 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     }
 
                                 }
-                            }
 
 
-                            ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                @Override
-                                public void save(String remarks) {
-                                    BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
 
-                                    BusProvider.getInstance().post(new AddRoomPriceRequest(
-                                            model,
-                                            String.valueOf(selectedRoom.getRoomId()),
-                                            new ArrayList<VoidProductModel>(),
-                                            remarks,
-                                            "",
-                                            "0", "0",
-                                            updateModel));
-                                    showLoading();
+                                if (cim.isForVoid()) {
+                                    voidModel.add(new VoidProductModel(
+                                            cim.getPostId(),
+                                            cim.getName(),
+                                            String.valueOf(cim.getAmount()),
+                                            String.valueOf(cim.getQuantity())
+                                    ));
                                 }
-                            };
-
-                            if (model.size() == 0 && updateModel.size() == 0) {
-                                Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
-                            } else {
-                                confirmWithRemarksDialog.show();
                             }
 
+                            if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
+                                Utils.showDialogMessage(getActivity(), "Please select item/s to save", "Information");
+                            } else {
+//                                BusProvider.getInstance().post(
+//                                        new AddProductToRequest(
+//                                                model,
+//                                                "",
+//                                                "1",
+//                                                selectedRoom.getControlNo(),
+//                                                voidModel,
+//                                                "",
+//                                                "0",
+//                                                "0",
+//                                                updateModel));
+
+
+
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<AddProductToResponse> request = iUsers.addProductTo(new AddProductToRequest(
+                                        model,
+                                        "",
+                                        "1",
+                                        selectedRoom.getControlNo(),
+                                        voidModel,
+                                        "",
+                                        "0",
+                                        "0",
+                                        updateModel).getMapValue());
+
+                                request.enqueue(new Callback<AddProductToResponse>() {
+                                    @Override
+                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+                                        detectSystem();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+
+                                    }
+                                });
+
+
+                            }
                         }
+                        break;
+                    case "table":
 
-                    }
+                        break;
+                    case "room":
+
+                        if (selectedRoom != null) {
+                            if (selectedRoom.isTakeOut()) {
+                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                                final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                                for (CartItemsModel cim : cartItemList) {
+                                    if (!cim.isPosted()) {
+
+                                        if (cim.isUpdated()) {
+                                            updateModel.add(new UpdateProductModel(
+                                                    cim.getPostId(),
+                                                    cim.getName(),
+                                                    String.valueOf(cim.getUnitPrice()),
+                                                    String.valueOf(cim.getQuantity())
+                                            ));
+                                        } else {
+                                            model.add(new AddRateProductModel(
+                                                    String.valueOf(cim.getProductId()),
+                                                    "0",
+                                                    String.valueOf(cim.getQuantity()),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                    String.valueOf(cim.getUnitPrice()),
+                                                    cim.getIsPriceChanged(),
+                                                    cim.getName(),
+                                                    cim.getAlaCarteList(),
+                                                    cim.getGroupList()
+                                            ));
+                                        }
+
+                                    }
 
 
+
+                                    if (cim.isForVoid()) {
+                                        voidModel.add(new VoidProductModel(
+                                                cim.getPostId(),
+                                                cim.getName(),
+                                                String.valueOf(cim.getAmount()),
+                                                String.valueOf(cim.getQuantity())
+                                        ));
+                                    }
+                                }
+
+                                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                    @Override
+                                    public void save(String remarks) {
+                                        BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
+                                        BusProvider.getInstance().post(
+                                                new AddProductToRequest(
+                                                        model,
+                                                        String.valueOf(selectedRoom.getRoomId()),
+                                                        String.valueOf(selectedRoom.getAreaId()),
+                                                        selectedRoom.getControlNo(),
+                                                        voidModel,
+                                                        remarks,
+                                                        "0",
+                                                        "0",
+                                                        updateModel));
+                                        showLoading();
+                                    }
+                                };
+
+                                if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
+                                    Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
+                                } else {
+                                    confirmWithRemarksDialog.show();
+                                }
+                            } else {
+                                if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                                        currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
+                                        selectedRoom.getStatus().equalsIgnoreCase("4") ||
+                                        selectedRoom.getStatus().equalsIgnoreCase("32") ||
+                                        selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                                    final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                                    final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+
+                                    for (CartItemsModel cim : cartItemList) {
+                                        if (!cim.isPosted()) {
+
+                                            if (cim.isUpdated()) {
+                                                updateModel.add(new UpdateProductModel(
+                                                        cim.getPostId(),
+                                                        cim.getName(),
+                                                        String.valueOf(cim.getUnitPrice()),
+                                                        String.valueOf(cim.getQuantity())
+                                                ));
+                                            } else {
+                                                model.add(new AddRateProductModel(
+                                                        String.valueOf(cim.getProductId()),
+                                                        "0",
+                                                        String.valueOf(cim.getQuantity()),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                        String.valueOf(cim.getUnitPrice()),
+                                                        cim.getIsPriceChanged(),
+                                                        cim.getName(),
+                                                        cim.getAlaCarteList(),
+                                                        cim.getGroupList()
+                                                ));
+                                            }
+
+                                        }
+                                    }
+
+
+                                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                        @Override
+                                        public void save(String remarks) {
+                                            BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
+
+                                            BusProvider.getInstance().post(new AddRoomPriceRequest(
+                                                    model,
+                                                    String.valueOf(selectedRoom.getRoomId()),
+                                                    new ArrayList<VoidProductModel>(),
+                                                    remarks,
+                                                    "",
+                                                    "0", "0",
+                                                    updateModel));
+                                            showLoading();
+                                        }
+                                    };
+
+                                    if (model.size() == 0 && updateModel.size() == 0) {
+                                        Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
+                                    } else {
+                                        confirmWithRemarksDialog.show();
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
+
+
+
                 break;
             case 101: //VOID
                 if (canTransact()) {
@@ -1932,128 +2249,152 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 102: //ADVANCE PAYMENT
 
-                if (selectedRoom != null) {
+                switch (Utils.getSystemType(getContext())) {
+                    case "not_supported":
+                        Utils.showDialogMessage(getActivity(), "System not supported", "Information");
+                        break;
+                    case "franchise":
+                        if (selectedRoom == null) {
+                            Utils.showDialogMessage(getActivity(), "No transaction", "Information");
+                            return;
+                        } else {
+                            if (cartItemList.size() > 0) {
+                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                                final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                                for (CartItemsModel cim : cartItemList) {
+                                    if (!cim.isPosted()) {
 
-                    if (hasUnpostedItems()) {
-                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                        if (cim.isUpdated()) {
+                                            updateModel.add(new UpdateProductModel(
+                                                    cim.getPostId(),
+                                                    cim.getName(),
+                                                    String.valueOf(cim.getUnitPrice()),
+                                                    String.valueOf(cim.getQuantity())
+                                            ));
+                                        } else {
+                                            model.add(new AddRateProductModel(
+                                                    String.valueOf(cim.getProductId()),
+                                                    "0",
+                                                    String.valueOf(cim.getQuantity()),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                    String.valueOf(cim.getUnitPrice()),
+                                                    cim.getIsPriceChanged(),
+                                                    cim.getName(),
+                                                    cim.getAlaCarteList(),
+                                                    cim.getGroupList()
+                                            ));
+                                        }
+                                    }
+                                    if (cim.isForVoid()) {
+                                        voidModel.add(new VoidProductModel(
+                                                cim.getPostId(),
+                                                cim.getName(),
+                                                String.valueOf(cim.getAmount()),
+                                                String.valueOf(cim.getQuantity())
+                                        ));
+                                    }
+                                }
 
-                            @Override
-                            public void yesClicked() {
+                                AddProductToRequest addProductToRequest = new AddProductToRequest(
+                                        model,
+                                        "",
+                                        "",
+                                        selectedRoom.getControlNo(),
+                                        voidModel,
+                                        "",
+                                        "0",
+                                        "0",
+                                        updateModel);
+
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<AddProductToResponse> request = iUsers.addProductTo(addProductToRequest.getMapValue());
+                                request.enqueue(new Callback<AddProductToResponse>() {
+                                    @Override
+                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+                                        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo());
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+                                        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+                                            @Override
+                                            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+                                                fetchOrderPendingViaControlNumberFunction(response.body());
+
+
+                                                //return dione
+                                                doAdvancePaymentFunction();
+
+
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+
+                                    }
+                                });
+                            } else {
+                                Utils.showDialogMessage(getActivity(), "No product selected", "Information");
+                            }
+                        }
+
+
+                        break;
+                    case "table":
+                        break;
+                    case "room":
+                        if (selectedRoom != null) {
+                            if (hasUnpostedItems()) {
+                                AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                                    @Override
+                                    public void yesClicked() {
+
+                                        doAdvancePaymentFunction();
+
+                                    }
+
+                                    @Override
+                                    public void noClicked() {
+
+                                    }
+                                };
+
+                                alertYesNo.show();
+
+                            } else {
 
                                 doAdvancePaymentFunction();
-
                             }
 
-                            @Override
-                            public void noClicked() {
-
-                            }
-                        };
-
-                        alertYesNo.show();
-
-                    } else {
-
-                        doAdvancePaymentFunction();
-                    }
 
 
+                        } else {
+                            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+                        }
 
-                } else {
-                    Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+                        break;
                 }
-
                 break;
         }
     }
 
     private void doBackOutGuestFunction() {
+        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+            boolean hasPosted = false;
+            for (CartItemsModel cim : cartItemList) {
+                if (cim.isPosted()) {
+                    hasPosted = true;
+                    break;
+                }
+            }
 
-        if (selectedRoom != null) {
-            if (hasUnpostedItems()) {
-                AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                    @Override
-                    public void yesClicked() {
-
-                        final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
-                            @Override
-                            public void save(final String remarks) {
-
-                                PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
-                                    @Override
-                                    public void passwordSuccess(String employeeId, final String employeeName) {
-
-                                        if (!selectedRoom.isTakeOut()) {
-                                            BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
-                                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                            Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                            request.enqueue(new Callback<BackOutGuestResponse>() {
-                                                @Override
-                                                public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-                                                    BusProvider.getInstance().post(new PrintModel("",
-                                                            selectedRoom.getName(),
-                                                            "BACKOUT",
-                                                            GsonHelper.getGson().toJson(selectedRoom),
-                                                            selectedRoom.getRoomType(),
-                                                            employeeName,
-                                                            remarks));
-                                                    defaultView();
-                                                    clearCartItems();
-                                                    endLoading();
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                    endLoading();
-                                                }
-                                            });
-                                        } else {
-                                            BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
-                                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                            Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                            request.enqueue(new Callback<BackOutGuestResponse>() {
-                                                @Override
-                                                public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-                                                    BusProvider.getInstance().post(new PrintModel("",
-                                                            selectedRoom.getName(),
-                                                            "BACKOUT",
-                                                            GsonHelper.getGson().toJson(selectedRoom),
-                                                            selectedRoom.getRoomType(),employeeName,
-                                                            remarks));
-                                                    defaultView();
-                                                    clearCartItems();
-                                                    endLoading();
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                    endLoading();
-                                                }
-                                            });
-                                        }
-                                    }
-
-                                    @Override
-                                    public void passwordFailed() {
-
-                                    }
-                                };
-                                if (!passwordDialog.isShowing()) passwordDialog.show();
-
-
-                            }
-                        };
-                        if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
-                        showLoading();
-                    }
-
-                    @Override
-                    public void noClicked() {
-
-                    }
-                };
-                alertYesNo.show();
-            } else {
+            if (hasPosted) {
                 ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                     @Override
                     public void save(final String remarks) {
@@ -2123,14 +2464,175 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                 };
                 if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
+
+            } else {
+                Utils.showDialogMessage(getActivity(), "No posted product", "Information");
             }
-
-
-
-
         } else {
-            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+            if (selectedRoom != null) {
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+
+                            final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
+                                @Override
+                                public void save(final String remarks) {
+
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
+                                        @Override
+                                        public void passwordSuccess(String employeeId, final String employeeName) {
+
+                                            if (!selectedRoom.isTakeOut()) {
+                                                BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
+                                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                                Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                                request.enqueue(new Callback<BackOutGuestResponse>() {
+                                                    @Override
+                                                    public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                                                        BusProvider.getInstance().post(new PrintModel("",
+                                                                selectedRoom.getName(),
+                                                                "BACKOUT",
+                                                                GsonHelper.getGson().toJson(selectedRoom),
+                                                                selectedRoom.getRoomType(),
+                                                                employeeName,
+                                                                remarks));
+                                                        defaultView();
+                                                        clearCartItems();
+                                                        endLoading();
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                        endLoading();
+                                                    }
+                                                });
+                                            } else {
+                                                BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
+                                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                                Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                                request.enqueue(new Callback<BackOutGuestResponse>() {
+                                                    @Override
+                                                    public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                                                        BusProvider.getInstance().post(new PrintModel("",
+                                                                selectedRoom.getName(),
+                                                                "BACKOUT",
+                                                                GsonHelper.getGson().toJson(selectedRoom),
+                                                                selectedRoom.getRoomType(),employeeName,
+                                                                remarks));
+                                                        defaultView();
+                                                        clearCartItems();
+                                                        endLoading();
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                        endLoading();
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void passwordFailed() {
+
+                                        }
+                                    };
+                                    if (!passwordDialog.isShowing()) passwordDialog.show();
+
+
+                                }
+                            };
+                            if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
+                            showLoading();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+                    alertYesNo.show();
+                } else {
+                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
+                        @Override
+                        public void save(final String remarks) {
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
+                                @Override
+                                public void passwordSuccess(String employeeId, final String employeeName) {
+
+                                    if (!selectedRoom.isTakeOut()) {
+                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                        request.enqueue(new Callback<BackOutGuestResponse>() {
+                                            @Override
+                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                                                BusProvider.getInstance().post(new PrintModel("",
+                                                        selectedRoom.getName(),
+                                                        "BACKOUT",
+                                                        GsonHelper.getGson().toJson(selectedRoom),
+                                                        selectedRoom.getRoomType(),employeeName,
+                                                        remarks));
+                                                defaultView();
+                                                clearCartItems();
+                                                endLoading();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                endLoading();
+                                            }
+                                        });
+                                    } else {
+                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                        request.enqueue(new Callback<BackOutGuestResponse>() {
+                                            @Override
+                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                                                BusProvider.getInstance().post(new PrintModel("",
+                                                        selectedRoom.getName(),
+                                                        "BACKOUT",
+                                                        GsonHelper.getGson().toJson(selectedRoom),
+                                                        selectedRoom.getRoomType(),employeeName,
+                                                        remarks));
+                                                defaultView();
+                                                clearCartItems();
+                                                endLoading();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                endLoading();
+                                            }
+                                        });
+
+//                                    Utils.showDialogMessage(getActivity(), "Transaction for take out only", "Information");
+                                    }
+
+
+                                }
+
+                                @Override
+                                public void passwordFailed() {
+
+                                }
+                            };
+                            if (!passwordDialog.isShowing()) passwordDialog.show();
+                        }
+                    };
+                    if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
+                }
+
+
+
+
+            } else {
+                Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+            }
         }
+
 
 
 
@@ -2189,7 +2691,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             selectedRoom.getControlNo(),
                             "",
                             forVoidDiscountModels,
-                            data) {
+                            data,
+                            fetchOrderPendingRresult) {
                         @Override
                         public void fetchPending(String type) {
 
@@ -2200,17 +2703,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
                                 }
                             }
-//                            if (type.equalsIgnoreCase("to")) {
-//
-//                            } else {
-//
-//                            }
                         }
                     };
 
             if (!discountSelectionDialog.isShowing()) discountSelectionDialog.show();
         } else {
-
             DiscountSelectionDialog discountSelectionDialog =
                     new DiscountSelectionDialog(getContext(),
                             getActivity(),
@@ -2218,7 +2715,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             "",
                             String.valueOf(selectedRoom.getRoomId()),
                             forVoidDiscountModels,
-                            data) {
+                            data,
+                            fetchOrderPendingRresult) {
                         @Override
                         public void fetchPending(String type) {
 
@@ -2433,8 +2931,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             }
         };
-
-
         if (selectedRoom.isTakeOut()) {
             if (paymentTypeList.size() > 0) {
                 paymentDialog.show();
@@ -2755,22 +3251,28 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void fetchOrderPendingViaControlNo(final String controlNo) {
 
-        if (hasUnpostedItems()) {
-            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                @Override
-                public void yesClicked() {
-                    BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
-                }
-
-                @Override
-                public void noClicked() {
-
-                }
-            };
-            alertYesNo.show();
-        } else {
+        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
             BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+        } else {
+            if (hasUnpostedItems()) {
+                AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                    @Override
+                    public void yesClicked() {
+                        BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+                    }
+
+                    @Override
+                    public void noClicked() {
+
+                    }
+                };
+                alertYesNo.show();
+            } else {
+                BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+            }
         }
+
+
 
 
     }
@@ -2782,13 +3284,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 Utils.showDialogMessage(getActivity(), "System not supported", "Information");
                 break;
             case "franchise":
-                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                GetOrderRequest getOrderRequest = new GetOrderRequest("", "", "");
-                Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
-                request.enqueue(new Callback<GetOrderResponse>() {
-                    @Override
-                    public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
-                        selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
+                if (selectedRoom == null) {
+                    Utils.showDialogMessage(getActivity(), "No transaction", "Information");
+                    return;
+                } else {
+                    if (cartItemList.size() > 0) {
                         final ArrayList<AddRateProductModel> model = new ArrayList<>();
                         final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
                         final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
@@ -2830,7 +3330,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 model,
                                 "",
                                 "",
-                                response.body().getResult().getControlNo(),
+                                selectedRoom.getControlNo(),
                                 voidModel,
                                 "",
                                 "0",
@@ -2848,9 +3348,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
                                     @Override
                                     public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
-
                                         fetchOrderPendingViaControlNumberFunction(response.body());
-
                                         PaymentDialog checkoutDialog = new PaymentDialog(getActivity(),
                                                 paymentTypeList,
                                                 true,
@@ -2932,13 +3430,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             }
                         });
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "No product selected", "Information");
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<GetOrderResponse> call, Throwable t) {
 
-                    }
-                });
                 break;
             case "table":
                 break;
@@ -3948,6 +4445,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
+        this.fetchOrderPendingRresult = fetchOrderPendingViaControlNoResponse.getResult();
         fetchOrderPendingViaControlNumberFunction(fetchOrderPendingViaControlNoResponse);
     }
 
@@ -3978,6 +4476,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
 
 
+
+
             defaultView();
             clearCartItems();
 
@@ -3990,6 +4490,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
+
+            detectSystem();
 
 
         }
@@ -4811,5 +5313,91 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void changeTheme(ChangeThemeModel changeThemeModel) {
         changeTheme();
+    }
+
+    private void detectSystem() {
+        FetchBranchInfoRequest fetchBranchInfoRequest = new FetchBranchInfoRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchBranchInfoResponse> request = iUsers.fetchBranchInfo(fetchBranchInfoRequest.getMapValue());
+
+        request.enqueue(new Callback<FetchBranchInfoResponse>() {
+            @Override
+            public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
+                if (response.body().getResult().getCompanyInfo().getIsRoom().equalsIgnoreCase("0") &&
+                        response.body().getResult().getCompanyInfo().getIsTable().equalsIgnoreCase("0")) {
+                    //franchise
+                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                    FetchOrderPendingRequest fetchOrderPendingRequest = new FetchOrderPendingRequest();
+                    Call<FetchOrderPendingResponse> request = iUsers.fetchOrderPending(fetchOrderPendingRequest.getMapValue());
+                    request.enqueue(new Callback<FetchOrderPendingResponse>() {
+                        @Override
+                        public void onResponse(Call<FetchOrderPendingResponse> call, Response<FetchOrderPendingResponse> response) {
+                            boolean hasPendingCleanTransaction = false;
+                            if (response.body().getResult().size() > 0) {
+                                for (FetchOrderPendingResponse.Result r : response.body().getResult()) {
+                                    if (r.getTotal() < 1) {
+                                        selectedRoom = new RoomTableModel(r.getControlNo(), true);
+                                        fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                                        hasPendingCleanTransaction = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!hasPendingCleanTransaction) {
+                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                    GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
+                                    Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
+                                    request.enqueue(new Callback<GetOrderResponse>() {
+                                        @Override
+                                        public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
+                                            selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
+                                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<GetOrderResponse> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                            } else {
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
+                                Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
+                                request.enqueue(new Callback<GetOrderResponse>() {
+                                    @Override
+                                    public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
+                                        selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
+                                        fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<GetOrderResponse> call, Throwable t) {
+
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<FetchOrderPendingResponse> call, Throwable t) {
+
+                        }
+                    });
+
+                } else if (response.body().getResult().getCompanyInfo().getIsTable().equalsIgnoreCase("1")) {
+                    //table
+                } else if (response.body().getResult().getCompanyInfo().getIsRoom().equalsIgnoreCase("1")) {
+                    //room
+                } else {
+                    //not supported
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FetchBranchInfoResponse> call, Throwable t) {
+
+            }
+        });
     }
 }

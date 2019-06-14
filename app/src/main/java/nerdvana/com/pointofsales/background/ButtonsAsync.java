@@ -30,6 +30,8 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                 break;
             case "franchise":
                 buttonsModelList.add(new ButtonsModel(105,"PAYMENT", "",6));
+                buttonsModelList.add(new ButtonsModel(100,"SAVE TRANSACTION", "",3));
+                buttonsModelList.add(new ButtonsModel(9988,"RESUME TRANSACTION", "",2));
                 break;
             case "table":
                 break;
@@ -45,19 +47,19 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                 buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14));
                 buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15));
                 buttonsModelList.add(new ButtonsModel(122,"CANCEL OVERTIME", "",18));
-                buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
                 buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
                 buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",24));
+                buttonsModelList.add(new ButtonsModel(126,"FOC", "",24));
                 break;
         }
 
 
 
 
+        buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
 //        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
         buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
         buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
-
         buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
         buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
 
@@ -70,7 +72,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(123,"REPRINT X READING", "",22));
         buttonsModelList.add(new ButtonsModel(127,"REPRINT Z READING", "",22));
 
-        buttonsModelList.add(new ButtonsModel(126,"FOC", "",24));
+
         buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
         buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
 

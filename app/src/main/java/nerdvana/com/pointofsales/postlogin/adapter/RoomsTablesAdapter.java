@@ -39,12 +39,14 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private Animation animBlink;
     private Context context;
+    private String systemType;
     public RoomsTablesAdapter(List<RoomTableModel> roomTableModelList, SelectionContract selectionContract,
-                              Context context) {
+                              Context context, String systemType) {
         this.roomsFilteredList = new ArrayList<>(roomTableModelList);
         this.roomTableModelList = new ArrayList<>(roomTableModelList);
         this.selectionContract = selectionContract;
         this.context = context;
+        this.systemType = systemType;
         animBlink = AnimationUtils.loadAnimation(context,
                 R.anim.blink);
     }
@@ -124,7 +126,8 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName() + "\n(OT:" + productsModel.getOtHours()+")");
         }
-        ImageLoader.loadImage(productsModel.getImageUrl(), ((RoomsTablesAdapter.ProductsViewHolder)holder).imageUrl);
+
+
 
         if (!productsModel.isTakeOut()) {
             ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
@@ -136,7 +139,17 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
         ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getAmountSelected()));
-        ImageLoader.loadImage(String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()), ((ProductsViewHolder) holder).badge);
+
+        if (!systemType.equalsIgnoreCase("franchise")) {
+            ((ProductsViewHolder)holder).badge.setVisibility(View.VISIBLE);
+            ImageLoader.loadImage(String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()), ((ProductsViewHolder) holder).badge);
+        } else {
+            ((RoomsTablesAdapter.ProductsViewHolder)holder).badge.setVisibility(View.GONE);
+        }
+
+
+
+
     }
 
 

@@ -62,14 +62,16 @@ public abstract class DialogBundleComposition extends BaseDialog {
     private double bundleAmount;
 
     private Minus minus;
-
+    private int qtySelected = 1;
     public DialogBundleComposition(@NonNull Context context,
                                    List<FetchProductsResponse.BranchGroup> branchGroupList,
-                                   double bundleAmount) {
+                                   double bundleAmount,
+                                   int qtySelected) {
         super(context);
         this.act = context;
         this.branchGroupList = branchGroupList;
         this.bundleAmount = bundleAmount;
+        this.qtySelected = qtySelected;
     }
 
     @Override
@@ -103,7 +105,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
                     branchGroup.getGroupName(),
                     index,
                     new ArrayList<SelectedProductsInBundleModel.BundleProductModel>(),
-                    branchGroup.getQty(),
+                    branchGroup.getQty() * qtySelected,
                     0,
                     bundleAmount));
             index++;

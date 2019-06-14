@@ -1,10 +1,12 @@
 package nerdvana.com.pointofsales.background;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
@@ -14,10 +16,14 @@ import nerdvana.com.pointofsales.model.RoomTableModel;
 
 public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List<RoomTableModel>> {
     private AsyncContract asyncContract;
+    private Context context;
     private List<FetchOrderPendingResponse.Result> roomList;
-    public FetchOrderPendingAsync(AsyncContract asyncContract, List<FetchOrderPendingResponse.Result> roomList) {
+    public FetchOrderPendingAsync(AsyncContract asyncContract,
+                                  List<FetchOrderPendingResponse.Result> roomList,
+                                  Context context) {
         this.asyncContract = asyncContract;
         this.roomList = roomList;
+        this.context = context;
     }
 
     @Override
@@ -27,16 +33,22 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
         for (FetchOrderPendingResponse.Result r : roomList) {
             String displayName = "";
 
-            if (r.getCustomer() != null) {
-                if (!r.getCustomer().getCustomer().equalsIgnoreCase("to be filled") && !r.getCustomer().getCustomer().equalsIgnoreCase("empty")) {
-                    String[] myName = r.getCustomer().getCustomer().trim().split(" ");
-                    for (int i = 0; i < myName.length; i++) {
-                        displayName += myName[i].trim().substring(0,1).toUpperCase();
+            if (Utils.getSystemType(context).equalsIgnoreCase("franchise")) {
+                displayName = r.getControlNo();
+            } else {
+                if (r.getCustomer() != null) {
+                    if (!r.getCustomer().getCustomer().equalsIgnoreCase("to be filled") && !r.getCustomer().getCustomer().equalsIgnoreCase("empty")) {
+                        String[] myName = r.getCustomer().getCustomer().trim().split(" ");
+                        for (int i = 0; i < myName.length; i++) {
+                            displayName += myName[i].trim().substring(0,1).toUpperCase();
+                        }
+                    } else {
+                        displayName = "GUEST";
                     }
-                } else {
-                    displayName = "GUEST";
                 }
             }
+
+
 
             productsModelList.add(
                     new RoomTableModel (

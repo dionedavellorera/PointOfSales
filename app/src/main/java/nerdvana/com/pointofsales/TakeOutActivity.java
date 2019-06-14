@@ -97,6 +97,10 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
                 if (!takeout.isShowing()) takeout.show();
             }
         });
+
+        if (Utils.getSystemType(getApplicationContext()).equalsIgnoreCase("franchise")) {
+            fab.hide();
+        }
     }
 
     @Override
@@ -128,7 +132,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
     public void fetchOrderPendingResponse(FetchOrderPendingResponse fetchOrderPendingResponse) {
         refreshRoom.setRefreshing(false);
         if (fetchOrderPendingResponse.getResult().size() > 0) {
-            new FetchOrderPendingAsync(this, fetchOrderPendingResponse.getResult()).execute();
+            new FetchOrderPendingAsync(this, fetchOrderPendingResponse.getResult(), getApplicationContext()).execute();
         }
     }
 
@@ -151,7 +155,11 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
     }
 
     private void setRoomsTableAdapter() {
-        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, TakeOutActivity.this);
+        roomsTablesAdapter = new RoomsTablesAdapter(
+                new ArrayList<RoomTableModel>(),
+                this,
+                TakeOutActivity.this,
+                Utils.getSystemType(getApplicationContext()));
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(TakeOutActivity.this, 5));
         listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);

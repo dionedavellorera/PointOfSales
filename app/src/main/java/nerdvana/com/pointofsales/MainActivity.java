@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
+import nerdvana.com.pointofsales.api_requests.BackOutGuestRequest;
 import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
@@ -78,12 +79,14 @@ import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDiscountSpecialRequest;
+import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
+import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
@@ -96,6 +99,7 @@ import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
@@ -115,6 +119,7 @@ import nerdvana.com.pointofsales.background.CheckInAsync;
 import nerdvana.com.pointofsales.background.CheckOutAsync;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.DepositAsync;
+import nerdvana.com.pointofsales.background.FetchOrderPendingAsync;
 import nerdvana.com.pointofsales.background.FoAsync;
 import nerdvana.com.pointofsales.background.FranchiseCheckoutAsync;
 import nerdvana.com.pointofsales.background.IntransitAsync;
@@ -294,6 +299,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        Log.d("MYCONNECTION", String.valueOf(Utils.checkConnection(this)));
     }
 
+
+
     private void saveBranchInfo() {
 
         FetchBranchInfoRequest fetchBranchInfoRequest = new FetchBranchInfoRequest();
@@ -304,10 +311,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             @Override
             public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
 
-
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getCompanyInfo().getIsRoom()), ApplicationConstants.IS_SYSTEM_ROOM);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getCompanyInfo().getIsTable()), ApplicationConstants.IS_SYSTEM_TABLE);
-
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getPermitNo()), ApplicationConstants.BRANCH_PERMIT);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getAddress()), ApplicationConstants.BRANCH_ADDRESS);

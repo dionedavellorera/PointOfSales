@@ -91,8 +91,13 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
 
-            if (cartItem.getTransactionPostFreebies() != null) {
+            if (cartItem.getAlaCarteList().size() > 0 ||
+                    cartItem.getGroupList().size() > 0 ||
+                    cartItem.getTransactionPostFreebies() != null) {
                 ((ProductsViewHolder)holder).linearBundle.removeAllViews();
+            }
+
+            if (cartItem.getTransactionPostFreebies() != null) {
 
                 if (cartItem.getTransactionPostFreebies().getTransactionPostFreebyCoreProduct() != null) {
                     TextView tv = new TextView(context);

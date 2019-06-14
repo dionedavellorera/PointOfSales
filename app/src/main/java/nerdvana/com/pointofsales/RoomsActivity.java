@@ -136,7 +136,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     }
 
     private void setRoomsTableAdapter() {
-        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this);
+        roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
         listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
@@ -222,7 +222,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         rootView.requestFocus();
 
         if (statusId == 0) { //SHOW ALL
-            roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this, RoomsActivity.this);
+            roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
             listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
 //            listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
@@ -235,7 +235,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                     filteredRoomList.add(rtm);
                 }
             }
-            roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this, RoomsActivity.this);
+            roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
             listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
 
