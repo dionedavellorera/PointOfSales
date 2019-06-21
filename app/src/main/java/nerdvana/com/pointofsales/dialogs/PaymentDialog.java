@@ -391,7 +391,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                 } else {
                     if (paymentMethod.getCoreId().equalsIgnoreCase("1")) { //cash
                         if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
-                            if (Double.valueOf(amountToPay.getText().toString()) > 0) {
+                            if (Double.valueOf(amountToPay.getText().toString()) >= 0) {
                                 postedPaymentList.add(new PostedPaymentsModel(
                                         paymentMethod.getCoreId(),
                                         amountToPay.getText().toString(),
@@ -691,6 +691,11 @@ public abstract class PaymentDialog extends BaseDialog  {
         showForm("1");
 
         setPostedPaymentSwipe();
+
+
+        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+            linRoomBoy.setVisibility(GONE);
+        }
     }
 
     private void setupGuestName() {
@@ -736,6 +741,8 @@ public abstract class PaymentDialog extends BaseDialog  {
         amountDue = totalBalance - (advancePayment + discountPayment);
         totalAmountDue.setText(String.valueOf(amountDue));
 
+        amountToPay.setText(String.valueOf(amountDue));
+        amountToPay.requestFocus();
         totalChange = totalPayment - totalBalance;
         if (Double.valueOf(totalChange) < 1) {
             displayTotalChange.setText("0");

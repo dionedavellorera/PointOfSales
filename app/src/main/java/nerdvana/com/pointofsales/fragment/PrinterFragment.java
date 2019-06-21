@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,8 +65,7 @@ public class PrinterFragment extends Fragment {
             radioButton.setPadding(5, 5, 5, 5);
             radioButton.setText(itm.getmModelName());
             radioButton.setId(itm.getmModelConstant());
-            if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER) != null) {
-                Log.d("TRTRTR", itm.getmModelConstant() + " - " + Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER)));
+            if (!TextUtils.isEmpty(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER))) {
 
                 if (itm.getmModelConstant() == Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER))) {
                     radioButton.setChecked(true);
@@ -101,7 +101,7 @@ public class PrinterFragment extends Fragment {
             radioButton.setText(itm.getmModelName());
             radioButton.setId(itm.getmModelConstant());
 
-            if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE) != null) {
+            if (!TextUtils.isEmpty(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE))) {
                 if (itm.getmModelConstant() == Integer.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_LANGUAGE))) {
                     radioButton.setChecked(true);
                 }

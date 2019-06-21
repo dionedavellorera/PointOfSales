@@ -6,8 +6,6 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class FetchCompanyUserResponse {
-
-
     @SerializedName("result")
     @Expose
     private List<Result> result = null;
@@ -67,13 +65,13 @@ public class FetchCompanyUserResponse {
         private Object imageFile;
         @SerializedName("e_sign")
         @Expose
-        private Integer eSign;
+        private String eSign;
         @SerializedName("group_id")
         @Expose
         private Integer groupId;
         @SerializedName("role_id")
         @Expose
-        private Integer roleId;
+        private Object roleId;
         @SerializedName("created_by")
         @Expose
         private Integer createdBy;
@@ -82,7 +80,7 @@ public class FetchCompanyUserResponse {
         private Object createdAt;
         @SerializedName("updated_at")
         @Expose
-        private String updatedAt;
+        private Object updatedAt;
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
@@ -91,7 +89,7 @@ public class FetchCompanyUserResponse {
         private UserGroup userGroup;
         @SerializedName("role")
         @Expose
-        private Role role;
+        private Object role;
 
         public Integer getId() {
             return id;
@@ -149,11 +147,11 @@ public class FetchCompanyUserResponse {
             this.imageFile = imageFile;
         }
 
-        public Integer getESign() {
+        public String getESign() {
             return eSign;
         }
 
-        public void setESign(Integer eSign) {
+        public void setESign(String eSign) {
             this.eSign = eSign;
         }
 
@@ -165,11 +163,11 @@ public class FetchCompanyUserResponse {
             this.groupId = groupId;
         }
 
-        public Integer getRoleId() {
+        public Object getRoleId() {
             return roleId;
         }
 
-        public void setRoleId(Integer roleId) {
+        public void setRoleId(Object roleId) {
             this.roleId = roleId;
         }
 
@@ -189,11 +187,11 @@ public class FetchCompanyUserResponse {
             this.createdAt = createdAt;
         }
 
-        public String getUpdatedAt() {
+        public Object getUpdatedAt() {
             return updatedAt;
         }
 
-        public void setUpdatedAt(String updatedAt) {
+        public void setUpdatedAt(Object updatedAt) {
             this.updatedAt = updatedAt;
         }
 
@@ -213,83 +211,12 @@ public class FetchCompanyUserResponse {
             this.userGroup = userGroup;
         }
 
-        public Role getRole() {
+        public Object getRole() {
             return role;
         }
 
-        public void setRole(Role role) {
+        public void setRole(Object role) {
             this.role = role;
-        }
-
-    }
-
-    public class Role {
-
-        @SerializedName("id")
-        @Expose
-        private Integer id;
-        @SerializedName("role")
-        @Expose
-        private String role;
-        @SerializedName("created_by")
-        @Expose
-        private Integer createdBy;
-        @SerializedName("created_at")
-        @Expose
-        private String createdAt;
-        @SerializedName("updated_at")
-        @Expose
-        private String updatedAt;
-        @SerializedName("deleted_at")
-        @Expose
-        private Object deletedAt;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
-
-        public Integer getCreatedBy() {
-            return createdBy;
-        }
-
-        public void setCreatedBy(Integer createdBy) {
-            this.createdBy = createdBy;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public Object getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(Object deletedAt) {
-            this.deletedAt = deletedAt;
         }
 
     }
@@ -319,7 +246,7 @@ public class FetchCompanyUserResponse {
         private Object createdAt;
         @SerializedName("updated_at")
         @Expose
-        private Object updatedAt;
+        private String updatedAt;
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
@@ -380,11 +307,11 @@ public class FetchCompanyUserResponse {
             this.createdAt = createdAt;
         }
 
-        public Object getUpdatedAt() {
+        public String getUpdatedAt() {
             return updatedAt;
         }
 
-        public void setUpdatedAt(Object updatedAt) {
+        public void setUpdatedAt(String updatedAt) {
             this.updatedAt = updatedAt;
         }
 

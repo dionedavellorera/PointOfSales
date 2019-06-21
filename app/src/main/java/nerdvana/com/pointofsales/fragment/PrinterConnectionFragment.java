@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.discovery.DeviceInfo;
@@ -86,6 +87,10 @@ public class PrinterConnectionFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    Toast.makeText(getContext(), deviceInfo.getTarget(), Toast.LENGTH_SHORT).show();
+                    Log.d("dsdsds", deviceInfo.getTarget());
+
                     otherPrinterModelList.add(new OtherPrinterModel(deviceInfo.getTarget(), deviceInfo.getDeviceName()));
 
                     if (otherPrinterAdapter != null) otherPrinterAdapter.notifyDataSetChanged();

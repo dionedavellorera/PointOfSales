@@ -44,7 +44,6 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-
     static class ProductsViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private TextView quantity;

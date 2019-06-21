@@ -225,6 +225,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         separator = findViewById(R.id.separator);
         separator2 = findViewById(R.id.separator2);
 
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))) {
+            SharedPreferenceManager.saveString(MainActivity.this, "32", ApplicationConstants.MAX_COLUMN_COUNT);
+        }
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.DEFAULT_CURRENCY_VALUE))) {
+            SharedPreferenceManager.saveString(MainActivity.this, "1", ApplicationConstants.DEFAULT_CURRENCY_VALUE);
+        }
+
         myPrintJobs = new ArrayList<>();
 
 
@@ -967,11 +976,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void loadPrinter() {
 
-        SPrinter sPrinter = new SPrinter(
-                Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER)),
-                Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_LANGUAGE)),
-                getApplicationContext()
-        );
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER))) {
+            SPrinter sPrinter = new SPrinter(
+                    Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER)),
+                    Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_LANGUAGE)),
+                    getApplicationContext()
+            );
+        }
+
     }
 
     private void addPrinterSpace(int count) {
@@ -998,18 +1010,17 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
     private void fetchCompanyUserRequest() {
+        Toast.makeText(getApplicationContext(), "REQ COM USER", Toast.LENGTH_SHORT).show();
         BusProvider.getInstance().post(new FetchCompanyUserRequest());
     }
 
     @Subscribe
     public void fetchCompanyUserRequest(FetchCompanyUserResponse fetchCompanyUserResponse) {
-        if (fetchCompanyUserResponse.getResult().size() > 0) {
-            SharedPreferenceManager.saveString(getApplicationContext(),
-                    GsonHelper.getGson().toJson(fetchCompanyUserResponse.getResult()),
-                    ApplicationConstants.COMPANY_USER);
-        }
+        SharedPreferenceManager.saveString(getApplicationContext(),
+                GsonHelper.getGson().toJson(fetchCompanyUserResponse.getResult()),
+                ApplicationConstants.COMPANY_USER);
 
-//        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
 
     }
 

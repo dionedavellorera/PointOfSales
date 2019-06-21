@@ -1822,29 +1822,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 105: //CHECKOUT
+
+                if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+                    doCheckoutFunction();
+                } else {
+                    if (hasUnpostedItems()) {
+                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                            @Override
+                            public void yesClicked() {
+                                doCheckoutFunction();
+                            }
+
+                            @Override
+                            public void noClicked() {
+
+                            }
+                        };
+
+                        alertYesNo.show();
+                    } else {
+                        doCheckoutFunction();
+                    }
+                }
+
+
                 if (canTransact()) {
 
-                    if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
-                        doCheckoutFunction();
-                    } else {
-                        if (hasUnpostedItems()) {
-                            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                                @Override
-                                public void yesClicked() {
-                                    doCheckoutFunction();
-                                }
 
-                                @Override
-                                public void noClicked() {
-
-                                }
-                            };
-
-                            alertYesNo.show();
-                        } else {
-                            doCheckoutFunction();
-                        }
-                    }
 
 
                 }
@@ -2982,19 +2986,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 public void save(String remarks) {
                                     BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
 
-                                    Log.d("VOID_ITEM_MODEL", new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
+                                    BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             String.valueOf(selectedRoom.getAreaId()),
                                             selectedRoom.getControlNo(),
                                             model,
                                             remarks,
-                                            "0", "0",
-                                            new ArrayList<UpdateProductModel>()).toString());
-//                                    BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-//                                            String.valueOf(selectedRoom.getAreaId()),
-//                                            selectedRoom.getControlNo(),
-//                                            model,
-//                                            remarks,
-//                                            "0", "0"));
+                                            "0",
+                                            "0",
+                                            new ArrayList<UpdateProductModel>()));
                                     showLoading();
                                 }
                             };
@@ -3342,10 +3341,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         request.enqueue(new Callback<AddProductToResponse>() {
                             @Override
                             public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
-                                FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo());
+
+                                Log.d("control", response.body().getResult().getControlNo());
+                                FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(response.body().getResult().getControlNo());
                                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
-                                request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+                                Call<FetchOrderPendingViaControlNoResponse> re = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+                                re.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
                                     @Override
                                     public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
                                         fetchOrderPendingViaControlNumberFunction(response.body());
@@ -4393,10 +4394,62 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
 
+            //ADD ALACARTE GROUP HERE
+
             if (fetchOrderPendingViaControlNoResponse.getResult().getPost().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Post tpost : fetchOrderPendingViaControlNoResponse.getResult().getPost()) {
 
                     if (tpost.getVoid() == 0) {
+                        ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                        ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
+                        ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
+                        ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
+
+                        if (tpost.getPostGroupList() != null) {
+                            for (FetchRoomPendingResponse.PostGroup sipm : tpost.getPostGroupList()) {
+                                groupCompoList = new ArrayList<>();
+                                groupCompoProductsList = new ArrayList<>();
+                                if (sipm.getPostGroupInfo() != null) {
+                                    for (FetchRoomPendingResponse.PostGroupItem bpm : sipm.getPostGroupItems()) {
+                                        groupCompoProductsList.add(
+                                                new AddRateProductModel(
+                                                        "",
+                                                        "0",
+                                                        String.valueOf(bpm.getQty()),
+                                                        SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                        "",
+                                                        0,
+                                                        bpm.getPostGroupItemProduct().getProduct(),
+                                                        new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                        new ArrayList<AddRateProductModel.Group>()
+                                                ));
+
+                                    }
+                                    groupLst.add(
+                                            new AddRateProductModel.Group(
+                                                    new AddRateProductModel.GroupCompo(
+                                                            0,
+                                                            sipm.getPostGroupInfo().getGroupName(),
+                                                            0,
+                                                            groupCompoProductsList)));
+                                }
+                            }
+                        }
+
+
+                        for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
+                            alaCartes.add(new AddRateProductModel.AlaCarte(
+                                    "",
+                                    "0",
+                                    String.valueOf(balac.getQty()),
+                                    SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                    "0.00",
+                                    0,
+                                    balac.getPostAlaCartProduct().getProduct()
+                            ));
+                        }
+
+
                         cartItemList.add(new CartItemsModel(
                                 tpost.getControlNo(),
                                 0,
@@ -4417,8 +4470,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 String.valueOf(tpost.getId()),
                                 false,
                                 "to",
-                                new ArrayList<AddRateProductModel.AlaCarte>(),
-                                new ArrayList<AddRateProductModel.Group>(),
+                                alaCartes,
+                                groupLst,
                                 false,
                                 null
                         ));
