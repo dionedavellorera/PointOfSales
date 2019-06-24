@@ -403,6 +403,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         });
 
         detectSystem();
+
+
+//        printReceiptFromCheckout("VCHI-2019-00000009", "TEST PRINT", "TEST ROOM TYPE");
+
         return view;
     }
 
@@ -3528,20 +3532,31 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
                                     if (paymentsToPost.size() > 0) {
                                         if (selectedRoom != null) {
+
+
+                                            Log.d("PYMT", "START");
+
                                             if (selectedRoom.isTakeOut()) {
+                                                Log.d("PYMT", "TO");
                                                 postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
                                             } else {
+                                                Log.d("PYMT", "ROOM");
+                                                Log.d("PYMT", String.valueOf(selectedRoom.getRoomId()));
+                                                Log.d("PYMT", String.valueOf(paymentsToPost.size()));
                                                 postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
                                             }
                                         }
 
                                     } else {
                                         if (selectedRoom != null) {
+                                            Log.d("PYMT", "START 1");
                                             if (selectedRoom.isTakeOut()) {
+                                                Log.d("PYMT", "TO 1");
                                                 checkoutRoom("",
                                                         selectedRoom.getControlNo(),
                                                         "");
                                             } else {
+                                                Log.d("PYMT", "ROOM 1");
                                                 checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
                                                         "",
                                                         roomboy);
@@ -4186,11 +4201,21 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         endLoading();
                     } else {
 
+                        Log.d("PAYMENT_RESP", "START");
+
                         if (selectedRoom.isTakeOut()) {
+
+                            Log.d("PAYMENT_RESP", "START IS TO");
+
                             checkoutRoom("",
                                     selectedRoom.getControlNo(),
                                     "");
                         } else {
+
+                            Log.d("PAYMENT_RESP", "START IS ROOM");
+                            Log.d("PAYMENT_RESP", String.valueOf(selectedRoom.getRoomId()));
+                            Log.d("PAYMENT_RESP", String.valueOf(selectedRoom.isTakeOut()));
+
                             checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
                                     "",
                                     roomBoy);
@@ -4518,9 +4543,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void checkoutResponse(CheckOutResponse checkOutResponse) {
 
+
+
         if (checkOutResponse.getStatus() == 0) {
             Utils.showDialogMessage(getActivity(), checkOutResponse.getMessage(), "Information");
         } else {
+
+            Log.d("POPOPO", selectedRoom.getControlNo());
 
 
             printReceiptFromCheckout(selectedRoom.getControlNo(),
@@ -4531,21 +4560,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
-            defaultView();
-            clearCartItems();
+//            defaultView();
+//            clearCartItems();
 
 
-            if (selectedRoom != null) {
-                if (selectedRoom.isTakeOut()) {
-                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                } else {
-                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                }
-            }
-
-
-            detectSystem();
-
+//            if (selectedRoom != null) {
+//                if (selectedRoom.isTakeOut()) {
+//                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+//                } else {
+//                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+//                }
+//            }
 
         }
 
@@ -4851,32 +4876,45 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
             @Override
             public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+
+                Log.d("SSTEM_TRACE", Utils.getSystemType(getContext()));
+
                 if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+
+                    Log.d("SSTEM_TRACE", "RCHISE");
+
+
                     BusProvider.getInstance().post(new PrintModel(
                             "", "",
                             "FRANCHISE_OR",
                             GsonHelper.getGson().toJson(response.body().getResult()),
                             ""));
                 } else {
+
+                    Log.d("SSTEM_TRACE", "else");
+
+
                     if (selectedRoom != null) {
 
                         if (selectedRoom.isTakeOut()) {
+
+                            Log.d("SSTEM_TRACE", "else to");
+
                             BusProvider.getInstance().post(new PrintModel(
                                     "", "takeout",
                                     "PRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
                                     roomType));
                         } else {
+
+
+                            Log.d("SSTEM_TRACE", "else room");
                             BusProvider.getInstance().post(new PrintModel(
                                     "", roomName,
                                     "PRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
                                     roomType));
                         }
-
-
-
-
                     }
                 }
 
@@ -4884,6 +4922,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 clearCartItems();
                 defaultView();
+
+                detectSystem();
             }
 
             @Override

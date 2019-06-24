@@ -112,7 +112,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                 "DATE / TIME",
-                convertDateToReadableDate(checkinDetails.get(0).getCreatedAt() != null ? checkinDetails.get(0).getCreatedAt() : "NA"),
+                convertDateToReadableDate(checkinDetails.get(0).getCheckIn() != null ? checkinDetails.get(0).getCheckIn() : "NA"),
                 40,
                 2,
                 context)

@@ -40,8 +40,8 @@ public class BaseService {
 
             @Override
             public void onFailure(Call<T> call, Throwable t) {
-//                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
-//                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
+                BusProvider.getInstance().post(new ApiError(t.getLocalizedMessage()));
+                BusProvider.getInstance().post(new ProgressBarModel(false, t.getLocalizedMessage()));
             }
         });
 

@@ -52,12 +52,15 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        Log.d("STARTEXEC", "CHECKOUT");
+
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
 
-
+        Log.d("STARTEXEC", "CHECKOUT EXECING");
 
         try {
             printer = new Printer(

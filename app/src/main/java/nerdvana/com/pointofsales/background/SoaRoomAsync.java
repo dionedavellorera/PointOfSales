@@ -98,13 +98,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 }
             });
 
-
-
-//            addTextToPrinter(printer, "_____________________"
-//                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-//            addTextToPrinter(printer, "SIGNATURE"
-//                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-
             if (bookedList.get(0).getRoom().getArea().getPrinterPath().isEmpty()) {
                 if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY))) {
                     try {
@@ -137,19 +130,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
-
-
-        try {
-            printer.addHLine(1, 65535, Printer.LINE_MEDIUM);
-            printer.addHLine(1, 65535, Printer.LINE_MEDIUM_DOUBLE);
-            printer.addHLine(1, 65535, Printer.LINE_THICK);
-            printer.addHLine(1, 65535, Printer.LINE_THIN);
-        } catch (Epos2Exception e) {
-            Log.d("PRINTER_ERROR", e.getMessage());
-            e.printStackTrace();
-        }
-
-
 
         PrinterUtils.addHeader(printModel, printer);
 
