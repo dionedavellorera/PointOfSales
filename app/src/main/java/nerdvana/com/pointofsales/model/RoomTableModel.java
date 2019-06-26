@@ -4,7 +4,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 
-public class RoomTableModel {
+public class RoomTableModel implements Comparable<RoomTableModel>{
 
     private int roomId;
     private int roomTypeId;
@@ -33,6 +33,7 @@ public class RoomTableModel {
     private String otHours;
 
     private String checkInTime;
+    private int listPosition;
 
     public RoomTableModel(String controlNumber, boolean isTakeOut) {
         this.controlNo = controlNumber;
@@ -50,7 +51,7 @@ public class RoomTableModel {
                           String controlNo, int unpostedOrdersCount,
                           boolean isBlink, boolean isTimer,
                           String expectedCheckout, String otHours,
-                          String checkInTime) {
+                          String checkInTime, int listPosition) {
         this.roomId = roomId;
         this.roomTypeId = roomTypeId;
         this.roomType = roomType;
@@ -74,7 +75,12 @@ public class RoomTableModel {
         this.expectedCheckout = expectedCheckout;
         this.otHours = otHours;
         this.checkInTime = checkInTime;
+        this.listPosition = listPosition;
 
+    }
+
+    public int getListPosition() {
+        return listPosition;
     }
 
     public String getCheckInTime() {
@@ -183,5 +189,15 @@ public class RoomTableModel {
 
     public void setControlNo(String controlNo) {
         this.controlNo = controlNo;
+    }
+
+    @Override
+    public int compareTo(RoomTableModel o) {
+        if (listPosition > o.getListPosition()) {
+            return 1;
+        } else if (listPosition < o.getListPosition()) {
+            return -1;
+        }
+        return 0;
     }
 }

@@ -8,6 +8,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import nerdvana.com.pointofsales.RoomConstants;
@@ -127,6 +128,24 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                 }
             }
 
+            int listPosition = 1;
+            switch (r.getStatus().getCoreId()) {
+                case 59:
+                    listPosition = 1;
+                    break;
+                case 17:
+                    listPosition = 2;
+                    break;
+                case 2:
+                    listPosition = 3;
+                    break;
+                case 1:
+                    listPosition = 4;
+                    break;
+                default:
+                    listPosition = 5;
+                    break;
+            }
 
             productsModelList.add(
                     new RoomTableModel (
@@ -152,11 +171,13 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                             r.getStatus().getIsTimer() == 1 ? true : false,
                             checkoutExpected,
                             otHours,
-                            checkInTime
-
-
+                            checkInTime,
+                            listPosition
                     )
             );
+
+            Collections.sort(productsModelList);
+
         }
         return productsModelList;
     }

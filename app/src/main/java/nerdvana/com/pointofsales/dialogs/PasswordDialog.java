@@ -68,6 +68,8 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
         proceed = findViewById(R.id.proceed);
         proceed.setOnClickListener(this);
 
+        setCancelable(false);
+
     }
 
     public abstract void passwordSuccess(String employeeId, String employeeName);

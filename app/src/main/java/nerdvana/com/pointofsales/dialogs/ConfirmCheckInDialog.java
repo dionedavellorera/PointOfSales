@@ -41,6 +41,8 @@ public abstract class ConfirmCheckInDialog extends BaseDialog {
 
             }
         });
+
+        setCancelable(false);
     }
 
     public abstract void checkinSuccess(String roomRatePriceId);

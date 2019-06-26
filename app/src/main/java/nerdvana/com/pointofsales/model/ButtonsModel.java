@@ -7,6 +7,7 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
     private int position;
 
     private boolean isSpecial;
+    private  boolean isEnabled = true;
     public ButtonsModel(int id, String name, String imageUrl, int position) {
         this.id = id;
         this.name = name;
@@ -21,6 +22,14 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
         this.imageUrl = imageUrl;
         this.position = position;
         this.isSpecial = isSpecial;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     public boolean isSpecial() {

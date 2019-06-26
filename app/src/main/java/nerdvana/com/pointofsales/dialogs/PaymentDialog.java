@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -88,6 +89,12 @@ import retrofit2.Response;
 import static android.view.View.GONE;
 
 public abstract class PaymentDialog extends BaseDialog  {
+
+    Double advancePayment = 0.00;
+    Double normalPayment = 0.00;
+    Double totalPayment = 0.00;
+    Double amountDue = 0.00;
+    Double totalChange = 0.00;
 
     private boolean isEmployee = false;
 
@@ -183,7 +190,8 @@ public abstract class PaymentDialog extends BaseDialog  {
     private String controlNumber = "";
     private GuestReceiptInfoModel guestReceiptInfoModel;
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
-    public PaymentDialog(@NonNull Context context, List<FetchPaymentResponse.Result> paymentList,
+    public PaymentDialog(@NonNull Context context,
+                         List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
                          final List<PostedPaymentsModel> postedPaymentList,
                          Double totalBalance,
@@ -204,6 +212,8 @@ public abstract class PaymentDialog extends BaseDialog  {
         this.totalBalance = totalBalance;
         this.currencyList = currencyList;
         this.creditCardList = creditCardList;
+
+
         this.arOnlineList = arOnlineList;
         this.discountPayment = discountPayment;
         this.voidItemContract = new VoidItemContract() {
@@ -263,11 +273,15 @@ public abstract class PaymentDialog extends BaseDialog  {
         super(context, cancelable, cancelListener);
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
+
+
         relGuestInfo = findViewById(R.id.relGuestInfo);
         guestName = findViewById(R.id.guestName);
         guestAddress = findViewById(R.id.guestAddress);
@@ -723,12 +737,13 @@ public abstract class PaymentDialog extends BaseDialog  {
     }
 
     private void computeTotal() {
-        Double advancePayment = 0.00;
-        Double normalPayment = 0.00;
-        Double totalPayment = 0.00;
-        Double amountDue = 0.00;
+        advancePayment = 0.00;
+        normalPayment = 0.00;
+        totalPayment = 0.00;
+        amountDue = 0.00;
+        totalChange = 0.00;
 
-        Double totalChange = 0.00;
+
         for (PostedPaymentsModel ppm : postedPaymentList) {
             if (ppm.isAdvance()) {
                 advancePayment += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
@@ -736,6 +751,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                 normalPayment += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
             }
         }
+
 
         totalPayment = normalPayment;
         amountDue = totalBalance - (advancePayment + discountPayment);
@@ -759,6 +775,10 @@ public abstract class PaymentDialog extends BaseDialog  {
         }
 
         totalDeposit.setText(String.valueOf(advancePayment));
+
+
+
+
     }
 
     @Override
@@ -820,84 +840,133 @@ public abstract class PaymentDialog extends BaseDialog  {
     }
 
     private void setForexSpinner() {
-        List<String> forexArray = new ArrayList<>();
+        final List<String> forexArray = new ArrayList<>();
         if (currencyList != null) {
-            for (FetchCurrencyExceptDefaultResponse.Result curr : currencyList) {
-                forexArray.add(curr.getCurrency());
-            }
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    for (FetchCurrencyExceptDefaultResponse.Result curr : currencyList) {
+                        forexArray.add(curr.getCurrency());
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+
+                    CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                            forexArray);
+                    spinnerForex.setAdapter(rateSpinnerAdapter);
+
+                    spinnerForex.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            currencyId = currencyList.get(position).getCountryCode();
+                            currencyValue = String.valueOf(currencyList.get(position).getValue());
+
+                            forexRate.setText(String.valueOf(1 / currencyList.get(position).getValue()));
+
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+
+                }
+            }.execute();
+
         }
 
-        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-                forexArray);
-        spinnerForex.setAdapter(rateSpinnerAdapter);
 
-        spinnerForex.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currencyId = currencyList.get(position).getCountryCode();
-                currencyValue = String.valueOf(currencyList.get(position).getValue());
-
-                forexRate.setText(String.valueOf(1 / currencyList.get(position).getValue()));
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     private void setVoucherSpinner() {
-        List<String> onlineArray = new ArrayList<>();
+        final List<String> onlineArray = new ArrayList<>();
         if (arOnlineList != null) {
-            for (FetchArOnlineResponse.Result ar : arOnlineList) {
-                onlineArray.add(ar.getArOnline());
-            }
+
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    for (FetchArOnlineResponse.Result ar : arOnlineList) {
+                        onlineArray.add(ar.getArOnline());
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                            onlineArray);
+                    spinnerOnline.setAdapter(rateSpinnerAdapter);
+
+                    spinnerOnline.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            //fix this when api call ready
+                            onlineId = String.valueOf(arOnlineList.get(position).getCoreId());
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+                }
+            }.execute();
+
+
         }
 
-        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-                onlineArray);
-        spinnerOnline.setAdapter(rateSpinnerAdapter);
 
-        spinnerOnline.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //fix this when api call ready
-                onlineId = String.valueOf(arOnlineList.get(position).getCoreId());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     private void setupCreditCardSpinner() {
-        List<String> ccArray = new ArrayList<>();
+        final List<String> ccArray = new ArrayList<>();
         if (creditCardList != null) {
-            for (FetchCreditCardResponse.Result cc : creditCardList) {
-                ccArray.add(cc.getCreditCard());
-            }
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    for (FetchCreditCardResponse.Result cc : creditCardList) {
+                        ccArray.add(cc.getCreditCard());
+
+
+                        Log.d("DEDEDE", cc.getCreditCard());
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    CustomSpinnerAdapter cardSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                            ccArray);
+                    spinnerCreditCard.setAdapter(cardSpinnerAdapter);
+
+                    spinnerCreditCard.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            //fix this when api call ready
+                            cardTypeId = String.valueOf(creditCardList.get(position).getCoreId());
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+                }
+            }.execute();
+
+
         }
 
-        CustomSpinnerAdapter cardSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-                ccArray);
-        spinnerCreditCard.setAdapter(cardSpinnerAdapter);
 
-        spinnerCreditCard.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //fix this when api call ready
-                cardTypeId = String.valueOf(creditCardList.get(position).getCoreId());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     @Override
@@ -948,27 +1017,42 @@ public abstract class PaymentDialog extends BaseDialog  {
         TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
         final List<FetchCompanyUserResponse.Result> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), companyUser.getType());
 
-        List<String> userArray = new ArrayList<>();
-        for (FetchCompanyUserResponse.Result res : userList) {
-            userArray.add(res.getName());
-        }
+        final List<String> userArray = new ArrayList<>();
 
-        CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-                userArray);
-        spinnerEmplyeeSelection.setAdapter(userAdapter);
-
-        spinnerEmplyeeSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                guestInfoEmployeeId = String.valueOf(userList.get(position).getUsername());
-                guestInfoEmployeeName = String.valueOf(userList.get(position).getName());
+            protected Void doInBackground(Void... voids) {
+                for (FetchCompanyUserResponse.Result res : userList) {
+                    userArray.add(res.getName());
+                }
+                return null;
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                        userArray);
+                spinnerEmplyeeSelection.setAdapter(userAdapter);
 
+                spinnerEmplyeeSelection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        guestInfoEmployeeId = String.valueOf(userList.get(position).getUsername());
+                        guestInfoEmployeeName = String.valueOf(userList.get(position).getName());
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
-        });
+        }.execute();
+
+
+
+
     }
 
     private void setRoomBoySpinner() {
@@ -976,26 +1060,41 @@ public abstract class PaymentDialog extends BaseDialog  {
         TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
         final List<FetchCompanyUserResponse.Result> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), companyUser.getType());
 
-        List<String> userArray = new ArrayList<>();
-        for (FetchCompanyUserResponse.Result res : userList) {
-            userArray.add(res.getName());
-        }
+        final List<String> userArray = new ArrayList<>();
 
-        CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-                userArray);
-        spinnerRoomBoy.setAdapter(userAdapter);
-
-        spinnerRoomBoy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                empId = String.valueOf(userList.get(position).getUserId());
+            protected Void doInBackground(Void... voids) {
+                for (FetchCompanyUserResponse.Result res : userList) {
+                    userArray.add(res.getName());
+                }
+                return null;
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                CustomSpinnerAdapter userAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                        userArray);
+                spinnerRoomBoy.setAdapter(userAdapter);
 
+                spinnerRoomBoy.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        empId = String.valueOf(userList.get(position).getUserId());
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
-        });
+        }.execute();
+
+
+
+
     }
 
     private void setPostedPaymentSwipe() {

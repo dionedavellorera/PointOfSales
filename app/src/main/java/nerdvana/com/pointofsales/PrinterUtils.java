@@ -71,7 +71,7 @@ public class PrinterUtils {
             filler += (maxColumnDivideTwo - partTwo.length());
         }
         finalString = (partOne.length() >= maxColumnDivideTwo ? partOne.substring(0, maxColumnDivideTwo) : partOne) + repeat(" ", filler) + (partTwo.length() >= maxColumnDivideTwo ? partTwo.substring(0, maxColumnDivideTwo) : partTwo);
-        Log.d("MYSTRING", finalString);
+//        Log.d("MYSTRING", finalString);
 
         return finalString;
     }

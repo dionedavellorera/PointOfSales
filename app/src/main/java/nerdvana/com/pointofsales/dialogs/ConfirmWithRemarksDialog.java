@@ -90,6 +90,8 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
 
             }
         });
+
+        setCancelable(false);
     }
 
     public abstract void save(String remarks);

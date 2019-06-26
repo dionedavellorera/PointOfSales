@@ -100,11 +100,22 @@
                     android:padding="10dp"
                     android:gravity="center_vertical"
                     android:text="time"
-                    android:layout_alignParentRight="true"
+                    android:layout_toLeftOf="@id/toggleTheme"
                     android:textColor="@color/colorWhite"
                     android:id="@+id/timer"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent" />
+
+                <Switch
+                    android:padding="10dp"
+                    android:gravity="center_vertical"
+                    android:layout_alignParentRight="true"
+                    android:textColor="@color/colorWhite"
+                    android:id="@+id/toggleTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

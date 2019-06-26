@@ -123,6 +123,9 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                     }
                 }
             } else {
+
+                Log.d("TTTTT", bookedList.get(0).getRoom().getArea().getPrinterPath());
+
                 printer.connect("TCP:" + bookedList.get(0).getRoom().getArea().getPrinterPath(), Printer.PARAM_DEFAULT);
             }
 
@@ -183,6 +186,10 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, "QTY   Description         Amount", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+
         for (PrintSoaResponse.Post soaTrans : bookedList.get(0).getTransaction().getPost()) {
 
             String qty = "";
@@ -236,7 +243,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                     context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         }
-
                     }
                 }
             }

@@ -30,10 +30,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.Space;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -178,6 +180,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private List<PrintJobModel> myPrintJobs;
 
 
+    RoomListViewDialog roomListViewDialog;
+
     RoomTableModel selected;
 
     private LeftFrameFragment preLoginLeftFrameFragment;
@@ -209,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private boolean doubleBackToExitPressedOnce;
     private Handler mHandler = new Handler();
     private DialogProgressBar dialogProgressBar;
-
+    private Switch toggleTheme;
 
     private Intent timerIntent;
 
@@ -224,7 +228,20 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         mainContainerBg = findViewById(R.id.mainContainerBg);
         separator = findViewById(R.id.separator);
         separator2 = findViewById(R.id.separator2);
+        toggleTheme = findViewById(R.id.toggleTheme);
 
+        if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.THEME_SELECTED).isEmpty()) {
+            if(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("dark")) {
+                toggleTheme.setChecked(true);
+            }
+        }
+        toggleTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferenceManager.saveString(getApplicationContext(), isChecked ? "dark" : "light", ApplicationConstants.THEME_SELECTED);
+                changeTheme();
+            }
+        });
 
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))) {
             SharedPreferenceManager.saveString(MainActivity.this, "32", ApplicationConstants.MAX_COLUMN_COUNT);
@@ -1145,15 +1162,32 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 break;
             case 125: //ROOM LIST VIEW POPUP
-                RoomListViewDialog roomListViewDialog = new RoomListViewDialog(MainActivity.this) {
-                    @Override
-                    public void instransitClicked(List<FetchRoomResponse.Result> data) {
-                        BusProvider.getInstance().post(new PrintModel("",
-                                "",
-                                "IN_TRANSIT",
-                                GsonHelper.getGson().toJson(data)));
-                    }
-                };
+                if (roomListViewDialog == null) {
+                    roomListViewDialog = new RoomListViewDialog(MainActivity.this) {
+                        @Override
+                        public void instransitClicked(List<FetchRoomResponse.Result> data) {
+                            BusProvider.getInstance().post(new PrintModel("",
+                                    "",
+                                    "IN_TRANSIT",
+                                    GsonHelper.getGson().toJson(data)));
+                        }
+                    };
+
+                    roomListViewDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            roomListViewDialog = null;
+                        }
+                    });
+
+                    roomListViewDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            roomListViewDialog = null;
+                        }
+                    });
+                }
+
                 if (!roomListViewDialog.isShowing()) roomListViewDialog.show();
                 break;
             case 999: //rooms

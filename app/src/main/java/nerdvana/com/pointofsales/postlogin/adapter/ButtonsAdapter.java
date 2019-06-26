@@ -117,6 +117,12 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     ((ButtonsViewHolder)holder).imageUrl
             );
         }
+
+        if (buttonsModelList.get(i).isEnabled()) {
+            ((ButtonsViewHolder)holder).rootView.setEnabled(true);
+        } else {
+            ((ButtonsViewHolder)holder).rootView.setEnabled(false);
+        }
     }
 
 
