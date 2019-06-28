@@ -63,6 +63,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
     private TextView remarks;
     private TextView wakeUpCall;
     private TextView checkInTime;
+    private TextView guestCountValue;
 
     String finalCheckInDateTime = ""; //24hrs time 23:23:00
     String finalCheckInDate = "";
@@ -124,6 +125,10 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
         checkInTime = findViewById(R.id.checkInTimeValue);
         checkInTime.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString())));
+
+
+        guestCountValue = findViewById(R.id.guestCountValue);
+        guestCountValue.setText(fetchRoomPendingResult.getBooked().get(0).getTransaction().getPersonCount());
 
         updateGuestInfo = findViewById(R.id.updateGuestInfo);
 

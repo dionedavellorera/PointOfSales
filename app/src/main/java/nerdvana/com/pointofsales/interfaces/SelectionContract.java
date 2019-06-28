@@ -4,4 +4,5 @@ import nerdvana.com.pointofsales.model.RoomTableModel;
 
 public interface SelectionContract {
     void listClicked(RoomTableModel selectedItem);
+    void listLongClicked(RoomTableModel selectedItem);
 }

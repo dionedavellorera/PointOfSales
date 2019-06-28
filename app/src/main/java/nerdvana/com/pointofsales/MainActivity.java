@@ -571,15 +571,22 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //    }
 
     private void requestRoomStatusList() {
-        List<RoomStatusEntity> list = RoomStatusEntity.listAll(RoomStatusEntity.class);
-        if (list.size() < 1) {
-            BusProvider.getInstance().post(new FetchRoomStatusRequest());
-        }
+
+        BusProvider.getInstance().post(new FetchRoomStatusRequest());
+
+
+//        List<RoomStatusEntity> list = RoomStatusEntity.listAll(RoomStatusEntity.class);
+//        if (list.size() < 1) {
+//            BusProvider.getInstance().post(new FetchRoomStatusRequest());
+//        }
     }
 
     @Subscribe
     public void onReceiveRoomStatusList(FetchRoomStatusResponse fetchRoomStatusResponse) {
-        new RoomStatusAsync(fetchRoomStatusResponse.getResult()).execute();
+//        new RoomStatusAsync(fetchRoomStatusResponse.getResult()).execute();
+
+        SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(fetchRoomStatusResponse.getResult()), ApplicationConstants.ROOM_STATUS_JSON);
+
     }
 
     @Override

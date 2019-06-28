@@ -114,6 +114,15 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int i) {
         final RoomTableModel productsModel = roomsFilteredList.get(i);
+
+        ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                selectionContract.listLongClicked(productsModel);
+                return false;
+            }
+        });
+
         ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

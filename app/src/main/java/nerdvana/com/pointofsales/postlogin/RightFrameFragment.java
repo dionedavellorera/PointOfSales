@@ -379,6 +379,11 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 //        BusProvider.getInstance().post(new FragmentNotifierModel(selectedItem.getName()));
     }
 
+    @Override
+    public void listLongClicked(RoomTableModel selectedItem) {
+
+    }
+
 //    @Override
 //    public void listClicked(String input) {
 //        //notifies leftfragment that an area is clicked and updates the ui

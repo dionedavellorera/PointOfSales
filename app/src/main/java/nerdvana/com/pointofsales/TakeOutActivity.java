@@ -154,6 +154,11 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         finish();
     }
 
+    @Override
+    public void listLongClicked(RoomTableModel selectedItem) {
+
+    }
+
     private void setRoomsTableAdapter() {
         roomsTablesAdapter = new RoomsTablesAdapter(
                 new ArrayList<RoomTableModel>(),

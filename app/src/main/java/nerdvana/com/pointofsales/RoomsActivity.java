@@ -14,16 +14,24 @@ import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.google.gson.reflect.TypeToken;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.adapters.RoomFilterAdapter;
+import nerdvana.com.pointofsales.api_requests.ChangeRoomStatusRequest;
+import nerdvana.com.pointofsales.api_requests.EditGuestCountRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
+import nerdvana.com.pointofsales.api_responses.ChangeRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.EditGuestCountResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.SpacesItemDecoration;
+import nerdvana.com.pointofsales.dialogs.ChangeRoomStatusDialog;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.RoomFilterContract;
@@ -32,9 +40,13 @@ import nerdvana.com.pointofsales.model.FilterOptionModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
 import okhttp3.internal.Util;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         SelectionContract, RoomFilterContract {
+    ChangeRoomStatusDialog changeRoomStatusDialog;
 
     private CoordinatorLayout rootView;
 
@@ -57,6 +69,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         searchView = findViewById(R.id.search);
         rootView = findViewById(R.id.rootView);
         allowedRoomStatusList = new ArrayList<>();
+
 
         allowedRoomStatusList.add(RoomConstants.CLEAN);
         allowedRoomStatusList.add(RoomConstants.DIRTY);
@@ -159,6 +172,42 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     }
 
+    @Override
+    public void listLongClicked(RoomTableModel selectedItem) {
+        TypeToken<List<FetchRoomStatusResponse.Result>> areaToken = new TypeToken<List<FetchRoomStatusResponse.Result>>() {};
+        List<FetchRoomStatusResponse.Result> resultList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.ROOM_STATUS_JSON), areaToken.getType());
+        if (resultList != null) {
+            changeRoomStatusDialog = new ChangeRoomStatusDialog(RoomsActivity.this, resultList, String.valueOf(selectedItem.getRoomId())) {
+                @Override
+                public void changeStatus(ChangeRoomStatusRequest changeRoomStatusRequest) {
+                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                    Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(changeRoomStatusRequest.getMapValue());
+                    request.enqueue(new Callback<ChangeRoomStatusResponse>() {
+                        @Override
+                        public void onResponse(Call<ChangeRoomStatusResponse> call, Response<ChangeRoomStatusResponse> response) {
+                            if (response.body().getStatus() == 1) {
+                                setRoomsTableAdapter();
+                                sendRoomListRequest();
+                                setRoomFilter();
+                                changeRoomStatusDialog.dismiss();
+                            } else {
+                                Utils.showDialogMessage(RoomsActivity.this, response.body().getMessage(), "Information");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ChangeRoomStatusResponse> call, Throwable t) {
+
+                        }
+                    });
+                }
+            };
+            changeRoomStatusDialog.show();
+        } else {
+            Utils.showDialogMessage(RoomsActivity.this, "Room status empty", "Information");
+        }
+    }
+
     private void sendRoomListRequest() {
         refreshRoom.setRefreshing(true);
         BusProvider.getInstance().post(new FetchRoomRequest());
@@ -253,4 +302,14 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         });
 
     }
+
+//    ChangeRoomStatusRequest changeRoomStatusRequest = new ChangeRoomStatusRequest(
+//            previousPersonCount,
+//            value.getText().toString(),
+//            roomId,
+//            remarks,
+//            employeeId);
+//
+//    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//    Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(changeRoomStatusRequest.getMapValue());
 }

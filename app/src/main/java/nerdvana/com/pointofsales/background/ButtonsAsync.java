@@ -50,6 +50,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                 buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
                 buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",24));
                 buttonsModelList.add(new ButtonsModel(126,"FOC", "",24));
+                buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",3));
                 break;
         }
 

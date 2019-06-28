@@ -133,6 +133,7 @@ import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.AlertYesNo;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
+import nerdvana.com.pointofsales.dialogs.AddGuestDialog;
 import nerdvana.com.pointofsales.dialogs.CheckInDialog;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
@@ -210,7 +211,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private boolean hasExistingRequest = false;
 
 
-
+    AddGuestDialog addGuestDialog;
     FreebiesDialog freebiesDialog;
 
     private String kitchenPath = "";
@@ -1290,6 +1291,41 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
 
         switch (clickedItem.getId()) {
+            case 131: //ADD GUEST COUNT
+                if (selectedRoom != null) {
+                    if (addGuestDialog == null) {
+                        addGuestDialog = new AddGuestDialog(getActivity(),
+                                fetchRoomPendingResult.getBooked().get(0).getTransaction().getPersonCount(),
+                                String.valueOf(selectedRoom.getRoomId())) {
+                            @Override
+                            public void editGuestSucess() {
+                                if (selectedRoom != null) {
+                                    Utils.showDialogMessage(getActivity(), "Guest count edit success", "Information");
+                                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                    dismiss();
+                                }
+                            }
+                        };
+
+                        addGuestDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                addGuestDialog = null;
+                            }
+                        });
+
+                        addGuestDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                addGuestDialog = null;
+                            }
+                        });
+
+                        if (!addGuestDialog.isShowing()) addGuestDialog.show();
+                    }
+                }
+
+                break;
             case 130: //CHECK FOR ROOM FREEBIES / ROOM BUNDLE
                 if (fetchRoomPendingResult != null) {
                     if (fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList().size() > 0) {
@@ -4841,7 +4877,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void checkoutRoom(String roomId, String controlNumber, String roomBoyId) {
-        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
+
+        Log.d("CHECKOUT_VAL", new CheckOutRequest(roomId, controlNumber, roomBoyId).toString());
+
+//        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
     }
 
     @Subscribe

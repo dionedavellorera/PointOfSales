@@ -766,6 +766,9 @@ public class FetchRoomPendingResponse {
     }
 
     public class RoomTransaction {
+        @SerializedName("person_count")
+        @Expose
+        private String personCount;
         @SerializedName("freebies")
         @Expose
         private List<Freebies> freebiesList;
@@ -877,6 +880,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+
+        public String getPersonCount() {
+            return personCount;
+        }
+
+        public void setPersonCount(String personCount) {
+            this.personCount = personCount;
+        }
 
         public List<Freebies> getFreebiesList() {
             return freebiesList;
@@ -1316,6 +1327,7 @@ public class FetchRoomPendingResponse {
 
 
 
+
 //        public String getStatus() {
 //            return status;
 //        }
@@ -1323,6 +1335,8 @@ public class FetchRoomPendingResponse {
 //        public void setStatus(String status) {
 //            this.status = status;
 //        }
+
+
 
 
         public Customer getCustomer() {

@@ -8,6 +8,7 @@ import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
+import nerdvana.com.pointofsales.api_responses.ChangeRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.CheckEndOfDayResponse;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
@@ -18,6 +19,7 @@ import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.CheckXReadResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.DiscountResponse;
+import nerdvana.com.pointofsales.api_responses.EditGuestCountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -356,4 +358,12 @@ public interface IUsers {
     @POST("fetchRoomRatePriceId")
     @FormUrlEncoded
     Call<FetchRoomRatePriceIdResponse> fetchRoomRatePriceId(@FieldMap Map<String, String> params);
+
+    @POST("addPerson")
+    @FormUrlEncoded
+    Call<EditGuestCountResponse> editGuestCount(@FieldMap Map<String, String> params);
+
+    @POST("changeRoomStatus")
+    @FormUrlEncoded
+    Call<ChangeRoomStatusResponse> changeRoomStatus(@FieldMap Map<String, String> params);
 }

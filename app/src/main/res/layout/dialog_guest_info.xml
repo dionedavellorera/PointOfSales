@@ -201,6 +201,7 @@
                     android:layout_height="wrap_content"
                     android:text="CHECK IN TIME"/>
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/checkInTimeValue"
                     android:layout_margin="10dp"
                     android:layout_width="match_parent"
@@ -214,11 +215,26 @@
                     android:layout_height="wrap_content"
                     android:text="WAKE UP CALL"/>
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/wakeUpCallValue"
                     android:layout_margin="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="08:00 PM"/>
+
+                <TextView
+                    android:layout_margin="10dp"
+                    android:textSize="14sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TOTAL NO OF GUEST"/>
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/guestCountValue"
+                    android:layout_margin="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1"/>
 
 
                 <Button
