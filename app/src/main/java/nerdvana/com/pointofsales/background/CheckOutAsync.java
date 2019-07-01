@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.epson.epos2.Epos2Exception;
@@ -26,6 +27,7 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResp
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
 import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
@@ -392,24 +394,33 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 }
             }
 
-
+            boolean hasSpecial = false;
+            List<SeniorReceiptCheckoutModel> seniorReceiptList = new ArrayList<>();
             if (toList1.getDiscountsList().size() > 0) {
                 addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
 //                        addTextToPrinter(printer, d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                    if (d.getId().equalsIgnoreCase("0")) { //MANUAL
+
+                    if (TextUtils.isEmpty(d.getVoid_by())) {
+                        if (d.getId().equalsIgnoreCase("0")) { //MANUAL
 //                        addTextToPrinter(printer, "    " + d.getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                    } else {
-                        if (d.getInfo() != null) {
-                            if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        d.getDiscountType(),
-                                        "NA",
-                                        40,
-                                        2,
-                                        context)
-                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                            } else {
+                        } else {
+
+                            if (d.getInfo() != null) {
+
+                                if (d.getDiscountTypes().getIsSpecial() == 1) {
+                                    hasSpecial = true;
+                                    seniorReceiptList.add(
+                                            new SeniorReceiptCheckoutModel(
+                                                    d.getInfo().getName() == null ? "" : d.getInfo().getName(),
+                                                    d.getInfo().getCardNo() == null ? "" : d.getInfo().getCardNo(),
+                                                    d.getInfo().getAddress() == null ? "" : d.getInfo().getAddress(),
+                                                    d.getInfo().getTin() == null ? "" : d.getInfo().getTin(),
+                                                    d.getInfo().getBusinessStyle() == null ? "" : d.getInfo().getBusinessStyle()
+                                            )
+                                    );
+
+                                }
 
                                 if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -421,41 +432,90 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 } else {
 
-                                    if (d.getInfo().getCardNo() != null) {
+                                    if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
                                         addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                                 d.getDiscountType(),
-                                                d.getInfo().getCardNo().toUpperCase(),
+                                                "NA",
                                                 40,
                                                 2,
                                                 context)
                                                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    } else {
+
+
+                                        if (d.getInfo().getCardNo() != null) {
+                                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                    d.getDiscountType(),
+                                                    d.getInfo().getCardNo().toUpperCase(),
+                                                    40,
+                                                    2,
+                                                    context)
+                                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        }
+
+                                        if (d.getInfo().getName() != null) {
+                                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                    "NAME",
+                                                    d.getInfo().getName().toUpperCase(),
+                                                    40,
+                                                    2,
+                                                    context)
+                                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        }
                                     }
 
-                                    if (d.getInfo().getName() != null) {
-                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                                "NAME",
-                                                d.getInfo().getName().toUpperCase(),
-                                                40,
-                                                2,
-                                                context)
-                                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                    }
+
                                 }
 
-
                             }
-
                         }
                     }
-
                 }
 
             }
 
+            if (hasSpecial) {
+                for (SeniorReceiptCheckoutModel sr : seniorReceiptList) {
+                    addPrinterSpace(1);
+                    if (!TextUtils.isEmpty(sr.getName())) {
+                        addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    } else {
+                        addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
+                    if (!TextUtils.isEmpty(sr.getScPwdId())) {
+                        addTextToPrinter(printer, "SC/PWD ID:"+sr.getScPwdId(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    } else {
+                        addTextToPrinter(printer, "SC/PWD ID:______________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
+
+                    if (toList1.getCustomer().getAddress() != null) {
+                        addTextToPrinter(printer, "ADDRESS:"+sr.getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    } else {
+                        addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
+                    if (toList1.getCustomer().getTin() != null) {
+                        addTextToPrinter(printer, "TIN#:" +sr.getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    } else {
+                        addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
+                    if (toList1.getCustomer().getBusinessStyle() != null) {
+                        addTextToPrinter(printer, "BUSINESS STYLE:"+ sr.getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                        addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    } else {
+                        addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
+                    addPrinterSpace(1);
+
+                }
+            }
+
 
             addPrinterSpace(1);
-
-
 
             if (toList1.getCustomer() != null) {
                 if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
@@ -469,13 +529,20 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     }
 
                     if (toList1.getCustomer().getTin() != null) {
-                        addTextToPrinter(printer, toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                        addTextToPrinter(printer, "TIN#:"+toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     } else {
                         addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     }
 
+                    if (toList1.getCustomer().getBusinessStyle() != null) {
+                        addTextToPrinter(printer, "BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                        addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    } else {
+                        addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
 
-                    addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+
+//                    addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     addPrinterSpace(1);
 
                 } else {

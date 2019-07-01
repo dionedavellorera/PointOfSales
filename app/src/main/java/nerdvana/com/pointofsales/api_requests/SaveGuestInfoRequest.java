@@ -12,7 +12,7 @@ public class SaveGuestInfoRequest extends BaseRequest {
 
     public SaveGuestInfoRequest(String emp, String guestName,
                                 String guestAddress, String guestTin,
-                                String controlNumber) {
+                                String controlNumber, String businessStyle) {
         mapValue = new HashMap<>();
 
         mapValue.put("emp_id", emp);
@@ -20,6 +20,7 @@ public class SaveGuestInfoRequest extends BaseRequest {
         mapValue.put("name", guestName);
         mapValue.put("address", guestAddress);
         mapValue.put("tin", guestTin);
+        mapValue.put("business_style", businessStyle);
 
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);

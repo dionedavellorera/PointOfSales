@@ -61,6 +61,8 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
     private EditText etSeniorPwdName;
     private EditText etSeniorPwdAddress;
     private EditText etSeniorPwdCardNumber;
+    private EditText etSeniorTin;
+    private EditText etSeniorBusinessStyle;
 
     private Context context;
     private Button submit;
@@ -89,6 +91,8 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
         etSeniorPwdName = findViewById(R.id.seniorPwdName);
         etSeniorPwdAddress = findViewById(R.id.seniorPwdAddress);
         etSeniorPwdCardNumber = findViewById(R.id.seniorPwdCardNumber);
+        etSeniorTin = findViewById(R.id.seniorTin);
+        etSeniorBusinessStyle = findViewById(R.id.seniorBusinessStyle);
 
         formCard = findViewById(R.id.formCard);
         formSpecial = findViewById(R.id.formSpecial);
@@ -252,7 +256,9 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         "",
                                         "",
                                         controlNumber,
-                                        roomId);
+                                        roomId,
+                                        "",
+                                        "");
                         break;
                     case "employee":
                         autoDiscountRequest =
@@ -265,7 +271,9 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         "",
                                         "",
                                         controlNumber,
-                                        roomId);
+                                        roomId,
+                                        "",
+                                        "");
 
                         Log.d("ERQREQREQ", autoDiscountRequest.toString());
 
@@ -281,9 +289,13 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         etSeniorPwdName.getText().toString(),
                                         etSeniorPwdAddress.getText().toString(),
                                         controlNumber,
-                                        roomId);
+                                        roomId,
+                                        etSeniorTin.getText().toString(),
+                                        etSeniorBusinessStyle.getText().toString());
                         break;
                 }
+
+                Log.d("DISC_DATA", autoDiscountRequest.toString());
 
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                 Call<AutoDiscountResponse> request = iUsers.sendAutoDiscount(autoDiscountRequest.getMapValue());

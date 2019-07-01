@@ -1593,6 +1593,9 @@ public class PrintSoaResponse {
     }
 
     public class Discounts {
+        @SerializedName("voided_at")
+        @Expose
+        private String voidedAt;
         @SerializedName("discount_type")
         @Expose
         private String discountType;
@@ -1606,6 +1609,14 @@ public class PrintSoaResponse {
         @SerializedName("discount_reason")
         @Expose
         private DiscountReason discountReason;
+
+        public String getVoidedAt() {
+            return voidedAt;
+        }
+
+        public void setVoidedAt(String voidedAt) {
+            this.voidedAt = voidedAt;
+        }
 
         public DiscountReason getDiscountReason() {
             return discountReason;

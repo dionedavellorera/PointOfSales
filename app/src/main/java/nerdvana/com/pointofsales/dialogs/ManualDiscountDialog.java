@@ -135,7 +135,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
                                         employeeId,
                                         discountReasonId,
                                         controlNumber,
-                                        roomId);
+                                        roomId, "", "");
 
 
                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);

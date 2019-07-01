@@ -10,7 +10,8 @@ public class AutoDiscountRequest extends BaseRequest{
                                String discountedBy, String empId,
                                String cardNumber, String name,
                                String address, String controlNumber,
-                               String roomId) {
+                               String roomId, String tin,
+                               String businessStyle) {
         mapValue = new HashMap<>();
 
         mapValue.put("post", "[]");
@@ -27,6 +28,9 @@ public class AutoDiscountRequest extends BaseRequest{
         mapValue.put("address", address);
         mapValue.put("control_no", controlNumber);
         mapValue.put("room_id", roomId);
+
+        mapValue.put("tin", tin);
+        mapValue.put("business_style", businessStyle);
 
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);

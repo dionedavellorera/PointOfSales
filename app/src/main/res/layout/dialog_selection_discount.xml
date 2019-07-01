@@ -114,6 +114,30 @@
                 android:layout_height="wrap_content"
                 android:hint="Card Number"/>
         </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_below="@+id/tilSeniorPwdCardNumber"
+            android:id="@+id/tilTin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/seniorTin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tin #"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_below="@+id/tilTin"
+            android:id="@+id/tilSeniorBusinessStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/seniorBusinessStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Business style"/>
+        </android.support.design.widget.TextInputLayout>
     </RelativeLayout>
 
 

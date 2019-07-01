@@ -16,7 +16,8 @@ public class DiscountRequest extends BaseRequest {
     public DiscountRequest(String post, String remarks,
                            String isPercentage, String value,
                            String empId, String discountReasonId,
-                           String controlNumber, String roomId) {
+                           String controlNumber, String roomId,
+                           String businessStyle, String tin) {
         mapValue = new HashMap<>();
 
         mapValue.put("post", post);
@@ -33,6 +34,9 @@ public class DiscountRequest extends BaseRequest {
         mapValue.put("address", "");
         mapValue.put("control_no", controlNumber);
         mapValue.put("room_id", roomId);
+
+        mapValue.put("business_style", businessStyle);
+        mapValue.put("tin", roomId);
 
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);

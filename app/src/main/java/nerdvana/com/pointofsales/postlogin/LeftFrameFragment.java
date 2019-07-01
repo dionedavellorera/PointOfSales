@@ -2934,7 +2934,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         new DiscountSelectionDialog(getContext(),
                                 getActivity(),
                                 fetchRoomPendingResult,
-                                "",
+                                selectedRoom.getControlNo(),
                                 String.valueOf(selectedRoom.getRoomId()),
                                 forVoidDiscountModels,
                                 data,
@@ -4067,7 +4067,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     advancePayment = r.getTransaction().getAdvance();
                     discountPayment = r.getTransaction().getDiscount();
                     subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
-                    total.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance - (advancePayment + discountPayment))));
+                    total.setText(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : totalBalance - (advancePayment + discountPayment))));
                     discount.setText(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)));
                     deposit.setText(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {

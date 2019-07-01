@@ -312,20 +312,12 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
             for (PrintSoaResponse.Discounts d : bookedList.get(0).getTransaction().getDiscounts()) {
 //                        addTextToPrinter(printer, d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                if (d.getDiscountTypeId().equalsIgnoreCase("0")) { //MANUAL
-                    addTextToPrinter(printer, "    " + d.getDiscountReason().getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                } else {
-                    if (d.getInfo() != null) {
-                        if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
-                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                    d.getDiscountType(),
-                                    "NA",
-                                    40,
-                                    2,
-                                    context)
-                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                        } else {
 
+                if (TextUtils.isEmpty(d.getVoidedAt())) {
+                    if (d.getDiscountTypeId().equalsIgnoreCase("0")) { //MANUAL
+                        addTextToPrinter(printer, "    " + d.getDiscountReason().getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    } else {
+                        if (d.getInfo() != null) {
                             if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         d.getDiscountType(),
@@ -336,33 +328,44 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             } else {
 
-                                if (d.getInfo().getCardNo() != null) {
+                                if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             d.getDiscountType(),
-                                            d.getInfo().getCardNo().toUpperCase(),
+                                            "NA",
                                             40,
                                             2,
                                             context)
                                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+
+                                    if (d.getInfo().getCardNo() != null) {
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                d.getDiscountType(),
+                                                d.getInfo().getCardNo().toUpperCase(),
+                                                40,
+                                                2,
+                                                context)
+                                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+
+
+                                    if (d.getInfo().getName() != null) {
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                "NAME",
+                                                d.getInfo().getName().toUpperCase(),
+                                                40,
+                                                2,
+                                                context)
+                                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                                    }
                                 }
 
 
-                                if (d.getInfo().getName() != null) {
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "NAME",
-                                            d.getInfo().getName().toUpperCase(),
-                                            40,
-                                            2,
-                                            context)
-                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-                                }
                             }
 
-
                         }
-
                     }
                 }
 

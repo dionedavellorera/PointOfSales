@@ -82,7 +82,6 @@ public class SocketManager {
                         if (data.getString("locale_id").equalsIgnoreCase("8")) {
                             BusProvider.getInstance().post(new UpdateDataModel("y"));
                         }
-                        Log.d("DATATEST", data.getString("locale_id"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

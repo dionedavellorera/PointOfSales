@@ -108,6 +108,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private RelativeLayout relGuestInfo;
 
     private EditText guestNameInput;
+    private EditText guestBusinessStyle;
     private EditText guestAddressInput;
     private EditText guestTinInput;
 
@@ -293,6 +294,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         spinnerForex = findViewById(R.id.spinnerForex);
         formGuestInfo = findViewById(R.id.formGuestInfo);
         guestNameInput = findViewById(R.id.guestNameInput);
+        guestBusinessStyle = findViewById(R.id.guestBusinessStyle);
         checkEmployee = findViewById(R.id.checkEmployee);
         spinnerEmplyeeSelection = findViewById(R.id.spinnerEmplyeeSelection);
         guestAddressInput = findViewById(R.id.guestAddressinput);
@@ -642,13 +644,13 @@ public abstract class PaymentDialog extends BaseDialog  {
                             }
                         }
 
-
                         if (isValid) {
                             submitGuestInfoData(isEmployee ? guestInfoEmployeeId : "",
                                     !isEmployee ?guestNameInput.getText().toString() : guestInfoEmployeeName,
                                     !isEmployee ? guestAddressInput.getText().toString() : "",
                                     !isEmployee ? guestTinInput.getText().toString() : "",
-                                    controlNumber);
+                                    controlNumber,
+                                    !isEmployee ? guestBusinessStyle.getText().toString() : "");
                         } else {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
@@ -754,14 +756,15 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
         totalPayment = normalPayment;
-        amountDue = totalBalance - (advancePayment + discountPayment);
+        amountDue = (totalBalance - (advancePayment + discountPayment)) <= 0 ? 0.00 : (totalBalance - (advancePayment + discountPayment));
         totalAmountDue.setText(String.valueOf(amountDue));
 
         amountToPay.setText(String.valueOf(amountDue));
         amountToPay.requestFocus();
-        totalChange = totalPayment - totalBalance;
+        totalChange = totalBalance - (advancePayment + discountPayment);
+//        totalChange = (totalPayment + advancePayment) - (totalBalance - discountPayment);
         if (Double.valueOf(totalChange) < 1) {
-            displayTotalChange.setText("0");
+            displayTotalChange.setText(String.valueOf(totalChange * -1));
         } else {
             displayTotalChange.setText(String.valueOf(totalChange));
         }
@@ -1126,9 +1129,13 @@ public abstract class PaymentDialog extends BaseDialog  {
         itemTouchhelper.attachToRecyclerView(listPostedPayments);
     }
 
-    private void submitGuestInfoData(String userId, final String gn, final String ga, final String gt, String controlNumber) {
+    private void submitGuestInfoData(String userId, final String gn,
+                                     final String ga, final String gt,
+                                     String controlNumber, String businessStyle) {
 
-        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, gn, ga, gt, controlNumber);
+        SaveGuestInfoRequest saveGuestInfoRequest = new SaveGuestInfoRequest(userId, gn,
+                ga, gt,
+                controlNumber, businessStyle);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<SaveGuestInfoResponse> request = iUsers.saveGuestInfo(saveGuestInfoRequest.getMapValue());
 
@@ -1139,7 +1146,6 @@ public abstract class PaymentDialog extends BaseDialog  {
                 guestName.setText(gn);
                 guestAddress.setText(ga);
                 guestTin.setText(gt);
-
                 Utils.showDialogMessage(act, "Guest info saved", "Information");
             }
 

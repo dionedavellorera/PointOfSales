@@ -1115,6 +1115,28 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("address")
         @Expose
         private String address;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("business_style")
+        @Expose
+        private String businessStyle;
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getBusinessStyle() {
+            return businessStyle;
+        }
+
+        public void setBusinessStyle(String businessStyle) {
+            this.businessStyle = businessStyle;
+        }
 
         public void setCardNo(String cardNo) {
             this.cardNo = cardNo;
@@ -1142,8 +1164,36 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
 
+    public class DiscountTypes {
+        @SerializedName("discount_card")
+        @Expose
+        private String discountCard;
+        @SerializedName("is_special")
+        @Expose
+        private int isSpecial;
+
+        public String getDiscountCard() {
+            return discountCard;
+        }
+
+        public void setDiscountCard(String discountCard) {
+            this.discountCard = discountCard;
+        }
+
+        public int getIsSpecial() {
+            return isSpecial;
+        }
+
+        public void setIsSpecial(int isSpecial) {
+            this.isSpecial = isSpecial;
+        }
+    }
+
 
     public class Discounts {
+        @SerializedName("discount_types")
+        @Expose
+        private DiscountTypes discountTypes;
         @SerializedName("info")
         @Expose
         private Info info;
@@ -1159,6 +1209,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("discount_amount")
         @Expose
         private Double discountAmount;
+
+        public DiscountTypes getDiscountTypes() {
+            return discountTypes;
+        }
+
+        public void setDiscountTypes(DiscountTypes discountTypes) {
+            this.discountTypes = discountTypes;
+        }
 
         public Info getInfo() {
             return info;
@@ -1532,6 +1590,17 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("address")
         @Expose
         private String address;
+        @SerializedName("business_style")
+        @Expose
+        private String businessStyle;
+
+        public String getBusinessStyle() {
+            return businessStyle;
+        }
+
+        public void setBusinessStyle(String businessStyle) {
+            this.businessStyle = businessStyle;
+        }
 
         public String getCustomer() {
             return customer;
