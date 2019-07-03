@@ -46,6 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:id="@+id/cardNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,6 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:id="@+id/seniorPwdName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -97,6 +101,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:id="@+id/seniorPwdAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,6 +115,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:id="@+id/seniorPwdCardNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -121,6 +129,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:id="@+id/seniorTin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,6 +143,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:id="@+id/seniorBusinessStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

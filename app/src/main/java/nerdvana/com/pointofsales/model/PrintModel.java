@@ -13,6 +13,15 @@ public class PrintModel {
     private String kitchenPath;
     private String printerPath;
 
+    private int newQty;
+    public PrintModel(String message, String roomNumber, String type, String data, int newQty) {
+        this.message = message;
+        this.roomNumber = roomNumber;
+        this.type = type;
+        this.data = data;
+        this.newQty = newQty;
+    }
+
     public PrintModel(String message, String roomNumber, String type, String data) {
         this.message = message;
         this.roomNumber = roomNumber;
@@ -50,6 +59,10 @@ public class PrintModel {
         this.roomType = roomType;
         this.dutyManager = dutyManager;
         this.remarks = remarks;
+    }
+
+    public int getNewQty() {
+        return newQty;
     }
 
     public String getKitchenPath() {

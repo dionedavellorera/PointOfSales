@@ -116,6 +116,7 @@ import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.background.BackOutAsync;
 import nerdvana.com.pointofsales.background.CashNReconcileAsync;
+import nerdvana.com.pointofsales.background.ChangeQtyAsync;
 import nerdvana.com.pointofsales.background.ChangeWakeUpCallAsync;
 import nerdvana.com.pointofsales.background.CheckInAsync;
 import nerdvana.com.pointofsales.background.CheckOutAsync;
@@ -695,6 +696,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
         }
         switch (printModel.getType()) {
+            case "CHANGE_QTY":
+                willExecutGlobalPrint = false;
+                addAsync(new ChangeQtyAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "change_qty");
+                break;
             case "FRANCHISE_OR":
                 willExecutGlobalPrint = false;
                 addAsync(new FranchiseCheckoutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "franchise_or");
@@ -1562,6 +1567,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void runTask(String taskName, AsyncTask asyncTask) {
         switch (taskName) {
+            case "change_qty":
+                ChangeQtyAsync changeQtyAsync = (ChangeQtyAsync) asyncTask;
+                changeQtyAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "franchise_or":
                 FranchiseCheckoutAsync franchiseCheckoutAsync = (FranchiseCheckoutAsync) asyncTask;
                 franchiseCheckoutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);

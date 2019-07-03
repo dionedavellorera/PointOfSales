@@ -1125,31 +1125,120 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.changeQty:
+                        final OpenPriceDialog openPriceDialog =
+                                new OpenPriceDialog(getActivity(),
+                                        itemSelected,
+                                        position,
+                                        itemSelected.isPosted(),
+                                        "qty") {
+                                    @Override
+                                    public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
+
+                                        if (type.equalsIgnoreCase("qty")) {
+                                            PasswordDialog pwd = new PasswordDialog(getActivity(), "999") {
+                                                @Override
+                                                public void passwordSuccess(String employeeId, String employeeName) {
+
+                                                    BusProvider.getInstance().post(new PrintModel(
+                                                            "",
+                                                            selectedRoom.getName(),
+                                                            "CHANGE_QTY",
+                                                            GsonHelper.getGson().toJson(cartItemList.get(position)),
+                                                            quantity));
+
+
+                                                    if (cartItemList.get(position).isPosted()) {
+                                                        cartItemList.get(position).setPosted(false);
+                                                        cartItemList.get(position).setUpdated(true);
+                                                        cartItemList.get(position).setForVoid(false);
+                                                    }
+                                                    cartItemList.get(position).setUnitPrice(newPrice);
+                                                    if (quantity != 0) {
+                                                        cartItemList.get(position).setQuantity(quantity);
+                                                    }
+                                                    cartItemList.get(position).setIsPriceChanged(1);
+                                                    if (checkoutAdapter != null) {
+                                                        checkoutAdapter.notifyItemChanged(position);
+                                                    }
+                                                    doSaveFunction();
+
+
+                                                    dismiss();
+                                                }
+
+                                                @Override
+                                                public void passwordFailed() {
+
+                                                }
+                                            };
+                                            pwd.show();
+
+
+
+                                        }
+//                                        else {
+//                                            if (cartItemList.get(position).isPosted()) {
+//                                                cartItemList.get(position).setPosted(false);
+//                                                cartItemList.get(position).setUpdated(true);
+//                                                cartItemList.get(position).setForVoid(false);
+//                                            }
+//                                            cartItemList.get(position).setUnitPrice(newPrice);
+//                                            if (quantity != 0) {
+//                                                cartItemList.get(position).setQuantity(quantity);
+//                                            }
+//                                            cartItemList.get(position).setIsPriceChanged(1);
+//                                            if (checkoutAdapter != null) {
+//                                                checkoutAdapter.notifyItemChanged(position);
+//                                            }
+//                                        }
+                                        dismiss();
+                                    }
+                                };
+                        openPriceDialog.show();
+                        break;
                     case R.id.voidItem:
                         doVoidFunction();
                         break;
                     case R.id.changePrice:
-                        final OpenPriceDialog openPriceDialog = new OpenPriceDialog(getActivity(), itemSelected, position, itemSelected.isPosted()) {
+                        final OpenPriceDialog openPriceDialog1 =
+                                new OpenPriceDialog(getActivity(),
+                                        itemSelected,
+                                        position,
+                                        itemSelected.isPosted(),
+                                        "price") {
                             @Override
-                            public void openPriceChangeSuccess(int quantity, Double newPrice, int position) {
-                                if (cartItemList.get(position).isPosted()) {
-                                    cartItemList.get(position).setPosted(false);
-                                    cartItemList.get(position).setUpdated(true);
-                                    cartItemList.get(position).setForVoid(false);
-                                }
-                                cartItemList.get(position).setUnitPrice(newPrice);
-                                if (quantity != 0) {
-                                    cartItemList.get(position).setQuantity(quantity);
-                                }
-                                cartItemList.get(position).setIsPriceChanged(1);
-                                if (checkoutAdapter != null) {
-                                    checkoutAdapter.notifyItemChanged(position);
-                                }
+                            public void openPriceChangeSuccess(int quantity, Double newPrice, int position, String type) {
 
+                                if (type.equalsIgnoreCase("qty")) {
+
+                                    BusProvider.getInstance().post(new PrintModel(
+                                            "",
+                                            selectedRoom.getName(),
+                                            "CHANGE_QTY",
+                                            GsonHelper.getGson().toJson(cartItemList.get(position)),
+                                            quantity));
+
+
+                                } else {
+                                    if (cartItemList.get(position).isPosted()) {
+                                        cartItemList.get(position).setPosted(false);
+                                        cartItemList.get(position).setUpdated(true);
+                                        cartItemList.get(position).setForVoid(false);
+                                    }
+                                    cartItemList.get(position).setUnitPrice(newPrice);
+                                    if (quantity != 0) {
+                                        cartItemList.get(position).setQuantity(quantity);
+                                    }
+                                    cartItemList.get(position).setIsPriceChanged(1);
+                                    if (checkoutAdapter != null) {
+                                        checkoutAdapter.notifyItemChanged(position);
+                                    }
+                                }
                                 dismiss();
                             }
                         };
-                        openPriceDialog.show();
+                        openPriceDialog1.show();
                         break;
                 }
                 return true;
@@ -1162,29 +1251,129 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.changeRoomPrice:
+                    case R.id.changeRoomQuantity:
+                        final OpenPriceDialog changeRoomPriceDialog =
+                                new OpenPriceDialog(
+                                        getActivity(),
+                                        itemSelected,
+                                        position,
+                                        itemSelected.isPosted(),
+                                        "qty") {
+                                    @Override
+                                    public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
-                        final OpenPriceDialog changeRoomPriceDialog = new OpenPriceDialog(getActivity(), itemSelected, position, itemSelected.isPosted()) {
+
+
+
+                                        if (type.equalsIgnoreCase("qty")) {
+
+                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(), "999") {
+                                                @Override
+                                                public void passwordSuccess(String employeeId, String employeeName) {
+
+                                                    BusProvider.getInstance().post(new PrintModel(
+                                                            "",
+                                                            selectedRoom.getName(),
+                                                            "CHANGE_QTY",
+                                                            GsonHelper.getGson().toJson(cartItemList.get(position)),
+                                                            quantity));
+
+
+                                                    if (cartItemList.get(position).isPosted()) {
+                                                        cartItemList.get(position).setPosted(false);
+                                                        cartItemList.get(position).setUpdated(true);
+                                                        cartItemList.get(position).setForVoid(false);
+                                                    }
+                                                    cartItemList.get(position).setUnitPrice(newPrice);
+                                                    if (quantity != 0) {
+                                                        cartItemList.get(position).setQuantity(quantity);
+                                                    }
+                                                    cartItemList.get(position).setIsPriceChanged(1);
+                                                    if (checkoutAdapter != null) {
+                                                        checkoutAdapter.notifyItemChanged(position);
+                                                    }
+
+                                                    doSaveFunction();
+
+
+                                                    dismiss();
+                                                }
+
+                                                @Override
+                                                public void passwordFailed() {
+
+                                                }
+                                            };
+                                            pwd1.show();
+
+
+                                        }
+
+//                                        else {
+//                                            if (cartItemList.get(position).isPosted()) {
+//                                                cartItemList.get(position).setPosted(false);
+//                                                cartItemList.get(position).setUpdated(true);
+//                                                cartItemList.get(position).setForVoid(false);
+//                                            }
+//                                            cartItemList.get(position).setUnitPrice(newPrice);
+//                                            if (quantity != 0) {
+//                                                cartItemList.get(position).setQuantity(quantity);
+//                                            }
+//                                            cartItemList.get(position).setIsPriceChanged(1);
+//                                            if (checkoutAdapter != null) {
+//                                                checkoutAdapter.notifyItemChanged(position);
+//                                            }
+//                                        }
+
+
+
+                                        dismiss();
+                                    }
+                                };
+                        changeRoomPriceDialog.show();
+
+
+                        break;
+                    case R.id.changeRoomPrice:
+                        final OpenPriceDialog changeRoomPriceDialog1 =
+                                new OpenPriceDialog(
+                                        getActivity(),
+                                        itemSelected,
+                                        position,
+                                        itemSelected.isPosted(),
+                                        "price") {
                             @Override
-                            public void openPriceChangeSuccess(int quantity, Double newPrice, int position) {
-                                if (cartItemList.get(position).isPosted()) {
-                                    cartItemList.get(position).setPosted(false);
-                                    cartItemList.get(position).setUpdated(true);
-                                    cartItemList.get(position).setForVoid(false);
+                            public void openPriceChangeSuccess(int quantity, Double newPrice, int position, String type) {
+
+                                if (type.equalsIgnoreCase("qty")) {
+                                    BusProvider.getInstance().post(new PrintModel(
+                                            "",
+                                            selectedRoom.getName(),
+                                            "CHANGE_QTY",
+                                            GsonHelper.getGson().toJson(cartItemList.get(position)),
+                                            quantity));
+                                } else {
+                                    if (cartItemList.get(position).isPosted()) {
+                                        cartItemList.get(position).setPosted(false);
+                                        cartItemList.get(position).setUpdated(true);
+                                        cartItemList.get(position).setForVoid(false);
+                                    }
+                                    cartItemList.get(position).setUnitPrice(newPrice);
+                                    if (quantity != 0) {
+                                        cartItemList.get(position).setQuantity(quantity);
+                                    }
+                                    cartItemList.get(position).setIsPriceChanged(1);
+                                    if (checkoutAdapter != null) {
+                                        checkoutAdapter.notifyItemChanged(position);
+                                    }
                                 }
-                                cartItemList.get(position).setUnitPrice(newPrice);
-                                if (quantity != 0) {
-                                    cartItemList.get(position).setQuantity(quantity);
-                                }
-                                cartItemList.get(position).setIsPriceChanged(1);
-                                if (checkoutAdapter != null) {
-                                    checkoutAdapter.notifyItemChanged(position);
-                                }
+
+
 
                                 dismiss();
                             }
                         };
-                        changeRoomPriceDialog.show();
+                        changeRoomPriceDialog1.show();
 
 
                         break;
@@ -2048,342 +2237,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 100: //SAVE TRANSACTION:
 
-                switch (Utils.getSystemType(getContext())) {
-                    case "not_supported":
-                        Utils.showDialogMessage(getActivity(), "System not supported", "Information");
-                        break;
-                    case "franchise":
-                        if (selectedRoom == null) {
-                            //create new and add
-                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                            GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
-                            Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
-                            request.enqueue(new Callback<GetOrderResponse>() {
-                                @Override
-                                public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
-                                    selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
-                                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-
-
-                                    final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                    final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-                                    final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-                                    for (CartItemsModel cim : cartItemList) {
-                                        if (!cim.isPosted()) {
-
-                                            if (cim.isUpdated()) {
-                                                updateModel.add(new UpdateProductModel(
-                                                        cim.getPostId(),
-                                                        cim.getName(),
-                                                        String.valueOf(cim.getUnitPrice()),
-                                                        String.valueOf(cim.getQuantity())
-                                                ));
-                                            } else {
-                                                model.add(new AddRateProductModel(
-                                                        String.valueOf(cim.getProductId()),
-                                                        "0",
-                                                        String.valueOf(cim.getQuantity()),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                                        String.valueOf(cim.getUnitPrice()),
-                                                        cim.getIsPriceChanged(),
-                                                        cim.getName(),
-                                                        cim.getAlaCarteList(),
-                                                        cim.getGroupList()
-                                                ));
-                                            }
-
-                                        }
-
-
-
-                                        if (cim.isForVoid()) {
-                                            voidModel.add(new VoidProductModel(
-                                                    cim.getPostId(),
-                                                    cim.getName(),
-                                                    String.valueOf(cim.getAmount()),
-                                                    String.valueOf(cim.getQuantity())
-                                            ));
-                                        }
-                                    }
-
-                                    if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
-                                        Utils.showDialogMessage(getActivity(), "Please select item/s to save", "Information");
-                                    } else {
-//                                        BusProvider.getInstance().post(
-//                                                new AddProductToRequest(
-//                                                        model,
-//                                                        "",
-//                                                        "1",
-//                                                        selectedRoom.getControlNo(),
-//                                                        voidModel,
-//                                                        "",
-//                                                        "0",
-//                                                        "0",
-//                                                        updateModel));
-
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<AddProductToResponse> request = iUsers.addProductTo(new AddProductToRequest(
-                                                model,
-                                                "",
-                                                "1",
-                                                selectedRoom.getControlNo(),
-                                                voidModel,
-                                                "",
-                                                "0",
-                                                "0",
-                                                updateModel).getMapValue());
-
-                                        request.enqueue(new Callback<AddProductToResponse>() {
-                                            @Override
-                                            public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
-                                                detectSystem();
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<AddProductToResponse> call, Throwable t) {
-
-                                            }
-                                        });
-
-
-                                    }
-
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<GetOrderResponse> call, Throwable t) {
-
-                                }
-                            });
-
-
-                        } else {
-                            //just add
-                            final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                            final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-                            final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-                            for (CartItemsModel cim : cartItemList) {
-                                if (!cim.isPosted()) {
-
-                                    if (cim.isUpdated()) {
-                                        updateModel.add(new UpdateProductModel(
-                                                cim.getPostId(),
-                                                cim.getName(),
-                                                String.valueOf(cim.getUnitPrice()),
-                                                String.valueOf(cim.getQuantity())
-                                        ));
-                                    } else {
-                                        model.add(new AddRateProductModel(
-                                                String.valueOf(cim.getProductId()),
-                                                "0",
-                                                String.valueOf(cim.getQuantity()),
-                                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                                String.valueOf(cim.getUnitPrice()),
-                                                cim.getIsPriceChanged(),
-                                                cim.getName(),
-                                                cim.getAlaCarteList(),
-                                                cim.getGroupList()
-                                        ));
-                                    }
-
-                                }
-
-
-
-                                if (cim.isForVoid()) {
-                                    voidModel.add(new VoidProductModel(
-                                            cim.getPostId(),
-                                            cim.getName(),
-                                            String.valueOf(cim.getAmount()),
-                                            String.valueOf(cim.getQuantity())
-                                    ));
-                                }
-                            }
-
-                            if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
-                                Utils.showDialogMessage(getActivity(), "Please select item/s to save", "Information");
-                            } else {
-//                                BusProvider.getInstance().post(
-//                                        new AddProductToRequest(
-//                                                model,
-//                                                "",
-//                                                "1",
-//                                                selectedRoom.getControlNo(),
-//                                                voidModel,
-//                                                "",
-//                                                "0",
-//                                                "0",
-//                                                updateModel));
-
-
-
-                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                Call<AddProductToResponse> request = iUsers.addProductTo(new AddProductToRequest(
-                                        model,
-                                        "",
-                                        "1",
-                                        selectedRoom.getControlNo(),
-                                        voidModel,
-                                        "",
-                                        "0",
-                                        "0",
-                                        updateModel).getMapValue());
-
-                                request.enqueue(new Callback<AddProductToResponse>() {
-                                    @Override
-                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
-                                        detectSystem();
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
-
-                                    }
-                                });
-
-
-                            }
-                        }
-                        break;
-                    case "table":
-
-                        break;
-                    case "room":
-
-                        if (selectedRoom != null) {
-                            if (selectedRoom.isTakeOut()) {
-                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-                                final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-                                for (CartItemsModel cim : cartItemList) {
-                                    if (!cim.isPosted()) {
-
-                                        if (cim.isUpdated()) {
-                                            updateModel.add(new UpdateProductModel(
-                                                    cim.getPostId(),
-                                                    cim.getName(),
-                                                    String.valueOf(cim.getUnitPrice()),
-                                                    String.valueOf(cim.getQuantity())
-                                            ));
-                                        } else {
-                                            model.add(new AddRateProductModel(
-                                                    String.valueOf(cim.getProductId()),
-                                                    "0",
-                                                    String.valueOf(cim.getQuantity()),
-                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                                    String.valueOf(cim.getUnitPrice()),
-                                                    cim.getIsPriceChanged(),
-                                                    cim.getName(),
-                                                    cim.getAlaCarteList(),
-                                                    cim.getGroupList()
-                                            ));
-                                        }
-
-                                    }
-
-
-
-                                    if (cim.isForVoid()) {
-                                        voidModel.add(new VoidProductModel(
-                                                cim.getPostId(),
-                                                cim.getName(),
-                                                String.valueOf(cim.getAmount()),
-                                                String.valueOf(cim.getQuantity())
-                                        ));
-                                    }
-                                }
-
-                                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                    @Override
-                                    public void save(String remarks) {
-                                        BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
-                                        BusProvider.getInstance().post(
-                                                new AddProductToRequest(
-                                                        model,
-                                                        String.valueOf(selectedRoom.getRoomId()),
-                                                        String.valueOf(selectedRoom.getAreaId()),
-                                                        selectedRoom.getControlNo(),
-                                                        voidModel,
-                                                        remarks,
-                                                        "0",
-                                                        "0",
-                                                        updateModel));
-                                        showLoading();
-                                    }
-                                };
-
-                                if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
-                                    Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
-                                } else {
-                                    confirmWithRemarksDialog.show();
-                                }
-                            } else {
-                                if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                                        currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
-                                        selectedRoom.getStatus().equalsIgnoreCase("4") ||
-                                        selectedRoom.getStatus().equalsIgnoreCase("32") ||
-                                        selectedRoom.getStatus().equalsIgnoreCase("59")) {
-                                    final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                    final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-
-                                    for (CartItemsModel cim : cartItemList) {
-                                        if (!cim.isPosted()) {
-
-                                            if (cim.isUpdated()) {
-                                                updateModel.add(new UpdateProductModel(
-                                                        cim.getPostId(),
-                                                        cim.getName(),
-                                                        String.valueOf(cim.getUnitPrice()),
-                                                        String.valueOf(cim.getQuantity())
-                                                ));
-                                            } else {
-                                                model.add(new AddRateProductModel(
-                                                        String.valueOf(cim.getProductId()),
-                                                        "0",
-                                                        String.valueOf(cim.getQuantity()),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                                        String.valueOf(cim.getUnitPrice()),
-                                                        cim.getIsPriceChanged(),
-                                                        cim.getName(),
-                                                        cim.getAlaCarteList(),
-                                                        cim.getGroupList()
-                                                ));
-                                            }
-
-                                        }
-                                    }
-
-
-                                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
-                                        @Override
-                                        public void save(String remarks) {
-                                            BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
-
-                                            BusProvider.getInstance().post(new AddRoomPriceRequest(
-                                                    model,
-                                                    String.valueOf(selectedRoom.getRoomId()),
-                                                    new ArrayList<VoidProductModel>(),
-                                                    remarks,
-                                                    "",
-                                                    "0", "0",
-                                                    updateModel));
-                                            showLoading();
-                                        }
-                                    };
-
-                                    if (model.size() == 0 && updateModel.size() == 0) {
-                                        Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
-                                    } else {
-                                        confirmWithRemarksDialog.show();
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                }
-
-
+                doSaveFunction();
 
                 break;
             case 101: //VOID
@@ -2549,6 +2403,347 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         }
 
                         break;
+                }
+                break;
+        }
+    }
+
+    private void doSaveFunction() {
+        switch (Utils.getSystemType(getContext())) {
+            case "not_supported":
+                Utils.showDialogMessage(getActivity(), "System not supported", "Information");
+                break;
+            case "franchise":
+                if (selectedRoom == null) {
+                    //create new and add
+                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                    GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
+                    Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
+                    request.enqueue(new Callback<GetOrderResponse>() {
+                        @Override
+                        public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
+                            selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
+                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+
+
+                            final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                            final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                            final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                            for (CartItemsModel cim : cartItemList) {
+                                if (!cim.isPosted()) {
+
+                                    if (cim.isUpdated()) {
+                                        updateModel.add(new UpdateProductModel(
+                                                cim.getPostId(),
+                                                cim.getName(),
+                                                String.valueOf(cim.getUnitPrice()),
+                                                String.valueOf(cim.getQuantity())
+                                        ));
+                                    } else {
+                                        model.add(new AddRateProductModel(
+                                                String.valueOf(cim.getProductId()),
+                                                "0",
+                                                String.valueOf(cim.getQuantity()),
+                                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                String.valueOf(cim.getUnitPrice()),
+                                                cim.getIsPriceChanged(),
+                                                cim.getName(),
+                                                cim.getAlaCarteList(),
+                                                cim.getGroupList()
+                                        ));
+                                    }
+
+                                }
+
+
+
+                                if (cim.isForVoid()) {
+                                    voidModel.add(new VoidProductModel(
+                                            cim.getPostId(),
+                                            cim.getName(),
+                                            String.valueOf(cim.getAmount()),
+                                            String.valueOf(cim.getQuantity())
+                                    ));
+                                }
+                            }
+
+                            if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
+                                Utils.showDialogMessage(getActivity(), "Please select item/s to save", "Information");
+                            } else {
+//                                        BusProvider.getInstance().post(
+//                                                new AddProductToRequest(
+//                                                        model,
+//                                                        "",
+//                                                        "1",
+//                                                        selectedRoom.getControlNo(),
+//                                                        voidModel,
+//                                                        "",
+//                                                        "0",
+//                                                        "0",
+//                                                        updateModel));
+
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<AddProductToResponse> request = iUsers.addProductTo(new AddProductToRequest(
+                                        model,
+                                        "",
+                                        "1",
+                                        selectedRoom.getControlNo(),
+                                        voidModel,
+                                        "",
+                                        "0",
+                                        "0",
+                                        updateModel).getMapValue());
+
+                                request.enqueue(new Callback<AddProductToResponse>() {
+                                    @Override
+                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+                                        detectSystem();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+
+                                    }
+                                });
+
+
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<GetOrderResponse> call, Throwable t) {
+
+                        }
+                    });
+
+
+                } else {
+                    //just add
+                    final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                    final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                    final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                    for (CartItemsModel cim : cartItemList) {
+                        if (!cim.isPosted()) {
+
+                            if (cim.isUpdated()) {
+                                updateModel.add(new UpdateProductModel(
+                                        cim.getPostId(),
+                                        cim.getName(),
+                                        String.valueOf(cim.getUnitPrice()),
+                                        String.valueOf(cim.getQuantity())
+                                ));
+                            } else {
+                                model.add(new AddRateProductModel(
+                                        String.valueOf(cim.getProductId()),
+                                        "0",
+                                        String.valueOf(cim.getQuantity()),
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                        String.valueOf(cim.getUnitPrice()),
+                                        cim.getIsPriceChanged(),
+                                        cim.getName(),
+                                        cim.getAlaCarteList(),
+                                        cim.getGroupList()
+                                ));
+                            }
+
+                        }
+
+
+
+                        if (cim.isForVoid()) {
+                            voidModel.add(new VoidProductModel(
+                                    cim.getPostId(),
+                                    cim.getName(),
+                                    String.valueOf(cim.getAmount()),
+                                    String.valueOf(cim.getQuantity())
+                            ));
+                        }
+                    }
+
+                    if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
+                        Utils.showDialogMessage(getActivity(), "Please select item/s to save", "Information");
+                    } else {
+//                                BusProvider.getInstance().post(
+//                                        new AddProductToRequest(
+//                                                model,
+//                                                "",
+//                                                "1",
+//                                                selectedRoom.getControlNo(),
+//                                                voidModel,
+//                                                "",
+//                                                "0",
+//                                                "0",
+//                                                updateModel));
+
+
+
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        Call<AddProductToResponse> request = iUsers.addProductTo(new AddProductToRequest(
+                                model,
+                                "",
+                                "1",
+                                selectedRoom.getControlNo(),
+                                voidModel,
+                                "",
+                                "0",
+                                "0",
+                                updateModel).getMapValue());
+
+                        request.enqueue(new Callback<AddProductToResponse>() {
+                            @Override
+                            public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+                                detectSystem();
+                            }
+
+                            @Override
+                            public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+
+                            }
+                        });
+
+
+                    }
+                }
+                break;
+            case "table":
+                break;
+            case "room":
+                if (selectedRoom != null) {
+                    if (selectedRoom.isTakeOut()) {
+                        final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                        final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
+                        final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+                        for (CartItemsModel cim : cartItemList) {
+                            if (!cim.isPosted()) {
+
+                                if (cim.isUpdated()) {
+                                    updateModel.add(new UpdateProductModel(
+                                            cim.getPostId(),
+                                            cim.getName(),
+                                            String.valueOf(cim.getUnitPrice()),
+                                            String.valueOf(cim.getQuantity())
+                                    ));
+                                } else {
+                                    model.add(new AddRateProductModel(
+                                            String.valueOf(cim.getProductId()),
+                                            "0",
+                                            String.valueOf(cim.getQuantity()),
+                                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                            String.valueOf(cim.getUnitPrice()),
+                                            cim.getIsPriceChanged(),
+                                            cim.getName(),
+                                            cim.getAlaCarteList(),
+                                            cim.getGroupList()
+                                    ));
+                                }
+
+                            }
+
+
+
+                            if (cim.isForVoid()) {
+                                voidModel.add(new VoidProductModel(
+                                        cim.getPostId(),
+                                        cim.getName(),
+                                        String.valueOf(cim.getAmount()),
+                                        String.valueOf(cim.getQuantity())
+                                ));
+                            }
+                        }
+
+                        ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                            @Override
+                            public void save(String remarks) {
+                                if (model.size() > 0) {
+                                    BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
+                                }
+
+                                BusProvider.getInstance().post(
+                                        new AddProductToRequest(
+                                                model,
+                                                String.valueOf(selectedRoom.getRoomId()),
+                                                String.valueOf(selectedRoom.getAreaId()),
+                                                selectedRoom.getControlNo(),
+                                                voidModel,
+                                                remarks,
+                                                "0",
+                                                "0",
+                                                updateModel));
+                                showLoading();
+                            }
+                        };
+
+                        if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
+                            Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
+                        } else {
+                            confirmWithRemarksDialog.show();
+                        }
+                    } else {
+                        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA) ||
+                                selectedRoom.getStatus().equalsIgnoreCase("4") ||
+                                selectedRoom.getStatus().equalsIgnoreCase("32") ||
+                                selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                            final ArrayList<AddRateProductModel> model = new ArrayList<>();
+                            final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
+
+                            for (CartItemsModel cim : cartItemList) {
+                                if (!cim.isPosted()) {
+
+                                    if (cim.isUpdated()) {
+                                        updateModel.add(new UpdateProductModel(
+                                                cim.getPostId(),
+                                                cim.getName(),
+                                                String.valueOf(cim.getUnitPrice()),
+                                                String.valueOf(cim.getQuantity())
+                                        ));
+                                    } else {
+                                        model.add(new AddRateProductModel(
+                                                String.valueOf(cim.getProductId()),
+                                                "0",
+                                                String.valueOf(cim.getQuantity()),
+                                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
+                                                String.valueOf(cim.getUnitPrice()),
+                                                cim.getIsPriceChanged(),
+                                                cim.getName(),
+                                                cim.getAlaCarteList(),
+                                                cim.getGroupList()
+                                        ));
+                                    }
+
+                                }
+                            }
+
+
+                            ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
+                                @Override
+                                public void save(String remarks) {
+                                    if (model.size() > 0) {
+                                        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
+                                    }
+
+
+                                    BusProvider.getInstance().post(new AddRoomPriceRequest(
+                                            model,
+                                            String.valueOf(selectedRoom.getRoomId()),
+                                            new ArrayList<VoidProductModel>(),
+                                            remarks,
+                                            "",
+                                            "0", "0",
+                                            updateModel));
+                                    showLoading();
+                                }
+                            };
+
+                            if (model.size() == 0 && updateModel.size() == 0) {
+                                Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
+                            } else {
+                                confirmWithRemarksDialog.show();
+                            }
+                        }
+                    }
                 }
                 break;
         }
@@ -3675,7 +3870,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
                                                     }
 
-                                                    if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
+                                                    if (totalPayments >= Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)))))) {
 
                                                         PrintSoaRequest printSoaRequest = new PrintSoaRequest("", selectedRoom.getControlNo());
                                                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -3789,6 +3984,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     if (!ppm.isIs_posted()) {
                                         paymentsToPost.add(ppm);
                                     }
+
+                                    Log.d("APIPI", String.valueOf(ppm.getAmount()));
                                     totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
                                 }
                                 if (cartItemList.size() == 0) {
@@ -3841,7 +4038,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                                 } else {
-                                    if (totalPayments >= (totalBalance - (advancePayment + discountPayment))) {
+
+                                    Log.d("PYMNTLOG", String.valueOf(totalPayments));
+                                    Log.d("PYMNTLOG", String.valueOf(totalBalance));
+                                    Log.d("PYMNTLOG", String.valueOf(advancePayment));
+                                    Log.d("PYMNTLOG", String.valueOf(discountPayment));
+                                    Log.d("PYMNTLOG_DEDUCTOR", String.valueOf((totalBalance - (advancePayment + discountPayment))));
+
+                                    if (totalPayments >= Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)))))) {
                                         if (paymentsToPost.size() > 0) {
                                             if (selectedRoom != null) {
 
@@ -4058,14 +4262,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
 
                     selectedRoom.setControlNo(r.getTransaction().getControlNo());
-                    totalBalance = (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
+                    totalBalance = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
                             fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount())
 //                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered());
-                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered() + fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt());
+                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered() + fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt()))));
 
-                    advancePayment = r.getTransaction().getAdvance();
-                    discountPayment = r.getTransaction().getDiscount();
+                    advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
+                    discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
                     subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
                     total.setText(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : totalBalance - (advancePayment + discountPayment))));
                     discount.setText(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)));
@@ -4629,10 +4833,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         /*fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
                 fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
                 fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount()*/
-        totalBalance = fetchOrderPendingViaControlNoResponse.getResult().getTotal() - ( fetchOrderPendingViaControlNoResponse.getResult().getTendered()  + fetchOrderPendingViaControlNoResponse.getResult().getVatExempt());
+        totalBalance = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal() -
+                ( fetchOrderPendingViaControlNoResponse.getResult().getTendered()  +
+                        fetchOrderPendingViaControlNoResponse.getResult().getVatExempt()))));
 
-        advancePayment = fetchOrderPendingViaControlNoResponse.getResult().getAdvance();
-        discountPayment = fetchOrderPendingViaControlNoResponse.getResult().getDiscount();
+        advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())));
+        discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
 
 
         cartItemList = new ArrayList<>();
@@ -4880,7 +5086,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         Log.d("CHECKOUT_VAL", new CheckOutRequest(roomId, controlNumber, roomBoyId).toString());
 
-//        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
+        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
     }
 
     @Subscribe

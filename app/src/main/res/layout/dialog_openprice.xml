@@ -34,6 +34,9 @@
         android:text="New price"/>
 
     <EditText
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:inputType="numberDecimal"
         android:layout_margin="10dp"
         android:id="@+id/newPrice"
         android:layout_width="match_parent"
@@ -48,6 +51,9 @@
         android:text="Quantity"/>
 
     <EditText
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:inputType="number"
         android:layout_margin="10dp"
         android:id="@+id/newQty"
         android:layout_width="match_parent"

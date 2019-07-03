@@ -21,6 +21,7 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
@@ -213,11 +214,11 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             ((ProductsViewHolder)holder).name.setText(cartItem.getName());
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
-            ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
+            ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
 
             if (cartItem.getType().equalsIgnoreCase("ot")) {
-                ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice() / cartItem.getQuantity()));
-                ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice()));
+                ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() / cartItem.getQuantity())));
+                ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
 
             } else {
 
@@ -230,54 +231,10 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 });
 
 
-                ((ProductsViewHolder)holder).price.setText(String.valueOf(cartItem.getUnitPrice()));
-                ((ProductsViewHolder)holder).totalPrice.setText(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity()));
+                ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
+                ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity())));
             }
 
-
-
-
-
-
-//            if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
-//                ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
-//                ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
-//                ((ProductsViewHolder)holder).quantity.setTextColor(Color.BLACK);
-//                ((ProductsViewHolder)holder).totalPrice.setTextColor(Color.BLACK);
-//            } else {
-//                if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
-//                    ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.lightListBg));
-//                    ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
-//                    ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
-//                    ((ProductsViewHolder)holder).quantity.setTextColor(Color.BLACK);
-//                    ((ProductsViewHolder)holder).totalPrice.setTextColor(Color.BLACK);
-//                } else {
-//                    ((ProductsViewHolder)holder).name.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).iconStatus.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).rootView1.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).rootView.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).price.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).quantity.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).totalPrice.setBackgroundColor(context.getResources().getColor(R.color.darkListBg));
-//                    ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
-//                    ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
-//                    ((ProductsViewHolder)holder).quantity.setTextColor(Color.WHITE);
-//                    ((ProductsViewHolder)holder).totalPrice.setTextColor(Color.WHITE);
-//                }
-//            }
 
             if (cartItem.isSelected()) {
                 if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme

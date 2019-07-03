@@ -382,17 +382,17 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 if (!bookedList.get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("EMPTY") && !bookedList.get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("to be filled")) {
 
-                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
 
 
-                    addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
 
                     if (bookedList.get(0).getTransaction().getCustomerTrans().getTin() != null) {
-                        addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     }
 
                     if (bookedList.get(0).getTransaction().getCustomerTrans().getAddress() != null) {
-                        addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        addTextToPrinter(printer, bookedList.get(0).getTransaction().getCustomerTrans().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     }
 
 

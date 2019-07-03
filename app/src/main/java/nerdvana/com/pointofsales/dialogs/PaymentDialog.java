@@ -352,7 +352,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         setRoomBoySpinner();
         setGuestInfoSelection();
 
-        displayTotalBalance.setText(String.valueOf(totalBalance));
+        displayTotalBalance.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
         paymentMethodImpl = new PaymentMethod() {
             @Override
             public void clicked(int position) {
@@ -756,20 +756,24 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
         totalPayment = normalPayment;
-        amountDue = (totalBalance - (advancePayment + discountPayment)) <= 0 ? 0.00 : (totalBalance - (advancePayment + discountPayment));
-        totalAmountDue.setText(String.valueOf(amountDue));
+        amountDue = (totalBalance - (advancePayment + discountPayment)) <= 0 ? 0.00 : Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)))));
+        totalAmountDue.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 
-        amountToPay.setText(String.valueOf(amountDue));
+        amountToPay.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
         amountToPay.requestFocus();
         totalChange = totalBalance - (advancePayment + discountPayment);
 //        totalChange = (totalPayment + advancePayment) - (totalBalance - discountPayment);
         if (Double.valueOf(totalChange) < 1) {
-            displayTotalChange.setText(String.valueOf(totalChange * -1));
+            displayTotalChange.setText(Utils.returnWithTwoDecimal(String.valueOf(totalChange < 0 ? totalBalance * -1  : totalChange)));
         } else {
-            displayTotalChange.setText(String.valueOf(totalChange));
+            displayTotalChange.setText(Utils.returnWithTwoDecimal(String.valueOf(totalChange)));
         }
 
-        displayTotalPayment.setText(String.valueOf(normalPayment));
+        displayTotalPayment.setText(Utils.returnWithTwoDecimal(String.valueOf(normalPayment)));
+
+
+        Log.d("ADDUDUD", String.valueOf(totalPayment));
+        Log.d("ADDUDUD", String.valueOf(amountDue));
 
         if (totalPayment >= amountDue) {
             pay.setBackgroundColor(Color.GREEN);
@@ -777,7 +781,7 @@ public abstract class PaymentDialog extends BaseDialog  {
             pay.setBackgroundColor(Color.RED);
         }
 
-        totalDeposit.setText(String.valueOf(advancePayment));
+        totalDeposit.setText(Utils.returnWithTwoDecimal(String.valueOf(advancePayment)));
 
 
 

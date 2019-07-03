@@ -23,6 +23,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
@@ -210,6 +211,9 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 }
             }
 
+
+
+
             if (toList1.getOtHours() > 0) {
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         String.valueOf(toList1.getOtHours()) + " " + "OT HOURS",
@@ -221,6 +225,25 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                         ),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             }
+
+            addPrinterSpace(1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "NO OF PERSONS",
+                    returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
+                    ,
+                    40,
+                    2,context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "NO OF ITEMS",
+                    returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
+                    ,
+                    40,
+                    2,context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            addPrinterSpace(1);
 
             addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
@@ -408,19 +431,18 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
                             if (d.getInfo() != null) {
 
-                                if (d.getDiscountTypes().getIsSpecial() == 1) {
-                                    hasSpecial = true;
-                                    seniorReceiptList.add(
-                                            new SeniorReceiptCheckoutModel(
-                                                    d.getInfo().getName() == null ? "" : d.getInfo().getName(),
-                                                    d.getInfo().getCardNo() == null ? "" : d.getInfo().getCardNo(),
-                                                    d.getInfo().getAddress() == null ? "" : d.getInfo().getAddress(),
-                                                    d.getInfo().getTin() == null ? "" : d.getInfo().getTin(),
-                                                    d.getInfo().getBusinessStyle() == null ? "" : d.getInfo().getBusinessStyle()
-                                            )
-                                    );
-
-                                }
+//                                if (d.getDiscountTypes().getIsSpecial() == 1) {
+//                                    hasSpecial = true;
+//                                    seniorReceiptList.add(
+//                                            new SeniorReceiptCheckoutModel(
+//                                                    d.getInfo().getName() == null ? "" : d.getInfo().getName(),
+//                                                    d.getInfo().getCardNo() == null ? "" : d.getInfo().getCardNo(),
+//                                                    d.getInfo().getAddress() == null ? "" : d.getInfo().getAddress(),
+//                                                    d.getInfo().getTin() == null ? "" : d.getInfo().getTin(),
+//                                                    d.getInfo().getBusinessStyle() == null ? "" : d.getInfo().getBusinessStyle()
+//                                            )
+//                                    );
+//                                }
 
                                 if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -441,8 +463,6 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                                                 context)
                                                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                     } else {
-
-
                                         if (d.getInfo().getCardNo() != null) {
                                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                                     d.getDiscountType(),
@@ -474,45 +494,45 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
             }
 
-            if (hasSpecial) {
-                for (SeniorReceiptCheckoutModel sr : seniorReceiptList) {
-                    addPrinterSpace(1);
-                    if (!TextUtils.isEmpty(sr.getName())) {
-                        addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    } else {
-                        addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    }
-
-                    if (!TextUtils.isEmpty(sr.getScPwdId())) {
-                        addTextToPrinter(printer, "SC/PWD ID:"+sr.getScPwdId(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    } else {
-                        addTextToPrinter(printer, "SC/PWD ID:______________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    }
-
-
-                    if (toList1.getCustomer().getAddress() != null) {
-                        addTextToPrinter(printer, "ADDRESS:"+sr.getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    } else {
-                        addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    }
-
-                    if (toList1.getCustomer().getTin() != null) {
-                        addTextToPrinter(printer, "TIN#:" +sr.getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    } else {
-                        addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    }
-
-                    if (toList1.getCustomer().getBusinessStyle() != null) {
-                        addTextToPrinter(printer, "BUSINESS STYLE:"+ sr.getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    } else {
-                        addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    }
-
-                    addPrinterSpace(1);
-
-                }
-            }
+//            if (hasSpecial) {
+//                for (SeniorReceiptCheckoutModel sr : seniorReceiptList) {
+//                    addPrinterSpace(1);
+//                    if (!TextUtils.isEmpty(sr.getName())) {
+//                        addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    } else {
+//                        addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    }
+//
+//                    if (!TextUtils.isEmpty(sr.getScPwdId())) {
+//                        addTextToPrinter(printer, "SC/PWD ID:"+sr.getScPwdId(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    } else {
+//                        addTextToPrinter(printer, "SC/PWD ID:______________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    }
+//
+//
+//                    if (toList1.getCustomer().getAddress() != null) {
+//                        addTextToPrinter(printer, "ADDRESS:"+sr.getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    } else {
+//                        addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    }
+//
+//                    if (toList1.getCustomer().getTin() != null) {
+//                        addTextToPrinter(printer, "TIN#:" +sr.getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    } else {
+//                        addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    }
+//
+//                    if (toList1.getCustomer().getBusinessStyle() != null) {
+//                        addTextToPrinter(printer, "BUSINESS STYLE:"+ sr.getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                        addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    } else {
+//                        addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                    }
+//
+//                    addPrinterSpace(1);
+//
+//                }
+//            }
 
 
             addPrinterSpace(1);
@@ -520,7 +540,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
             if (toList1.getCustomer() != null) {
                 if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
                     addPrinterSpace(1);
-                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     if (toList1.getCustomer().getAddress() != null) {
                         addTextToPrinter(printer, "ADDRESS:"+toList1.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
@@ -637,12 +657,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
 
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "AMOUNT DUE",
-                    returnWithTwoDecimal(String.valueOf(toList1.getTotal() - (toList1.getAdvance() + toList1.getDiscount()))),
-                    40,
-                    2,
-                    context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "TENDERED",
@@ -650,6 +665,19 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                     ,
                     40,
                     2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "AMOUNT DUE",
+                    returnWithTwoDecimal(Utils.returnWithTwoDecimal(String.valueOf((toList1.getTotal() +
+                            toList1.getOtAmount() +
+                            toList1.getXPersonAmount())
+                            - (
+                            toList1.getDiscount() +
+                                    toList1.getVatExempt())))),
+                    40,
+                    2,
+                    context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "CHANGE",

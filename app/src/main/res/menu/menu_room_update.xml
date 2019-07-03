@@ -3,4 +3,8 @@
     <item
         android:id="@+id/changeRoomPrice"
         android:title="Update room" />
+
+    <item
+        android:id="@+id/changeRoomQuantity"
+        android:title="Update quantity" />
 </menu>

@@ -1628,6 +1628,15 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
     public class Result {
+        @SerializedName("person_count")
+        @Expose
+        private String personCount;
+        @SerializedName("total_item")
+        @Expose
+        private String totalItem;
+        @SerializedName("total_qty")
+        @Expose
+        private String totalQty;
         @SerializedName("area")
         @Expose
         private Area area;
@@ -1760,6 +1769,30 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("vat_exempt_sales")
         @Expose
         private Double vatExemptSales;
+
+        public String getPersonCount() {
+            return personCount;
+        }
+
+        public void setPersonCount(String personCount) {
+            this.personCount = personCount;
+        }
+
+        public String getTotalItem() {
+            return totalItem;
+        }
+
+        public void setTotalItem(String totalItem) {
+            this.totalItem = totalItem;
+        }
+
+        public String getTotalQty() {
+            return totalQty;
+        }
+
+        public void setTotalQty(String totalQty) {
+            this.totalQty = totalQty;
+        }
 
         public Area getArea() {
             return area;

@@ -5,5 +5,9 @@
         android:title="Void" />
     <item
         android:id="@+id/changePrice"
-        android:title="Update product" />
+        android:title="Update product price" />
+
+    <item
+        android:id="@+id/changeQty"
+        android:title="Update product quantity" />
 </menu>
