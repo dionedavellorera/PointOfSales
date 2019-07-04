@@ -35,6 +35,8 @@
                 android:src="@mipmap/outline_search_white_24"/>
 
             <EditText
+                android:imeOptions="actionDone"
+                android:singleLine="true"
                 android:layout_toRightOf="@id/srchImage"
                 android:paddingLeft="10dp"
                 android:id="@+id/search"

@@ -145,7 +145,6 @@ public abstract class PaymentDialog extends BaseDialog  {
     private TextView displayTotalPayment;
     private Spinner spinnerRoomBoy;
 
-
     private CheckBox checkEmployee;
     private Spinner spinnerEmplyeeSelection;
     //forex fields

@@ -274,9 +274,6 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         roomId,
                                         "",
                                         "");
-
-                        Log.d("ERQREQREQ", autoDiscountRequest.toString());
-
                         break;
                     case "special":
                         autoDiscountRequest =
@@ -294,9 +291,6 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                                         etSeniorBusinessStyle.getText().toString());
                         break;
                 }
-
-                Log.d("DISC_DATA", autoDiscountRequest.toString());
-
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                 Call<AutoDiscountResponse> request = iUsers.sendAutoDiscount(autoDiscountRequest.getMapValue());
                 request.enqueue(new Callback<AutoDiscountResponse>() {

@@ -193,7 +193,6 @@ public class PrinterUtils {
                 }
             } catch (Epos2Exception e) {
 
-                Log.d("TETETETETE", String.valueOf(e.getErrorStatus()));
                 e.printStackTrace();
             }
         } else {

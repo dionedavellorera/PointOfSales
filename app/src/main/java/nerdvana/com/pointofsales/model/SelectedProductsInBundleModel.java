@@ -62,12 +62,20 @@ public class SelectedProductsInBundleModel {
         private String url;
         private int qty;
         private double amount;
-        public BundleProductModel(String name, String url, int qty, int productId, double amount) {
+        private double addPrice;
+        public BundleProductModel(String name, String url,
+                                  int qty, int productId,
+                                  double amount, double addPrice) {
             this.name = name;
             this.url = url;
             this.qty = qty;
             this.productId = productId;
             this.amount = amount;
+            this.addPrice = addPrice;
+        }
+
+        public double getAddPrice() {
+            return addPrice;
         }
 
         public double getAmount() {

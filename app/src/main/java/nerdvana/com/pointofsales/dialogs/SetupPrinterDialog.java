@@ -159,8 +159,6 @@ public abstract class SetupPrinterDialog extends BaseDialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 selectedPrinter = String.valueOf(seriesAdapter.getItem(position).getmModelConstant());
-                Log.d("TETETE", selectedPrinter);
-                Log.d("TETETE", seriesAdapter.getItem(position).getmModelName());
 
             }
 
@@ -222,9 +220,6 @@ public abstract class SetupPrinterDialog extends BaseDialog {
             ((MainActivity)context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-
-                    Log.d("GGGGGGG", deviceInfo.getTarget());
-
                     spinnerPort.setText(deviceInfo.getTarget());
 //                    SharedPreferenceManager.saveString(getContext(), deviceInfo.getTarget(), ApplicationConstants.SELECTED_PORT);
                 }

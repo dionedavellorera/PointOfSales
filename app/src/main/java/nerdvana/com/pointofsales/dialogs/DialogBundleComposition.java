@@ -145,7 +145,8 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                                                 branchLists.get(position).getBranchProduct().getImageFile(),
                                                                 1,
                                                                 branchLists.get(position).getBranchProduct().getCoreId(),
-                                                                branchLists.get(position).getBranchProduct().getAmount()));
+                                                                branchLists.get(position).getBranchProduct().getAmount(),
+                                                                branchLists.get(position).getPrice()));
 
                                         selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
                                         if (sib.getTotalQtySelected() == sib.getMaxQty()) proceedToNext();
@@ -192,7 +193,8 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                                                     branchLists.get(position).getBranchProduct().getImageFile(),
                                                                     1,
                                                                     branchLists.get(position).getBranchProduct().getCoreId(),
-                                                                    branchLists.get(position).getBranchProduct().getAmount()));
+                                                                    branchLists.get(position).getBranchProduct().getAmount(),
+                                                                    branchLists.get(position).getPrice()));
 
                                             selectionTitle.setText(String.format("%s(%s)", sib.getGroupName(), String.valueOf(sib.getMaxQty() - sib.getTotalQtySelected())));
 
@@ -203,14 +205,11 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                             shouldStop = true;
                                             break;
                                         }
-
                                     }
                                 }
-
                                 if (selectedProductsAdapter != null) {
                                     selectedProductsAdapter.notifyDataSetChanged();
                                 }
-
                             break;
                         }
                     }
@@ -229,7 +228,6 @@ public abstract class DialogBundleComposition extends BaseDialog {
                 listSelectedProducts.setLayoutManager(llm2);
                 listSelectedProducts.setAdapter(selectedProductsAdapter);
                 selectedProductsAdapter.notifyDataSetChanged();
-
 
                 branchLists = branchGroupList.get(position).getBranchLists();
 

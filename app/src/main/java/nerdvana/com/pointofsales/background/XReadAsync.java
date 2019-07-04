@@ -96,7 +96,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
             JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
             JSONObject dutyManager = jsonObject.getJSONObject("data").getJSONObject("duty_manager");
             if (dataJsonObject != null) {
-//                        Log.d("TESXXXXTDATA", jsonObject.toString());
                 addTextToPrinter(printer, "X READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "POSTING DATE: " + dataJsonObject.getString("cut_off_date"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "SHIFT : " + (dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -194,8 +193,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                 TypeToken<List<FetchPaymentResponse.Result>> paymentTypeToken = new TypeToken<List<FetchPaymentResponse.Result>>() {
                 };
                 List<FetchPaymentResponse.Result> paymentTypeList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.PAYMENT_TYPE_JSON), paymentTypeToken.getType());
-//                        Log.d("TESZZ", String.valueOf(paymentTypeList.size()));
-
 
                 Double totalAdvancePayment = 0.00;
                 for (int i = 0; i < paymentJsonArray.length(); i++) {
@@ -227,7 +224,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                     if (payment.getPaymentType().equalsIgnoreCase("cash") || payment.getPaymentType().equalsIgnoreCase("card")) {
 
-//                                Log.d("TEKTEK", payment.getPaymentType() + " - " + String.valueOf(isAdvance));
                         if (isAdvance.equalsIgnoreCase("1")) {
 
                             paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
@@ -335,16 +331,10 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                 TypeToken<List<FetchDiscountSpecialResponse.Result>> discToken = new TypeToken<List<FetchDiscountSpecialResponse.Result>>() {};
                 List<FetchDiscountSpecialResponse.Result> discountDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.DISCOUNT_SPECIAL_JSON), discToken.getType());
 
-                Log.d("TETETE", "XREADASYNC");
-                Log.d("TETETE", String.valueOf(discountDetails.size()));
-
-
                 double otherDiscAmount = 0.00;
 
 
                 if (discountDetails != null) {
-
-                    Log.d("TURY", discountDetails.get(0).getDiscountCard());
 
 
                     for (FetchDiscountSpecialResponse.Result d : discountDetails) {

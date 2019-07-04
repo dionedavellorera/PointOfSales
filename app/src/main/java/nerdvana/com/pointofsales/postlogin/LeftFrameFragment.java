@@ -783,6 +783,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
                                     dismiss();
+                                    double addPrice = 0.00;
+                                    for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
+                                        for (SelectedProductsInBundleModel.BundleProductModel bpm : sipm.getBundleProductModelList()) {
+                                            addPrice += bpm.getAddPrice() * bpm.getQty();
+                                        }
+                                    }
+
                                     ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
                                     ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
                                     ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
@@ -850,7 +857,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                 false,
                                                 productsModel.getMarkUp(),
                                                 productsModel.getIsPriceChanged(),
-                                                productsModel.getUnitPrice(),
+                                                productsModel.getUnitPrice() + addPrice,
                                                 false,
                                                 "",
                                                 false,
@@ -942,6 +949,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     @Override
                                     public void bundleCompleted(List<SelectedProductsInBundleModel> selectedProductsInBundleModelList) {
                                         dismiss();
+
+                                        double addPrice = 0.00;
+                                        for (SelectedProductsInBundleModel sipm : selectedProductsInBundleModelList) {
+                                            for (SelectedProductsInBundleModel.BundleProductModel bpm : sipm.getBundleProductModelList()) {
+                                                addPrice += bpm.getAddPrice() * bpm.getQty();
+                                            }
+                                        }
+
                                         ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
                                         ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
                                         ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
@@ -1001,7 +1016,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                             false,
                                                             0.00,
                                                             0,
-                                                            productsModel.getPrice(),
+                                                            productsModel.getPrice() + addPrice,
                                                             false,
                                                             "",
                                                             false,
@@ -1173,25 +1188,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                 }
                                             };
                                             pwd.show();
-
-
-
                                         }
-//                                        else {
-//                                            if (cartItemList.get(position).isPosted()) {
-//                                                cartItemList.get(position).setPosted(false);
-//                                                cartItemList.get(position).setUpdated(true);
-//                                                cartItemList.get(position).setForVoid(false);
-//                                            }
-//                                            cartItemList.get(position).setUnitPrice(newPrice);
-//                                            if (quantity != 0) {
-//                                                cartItemList.get(position).setQuantity(quantity);
-//                                            }
-//                                            cartItemList.get(position).setIsPriceChanged(1);
-//                                            if (checkoutAdapter != null) {
-//                                                checkoutAdapter.notifyItemChanged(position);
-//                                            }
-//                                        }
                                         dismiss();
                                     }
                                 };
@@ -1208,7 +1205,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         itemSelected.isPosted(),
                                         "price") {
                             @Override
-                            public void openPriceChangeSuccess(int quantity, Double newPrice, int position, String type) {
+                            public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
                                 if (type.equalsIgnoreCase("qty")) {
 
@@ -1221,19 +1218,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                                 } else {
-                                    if (cartItemList.get(position).isPosted()) {
-                                        cartItemList.get(position).setPosted(false);
-                                        cartItemList.get(position).setUpdated(true);
-                                        cartItemList.get(position).setForVoid(false);
-                                    }
-                                    cartItemList.get(position).setUnitPrice(newPrice);
-                                    if (quantity != 0) {
-                                        cartItemList.get(position).setQuantity(quantity);
-                                    }
-                                    cartItemList.get(position).setIsPriceChanged(1);
-                                    if (checkoutAdapter != null) {
-                                        checkoutAdapter.notifyItemChanged(position);
-                                    }
+
+                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(), "999") {
+                                        @Override
+                                        public void passwordSuccess(String employeeId, String employeeName) {
+                                            if (cartItemList.get(position).isPosted()) {
+                                                cartItemList.get(position).setPosted(false);
+                                                cartItemList.get(position).setUpdated(true);
+                                                cartItemList.get(position).setForVoid(false);
+                                            }
+                                            cartItemList.get(position).setUnitPrice(newPrice);
+                                            if (quantity != 0) {
+                                                cartItemList.get(position).setQuantity(quantity);
+                                            }
+                                            cartItemList.get(position).setIsPriceChanged(1);
+                                            if (checkoutAdapter != null) {
+                                                checkoutAdapter.notifyItemChanged(position);
+                                            }
+                                          dismiss();
+                                        }
+
+                                        @Override
+                                        public void passwordFailed() {
+
+                                        }
+                                    };
+                                    passwordDialog3.show();
+
                                 }
                                 dismiss();
                             }
@@ -1261,9 +1272,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         "qty") {
                                     @Override
                                     public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
-
-
-
 
                                         if (type.equalsIgnoreCase("qty")) {
 
@@ -1308,31 +1316,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                                         }
-
-//                                        else {
-//                                            if (cartItemList.get(position).isPosted()) {
-//                                                cartItemList.get(position).setPosted(false);
-//                                                cartItemList.get(position).setUpdated(true);
-//                                                cartItemList.get(position).setForVoid(false);
-//                                            }
-//                                            cartItemList.get(position).setUnitPrice(newPrice);
-//                                            if (quantity != 0) {
-//                                                cartItemList.get(position).setQuantity(quantity);
-//                                            }
-//                                            cartItemList.get(position).setIsPriceChanged(1);
-//                                            if (checkoutAdapter != null) {
-//                                                checkoutAdapter.notifyItemChanged(position);
-//                                            }
-//                                        }
-
-
-
                                         dismiss();
                                     }
                                 };
                         changeRoomPriceDialog.show();
-
-
                         break;
                     case R.id.changeRoomPrice:
                         final OpenPriceDialog changeRoomPriceDialog1 =
@@ -1343,7 +1330,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         itemSelected.isPosted(),
                                         "price") {
                             @Override
-                            public void openPriceChangeSuccess(int quantity, Double newPrice, int position, String type) {
+                            public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
                                 if (type.equalsIgnoreCase("qty")) {
                                     BusProvider.getInstance().post(new PrintModel(
@@ -1353,19 +1340,33 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             GsonHelper.getGson().toJson(cartItemList.get(position)),
                                             quantity));
                                 } else {
-                                    if (cartItemList.get(position).isPosted()) {
-                                        cartItemList.get(position).setPosted(false);
-                                        cartItemList.get(position).setUpdated(true);
-                                        cartItemList.get(position).setForVoid(false);
-                                    }
-                                    cartItemList.get(position).setUnitPrice(newPrice);
-                                    if (quantity != 0) {
-                                        cartItemList.get(position).setQuantity(quantity);
-                                    }
-                                    cartItemList.get(position).setIsPriceChanged(1);
-                                    if (checkoutAdapter != null) {
-                                        checkoutAdapter.notifyItemChanged(position);
-                                    }
+
+                                    PasswordDialog passwordDialog2 = new PasswordDialog(getActivity(), "999") {
+                                        @Override
+                                        public void passwordSuccess(String employeeId, String employeeName) {
+                                            if (cartItemList.get(position).isPosted()) {
+                                                cartItemList.get(position).setPosted(false);
+                                                cartItemList.get(position).setUpdated(true);
+                                                cartItemList.get(position).setForVoid(false);
+                                            }
+                                            cartItemList.get(position).setUnitPrice(newPrice);
+                                            if (quantity != 0) {
+                                                cartItemList.get(position).setQuantity(quantity);
+                                            }
+                                            cartItemList.get(position).setIsPriceChanged(1);
+                                            if (checkoutAdapter != null) {
+                                                checkoutAdapter.notifyItemChanged(position);
+                                            }
+                                            dismiss();
+                                        }
+
+                                        @Override
+                                        public void passwordFailed() {
+
+                                        }
+                                    };
+
+                                    passwordDialog2.show();
                                 }
 
 
@@ -3494,12 +3495,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 public void save(String remarks) {
                                     BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
 
-                                    Log.d("VOID_ITEM_MODEL", new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                            model, remarks,
-                                            employeeId,
-                                            "0", "0",
-                                            new ArrayList<UpdateProductModel>()).toString());
-
                                     BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             model, remarks,
                                             employeeId,
@@ -3832,7 +3827,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             @Override
                             public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
 
-                                Log.d("control", response.body().getResult().getControlNo());
                                 FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(response.body().getResult().getControlNo());
                                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                 Call<FetchOrderPendingViaControlNoResponse> re = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
@@ -3985,7 +3979,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         paymentsToPost.add(ppm);
                                     }
 
-                                    Log.d("APIPI", String.valueOf(ppm.getAmount()));
                                     totalPayments += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
                                 }
                                 if (cartItemList.size() == 0) {
@@ -4039,40 +4032,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                 } else {
 
-                                    Log.d("PYMNTLOG", String.valueOf(totalPayments));
-                                    Log.d("PYMNTLOG", String.valueOf(totalBalance));
-                                    Log.d("PYMNTLOG", String.valueOf(advancePayment));
-                                    Log.d("PYMNTLOG", String.valueOf(discountPayment));
-                                    Log.d("PYMNTLOG_DEDUCTOR", String.valueOf((totalBalance - (advancePayment + discountPayment))));
-
                                     if (totalPayments >= Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)))))) {
                                         if (paymentsToPost.size() > 0) {
                                             if (selectedRoom != null) {
 
-
-                                                Log.d("PYMT", "START");
-
                                                 if (selectedRoom.isTakeOut()) {
-                                                    Log.d("PYMT", "TO");
                                                     postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
                                                 } else {
-                                                    Log.d("PYMT", "ROOM");
-                                                    Log.d("PYMT", String.valueOf(selectedRoom.getRoomId()));
-                                                    Log.d("PYMT", String.valueOf(paymentsToPost.size()));
                                                     postCheckoutPayment(paymentsToPost, String.valueOf(selectedRoom.getRoomId()), "", roomboy);
                                                 }
                                             }
 
                                         } else {
                                             if (selectedRoom != null) {
-                                                Log.d("PYMT", "START 1");
                                                 if (selectedRoom.isTakeOut()) {
-                                                    Log.d("PYMT", "TO 1");
                                                     checkoutRoom("",
                                                             selectedRoom.getControlNo(),
                                                             "");
                                                 } else {
-                                                    Log.d("PYMT", "ROOM 1");
                                                     checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
                                                             "",
                                                             roomboy);
@@ -4188,7 +4165,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
-            Log.d("MYLIST", String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getFreebiesList().size()));
+
             kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
             printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
             for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
@@ -4335,8 +4312,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
                     if (tpost.getVoid() == 0) {
                         if (tpost.getTransactionPostFreebies() != null) {
-                            Log.d("TRANSPOT", String.valueOf(tpost.getTransactionPostFreebies().getTransactionPostAlaCart().size()));
-                            Log.d("TRANSPOT", String.valueOf(tpost.getTransactionPostFreebies().getTransactionPostGroup().size()));
+                            //whatis this
                         }
                         if (tpost.getRoomRateId() != null) {
                             roomRateCounter.add(1);
@@ -4738,20 +4714,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         endLoading();
                     } else {
 
-                        Log.d("PAYMENT_RESP", "START");
-
                         if (selectedRoom.isTakeOut()) {
-
-                            Log.d("PAYMENT_RESP", "START IS TO");
 
                             checkoutRoom("",
                                     selectedRoom.getControlNo(),
                                     "");
                         } else {
-
-                            Log.d("PAYMENT_RESP", "START IS ROOM");
-                            Log.d("PAYMENT_RESP", String.valueOf(selectedRoom.getRoomId()));
-                            Log.d("PAYMENT_RESP", String.valueOf(selectedRoom.isTakeOut()));
 
                             checkoutRoom(String.valueOf(selectedRoom.getRoomId()),
                                     "",
@@ -5432,8 +5400,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
 
-                    Log.d("SSTEM_TRACE", "RCHISE");
-
 
                     BusProvider.getInstance().post(new PrintModel(
                             "", "",
@@ -5442,14 +5408,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             ""));
                 } else {
 
-                    Log.d("SSTEM_TRACE", "else");
-
-
                     if (selectedRoom != null) {
 
                         if (selectedRoom.isTakeOut()) {
-
-                            Log.d("SSTEM_TRACE", "else to");
 
                             BusProvider.getInstance().post(new PrintModel(
                                     "", "takeout",
@@ -5458,8 +5419,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     roomType));
                         } else {
 
-
-                            Log.d("SSTEM_TRACE", "else room");
                             BusProvider.getInstance().post(new PrintModel(
                                     "", roomName,
                                     "PRINT_RECEIPT",
@@ -5805,7 +5764,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
-        Log.d("WATAFAK", "TEST");
+
         BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
         BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }

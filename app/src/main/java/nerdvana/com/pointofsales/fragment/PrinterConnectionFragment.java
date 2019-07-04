@@ -89,7 +89,6 @@ public class PrinterConnectionFragment extends Fragment {
                 public void run() {
 
                     Toast.makeText(getContext(), deviceInfo.getTarget(), Toast.LENGTH_SHORT).show();
-                    Log.d("dsdsds", deviceInfo.getTarget());
 
                     otherPrinterModelList.add(new OtherPrinterModel(deviceInfo.getTarget(), deviceInfo.getDeviceName()));
 
@@ -103,7 +102,6 @@ public class PrinterConnectionFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("BTBTB", "STOP");
         try {
             Discovery.stop();
         } catch (Epos2Exception e) {

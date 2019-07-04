@@ -10,7 +10,10 @@ public class CollectionFinalPostModel {
     private String user_id;
     private String emp_id;
 
-    public CollectionFinalPostModel(String cash_denomination_id, String amount, String cash_valued, String currency_id, String currency_value, String pos_id, String user_id, String emp_id) {
+    public CollectionFinalPostModel(String cash_denomination_id, String amount,
+                                    String cash_valued, String currency_id,
+                                    String currency_value, String pos_id,
+                                    String user_id, String emp_id) {
         this.cash_denomination_id = cash_denomination_id;
         this.amount = amount;
         this.cash_valued = cash_valued;

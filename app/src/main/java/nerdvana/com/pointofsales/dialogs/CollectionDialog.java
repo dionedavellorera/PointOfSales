@@ -118,8 +118,6 @@ public abstract class CollectionDialog extends BaseDialog {
                         public void passwordSuccess(String employeeId, String employeeName) {
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
-                            Log.d("CASHRECOREQ", collectionRequest.toString());
-
 
 
                             Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());

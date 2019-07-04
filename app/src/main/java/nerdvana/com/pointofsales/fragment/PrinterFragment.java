@@ -33,7 +33,6 @@ public class PrinterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_printer, container, false);
-        Log.d("CCCCC", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER));
         printerRadioGroup = view.findViewById(R.id.printerRadioGroup);
         languageRadioGroup = view.findViewById(R.id.languageRadioGroup);
 

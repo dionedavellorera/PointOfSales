@@ -1386,7 +1386,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void fetchDiscountSpecialRespone(FetchDiscountSpecialResponse fetchDiscountSpecialResponse) {
 
-        Log.d("TETET", "DIONEY");
         SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(fetchDiscountSpecialResponse.getResult()), ApplicationConstants.DISCOUNT_SPECIAL_JSON);
     }
 

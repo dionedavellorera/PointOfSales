@@ -56,7 +56,7 @@ public class ReprintZReadingAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ((ReprintZReadingAdapter.ZReadListHolder) holder).row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("RERERERe", String.valueOf(zreadList.get(i).getId()));
+
                     item.clicked(String.valueOf(zreadList.get(i).getId()));
                 }
             });
