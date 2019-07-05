@@ -8,6 +8,7 @@
         android:title="Update product price" />
 
     <item
+        android:visible="false"
         android:id="@+id/changeQty"
         android:title="Update product quantity" />
 </menu>

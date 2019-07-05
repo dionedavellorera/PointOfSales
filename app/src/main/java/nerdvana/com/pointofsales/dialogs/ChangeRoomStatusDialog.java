@@ -39,7 +39,7 @@ public abstract class ChangeRoomStatusDialog extends BaseDialog {
                 ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getContext()) {
                     @Override
                     public void save(final String remarks) {
-                        PasswordDialog passwordDialog = new PasswordDialog(getContext(), "99") {
+                        PasswordDialog passwordDialog = new PasswordDialog(getContext(), "115") {
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
 

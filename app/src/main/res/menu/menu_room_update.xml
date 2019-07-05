@@ -5,6 +5,7 @@
         android:title="Update room" />
 
     <item
+        android:visible="false"
         android:id="@+id/changeRoomQuantity"
         android:title="Update quantity" />
 </menu>

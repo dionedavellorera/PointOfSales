@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.TooltipCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -324,6 +325,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        Log.d("TAG","FINGERPRINT: "+Build.FINGERPRINT);
 //        Log.d("TAG","Version Code: " + Build.VERSION.RELEASE);
 //        Log.d("MYCONNECTION", String.valueOf(Utils.checkConnection(this)));
+
+        role.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                TooltipCompat.setTooltipText(v, "v1.0.1");
+                return false;
+            }
+        });
     }
 
 
@@ -350,8 +359,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getTelephone()), ApplicationConstants.BRANCH_TELEPHONE);
                 SharedPreferenceManager.saveString(MainActivity.this, String.valueOf(response.body().getResult().getBranchInfo().getInfo().getSafeKeepingAmount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(String.valueOf(response.body().getResult().getBranchInfo().getShift())), ApplicationConstants.SHIFT_DETAILS);
-
-
 
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult().getBranchInfo().getShift()), ApplicationConstants.SHIFT_INFO_ARRAY);
 

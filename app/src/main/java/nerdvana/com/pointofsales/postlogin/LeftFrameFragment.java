@@ -1151,7 +1151,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
                                         if (type.equalsIgnoreCase("qty")) {
-                                            PasswordDialog pwd = new PasswordDialog(getActivity(), "999") {
+                                            PasswordDialog pwd = new PasswordDialog(getActivity(), "60") {
                                                 @Override
                                                 public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -1219,7 +1219,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                 } else {
 
-                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(), "999") {
+                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(), "60") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             if (cartItemList.get(position).isPosted()) {
@@ -1275,7 +1275,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                         if (type.equalsIgnoreCase("qty")) {
 
-                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(), "999") {
+                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(), "60") {
                                                 @Override
                                                 public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -1341,7 +1341,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             quantity));
                                 } else {
 
-                                    PasswordDialog passwordDialog2 = new PasswordDialog(getActivity(), "999") {
+                                    PasswordDialog passwordDialog2 = new PasswordDialog(getActivity(), "60") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             if (cartItemList.get(position).isPosted()) {
