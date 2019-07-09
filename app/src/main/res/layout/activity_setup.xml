@@ -100,7 +100,7 @@
                 android:layout_margin="15dp"
                 android:gravity="center"
                 android:layout_below="@id/proceed"
-                android:text="v 1.0.0"
+                android:text="Release 1.0(build 1.0.0)"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

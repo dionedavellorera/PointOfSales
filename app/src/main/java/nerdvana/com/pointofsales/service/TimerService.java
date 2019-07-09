@@ -68,7 +68,6 @@ public class TimerService extends Service {
                 final List<FetchBranchInfoResponse.Shift> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.SHIFT_INFO_ARRAY), branchInfo.getType());
 ;
 
-
                 secsOfDate = Utils.getDurationInSecs(startDate);
 
                 countUpTimer = new CountUpTimer(999999999) {
@@ -81,21 +80,21 @@ public class TimerService extends Service {
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
 
                         if (secsOfDate % 10 == 0) {
-//                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
+                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-//                            Call<ResponseBody> repatchData = iUsers.repatchData(
-//                                    repatchDataRequest.getMapValue());
-//                            repatchData.enqueue(new Callback<ResponseBody>() {
-//                                @Override
-//                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-//
-//                                }
-//
-//                                @Override
-//                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-//
-//                                }
-//                            });
+                            Call<ResponseBody> repatchData = iUsers.repatchData(
+                                    repatchDataRequest.getMapValue());
+                            repatchData.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                                }
+                            });
 
 
                             CheckShiftRequest checkShiftRequest = new CheckShiftRequest();

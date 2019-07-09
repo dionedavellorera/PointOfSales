@@ -718,9 +718,9 @@ public abstract class PaymentDialog extends BaseDialog  {
         if (guestReceiptInfoModel != null) {
 
             if (!guestReceiptInfoModel.getName().equalsIgnoreCase("to be filled") && !guestReceiptInfoModel.getName().equalsIgnoreCase("empty")) {
-                guestName.setText(guestReceiptInfoModel.getName());
-                guestAddress.setText(guestReceiptInfoModel.getAddress());
-                guestTin.setText(guestReceiptInfoModel.getTin());
+                guestName.setText("NAME : " +guestReceiptInfoModel.getName());
+                guestAddress.setText("ADDRESS : " +guestReceiptInfoModel.getAddress());
+                guestTin.setText("TIN : " +guestReceiptInfoModel.getTin());
 
                 guestNameInput.setText(guestReceiptInfoModel.getName());
                 guestAddressInput.setText(guestReceiptInfoModel.getAddress());
@@ -1146,9 +1146,9 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onResponse(Call<SaveGuestInfoResponse> call, Response<SaveGuestInfoResponse> response) {
                 removePaymentSuccess();
-                guestName.setText(gn);
-                guestAddress.setText(ga);
-                guestTin.setText(gt);
+                guestName.setText("NAME : " + gn);
+                guestAddress.setText("ADDRESS : " +ga);
+                guestTin.setText("TIN : " + gt);
                 Utils.showDialogMessage(act, "Guest info saved", "Information");
             }
 

@@ -3200,7 +3200,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 }
                             }
 
-                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "69") {
+                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "70") {
 
                                 @Override
                                 public void passwordSuccess(String employeeId, String employeeName) {
