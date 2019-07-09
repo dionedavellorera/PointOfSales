@@ -607,9 +607,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-        if (canTransact()) {
-            checkSafeKeepingRequest();
-        }
+//        if (canTransact()) {
+//            checkSafeKeepingRequest();
+//        }
 
         loadPrinter();
 
@@ -1239,18 +1239,30 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
         if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
 
-            if (collectionDialog != null) {
+            if (collectionDialog == null) {
+                collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
+                    @Override
+                    public void printCashRecoData(String cashNRecoData) {
+
+                    }
+                };
+
+                collectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        collectionDialog = null;
+                    }
+                });
+
+                collectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        collectionDialog = null;
+                    }
+                });
+
                 if (!collectionDialog.isShowing()) collectionDialog.show();
             }
-
-            collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
-                @Override
-                public void printCashRecoData(String cashNRecoData) {
-
-                }
-            };
-
-
         }
     }
 
@@ -1261,6 +1273,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         user.setText(currentText);
         role.setText(String.format("%s SHIFT : %s", userModel.getUserGroup().toUpperCase(), timerModel.getShiftNumber()));
+
+
 
     }
 

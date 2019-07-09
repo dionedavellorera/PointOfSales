@@ -46,13 +46,17 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
     private String freebieId;
     private FreebiesDialog.Freeby freeby;
     private int qtySelected = 1;
+
+    private String kitchenPath;
+    private String printerPath;
     public RoomBundleSelectionDialog(@NonNull Context context,
                                      FetchRoomRatePriceIdResponse.Result result,
                                      RoomTableModel selectedRoom,
                                      String postTransId,
                                      String freebieId,
                                      FreebiesDialog.Freeby freeby,
-                                     int qtySelected) {
+                                     int qtySelected, String kitchenPath,
+                                     String printerPath) {
         super(context);
         this.result = result;
         this.selectedRoom = selectedRoom;
@@ -60,6 +64,9 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
         this.freebieId = freebieId;
         this.qtySelected = qtySelected;
         this.freeby = freeby;
+
+        this.kitchenPath = kitchenPath;
+        this.printerPath = printerPath;
     }
 
     @Override
@@ -121,6 +128,16 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                                         postTransId,
                                         freebieId,
                                         new ArrayList<UpdateProductModel>()));
+
+                                BusProvider.getInstance().post(
+                                        new PrintModel("",
+                                                "TAKEOUT",
+                                                "FO",
+                                                GsonHelper.getGson().toJson(model),
+                                                kitchenPath,
+                                                printerPath));
+
+
                             } else {
 //                                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
                                 BusProvider.getInstance().post(new AddRoomPriceRequest(
@@ -132,6 +149,9 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                                         postTransId,
                                         freebieId,
                                         new ArrayList<UpdateProductModel>()));
+
+                                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath));
+
                             }
 
 //                            freeby.clicked(position);

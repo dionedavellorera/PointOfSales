@@ -180,6 +180,42 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                             2,context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+
+                    if (soaTrans.getFreebie() != null) {
+                        Log.d("TEKTEK", "TEST PRINT HERE");
+                        if (soaTrans.getFreebie().getPostAlaCart().size() > 0) {
+                            for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getFreebie().getPostAlaCart()) {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
+                                        ""
+                                        ,
+                                        40,
+                                        2,
+                                        context),
+                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            }
+                        }
+
+                        if (soaTrans.getFreebie().getPostGroup().size() > 0) {
+                            for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getFreebie().getPostGroup()) {
+                                for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
+                                            ""
+                                            ,
+                                            40,
+                                            2,
+                                            context),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+                            }
+                        }
+
+
+                    }
+
+
+
                     if (soaTrans.getPostAlaCartList().size() > 0) {
                         for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(

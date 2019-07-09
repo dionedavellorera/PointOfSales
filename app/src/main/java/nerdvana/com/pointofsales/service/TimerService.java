@@ -28,6 +28,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
+import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
 import nerdvana.com.pointofsales.api_requests.RepatchDataRequest;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
@@ -80,6 +81,10 @@ public class TimerService extends Service {
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
 
                         if (secsOfDate % 10 == 0) {
+
+                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+
+
                             RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             Call<ResponseBody> repatchData = iUsers.repatchData(

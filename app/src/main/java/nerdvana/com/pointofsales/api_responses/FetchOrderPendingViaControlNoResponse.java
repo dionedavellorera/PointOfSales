@@ -377,8 +377,36 @@ public class FetchOrderPendingViaControlNoResponse {
 
     }
 
+    public class Freebie {
+        @SerializedName("alacart")
+        @Expose
+        private List<FetchRoomPendingResponse.PostAlaCart> postAlaCart;
+        @SerializedName("group")
+        @Expose
+        private List<FetchRoomPendingResponse.PostGroup> postGroup;
+
+        public List<FetchRoomPendingResponse.PostAlaCart> getPostAlaCart() {
+            return postAlaCart;
+        }
+
+        public void setPostAlaCart(List<FetchRoomPendingResponse.PostAlaCart> postAlaCart) {
+            this.postAlaCart = postAlaCart;
+        }
+
+        public List<FetchRoomPendingResponse.PostGroup> getPostGroup() {
+            return postGroup;
+        }
+
+        public void setPostGroup(List<FetchRoomPendingResponse.PostGroup> postGroup) {
+            this.postGroup = postGroup;
+        }
+    }
+
 
     public class Post {
+        @SerializedName("freebie")
+        @Expose
+        private Freebie freebie;
         @SerializedName("group")
         @Expose
         private List<FetchRoomPendingResponse.PostGroup> postGroupList;
@@ -490,6 +518,30 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+
+        public Freebie getFreebie() {
+            return freebie;
+        }
+
+        public void setFreebie(Freebie freebie) {
+            this.freebie = freebie;
+        }
+
+        public Integer getxSkip() {
+            return xSkip;
+        }
+
+        public void setxSkip(Integer xSkip) {
+            this.xSkip = xSkip;
+        }
+
+        public Integer get_void() {
+            return _void;
+        }
+
+        public void set_void(Integer _void) {
+            this._void = _void;
+        }
 
         public List<FetchRoomPendingResponse.PostGroup> getPostGroupList() {
             return postGroupList;

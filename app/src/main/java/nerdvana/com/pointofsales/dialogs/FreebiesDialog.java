@@ -32,15 +32,22 @@ public abstract class FreebiesDialog extends BaseDialog {
     private String postTransId;
     private Freeby freeby;
     private int qtySelected = 1;
+
+    private String kitchenPath;
+    private String printerPath;
     public FreebiesDialog(@NonNull Context context,
                           List<FetchRoomPendingResponse.Freebies> freebiesList,
                           RoomTableModel selectedRoom,
-                          int qtySelected) {
+                          int qtySelected, String kitchenPath,
+                          String printerPath) {
         super(context);
         this.freebiesList = freebiesList;
         this.selectedRoom = selectedRoom;
 
         this.qtySelected = qtySelected;
+
+        this.kitchenPath = kitchenPath;
+        this.printerPath = printerPath;
     }
 
     @Override
@@ -70,7 +77,9 @@ public abstract class FreebiesDialog extends BaseDialog {
                                     String.valueOf(freebiesList.get(position).getPostTransId()),
                                     String.valueOf(freebiesList.get(position).getId()),
                                     freeby,
-                                    qtySelected) {
+                                    qtySelected,
+                                    kitchenPath,
+                                    printerPath) {
                                 @Override
                                 public void completed() {
                                     roomBundleSelectionDialog.dismiss();

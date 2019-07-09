@@ -66,6 +66,7 @@ import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
+import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CheckShiftRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
@@ -427,6 +428,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 //        printReceiptFromCheckout("VCHI-2019-00000009", "TEST PRINT", "TEST ROOM TYPE");
 
+
         return view;
     }
 
@@ -528,6 +530,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void notify(FragmentNotifierModel selectedRoom) {
+
+//        printReceiptFromCheckout("VCHI-2019-00000005", "ttete", "tet");
         if (selectedRoom.getSelectedRoom().isTakeOut()) {
             //takeout logic
 //            selectedRoom.getSelectedRoom().getControlNo()
@@ -1524,10 +1528,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     getActivity(),
                                     fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList(),
                                     selectedRoom,
-                                    1) {
+                                    1,
+                                    kitchenPath,
+                                    printerPath) {
                                 @Override
                                 public void freebySelected() {
-                                    freebiesDialog.dismiss();
+                                    if (freebiesDialog != null) {
+                                        freebiesDialog.dismiss();
+                                    }
+
 
                                 }
                             };
@@ -5088,6 +5097,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
 //                }
 //            }
+
+            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
 
         }
 
