@@ -99,6 +99,7 @@ import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
+import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CheckShiftResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
@@ -140,6 +141,7 @@ import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.ConfirmWithRemarksDialog;
 import nerdvana.com.pointofsales.dialogs.DialogBundleComposition;
 import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
+import nerdvana.com.pointofsales.dialogs.EmployeeSelectionDialog;
 import nerdvana.com.pointofsales.dialogs.FocDialog;
 import nerdvana.com.pointofsales.dialogs.FreebiesDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
@@ -207,6 +209,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     RemoveOtDialog removeOtDialog;
     PasswordDialog passwordDialog;
     ConfirmWithRemarksDialog backoutGuestDialog;
+    EmployeeSelectionDialog employeeSelectionDialog;
     //endregion
 
     private boolean hasExistingRequest = false;
@@ -1421,41 +1424,81 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void doFocFunction() {
 
-        if (selectedRoom != null) {
-            if (!employeeId.isEmpty()) {
-                PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "78") {
-                    @Override
-                    public void passwordSuccess(String employeeId, String employeeName) {
-                        if (selectedRoom.isTakeOut()) {
-                            BusProvider.getInstance().post(new FocTransactionRequest(
-                                    "",
-                                    selectedRoom.getControlNo(),
-                                    employeeId
-                            ));
-                        } else {
-                            BusProvider.getInstance().post(new FocTransactionRequest(
-                                    String.valueOf(selectedRoom.getRoomId()),
-                                    "",
-                                    employeeId
-                            ));
+        if (fetchRoomPendingResult != null) {
+            if (fetchRoomPendingResult.getBooked().size() > 0) {
+                if (fetchRoomPendingResult.getBooked()
+                        .get(0).getTransaction()
+                        .getCustomerTrans().getCustomer() != null) {
+
+                    if (TextUtils.isEmpty(employeeId) &&
+                            (fetchRoomPendingResult.getBooked().get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("EMPTY")
+                                    || fetchRoomPendingResult.getBooked().get(0).getTransaction().getCustomerTrans().getCustomer().equalsIgnoreCase("To be filled"))) {
+
+                        if (employeeSelectionDialog == null) {
+                            employeeSelectionDialog = new EmployeeSelectionDialog(getActivity(), selectedRoom.getControlNo()) {
+                                @Override
+                                public void saveEmployeeToTransaction(final String userId, String wholeName) {
+
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "78") {
+                                        @Override
+                                        public void passwordSuccess(String employeeId, String employeeName) {
+                                            if (selectedRoom.isTakeOut()) {
+                                                BusProvider.getInstance().post(new FocTransactionRequest(
+                                                        "",
+                                                        selectedRoom.getControlNo(),
+                                                        userId
+                                                ));
+                                            } else {
+                                                BusProvider.getInstance().post(new FocTransactionRequest(
+                                                        String.valueOf(selectedRoom.getRoomId()),
+                                                        "",
+                                                        userId
+                                                ));
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void passwordFailed() {
+
+                                        }
+                                    };
+
+                                    if (!passwordDialog.isShowing()) passwordDialog.show();
+
+
+                                }
+                            };
+
+                            employeeSelectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    employeeSelectionDialog = null;
+                                }
+                            });
+
+                            employeeSelectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    employeeSelectionDialog = null;
+                                }
+                            });
+
+                            employeeSelectionDialog.show();
                         }
 
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "Receipt already assigned", "Information");
                     }
 
-                    @Override
-                    public void passwordFailed() {
-
-                    }
-                };
-
-                if (!passwordDialog.isShowing()) passwordDialog.show();
-
+                }
             } else {
-                Utils.showDialogMessage(getActivity(), "Not an employee", "Information");
+                Utils.showDialogMessage(getActivity(), "Empty fetch room pending", "Information");
             }
         } else {
             Utils.showDialogMessage(getActivity(), "No room selected", "Information");
         }
+
     }
 
     private boolean isAllowedToTransact() {
@@ -1485,12 +1528,30 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
 
         switch (clickedItem.getId()) {
+            case 132: //PRINT SPOT AUDIT
+                CheckSafeKeepingRequest checkSafeKeepingRequest = new CheckSafeKeepingRequest();
+                IUsers uiuser = PosClient.mRestAdapter.create(IUsers.class);
+                Call<CheckSafeKeepingResponse> checkSafeKeepRequest = uiuser.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
+                checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
+                    @Override
+                    public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
+                        //return dione
+                        BusProvider.getInstance().post(new PrintModel("", "", "SPOT_AUDIT_PRINT", GsonHelper.getGson().toJson(response.body())));
+                    }
+
+                    @Override
+                    public void onFailure(Call<CheckSafeKeepingResponse> call, Throwable t) {
+
+                    }
+                });
+                break;
             case 131: //ADD GUEST COUNT
                 if (selectedRoom != null) {
                     if (addGuestDialog == null) {
                         addGuestDialog = new AddGuestDialog(getActivity(),
                                 fetchRoomPendingResult.getBooked().get(0).getTransaction().getPersonCount(),
-                                String.valueOf(selectedRoom.getRoomId())) {
+                                String.valueOf(selectedRoom.getRoomId()),
+                                fetchRoomPendingResult.getBooked().get(0).getTransaction().getSpecial()) {
                             @Override
                             public void editGuestSucess() {
                                 if (selectedRoom != null) {
@@ -3139,7 +3200,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         new DiscountSelectionDialog(getContext(),
                                 getActivity(),
                                 fetchRoomPendingResult,
-                                selectedRoom.getControlNo(),
+                                "",
                                 String.valueOf(selectedRoom.getRoomId()),
                                 forVoidDiscountModels,
                                 data,
@@ -4173,6 +4234,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         discountPayment = 0.00;
         advancePayment = 0.00;
         currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
+
         if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
 
             kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
@@ -4455,6 +4517,34 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             "",
                             false,
                             "ot",
+                            new ArrayList<AddRateProductModel.AlaCarte>(),
+                            new ArrayList<AddRateProductModel.Group>(),
+                            false,
+                            null
+                    ));
+                }
+
+                if (Integer.valueOf(r.getTransaction().getPersonCount()) > 2) {
+                    cartItemList.add(new CartItemsModel(
+                            r.getTransaction().getControlNo(),
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                            "EXTRA PERSON",
+                            false,
+                            r.getTransaction().getXPersonAmount(),
+                            0,
+                            Integer.valueOf(r.getTransaction().getPersonCount()) - 2,
+                            true,
+                            0.00,
+                            0,
+                            r.getTransaction().getXPersonAmount(),
+                            false,
+                            "",
+                            false,
+                            "misc",
                             new ArrayList<AddRateProductModel.AlaCarte>(),
                             new ArrayList<AddRateProductModel.Group>(),
                             false,
@@ -5328,31 +5418,36 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                Object deletedAt, RatePrice ratePrice
         List<RoomRateMain> mYList=  new ArrayList<>();
         for (RoomRateMainViaId rrm : roomRateMainList) {
-            RatePrice ratePrice = new RatePrice(
-                    rrm.getRatePrice().getId(),
-                    rrm.getRatePrice().getRoomRateId(),
-                    rrm.getRatePrice().getCurrencyId(),
-                    rrm.getRatePrice().getAmount(),
-                    rrm.getRatePrice().getXPerson(),
-                    rrm.getRatePrice().getPerHour(),
-                    rrm.getRatePrice().getFlag(),
-                    rrm.getRatePrice().getCreatedBy(),
-                    rrm.getRatePrice().getCreatedAt(),
-                    rrm.getRatePrice().getUpdatedAt(),
-                    "",
-                    rrm.getRatePrice().getRoomRate()
-            );
-            mYList.add(new RoomRateMain(
-                    rrm.getId(),
-                    rrm.getRoomRatePriceId(),
-                    rrm.getRoomTypeId(),
-                    rrm.getCreatedBy(),
-                    rrm.getCreatedAt(),
-                    rrm.getUpdatedAt(),
-                    rrm.getDeletedAt(),
-                    ratePrice
 
-            ));
+            if (rrm.getRatePrice() != null) {
+                RatePrice ratePrice = new RatePrice(
+                        rrm.getRatePrice().getId(),
+                        rrm.getRatePrice().getRoomRateId(),
+                        rrm.getRatePrice().getCurrencyId(),
+                        rrm.getRatePrice().getAmount(),
+                        rrm.getRatePrice().getXPerson(),
+                        rrm.getRatePrice().getPerHour(),
+                        rrm.getRatePrice().getFlag(),
+                        rrm.getRatePrice().getCreatedBy(),
+                        rrm.getRatePrice().getCreatedAt(),
+                        rrm.getRatePrice().getUpdatedAt(),
+                        "",
+                        rrm.getRatePrice().getRoomRate()
+                );
+                mYList.add(new RoomRateMain(
+                        rrm.getId(),
+                        rrm.getRoomRatePriceId(),
+                        rrm.getRoomTypeId(),
+                        rrm.getCreatedBy(),
+                        rrm.getCreatedAt(),
+                        rrm.getUpdatedAt(),
+                        rrm.getDeletedAt(),
+                        ratePrice
+
+                ));
+            }
+
+
 
         }
 

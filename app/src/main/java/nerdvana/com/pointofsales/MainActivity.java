@@ -133,6 +133,7 @@ import nerdvana.com.pointofsales.background.SafeKeepingAsync;
 import nerdvana.com.pointofsales.background.ShortOverAsync;
 import nerdvana.com.pointofsales.background.SoaRoomAsync;
 import nerdvana.com.pointofsales.background.SoaToAsync;
+import nerdvana.com.pointofsales.background.SpotAuditAsync;
 import nerdvana.com.pointofsales.background.SwitchRoomAsync;
 import nerdvana.com.pointofsales.background.VoidAsync;
 import nerdvana.com.pointofsales.background.XReadAsync;
@@ -703,6 +704,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
         }
         switch (printModel.getType()) {
+            case "SPOT_AUDIT_PRINT":
+                willExecutGlobalPrint = false;
+                addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
+                break;
             case "CHANGE_QTY":
                 willExecutGlobalPrint = false;
                 addAsync(new ChangeQtyAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "change_qty");
@@ -1587,6 +1592,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void runTask(String taskName, AsyncTask asyncTask) {
         switch (taskName) {
+            case "spot_audit":
+                SpotAuditAsync spotAuditAsync = (SpotAuditAsync) asyncTask;
+                spotAuditAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "change_qty":
                 ChangeQtyAsync changeQtyAsync = (ChangeQtyAsync) asyncTask;
                 changeQtyAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);

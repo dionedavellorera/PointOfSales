@@ -880,6 +880,17 @@ public class FetchRoomPendingResponse {
         @SerializedName("trans")
         @Expose
         private List<Tran> trans = null;
+        @SerializedName("special")
+        @Expose
+        private int special;
+
+        public int getSpecial() {
+            return special;
+        }
+
+        public void setSpecial(int special) {
+            this.special = special;
+        }
 
         public String getPersonCount() {
             return personCount;
@@ -1326,9 +1337,7 @@ public class FetchRoomPendingResponse {
         private BranchNationality branchNationality;
 
 
-
-
-//        public String getStatus() {
+        //        public String getStatus() {
 //            return status;
 //        }
 //

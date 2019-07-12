@@ -763,7 +763,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         totalChange = totalBalance - (advancePayment + discountPayment);
 //        totalChange = (totalPayment + advancePayment) - (totalBalance - discountPayment);
         if (Double.valueOf(totalChange) < 1) {
-            displayTotalChange.setText(Utils.returnWithTwoDecimal(String.valueOf(totalChange < 0 ? totalBalance * -1  : totalChange)));
+            displayTotalChange.setText(Utils.returnWithTwoDecimal(String.valueOf(totalChange < 0 ? totalChange * -1  : totalChange)));
         } else {
             displayTotalChange.setText(Utils.returnWithTwoDecimal(String.valueOf(totalChange)));
         }

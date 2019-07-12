@@ -120,35 +120,37 @@ public abstract class CollectionDialog extends BaseDialog {
                             CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
 
 
-                            Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-                            request.enqueue(new Callback<Object>() {
-                                @Override
-                                public void onResponse(Call<Object> call, Response<Object> response) {
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
-                                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+                            Log.d("CASHRECODATA", collectionRequest.toString());
 
-                                            BusProvider.getInstance().post(new PrintModel("",
-                                                    "",
-                                                    "CASHRECONCILE",
-                                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                                    ""));
-
-                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
-                                        } else {
-                                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Object> call, Throwable t) {
-
-                                }
-                            });
+//                            Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+//                            request.enqueue(new Callback<Object>() {
+//                                @Override
+//                                public void onResponse(Call<Object> call, Response<Object> response) {
+//                                    try {
+//                                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+//                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
+//                                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+//
+//                                            BusProvider.getInstance().post(new PrintModel("",
+//                                                    "",
+//                                                    "CASHRECONCILE",
+//                                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
+//                                                    ""));
+//
+//                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+//                                        } else {
+//                                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+//                                        }
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onFailure(Call<Object> call, Throwable t) {
+//
+//                                }
+//                            });
 
 //                            request.enqueue(new Callback<CashNReconcileResponse>() {
 //                                @Override
@@ -189,6 +191,10 @@ public abstract class CollectionDialog extends BaseDialog {
                                 if (totalSafeKeepAmount <= response.body().getResult().getUnCollected()) {
                                     IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                     CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
+
+                                    Log.d("CASHRECODATA", collectionRequest.toString());
+
+
                                     Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
 
                                     request.enqueue(new Callback<CollectionResponse>() {

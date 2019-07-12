@@ -302,6 +302,7 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
                             SelectionDiscountDialog.this.dismiss();
                             Utils.showDialogMessage(context, "Discounting success" ,"Information");
                             discountSuccess();
+                            dismiss();
                         }
                     }
 

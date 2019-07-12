@@ -85,8 +85,11 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ProductsViewHolder)holder).rootView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    checkoutItemsContract.itemLongClicked(cartItem, holder.getAdapterPosition(), v);
-                    return false;
+                    if (!cartItem.getType().equalsIgnoreCase("misc")) {
+                        checkoutItemsContract.itemLongClicked(cartItem, holder.getAdapterPosition(), v);
+                    }
+
+                    return true;
                 }
             });
 
@@ -220,6 +223,9 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() / cartItem.getQuantity())));
                 ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
 
+            } else if(cartItem.getType().equalsIgnoreCase("misc")){
+                ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getQuantity())));
+                ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
             } else {
 
                 ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {

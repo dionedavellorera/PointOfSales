@@ -26,11 +26,14 @@ public abstract class AddGuestDialog extends BaseDialog {
     private Button confirm;
     private Context context;
     private String roomId;
-    public AddGuestDialog(@NonNull final Context context, String previousPersonCount, String roomId) {
+    private int specialCount;
+    public AddGuestDialog(@NonNull final Context context, String previousPersonCount,
+                          String roomId, int specialCount) {
         super(context);
         this.context = context;
         this.previousPersonCount = previousPersonCount;
         this.roomId = roomId;
+        this.specialCount = specialCount;
 
 
     }
@@ -59,7 +62,9 @@ public abstract class AddGuestDialog extends BaseDialog {
         subtract.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Integer.valueOf(value.getText().toString()) - 1 == 1) {
+                if ((Integer.valueOf(value.getText().toString()) - 1) < specialCount) {
+                    Utils.showDialogMessage(context, "Cannot proceed, special discount will exceed the number of person, void discount first", "Information");
+                } else if (Integer.valueOf(value.getText().toString()) - 1 == 1) {
                     Utils.showDialogMessage(context, "Guest count cannot be less than two(2)", "Information");
                 } else {
                     value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) - 1));

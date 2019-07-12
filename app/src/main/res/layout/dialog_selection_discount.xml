@@ -124,6 +124,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:visibility="gone"
             android:layout_below="@+id/tilSeniorPwdCardNumber"
             android:id="@+id/tilTin"
             android:layout_width="match_parent"
@@ -138,6 +139,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
+            android:visibility="gone"
             android:layout_below="@+id/tilTin"
             android:id="@+id/tilSeniorBusinessStyle"
             android:layout_width="match_parent"

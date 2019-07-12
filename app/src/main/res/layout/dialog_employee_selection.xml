@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/partial_header" android:id="@+id/header" />
+
+    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+        android:layout_margin="10dp"
+        android:layout_below="@id/header"
+        android:id="@+id/employeeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:text="save"
+        android:layout_below="@id/employeeSpinner"
+        android:layout_margin="10dp"
+        android:id="@+id/saveEmployee"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_selector"/>
+
+</RelativeLayout>

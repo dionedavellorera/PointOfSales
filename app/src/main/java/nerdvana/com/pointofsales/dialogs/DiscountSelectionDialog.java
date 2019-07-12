@@ -162,7 +162,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                             } else {
                                 fetchPending("room");
                             }
-                            dismiss();
+                            DiscountSelectionDialog.this.dismiss();
                         }
                     };
             if (!selectionDiscountDialog.isShowing()) selectionDiscountDialog.show();
@@ -180,11 +180,12 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     } else {
                                         fetchPending("room");
                                     }
+                                    DiscountSelectionDialog.this.dismiss();
                                 }
                             };
                             if (!manualDiscountDialog.isShowing()) manualDiscountDialog.show();
                         } else {
-                            Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
+                            Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING TO", "WARNING CONTACT DEVELOPER");
                         }
                     } else {
                         if (fetchRoomPendingResult != null) {
@@ -196,11 +197,12 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     } else {
                                         fetchPending("room");
                                     }
+                                    DiscountSelectionDialog.this.dismiss();
                                 }
                             };
                             if (!manualDiscountDialog.isShowing()) manualDiscountDialog.show();
                         } else {
-                            Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING", "WARNING CONTACT DEVELOPER");
+                            Utils.showDialogMessage(activity, "EMPTY FETCH ROOM PENDING ROOM", "WARNING CONTACT DEVELOPER");
                         }
                     }
 
@@ -216,7 +218,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                         fetchPending("room");
                                     }
 
-                                    dismiss();
+                                    DiscountSelectionDialog.this.dismiss();
                                 }
                             };
 

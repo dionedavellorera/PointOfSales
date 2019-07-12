@@ -281,6 +281,9 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
             }
         }
 
+//        Integer.valueOf(r.getTransaction().getPersonCount()) > 2
+
+
         if (bookedList.get(0).getTransaction().getOtHours() > 0) {
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     String.valueOf(bookedList.get(0).getTransaction().getOtHours()) + " " + "OT HOURS",
@@ -291,6 +294,15 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
         }
 
+        if (bookedList.get(0).getTransaction().getPersonCount() > 2) {
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    String.valueOf(bookedList.get(0).getTransaction().getPersonCount() - 2) + " " + "EXTRA PERSON",
+                    returnWithTwoDecimal(String.valueOf(bookedList.get(0).getTransaction().getxPersonAmount()))
+                    ,
+                    40,
+                    2,context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        }
 
 
 

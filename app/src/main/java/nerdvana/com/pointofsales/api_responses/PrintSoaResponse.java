@@ -1740,6 +1740,9 @@ public class PrintSoaResponse {
     }
 
     public class Transaction {
+        @SerializedName("person_count")
+        @Expose
+        private int personCount;
         @SerializedName("customer")
         @Expose
         private CustomerTrans customerTrans;
@@ -1852,6 +1855,38 @@ public class PrintSoaResponse {
         @SerializedName("discounts")
         @Expose
         private List<Discounts> discounts;
+
+        public int getPersonCount() {
+            return personCount;
+        }
+
+        public void setPersonCount(int personCount) {
+            this.personCount = personCount;
+        }
+
+        public Double getxPersonAmount() {
+            return xPersonAmount;
+        }
+
+        public void setxPersonAmount(Double xPersonAmount) {
+            this.xPersonAmount = xPersonAmount;
+        }
+
+        public Integer getxSkip() {
+            return xSkip;
+        }
+
+        public void setxSkip(Integer xSkip) {
+            this.xSkip = xSkip;
+        }
+
+        public Integer get_void() {
+            return _void;
+        }
+
+        public void set_void(Integer _void) {
+            this._void = _void;
+        }
 
         public CustomerTrans getCustomerTrans() {
             return customerTrans;
