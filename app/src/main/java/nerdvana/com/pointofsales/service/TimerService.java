@@ -110,13 +110,18 @@ public class TimerService extends Service {
                                 public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
                                     if (response.body().getStatus() == 1) {
                                         if (response.body().getResult().size() > 0) {
-                                            DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                                            DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
-                                            shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
-                                            if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
-                                                BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
-                                            } else {
+                                            if (response.body().getResult().get(0).getETime() == null) {
+                                                shiftDisplay = "0";
                                                 BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                            } else {
+                                                DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                                                DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
+                                                shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
+                                                if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+                                                    BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                                } else {
+                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                }
                                             }
                                         } else {
                                             shiftDisplay = "0";

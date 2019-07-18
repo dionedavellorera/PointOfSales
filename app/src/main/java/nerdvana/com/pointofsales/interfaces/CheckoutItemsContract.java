@@ -9,5 +9,5 @@ public interface CheckoutItemsContract {
     void itemAdded(ProductsModel itemAdded);
     void itemRemoved(ProductsModel item);
     void itemSelected(CartItemsModel itemSelected, int position);
-    void itemLongClicked(CartItemsModel itemSelected, int position, View view);
+    void itemLongClicked(CartItemsModel itemSelected, int position, View view, String type);
 }

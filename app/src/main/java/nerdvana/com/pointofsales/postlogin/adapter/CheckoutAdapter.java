@@ -86,7 +86,9 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 @Override
                 public boolean onLongClick(View v) {
                     if (!cartItem.getType().equalsIgnoreCase("misc")) {
-                        checkoutItemsContract.itemLongClicked(cartItem, holder.getAdapterPosition(), v);
+                        checkoutItemsContract.itemLongClicked(cartItem, holder.getAdapterPosition(), v, "not_misc");
+                    } else {
+                        checkoutItemsContract.itemLongClicked(cartItem, holder.getAdapterPosition(), v, "misc");
                     }
 
                     return true;

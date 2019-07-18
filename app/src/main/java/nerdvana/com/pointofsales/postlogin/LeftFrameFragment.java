@@ -48,6 +48,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.Helper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
@@ -210,6 +211,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     PasswordDialog passwordDialog;
     ConfirmWithRemarksDialog backoutGuestDialog;
     EmployeeSelectionDialog employeeSelectionDialog;
+    CollectionDialog safeKeepingDialog;
+    CollectionDialog spotAuditDialog;
     //endregion
 
     private boolean hasExistingRequest = false;
@@ -401,7 +404,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 ////            computeFromDb();
 //        }
 
-//        fetchXReadViaIdRequest("6");
+//        fetchXReadViaIdRequest("5");
 //        fetchZReadViaIdRequest("1");
 
         fetchCarRequest();
@@ -429,8 +432,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         detectSystem();
 
 
-//        printReceiptFromCheckout("VCHI-2019-00000009", "TEST PRINT", "TEST ROOM TYPE");
+//        printReceiptFromCheckout("VCHI-2019-00000002", "TEST PRINT", "TEST ROOM TYPE");
 
+//        fetchXReadViaIdRequest("5");
 
         return view;
     }
@@ -624,7 +628,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (productsModel.getBranchGroupList().size() > 0) {
                     DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(
                             getActivity(),
-                            productsModel.getBranchGroupList(),
+                            new ArrayList<FetchProductsResponse.BranchGroup>(productsModel.getBranchGroupList()),
                             productsModel.getPrice(),
                             productsModel.getQty()) {
                         @Override
@@ -1140,7 +1144,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     @Override
-    public void itemLongClicked(final CartItemsModel itemSelected, final int position, View view) {
+    public void itemLongClicked(final CartItemsModel itemSelected, final int position, View view, String type) {
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_checkout_item, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -1408,11 +1412,65 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             cancelOtMenu.show();
         } else {
-            if (itemSelected.isProduct()) {
-                popupMenu.show();
-            }  else {
-                roomPopupMenu.show();
+
+            if (type.equalsIgnoreCase("misc")) {
+                PopupMenu editGuestMenu = new PopupMenu(getActivity(), view);
+                editGuestMenu.getMenuInflater().inflate(R.menu.menu_edit_guest, editGuestMenu.getMenu());
+                editGuestMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.editGuest:
+                                addGuestDialog = new AddGuestDialog(
+                                        getActivity(),
+                                        fetchRoomPendingResult.getBooked().get(0).getTransaction().getPersonCount(),
+                                        String.valueOf(selectedRoom.getRoomId()),
+                                        fetchRoomPendingResult.getBooked().get(0).getTransaction().getSpecial(),
+                                        true) {
+                                    @Override
+                                    public void editGuestSucess() {
+                                        if (selectedRoom != null) {
+                                            Utils.showDialogMessage(getActivity(), "Guest count edit success", "Information");
+                                            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                            dismiss();
+                                        }
+                                    }
+                                };
+
+                                addGuestDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        addGuestDialog = null;
+                                    }
+                                });
+
+                                addGuestDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        addGuestDialog = null;
+                                    }
+                                });
+
+                                addGuestDialog.show();
+                                Toast.makeText(getContext(), "Edit Guest count", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        return true;
+                    }
+                });
+
+                editGuestMenu.show();
+
+
+            } else {
+                if (itemSelected.isProduct()) {
+                    popupMenu.show();
+                }  else {
+                    roomPopupMenu.show();
+                }
             }
+
+
         }
 
 
@@ -1529,21 +1587,51 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         switch (clickedItem.getId()) {
             case 132: //PRINT SPOT AUDIT
-                CheckSafeKeepingRequest checkSafeKeepingRequest = new CheckSafeKeepingRequest();
-                IUsers uiuser = PosClient.mRestAdapter.create(IUsers.class);
-                Call<CheckSafeKeepingResponse> checkSafeKeepRequest = uiuser.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
-                checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
-                    @Override
-                    public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
-                        //return dione
-                        BusProvider.getInstance().post(new PrintModel("", "", "SPOT_AUDIT_PRINT", GsonHelper.getGson().toJson(response.body())));
-                    }
 
-                    @Override
-                    public void onFailure(Call<CheckSafeKeepingResponse> call, Throwable t) {
 
-                    }
-                });
+                if (spotAuditDialog == null) {
+                    spotAuditDialog = new CollectionDialog(getActivity(), "SPOT AUDIT", false) {
+                        @Override
+                        public void printCashRecoData(String cashNRecoData) {
+
+                        }
+                    };
+
+                    spotAuditDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            spotAuditDialog = null;
+                        }
+                    });
+
+                    spotAuditDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            spotAuditDialog = null;
+                        }
+                    });
+
+                    if (!spotAuditDialog.isShowing()) spotAuditDialog.show();
+                }
+
+
+
+//                CheckSafeKeepingRequest checkSafeKeepingRequest = new CheckSafeKeepingRequest();
+//                IUsers uiuser = PosClient.mRestAdapter.create(IUsers.class);
+//                Call<CheckSafeKeepingResponse> checkSafeKeepRequest = uiuser.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
+//                checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
+//                    @Override
+//                    public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
+//                        //return dione
+//
+////                        BusProvider.getInstance().post(new PrintModel("", "", "SPOT_AUDIT_PRINT", GsonHelper.getGson().toJson(response.body())));
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<CheckSafeKeepingResponse> call, Throwable t) {
+//
+//                    }
+//                });
                 break;
             case 131: //ADD GUEST COUNT
                 if (selectedRoom != null) {
@@ -1551,7 +1639,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         addGuestDialog = new AddGuestDialog(getActivity(),
                                 fetchRoomPendingResult.getBooked().get(0).getTransaction().getPersonCount(),
                                 String.valueOf(selectedRoom.getRoomId()),
-                                fetchRoomPendingResult.getBooked().get(0).getTransaction().getSpecial()) {
+                                fetchRoomPendingResult.getBooked().get(0).getTransaction().getSpecial(),
+                                false) {
                             @Override
                             public void editGuestSucess() {
                                 if (selectedRoom != null) {
@@ -3094,13 +3183,30 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void doSafeKeepFunction() {
-        CollectionDialog safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
-            @Override
-            public void printCashRecoData(String cashNRecoData) {
+        if (safeKeepingDialog == null) {
+            safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
+                @Override
+                public void printCashRecoData(String cashNRecoData) {
 
-            }
-        };
-        if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+                }
+            };
+
+            safeKeepingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    safeKeepingDialog = null;
+                }
+            });
+
+            safeKeepingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    safeKeepingDialog = null;
+                }
+            });
+            if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+        }
+
     }
 
     private void doPostVoidFunction() {
@@ -5506,24 +5612,40 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
 
+                    Log.d("SSTEM_TRACE", "franchise");
 
                     BusProvider.getInstance().post(new PrintModel(
                             "", "",
                             "FRANCHISE_OR",
                             GsonHelper.getGson().toJson(response.body().getResult()),
                             ""));
-                } else {
+                }
+                else {
+
+                    //comment this later on after tesint
+                    BusProvider.getInstance().post(new PrintModel(
+                            "", roomName,
+                            "PRINT_RECEIPT",
+                            GsonHelper.getGson().toJson(response.body().getResult()),
+                            roomType));
 
                     if (selectedRoom != null) {
 
                         if (selectedRoom.isTakeOut()) {
+
+
+                            Log.d("SSTEM_TRACE", "room to");
+
 
                             BusProvider.getInstance().post(new PrintModel(
                                     "", "takeout",
                                     "PRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
                                     roomType));
-                        } else {
+                        }
+                        else {
+
+                            Log.d("SSTEM_TRACE", "room not to");
 
                             BusProvider.getInstance().post(new PrintModel(
                                     "", roomName,
@@ -5531,6 +5653,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     GsonHelper.getGson().toJson(response.body().getResult()),
                                     roomType));
                         }
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "Empty selected room on printing, please reprint", "Information");;
                     }
                 }
 
@@ -5538,7 +5662,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 clearCartItems();
                 defaultView();
-
                 detectSystem();
             }
 

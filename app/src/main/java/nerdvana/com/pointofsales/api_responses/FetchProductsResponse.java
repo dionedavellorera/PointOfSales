@@ -401,7 +401,20 @@ public class FetchProductsResponse {
         }
     }
 
-    public class BranchList {
+    public static class BranchList {
+
+        public BranchList(int id, int productGroupId, int currencyId, double price, String createdBy, String createdAt, String updatedAt, String deletedAt, BranchProduct branchProduct) {
+            this.id = id;
+            this.productGroupId = productGroupId;
+            this.currencyId = currencyId;
+            Price = price;
+            this.createdBy = createdBy;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
+            this.branchProduct = branchProduct;
+        }
+
         @SerializedName("id")
         @Expose
         private int id;
@@ -503,7 +516,25 @@ public class FetchProductsResponse {
         }
     }
 
-    public class BranchGroup {
+    public static class BranchGroup {
+
+        public BranchGroup(int selectedQtyInBranch, int id, int coreId, int productId, String groupName, int currencyId, int qty, String createdBy, String createdAt, String updatedAt, String deletedAt) {
+            this.selectedQtyInBranch = selectedQtyInBranch;
+            this.id = id;
+            this.coreId = coreId;
+            this.productId = productId;
+            this.groupName = groupName;
+            this.currencyId = currencyId;
+            this.qty = qty;
+            this.createdBy = createdBy;
+            this.createdAt = createdAt;
+            this.updatedAt = updatedAt;
+            this.deletedAt = deletedAt;
+            this.branchLists = branchLists;
+        }
+
+        private int selectedQtyInBranch = 0;
+
         @SerializedName("id")
         @Expose
         private int id;
@@ -537,6 +568,14 @@ public class FetchProductsResponse {
         @SerializedName("branch_list")
         @Expose
         private List<BranchList> branchLists;
+
+        public int getSelectedQtyInBranch() {
+            return selectedQtyInBranch;
+        }
+
+        public void setSelectedQtyInBranch(int selectedQtyInBranch) {
+            this.selectedQtyInBranch = selectedQtyInBranch;
+        }
 
         public int getId() {
             return id;

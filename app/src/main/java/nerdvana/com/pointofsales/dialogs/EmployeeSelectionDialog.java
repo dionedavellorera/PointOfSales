@@ -95,7 +95,7 @@ public abstract class EmployeeSelectionDialog extends BaseDialog {
         employeeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                userId = companyUser.get(position).getUsername();
+                userId = String.valueOf(companyUser.get(position).getUserId());
                 wholeName = companyUser.get(position).getName();
             }
 

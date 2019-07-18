@@ -1032,6 +1032,17 @@ public class FetchXReadingViaIdResponse {
         @SerializedName("payments")
         @Expose
         private List<Payment> payments = null;
+        @SerializedName("adjustment_deposit")
+        @Expose
+        private String adjustmentDeposit;
+
+        public String getAdjustmentDeposit() {
+            return adjustmentDeposit;
+        }
+
+        public void setAdjustmentDeposit(String adjustmentDeposit) {
+            this.adjustmentDeposit = adjustmentDeposit;
+        }
 
         public Integer getId() {
             return id;

@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.dialogs;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,15 +28,16 @@ public abstract class AddGuestDialog extends BaseDialog {
     private Context context;
     private String roomId;
     private int specialCount;
+    private boolean isEdit;
     public AddGuestDialog(@NonNull final Context context, String previousPersonCount,
-                          String roomId, int specialCount) {
+                          String roomId, int specialCount,
+                          boolean isEdit) {
         super(context);
         this.context = context;
         this.previousPersonCount = previousPersonCount;
         this.roomId = roomId;
         this.specialCount = specialCount;
-
-
+        this.isEdit = isEdit;
     }
 
     @Override
@@ -50,25 +52,55 @@ public abstract class AddGuestDialog extends BaseDialog {
         value = findViewById(R.id.value);
         confirm = findViewById(R.id.confirm);
 
-        value.setText(previousPersonCount);
+        if (isEdit) {
+            value.setText(String.valueOf(Integer.valueOf(previousPersonCount) - 2));
+        } else {
+            value.setText("1");
+        }
+
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) + 1));
+                if (isEdit) {
+
+                    Log.d("DSADSAD", previousPersonCount);
+                    Log.d("DSADSAD", value.getText().toString());
+
+                    if ((Integer.valueOf(value.getText().toString()) + 1) > ((Integer.valueOf(previousPersonCount)) - 2)) {
+                        Utils.showDialogMessage(context, "Cannot add more guest, please go to add guest menu to add", "Information");
+                    } else {
+                        value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) + 1));
+                    }
+                } else {
+                    value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) + 1));
+                }
+
             }
         });
 
         subtract.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if ((Integer.valueOf(value.getText().toString()) - 1) < specialCount) {
                     Utils.showDialogMessage(context, "Cannot proceed, special discount will exceed the number of person, void discount first", "Information");
-                } else if (Integer.valueOf(value.getText().toString()) - 1 == 1) {
-                    Utils.showDialogMessage(context, "Guest count cannot be less than two(2)", "Information");
                 } else {
-                    value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) - 1));
+                    if (isEdit) {
+                        if ((Integer.valueOf(value.getText().toString()) - 1) < 0) {
+                            Utils.showDialogMessage(context, "Cannot remove negative count of guest", "Information");
+                        } else {
+                            value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) - 1));
+                        }
+                    } else {
+                        if ((Integer.valueOf(value.getText().toString()) - 1) < 1) {
+                            Utils.showDialogMessage(context, "Cannot add zero(0) guest", "Information");
+                        } else {
+                            value.setText(String.valueOf(Integer.valueOf(value.getText().toString()) - 1));
+                        }
+                    }
                 }
+
             }
         });
 
@@ -76,58 +108,64 @@ public abstract class AddGuestDialog extends BaseDialog {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Integer.valueOf(value.getText().toString()) < 2) {
-                    Utils.showDialogMessage(context, "Guest count cannot be less than two(2)", "Information");
-                } else {
 
-                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(context) {
-                        @Override
-                        public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(context, "99") {
-                                @Override
-                                public void passwordSuccess(String employeeId, String employeeName) {
-                                    EditGuestCountRequest editGuestCountRequest = new EditGuestCountRequest(
-                                            previousPersonCount,
-                                            value.getText().toString(),
-                                            roomId,
-                                            employeeId,
-                                            remarks);
+                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(context) {
+                    @Override
+                    public void save(final String remarks) {
+                        PasswordDialog passwordDialog = new PasswordDialog(context, "99") {
+                            @Override
+                            public void passwordSuccess(String employeeId, String employeeName) {
+                                int personCount = 0;
+                                if (isEdit) {
+                                    if (Integer.valueOf(value.getText().toString()) == 0) {
+                                        personCount = 2;
+                                    } else if(Integer.valueOf(value.getText().toString()) == (Integer.valueOf(previousPersonCount) - Integer.valueOf(value.getText().toString()))) {
+                                        Utils.showDialogMessage(context, "No changes to guest number, cannot update", "Information");
+                                    } else {
+                                        personCount = Integer.valueOf(previousPersonCount) - Integer.valueOf(value.getText().toString());
+                                    }
 
-                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                    Call<EditGuestCountResponse> request = iUsers.editGuestCount(editGuestCountRequest.getMapValue());
-                                    request.enqueue(new Callback<EditGuestCountResponse>() {
-                                        @Override
-                                        public void onResponse(Call<EditGuestCountResponse> call, Response<EditGuestCountResponse> response) {
-                                            if (response.body().getStatus() == 1) {
-                                                dismiss();
-                                                editGuestSucess();
-                                            } else {
-                                                Utils.showDialogMessage(context, response.body().getMessage(), "Information");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<EditGuestCountResponse> call, Throwable t) {
-
-                                        }
-                                    });
+                                } else {
+                                    personCount = Integer.valueOf(previousPersonCount) + Integer.valueOf(value.getText().toString());
                                 }
 
-                                @Override
-                                public void passwordFailed() {
+                                EditGuestCountRequest editGuestCountRequest = new EditGuestCountRequest(
+                                        previousPersonCount,
+                                        String.valueOf(personCount),
+                                        roomId,
+                                        employeeId,
+                                        remarks);
 
-                                }
-                            };
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<EditGuestCountResponse> request = iUsers.editGuestCount(editGuestCountRequest.getMapValue());
+                                request.enqueue(new Callback<EditGuestCountResponse>() {
+                                    @Override
+                                    public void onResponse(Call<EditGuestCountResponse> call, Response<EditGuestCountResponse> response) {
+                                        if (response.body().getStatus() == 1) {
+                                            dismiss();
+                                            editGuestSucess();
+                                        } else {
+                                            Utils.showDialogMessage(context, response.body().getMessage(), "Information");
+                                        }
+                                    }
 
-                            passwordDialog.show();
-                        }
-                    };
+                                    @Override
+                                    public void onFailure(Call<EditGuestCountResponse> call, Throwable t) {
 
-                    confirmWithRemarksDialog.show();
+                                    }
+                                });
+                            }
 
+                            @Override
+                            public void passwordFailed() {
 
+                            }
+                        };
 
-                }
+                        passwordDialog.show();
+                    }
+                };
+                confirmWithRemarksDialog.show();
             }
         });
     }

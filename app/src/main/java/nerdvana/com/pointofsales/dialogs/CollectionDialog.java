@@ -46,6 +46,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
+import nerdvana.com.pointofsales.model.SpotAuditModel;
 import okhttp3.ResponseBody;
 import okhttp3.internal.Util;
 import retrofit2.Call;
@@ -86,16 +87,13 @@ public abstract class CollectionDialog extends BaseDialog {
                 totalSafeKeepAmount = 0.00;
                 collectionFinalPostModels = new ArrayList<>();
                 for (SafeKeepDataModel skdm : safeKeepDataModelList) {
-
                     if (!TextUtils.isEmpty(skdm.getEditText().getText().toString().trim())) {
                         if (Double.valueOf(skdm.getEditText().getText().toString()) > 0) {
-
                             if (skdm.getValue().equalsIgnoreCase("CHECK")) { //CHECK, SPECIAL CASE
 
                             } else {
                                 totalSafeKeepAmount += (Double.valueOf(skdm.getValue()) * Double.valueOf(skdm.getEditText().getText().toString()));
                                 collectionFinalPostModels.add(
-
                                         new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
                                                 skdm.getEditText().getText().toString(),
                                                 skdm.getValue(),
@@ -120,56 +118,38 @@ public abstract class CollectionDialog extends BaseDialog {
                             CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
 
 
-                            Log.d("CASHRECODATA", collectionRequest.toString());
+//                            Log.d("CASHRECODATA", collectionRequest.toString());
 
-//                            Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-//                            request.enqueue(new Callback<Object>() {
-//                                @Override
-//                                public void onResponse(Call<Object> call, Response<Object> response) {
-//                                    try {
-//                                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-//                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
-//                                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
-//
-//                                            BusProvider.getInstance().post(new PrintModel("",
-//                                                    "",
-//                                                    "CASHRECONCILE",
-//                                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
-//                                                    ""));
-//
-//                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
-//                                        } else {
-//                                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
-//                                        }
-//                                    } catch (JSONException e) {
-//                                        e.printStackTrace();
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onFailure(Call<Object> call, Throwable t) {
-//
-//                                }
-//                            });
+                            Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+                            request.enqueue(new Callback<Object>() {
+                                @Override
+                                public void onResponse(Call<Object> call, Response<Object> response) {
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
+                                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
 
-//                            request.enqueue(new Callback<CashNReconcileResponse>() {
-//                                @Override
-//                                public void onResponse(Call<CashNReconcileResponse> call, Response<CashNReconcileResponse> response) {
-//
-//                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-//
-//                                    if (response.body().getStatus() == 1) {
-//                                        dismiss();
-//                                    }
-//
-//                                    printCashRecoData(response.body());
-//                                }
-//
-//                                @Override
-//                                public void onFailure(Call<CashNReconcileResponse> call, Throwable t) {
-//
-//                                }
-//                            });
+                                            BusProvider.getInstance().post(new PrintModel("",
+                                                    "",
+                                                    "CASHRECONCILE",
+                                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                                    ""));
+
+                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+                                        } else {
+                                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<Object> call, Throwable t) {
+
+                                }
+                            });
+
                         }
 
                         @Override
@@ -188,41 +168,57 @@ public abstract class CollectionDialog extends BaseDialog {
                         checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
                             @Override
                             public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
-                                if (totalSafeKeepAmount <= response.body().getResult().getUnCollected()) {
-                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                    CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
 
-                                    Log.d("CASHRECODATA", collectionRequest.toString());
+                                if (type.equalsIgnoreCase("SPOT AUDIT")) {
+                                    SpotAuditModel spotAuditModel = new SpotAuditModel(
+                                            String.valueOf(totalSafeKeepAmount - response.body().getResult().getUnCollected()),
+                                            collectionFinalPostModels,
+                                            String.valueOf(response.body().getResult().getUnCollected()));
 
+                                    BusProvider.getInstance()
+                                            .post(
+                                                    new PrintModel("",
+                                                            "",
+                                                            "SPOT_AUDIT_PRINT",
+                                                            GsonHelper.getGson().toJson(spotAuditModel)));
 
-                                    Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
-
-                                    request.enqueue(new Callback<CollectionResponse>() {
-                                        @Override
-                                        public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
-                                            if (response.body().getStatus() == 0) {
-                                                Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-                                            } else {
-
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        "",
-                                                        "SAFEKEEPING",
-                                                        GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                                        ""));
-
-
-                                                dismiss();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<CollectionResponse> call, Throwable t) {
-
-                                        }
-                                    });
+                                    dismiss();
                                 } else {
-                                    Utils.showDialogMessage(act, "The amount you entered is more than the actual sales", "Error");
+                                    if (totalSafeKeepAmount <= response.body().getResult().getUnCollected()) {
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
+//                                    Log.d("CASHRECODATA", collectionRequest.toString());
+
+                                        Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+
+                                        request.enqueue(new Callback<CollectionResponse>() {
+                                            @Override
+                                            public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
+                                                if (response.body().getStatus() == 0) {
+                                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                                                } else {
+
+                                                    BusProvider.getInstance().post(new PrintModel("",
+                                                            "",
+                                                            "SAFEKEEPING",
+                                                            GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                                            ""));
+
+
+                                                    dismiss();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<CollectionResponse> call, Throwable t) {
+
+                                            }
+                                        });
+                                    } else {
+                                        Utils.showDialogMessage(act, "The amount you entered is more than the actual sales", "Error");
+                                    }
                                 }
+
                             }
 
                             @Override

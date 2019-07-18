@@ -22,6 +22,7 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.WelcomeGuestRequest;
 import nerdvana.com.pointofsales.api_responses.FetchCarResponse;
@@ -71,7 +72,8 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
     private FetchRoomPendingResponse.Result fetchRoomPendingResult;
     private List<FetchUserResponse.Result> userList;
     public CheckInDialog(@NonNull Context context, RoomTableModel selectedRoom,
-                         List<FetchCarResponse.Result> carList, List<FetchVehicleResponse.Result> vehicleList,
+                         List<FetchCarResponse.Result> carList,
+                         List<FetchVehicleResponse.Result> vehicleList,
                          List<FetchGuestTypeResponse.Result> guestTypeList,
                          List<FetchUserResponse.Result> userList,
                          List<FetchRoomAreaResponse.Result> areaList,
@@ -276,7 +278,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
     private void setPriceSelection() {
         List<String> priceArray = new ArrayList<>();
         for (RoomRateMain rrm : priceList) {
-            priceArray.add(String.format("%f - %s", rrm.getRatePrice().getAmount(), rrm.getRatePrice().getRoomRate().getRoomRate()));
+            priceArray.add(String.format("%s - %s", Utils.returnWithTwoDecimal(String.valueOf(rrm.getRatePrice().getAmount())), rrm.getRatePrice().getRoomRate().getRoomRate()));
         }
         CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                 priceArray);

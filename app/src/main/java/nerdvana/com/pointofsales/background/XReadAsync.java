@@ -9,6 +9,8 @@ import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -93,6 +95,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
             JSONObject jsonObject = new JSONObject(printModel.getData());
             JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+            JSONArray dataCashAndRecoJsonObject = jsonObject.getJSONObject("data").getJSONArray("cash_and_reco");
             JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
             JSONObject dutyManager = jsonObject.getJSONObject("data").getJSONObject("duty_manager");
             if (dataJsonObject != null) {
@@ -284,23 +287,37 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
             }
 
             addPrinterSpace(1);
+
+
+            JSONObject cashRecoObj = dataCashAndRecoJsonObject.getJSONObject(0);
+
+            Log.d("TEST", cashRecoObj.getString("adjustment_deposit"));
+
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CASH OUT",
-                    "0.00"
-                    ,
+                    "DEPOSIT ADJ.",
+                    cashRecoObj.getString("adjustment_deposit"),
                     40,
                     2,
                     context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "REFUND",
-                    "0.00"
-                    ,
-                    40,
-                    2,
-                    context),
-                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "CASH OUT",
+//                    "0.00",
+//                    40,
+//                    2,
+//                    context),
+//                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "REFUND",
+//                    "0.00"
+//                    ,
+//                    40,
+//                    2,
+//                    context),
+//                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "VOID",

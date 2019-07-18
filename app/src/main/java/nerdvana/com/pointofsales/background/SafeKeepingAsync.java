@@ -91,16 +91,11 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
 
 
         try {
-
             printer.addCut(Printer.CUT_FEED);
-
             if (printer.getStatus().getConnection() == 1) {
                 printer.sendData(Printer.PARAM_DEFAULT);
                 printer.clearCommandBuffer();
             }
-
-
-//            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

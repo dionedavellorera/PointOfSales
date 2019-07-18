@@ -66,7 +66,7 @@ public class PrinterConnectionFragment extends Fragment {
         try {
             Discovery.start(getContext(), mFilterOption, mDiscoveryListener);
         } catch (Epos2Exception e) {
-
+            Toast.makeText(getContext(), e.getErrorStatus(), Toast.LENGTH_SHORT).show();
         }
 
         if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY).isEmpty()) {

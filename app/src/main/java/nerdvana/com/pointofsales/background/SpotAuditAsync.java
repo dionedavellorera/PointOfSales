@@ -3,22 +3,32 @@ package nerdvana.com.pointofsales.background;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.SafeKeepDataModel;
+import nerdvana.com.pointofsales.model.SpotAuditModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
+import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
+import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
@@ -53,8 +63,6 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
                     context);
-
-
             printer.setReceiveEventListener(new ReceiveListener() {
                 @Override
                 public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
@@ -75,69 +83,19 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+        PrinterUtils.addHeader(printModel, printer);
 
-        addTextToPrinter(printer,"SPOT AUDIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
-
-        addPrinterSpace(1);
-
-
-
-        CheckSafeKeepingResponse cim = GsonHelper.getGson().fromJson(printModel.getData(), CheckSafeKeepingResponse.class);
-
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "CASH SALES",
-                String.valueOf(cim.getResult().getPayments()),
-                40,
-                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "SAFEKEEP AMOUNT",
-                String.valueOf(cim.getResult().getCashOnHand()),
-                40,
-                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "CASH ON HAND",
-                String.valueOf(cim.getResult().getUnCollected()),
-                40,
-                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-        if (cim.getResult().getList().size() > 0) {
-
-            addPrinterSpace(1);
-
-
-            addTextToPrinter(printer,"SAFEKEEP BREAKDOWN", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,1);
-
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "DENOMINATION",
-                    "COUNT",
-                    40,
-                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            for (CheckSafeKeepingResponse.Liiiist r : cim.getResult().getList()) {
-
-                addPrinterSpace(1);
+        addTextToPrinter(printer, "SPOT AUDIT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
+        SpotAuditModel collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), SpotAuditModel.class);
+        addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+        fixDenoPrint(collectionDetails.getCollectionFinalPostModels(),
+                collectionDetails.getShortOver(),
+                collectionDetails.getCashSales());
 
 
 
-                for (CheckSafeKeepingResponse.Denomination d : r.getDenominationList()) {
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            d.getCashDenominationValue(),
-                            String.valueOf(d.getAmount()),
-                            40,
-                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                }
-
-            }
-        }
-
-
-
-        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         try {
             printer.addCut(Printer.CUT_FEED);
             if (printer.getStatus().getConnection() == 1) {
@@ -147,6 +105,7 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+
 
 
         return null;
@@ -206,4 +165,92 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
             e.printStackTrace();
         }
     }
+
+    private void fixDenoPrint(List<CollectionFinalPostModel> myList, String shortOver,
+                              String cashSales) {
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.CASH_DENO_JSON))) {
+            TypeToken<List<FetchDenominationResponse.Result>> collectionToken = new TypeToken<List<FetchDenominationResponse.Result>>() {};
+            List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.CASH_DENO_JSON), collectionToken.getType());
+            Double finalAmount = 0.00;
+            for (FetchDenominationResponse.Result cfm : denoDetails) {
+                String valueCount = "0";
+                String valueAmount = "0.00";
+                for (CollectionFinalPostModel c : myList) {
+                    if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
+                        valueCount = c.getAmount();
+                        valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
+                        break;
+                    }
+                }
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        String.format("%s  x %s", valueCount, cfm.getAmount()),
+                        valueAmount
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                finalAmount += Double.valueOf(valueAmount);
+            }
+
+            addPrinterSpace(1);
+
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "CASH SALES",
+                    cashSales
+                    ,
+                    40,
+                    2,
+                    context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "CASH COUNT",
+                    String.valueOf(finalAmount)
+                    ,
+                    40,
+                    2,
+                    context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "CASH OUT",
+                    "0.00"
+                    ,
+                    40,
+                    2,
+                    context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+            addPrinterSpace(1);
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "SHORT/OVER",
+                    shortOver
+                    ,
+                    40,
+                    2,
+                    context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+            addPrinterSpace(1);
+
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+        }
+
+    }
+
+
 }

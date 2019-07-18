@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.adapters;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,10 @@ public class ListMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         if (holder instanceof ListMenuAdapter.ListViewHolder) {
+
+            Log.d("QTYQTY", String.valueOf(branchGroupList.get(i).getQty()));
+            Log.d("QTYQTY", String.valueOf(branchGroupList.get(i).getSelectedQtyInBranch()));
+
             ((ListViewHolder) holder).name.setText(branchGroupList.get(i).getGroupName());
             ((ListViewHolder) holder).name.setTextColor(R.color.lightPrimaryFont);
             ((ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +62,13 @@ public class ListMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     category.clicked(i);
                 }
             });
+
+
+            if (branchGroupList.get(i).getSelectedQtyInBranch() == branchGroupList.get(i).getQty()) {
+                ((ListViewHolder) holder).name.setText("DONE");
+            } else {
+                ((ListViewHolder) holder).name.setBackgroundColor(R.color.colorWhite);
+            }
 
         }
 

@@ -56,6 +56,8 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
+
+        boolean hasConnected = true;
         try {
             printer = new Printer(
                     Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
@@ -79,27 +81,31 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 }
             });
 
-            boolean hasConnected = false;
-            if (!TextUtils.isEmpty(printerPath)) {
-                printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
-                hasConnected = true;
-            }
-
-            if (!hasConnected) {
-                if (!TextUtils.isEmpty(kitchPath)) {
-                    printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
-                    hasConnected = true;
-                }
-            }
-
-            if (!hasConnected) {
-                printer.disconnect();
-                Toast.makeText(context, "No printer available", Toast.LENGTH_SHORT).show();
-            }
 
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+
+        try {
+            printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+            hasConnected = false;
+        }
+
+
+        try {
+            printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+        } catch (Epos2Exception e) {
+            e.printStackTrace();
+            hasConnected = false;
+        }
+
+
+        if (!hasConnected) {
+            PrinterUtils.connect(context, printer);
+        }
+
         PrinterUtils.addHeader(printModel, printer);
         Double totalAmount = 0.00;
         addTextToPrinter(printer, "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

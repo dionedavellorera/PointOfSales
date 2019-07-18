@@ -98,36 +98,38 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 }
             });
 
-            if (bookedList.get(0).getRoom().getArea().getPrinterPath().isEmpty()) {
-                if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY))) {
-                    try {
-                        if (printer != null) {
+            PrinterUtils.connect(context, printer);
 
-                            printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
-                        }
-                    } catch (Epos2Exception e) {
-
-                        e.printStackTrace();
-                    }
-                } else {
-                    if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT).isEmpty()) {
-                        Toast.makeText(context, "No Printer", Toast.LENGTH_SHORT).show();
-                    } else {
-                        try {
-                            if (printer != null) {
-                                printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
-                            }
-                        } catch (Epos2Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            } else {
-
-                Log.d("TTTTT", bookedList.get(0).getRoom().getArea().getPrinterPath());
-
-                printer.connect("TCP:" + bookedList.get(0).getRoom().getArea().getPrinterPath(), Printer.PARAM_DEFAULT);
-            }
+//            if (bookedList.get(0).getRoom().getArea().getPrinterPath().isEmpty()) {
+//                if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY))) {
+//                    try {
+//                        if (printer != null) {
+//
+//                            printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
+//                        }
+//                    } catch (Epos2Exception e) {
+//
+//                        e.printStackTrace();
+//                    }
+//                } else {
+//                    if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT).isEmpty()) {
+//                        Toast.makeText(context, "No Printer", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        try {
+//                            if (printer != null) {
+//                                printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+//                            }
+//                        } catch (Epos2Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            } else {
+//
+//                Log.d("TTTTT", bookedList.get(0).getRoom().getArea().getPrinterPath());
+//
+//                printer.connect("TCP:" + bookedList.get(0).getRoom().getArea().getPrinterPath(), Printer.PARAM_DEFAULT);
+//            }
 
 
         } catch (Epos2Exception e) {

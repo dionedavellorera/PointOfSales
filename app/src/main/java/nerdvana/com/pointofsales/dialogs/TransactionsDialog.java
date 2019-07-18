@@ -276,7 +276,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     }
 
     @Override
-    public void itemLongClicked(CartItemsModel itemSelected, int position, View view) {
+    public void itemLongClicked(CartItemsModel itemSelected, int position, View view, String type) {
 
     }
 

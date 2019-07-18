@@ -222,7 +222,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         } else {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                    payment.getPaymentType() + " Sales",
+                                    payment.getPaymentType().toUpperCase()+ " SALES",
                                     String.valueOf(value)
                                     ,
                                     40,
@@ -264,23 +264,35 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
             }
 
             addPrinterSpace(1);
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "CASH OUT",
+//                    "0.00"
+//                    ,
+//                    40,
+//                    2,
+//                    context),
+//                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            double depositAdjustment = 0.00;
+            for (ZReadResponse.CutOff cutOff : zReadResponse.getData().getCutOff()) {
+                depositAdjustment += Double.valueOf(cutOff.getCashAndReco().get(0).getAdjustmentDeposit());
+            }
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "CASH OUT",
-                    "0.00"
+                    "DEPO. ADJUSTMENT",
+                    String.valueOf(depositAdjustment)
                     ,
                     40,
                     2,
                     context),
                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-            addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "REFUND",
-                    "0.00"
-                    ,
-                    40,
-                    2,
-                    context),
-                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "REFUND",
+//                    "0.00"
+//                    ,
+//                    40,
+//                    2,
+//                    context),
+//                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "VOID",
