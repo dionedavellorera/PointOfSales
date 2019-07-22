@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.adapters;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,9 +24,12 @@ import nerdvana.com.pointofsales.model.AvailableGcModel;
 public class ListMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<FetchProductsResponse.BranchGroup> branchGroupList;
     private DialogBundleComposition.Category category;
-    public ListMenuAdapter(List<FetchProductsResponse.BranchGroup> branchGroupList, DialogBundleComposition.Category category) {
+    private Context context;
+    public ListMenuAdapter(List<FetchProductsResponse.BranchGroup> branchGroupList, DialogBundleComposition.Category category,
+                           Context context) {
         this.branchGroupList = branchGroupList;
         this.category = category;
+        this.context = context;
     }
 
     @NonNull
@@ -65,7 +69,7 @@ public class ListMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
             if (branchGroupList.get(i).getSelectedQtyInBranch() == branchGroupList.get(i).getQty()) {
-                ((ListViewHolder) holder).name.setText("DONE");
+                ((ListViewHolder) holder).name.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
             } else {
                 ((ListViewHolder) holder).name.setBackgroundColor(R.color.colorWhite);
             }

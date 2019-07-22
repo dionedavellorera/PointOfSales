@@ -127,22 +127,60 @@ public abstract class DialogBundleComposition extends BaseDialog {
             @Override
             public void clicked(int position) {
                 if ((bundleProductModelList.get(position).getQty() - 1) == 0) {
-
-
-                    selectedProductsInBundleModelList.get(pageIndicator).setTotalQtySelected(bundleProductModelList.get(position).getQty() - 1);
-
-
-                    branchGroupList.get(pageIndicator).setSelectedQtyInBranch(bundleProductModelList.get(position).getQty() - 1);
-
-
+                    int qty = 0;
+                    for (SelectedProductsInBundleModel.BundleProductModel bpm : bundleProductModelList) {
+                        qty += bpm.getQty();
+                    }
+                    selectedProductsInBundleModelList
+                            .get(pageIndicator)
+                            .setTotalQtySelected((qty - 1));
+                    branchGroupList
+                            .get(pageIndicator)
+                            .setSelectedQtyInBranch(0);
                     bundleProductModelList.remove(position);
-
-
                     selectedProductsAdapter.notifyDataSetChanged();
-
                     if (listMenuAdapter != null) {
                         listMenuAdapter.notifyDataSetChanged();
                     }
+                    selectionTitle.setText(String.format("%s(%s)",
+                            branchGroupList.get(pageIndicator).getGroupName(),
+                            String.valueOf(
+                                    selectedProductsInBundleModelList.get(pageIndicator).getMaxQty()
+                                            - (qty - 1)
+                            )));
+                } else {
+
+                    selectedProductsInBundleModelList
+                            .get(pageIndicator)
+                            .setTotalQtySelected(
+                                    selectedProductsInBundleModelList
+                                            .get(pageIndicator)
+                                            .getTotalQtySelected() - 1
+
+                            );
+                    branchGroupList
+                            .get(pageIndicator)
+                            .setSelectedQtyInBranch(
+                                    selectedProductsInBundleModelList
+                                            .get(pageIndicator)
+                                            .getTotalQtySelected() - 1
+
+                            );
+                    bundleProductModelList
+                            .get(position)
+                            .setQty(
+                                    bundleProductModelList.get(position).getQty() - 1
+                            );
+                    selectedProductsAdapter.notifyDataSetChanged();
+                    if (listMenuAdapter != null) {
+                        listMenuAdapter.notifyDataSetChanged();
+                    }
+
+
+                    selectionTitle.setText(String.format("%s(%s)",
+                            branchGroupList.get(pageIndicator).getGroupName(),
+                            String.valueOf(selectedProductsInBundleModelList.get(pageIndicator).getMaxQty()
+                                    - selectedProductsInBundleModelList.get(pageIndicator).getTotalQtySelected())));
                 }
             }
         };
@@ -305,7 +343,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
 
 
         listMenu.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.HORIZONTAL));
-        listMenuAdapter = new ListMenuAdapter(branchGroupList, category);
+        listMenuAdapter = new ListMenuAdapter(branchGroupList, category, getContext());
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         listMenu.setLayoutManager(llm);
