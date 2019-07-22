@@ -140,6 +140,7 @@ import nerdvana.com.pointofsales.background.XReadAsync;
 import nerdvana.com.pointofsales.background.ZReadAsync;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
+import nerdvana.com.pointofsales.dialogs.DialogWakeUpCall;
 import nerdvana.com.pointofsales.dialogs.RoomListViewDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
@@ -151,6 +152,7 @@ import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.ChangeWakeUpCallPrintModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.InfoModel;
+import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintJobModel;
@@ -196,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
     android.support.v7.widget.Toolbar toolbar;
+
+    private DialogWakeUpCall dialogWakeUpCall;
 
 
     private TextView timer;
@@ -1715,6 +1719,33 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         user.setTextColor(getResources().getColor(R.color.darkFont));
         timer.setTextColor(getResources().getColor(R.color.darkFont));
 
+    }
+
+    @Subscribe
+    public void openWakeUpCallDialog(OpenWakeUpCallDialog openWakeUpCallDialog) {
+
+        if (dialogWakeUpCall == null) {
+            dialogWakeUpCall = new DialogWakeUpCall(MainActivity.this, openWakeUpCallDialog.getWakeUpCallModels());
+
+            dialogWakeUpCall.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    dialogWakeUpCall = null;
+                }
+            });
+
+            dialogWakeUpCall.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    dialogWakeUpCall = null;
+                }
+            });
+
+            if (!dialogWakeUpCall.isShowing()) {
+                dialogWakeUpCall.show();
+            }
+
+        }
     }
 }
 

@@ -37,6 +37,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
+import nerdvana.com.pointofsales.background.WakeUpCallReminderAsync;
 import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.TimerModel;
 import okhttp3.ResponseBody;
@@ -76,10 +77,10 @@ public class TimerService extends Service {
                     public void onTick(int second) {
                         secsOfDate+= 1;
 
+                        Log.d("DATEDATE", String.valueOf(secsOfDate));
 
                         BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate), shiftDisplay));
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
-
                         if (secsOfDate % 10 == 0) {
 
                             BusProvider.getInstance().post(new CheckSafeKeepingRequest());
@@ -138,6 +139,10 @@ public class TimerService extends Service {
                                     BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
                                 }
                             });
+                        }
+                        if (secsOfDate % 10 == 0){
+
+                            new WakeUpCallReminderAsync(secsOfDate).execute();
 
                         }
                     }

@@ -217,6 +217,11 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
         refreshRoom.setRefreshing(false);
         if (fetchRoomResponse.getResult().size() > 0) {
+            SharedPreferenceManager
+                    .saveString(
+                            RoomsActivity.this,
+                            GsonHelper.getGson().toJson(fetchRoomResponse.getResult()),
+                            ApplicationConstants.ROOM_JSON);
             new RoomsTablesAsync(this, fetchRoomResponse.getResult()).execute();
             setRoomFilter();
         }

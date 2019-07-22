@@ -5271,6 +5271,27 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             Utils.showDialogMessage(getActivity(), checkOutResponse.getMessage(), "Information");
         } else {
 
+            TypeToken<List<String>> roomToken = new TypeToken<List<String>>() {};
+            List<String> wul =
+                    GsonHelper
+                            .getGson()
+                            .fromJson(
+                                    SharedPreferenceManager.getString(null, "room_no_list"),
+                                    roomToken.getType());
+
+            if (wul != null) {
+                if (wul.size() > 0) {
+                    int index = 0;
+                    for (String str : wul) {
+                        if (str.equalsIgnoreCase(selectedRoom.getName())) {
+                            break;
+                        }
+                        index++;
+                    }
+                    wul.remove(index);
+                }
+            }
+
             Log.d("POPOPO", selectedRoom.getControlNo());
 
 
