@@ -55,9 +55,6 @@ public class ListMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         if (holder instanceof ListMenuAdapter.ListViewHolder) {
 
-            Log.d("QTYQTY", String.valueOf(branchGroupList.get(i).getQty()));
-            Log.d("QTYQTY", String.valueOf(branchGroupList.get(i).getSelectedQtyInBranch()));
-
             ((ListViewHolder) holder).name.setText(branchGroupList.get(i).getGroupName());
             ((ListViewHolder) holder).name.setTextColor(R.color.lightPrimaryFont);
             ((ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {

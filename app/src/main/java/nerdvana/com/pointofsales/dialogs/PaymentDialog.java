@@ -771,9 +771,6 @@ public abstract class PaymentDialog extends BaseDialog  {
         displayTotalPayment.setText(Utils.returnWithTwoDecimal(String.valueOf(normalPayment)));
 
 
-        Log.d("ADDUDUD", String.valueOf(totalPayment));
-        Log.d("ADDUDUD", String.valueOf(amountDue));
-
         if (totalPayment >= amountDue) {
             pay.setBackgroundColor(Color.GREEN);
         } else {
@@ -941,8 +938,6 @@ public abstract class PaymentDialog extends BaseDialog  {
                     for (FetchCreditCardResponse.Result cc : creditCardList) {
                         ccArray.add(cc.getCreditCard());
 
-
-                        Log.d("DEDEDE", cc.getCreditCard());
                     }
                     return null;
                 }

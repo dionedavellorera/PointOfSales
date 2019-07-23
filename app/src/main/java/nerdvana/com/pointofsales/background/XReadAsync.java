@@ -291,7 +291,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
             JSONObject cashRecoObj = dataCashAndRecoJsonObject.getJSONObject(0);
 
-            Log.d("TEST", cashRecoObj.getString("adjustment_deposit"));
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "DEPOSIT ADJ.",

@@ -77,8 +77,6 @@ public class TimerService extends Service {
                     public void onTick(int second) {
                         secsOfDate+= 1;
 
-                        Log.d("DATEDATE", String.valueOf(secsOfDate));
-
                         BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate), shiftDisplay));
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
                         if (secsOfDate % 10 == 0) {

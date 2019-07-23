@@ -64,9 +64,6 @@ public abstract class AddGuestDialog extends BaseDialog {
             public void onClick(View v) {
                 if (isEdit) {
 
-                    Log.d("DSADSAD", previousPersonCount);
-                    Log.d("DSADSAD", value.getText().toString());
-
                     if ((Integer.valueOf(value.getText().toString()) + 1) > ((Integer.valueOf(previousPersonCount)) - 2)) {
                         Utils.showDialogMessage(context, "Cannot add more guest, please go to add guest menu to add", "Information");
                     } else {
