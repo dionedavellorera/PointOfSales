@@ -13,9 +13,11 @@
         android:layout_height="wrap_content"
         android:text="NAME"/>
     <ImageView
+        android:src="@mipmap/sharp_close_white_24"
+        android:tint="@color/colorBlack"
         android:id="@+id/remove"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:src="@mipmap/ic_launcher"/>
+        />
 
 </LinearLayout>

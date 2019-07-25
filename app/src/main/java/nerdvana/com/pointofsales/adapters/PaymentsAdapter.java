@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.adapters;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,8 +68,25 @@ public class PaymentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
 
+            if (paymentList.get(holder.getAdapterPosition()).getCoreId().equalsIgnoreCase("8") ||
+                    paymentList.get(holder.getAdapterPosition()).getCoreId().equalsIgnoreCase("7") ||
+            paymentList.get(holder.getAdapterPosition()).getCoreId().equalsIgnoreCase("4")) {
+
+
+                ((PaymentTypeViewHolder)holder)
+                        .rootView
+                        .setLayoutParams(new CardView.LayoutParams(0, 0));
+            } else {
+
+
+                ((PaymentTypeViewHolder)holder)
+                        .rootView
+                        .setLayoutParams(new CardView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+
+            }
+
             ((PaymentTypeViewHolder) holder).description.setText(paymentList.get(i).getPaymentType());
-//            holder.description.sette
             ImageLoader.loadImage("http://192.168.1.90/pos/uploads/icon/" +paymentList.get(i).getImage(), ((PaymentTypeViewHolder) holder).name);
         }
     }

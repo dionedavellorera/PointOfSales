@@ -160,6 +160,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     FetchPaymentResponse.Result f;
 
+    private RelativeLayout rootView;
 
     //gift check
     private EditText voucherNumber;
@@ -281,7 +282,8 @@ public abstract class PaymentDialog extends BaseDialog  {
 //        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
 
-
+        rootView = findViewById(R.id.rootView);
+        rootView.requestFocus();
         relGuestInfo = findViewById(R.id.relGuestInfo);
         guestName = findViewById(R.id.guestName);
         guestAddress = findViewById(R.id.guestAddress);
@@ -868,7 +870,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             currencyId = currencyList.get(position).getCountryCode();
                             currencyValue = String.valueOf(currencyList.get(position).getValue());
 
-                            forexRate.setText(String.valueOf(1 / currencyList.get(position).getValue()));
+                            forexRate.setText("1 " + currencyList.get(position).getCountryCode() + " is equivalent to " + Utils.returnWithTwoDecimal(String.valueOf(1 / currencyList.get(position).getValue())));
 
                         }
 
@@ -988,7 +990,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                         for (AvailableGcModel availList : list) {
                             boolean isValid = true;
                             for (AvailableGcModel myList : gcList) {
-                                if (myList.getGcId().equalsIgnoreCase(availList.getGcId())) {
+                                if (myList.getId().equalsIgnoreCase(availList.getId())) {
                                     isValid = false;
                                 }
                             }

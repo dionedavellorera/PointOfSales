@@ -51,8 +51,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
     private String kitchenPath;
     private String printerPath;
 
-    private Activity act;
-    public RoomBundleSelectionDialog(@NonNull Activity context,
+    private Context act;
+    public RoomBundleSelectionDialog(@NonNull Context context,
                                      FetchRoomRatePriceIdResponse.Result result,
                                      RoomTableModel selectedRoom,
                                      String postTransId,

@@ -75,7 +75,7 @@ public abstract class FreebiesDialog extends BaseDialog {
                         if (response.body().getResult() != null) {
 
                             roomBundleSelectionDialog = new RoomBundleSelectionDialog(
-                                    act,
+                                    getContext(),
                                     response.body().getResult(),
                                     selectedRoom,
                                     String.valueOf(freebiesList.get(position).getPostTransId()),

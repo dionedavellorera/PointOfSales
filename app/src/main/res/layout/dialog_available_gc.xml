@@ -12,6 +12,8 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="50dp"/>
     <Button
+        android:layout_margin="10dp"
+        android:background="@drawable/button_selector"
         android:layout_alignParentBottom="true"
         android:id="@+id/ok"
         android:layout_width="match_parent"

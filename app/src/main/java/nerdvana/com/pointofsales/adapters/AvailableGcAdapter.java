@@ -55,7 +55,7 @@ public class AvailableGcAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     item.remove(i);
                 }
             });
-            ((AvailableGcAdapter.ApproveListGcViewHolder) holder).name.setText(approveList.get(i).getSeriesNumber() + " - " + String.valueOf(approveList.get(i).getAmount()));
+            ((AvailableGcAdapter.ApproveListGcViewHolder) holder).name.setText("GC# "+ approveList.get(i).getSeriesNumber() + " - " + "Amount:" + String.valueOf(approveList.get(i).getAmount()));
         }
     }
 
