@@ -34,7 +34,7 @@ public class Utils {
         return size.x;
     }
 
-    public static void showDialogMessage(Context context, String message, String title) {
+    public static void showDialogMessage(Activity context, String message, String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message)

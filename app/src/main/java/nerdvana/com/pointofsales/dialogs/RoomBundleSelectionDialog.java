@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,7 +50,9 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
 
     private String kitchenPath;
     private String printerPath;
-    public RoomBundleSelectionDialog(@NonNull Context context,
+
+    private Activity act;
+    public RoomBundleSelectionDialog(@NonNull Activity context,
                                      FetchRoomRatePriceIdResponse.Result result,
                                      RoomTableModel selectedRoom,
                                      String postTransId,
@@ -58,6 +61,7 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                                      int qtySelected, String kitchenPath,
                                      String printerPath) {
         super(context);
+        this.act = context;
         this.result = result;
         this.selectedRoom = selectedRoom;
         this.postTransId = postTransId;
@@ -190,7 +194,7 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
 
 
                     DialogBundleComposition dialogBundleComposition = new DialogBundleComposition(
-                            getContext(),
+                            act,
                             productsModel.getBranchGroupList(),
                             productsModel.getPrice(),
                             qtySelected) {

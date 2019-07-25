@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -55,12 +56,12 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     private EditText inputAmount;
     private Spinner spinnerDiscountReason;
     private String discountReasonId = "";
-    private Context context;
+    private Activity context;
     private String controlNumber = "";
     private String roomId = "";
     private FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingData;
     private ArrayList<DiscountModel> discountModelList;
-    public ManualDiscountDialog(@NonNull Context context,
+    public ManualDiscountDialog(@NonNull Activity context,
                                 FetchRoomPendingResponse.Result fetchRoomPendingData,
                                 String controlNumber,
                                 String roomId,

@@ -622,7 +622,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void productsClicked(final ProductsModel productsModel) {
         switch (Utils.getSystemType(getContext())) {
             case "not_supported":
-                Utils.showDialogMessage(getContext(), "System not supported", "Information");
+                Utils.showDialogMessage(getActivity(), "System not supported", "Information");
                 break;
             case "franchise":
                 if (productsModel.getBranchGroupList().size() > 0) {
@@ -5286,7 +5286,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         if (str.equalsIgnoreCase(selectedRoom.getName())) {
                             break;
                         }
-                        index++;
+                        index += 1;
                     }
                     wul.remove(index);
                 }

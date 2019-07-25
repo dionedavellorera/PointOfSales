@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -64,11 +65,11 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
     private EditText etSeniorTin;
     private EditText etSeniorBusinessStyle;
 
-    private Context context;
+    private Activity context;
     private Button submit;
     private String specialDiscountId;
 
-    public SelectionDiscountDialog(@NonNull Context context, String controlNumber,
+    public SelectionDiscountDialog(@NonNull Activity context, String controlNumber,
                                    String roomId, String specialDiscountId) {
         super(context);
         this.context = context;

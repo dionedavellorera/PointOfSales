@@ -177,7 +177,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private EditText cardHoldersName;
     private EditText creditCardAmount;
     private String cardTypeId;
-    private Context act;
+    private Activity act;
 
     private LinearLayout linRoomBoy;
 
@@ -190,7 +190,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private String controlNumber = "";
     private GuestReceiptInfoModel guestReceiptInfoModel;
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
-    public PaymentDialog(@NonNull Context context,
+    public PaymentDialog(@NonNull Activity context,
                          List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
                          final List<PostedPaymentsModel> postedPaymentList,

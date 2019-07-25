@@ -29,6 +29,7 @@ import nerdvana.com.pointofsales.api_responses.EditGuestCountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.SpacesItemDecoration;
 import nerdvana.com.pointofsales.dialogs.ChangeRoomStatusDialog;
@@ -254,11 +255,16 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         allowedPosStatus.add("on-going rc with waiting guest");
         allowedPosStatus.add("dirty with waiting guest");
         List<FilterOptionModel> filterOptionsList = new ArrayList<>();
-        List<RoomStatusEntity> rse = RoomStatusEntity.listAll(RoomStatusEntity.class);
+//        List<RoomStatusEntity> rse = RoomStatusEntity.listAll(RoomStatusEntity.class);
+
+        TypeToken<List<FetchRoomStatusResponse.Result>> bookedToken = new TypeToken<List<FetchRoomStatusResponse.Result>>() {};
+        List<FetchRoomStatusResponse.Result> rse = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.ROOM_STATUS_JSON), bookedToken.getType());
+
+
         filterOptionsList.add(new FilterOptionModel("ALL", true, 0));
-        for (RoomStatusEntity r : rse) {
-            if (allowedPosStatus.contains(r.getRoom_status().toLowerCase())) {
-                filterOptionsList.add(new FilterOptionModel(r.getRoom_status().toUpperCase(), false, r.getCore_id()));
+        for (FetchRoomStatusResponse.Result r : rse) {
+            if (allowedPosStatus.contains(r.getRoomStatus().toLowerCase())) {
+                filterOptionsList.add(new FilterOptionModel(r.getRoomStatus().toUpperCase(), false, r.getCoreId()));
             }
         }
 
@@ -305,7 +311,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                 sendRoomListRequest();
             }
         });
-
     }
 
 //    ChangeRoomStatusRequest changeRoomStatusRequest = new ChangeRoomStatusRequest(

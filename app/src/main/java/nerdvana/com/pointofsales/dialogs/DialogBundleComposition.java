@@ -55,7 +55,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
     private Category category;
     private Product product;
     private TextView selectionTitle;
-    private Context act;
+    private Activity act;
     private FloatingActionButton nextButton;
     private FloatingActionButton backButton;
     private int pageIndicator = 0;
@@ -66,7 +66,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
     private int qtySelected = 1;
 
 //    private List<FetchProductsResponse.BranchGroup> myCopy = new ArrayList<>();
-    public DialogBundleComposition(@NonNull Context context,
+    public DialogBundleComposition(@NonNull Activity context,
                                    List<FetchProductsResponse.BranchGroup> bgl,
                                    double bundleAmount,
                                    int qtySelected) {

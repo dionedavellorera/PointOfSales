@@ -24,14 +24,14 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
 
     private EditText remarks;
     private Button save;
-    private Context context;
+    private Activity context;
     private TextView header;
     private Boolean isRequired;
     public ConfirmWithRemarksDialog(@NonNull Context context) {
         super(context);
     }
 
-    public ConfirmWithRemarksDialog(@NonNull Context context, boolean isRequired) {
+    public ConfirmWithRemarksDialog(@NonNull Activity context, boolean isRequired) {
         super(context);
         this.context = context;
         this.isRequired = isRequired;

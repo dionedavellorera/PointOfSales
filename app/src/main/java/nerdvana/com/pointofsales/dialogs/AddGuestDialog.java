@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,11 +26,11 @@ public abstract class AddGuestDialog extends BaseDialog {
     private TextView subtract;
     private TextView value;
     private Button confirm;
-    private Context context;
+    private Activity context;
     private String roomId;
     private int specialCount;
     private boolean isEdit;
-    public AddGuestDialog(@NonNull final Context context, String previousPersonCount,
+    public AddGuestDialog(@NonNull final Activity context, String previousPersonCount,
                           String roomId, int specialCount,
                           boolean isEdit) {
         super(context);

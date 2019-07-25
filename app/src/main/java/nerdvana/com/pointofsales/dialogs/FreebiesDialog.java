@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,14 +34,17 @@ public abstract class FreebiesDialog extends BaseDialog {
     private Freeby freeby;
     private int qtySelected = 1;
 
+
+    private Activity act;
     private String kitchenPath;
     private String printerPath;
-    public FreebiesDialog(@NonNull Context context,
+    public FreebiesDialog(@NonNull Activity context,
                           List<FetchRoomPendingResponse.Freebies> freebiesList,
                           RoomTableModel selectedRoom,
                           int qtySelected, String kitchenPath,
                           String printerPath) {
         super(context);
+        this.act = act;
         this.freebiesList = freebiesList;
         this.selectedRoom = selectedRoom;
 
@@ -71,7 +75,7 @@ public abstract class FreebiesDialog extends BaseDialog {
                         if (response.body().getResult() != null) {
 
                             roomBundleSelectionDialog = new RoomBundleSelectionDialog(
-                                    getContext(),
+                                    act,
                                     response.body().getResult(),
                                     selectedRoom,
                                     String.valueOf(freebiesList.get(position).getPostTransId()),

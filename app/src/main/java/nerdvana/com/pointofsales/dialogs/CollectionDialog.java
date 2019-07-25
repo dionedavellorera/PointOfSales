@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -60,13 +61,13 @@ public abstract class CollectionDialog extends BaseDialog {
     private Button save;
 
     private List<SafeKeepDataModel> safeKeepDataModelList;
-    private Context act;
+    private Activity act;
     private boolean willCashReco;
     List<CollectionFinalPostModel> collectionFinalPostModels;
 
     private Double totalSafeKeepAmount = 0.00;
 
-    public CollectionDialog(@NonNull Context context, String type, boolean continueCashReco) {
+    public CollectionDialog(@NonNull Activity context, String type, boolean continueCashReco) {
         super(context);
         this.type = type;
         this.act = context;

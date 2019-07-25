@@ -1230,6 +1230,13 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (timerIntent != null) {
                     stopService(timerIntent);
                 }
+
+                SharedPreferenceManager
+                        .saveString(
+                                MainActivity.this,
+                                null,
+                                ApplicationConstants.ROOM_JSON);
+
                 userModel.setLoggedIn(false);
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);

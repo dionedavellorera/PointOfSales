@@ -138,7 +138,7 @@ public class TimerService extends Service {
                                 }
                             });
                         }
-                        if (secsOfDate % 10 == 0){
+                        if (secsOfDate % 300 == 0){
 
                             new WakeUpCallReminderAsync(secsOfDate).execute();
 
