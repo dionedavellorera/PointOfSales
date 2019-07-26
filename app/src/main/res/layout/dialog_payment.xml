@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rootView">
 
@@ -196,8 +197,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
-
-                        android:focusableInTouchMode="false"
                         android:textSize="22sp"
                         android:selectAllOnFocus="true"
                         android:maxLines="1"
@@ -704,6 +703,7 @@
                 android:layout_height="wrap_content" />
 
             <View
+                android:id="@+id/sp3"
                 android:layout_below="@id/plist"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
@@ -714,7 +714,8 @@
 
 
             <android.support.v7.widget.RecyclerView
-                android:layout_above="@id/linTotals"
+                android:layout_below="@id/sp3"
+                android:layout_above="@id/relGuestInfo"
                 android:id="@+id/listPostedPayments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

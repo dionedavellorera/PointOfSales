@@ -155,8 +155,10 @@ import nerdvana.com.pointofsales.dialogs.RemoveOtDialog;
 import nerdvana.com.pointofsales.dialogs.ReprintXReadingDialog;
 import nerdvana.com.pointofsales.dialogs.ReprintZReadingDialog;
 import nerdvana.com.pointofsales.dialogs.SetupPrinterDialog;
+import nerdvana.com.pointofsales.dialogs.ShiftCutOffMenuDialog;
 import nerdvana.com.pointofsales.dialogs.SwitchRoomDialog;
 import nerdvana.com.pointofsales.dialogs.TransactionsDialog;
+import nerdvana.com.pointofsales.dialogs.ViewReceiptDialog;
 import nerdvana.com.pointofsales.entities.CartEntity;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.PaymentEntity;
@@ -198,6 +200,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
 
     //regiondialogs
+    ShiftCutOffMenuDialog shiftCutOffMenuDialog;
     PaymentDialog checkoutDialog;
     RateDialog rateDialog;
     PaymentDialog advancePaymentDialog;
@@ -1586,6 +1589,35 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
 
         switch (clickedItem.getId()) {
+            case 996://upon completion remove view receipt :: 112
+                ViewReceiptDialog viewReceiptDialog = new ViewReceiptDialog(getActivity());
+                viewReceiptDialog.show();
+                break;
+            case 133://SHOW SHIT CUT OFF DIALOG(X READ,Z READ, REPRINTS)
+                if (shiftCutOffMenuDialog == null) {
+                    shiftCutOffMenuDialog = new ShiftCutOffMenuDialog(getActivity());
+
+
+                    shiftCutOffMenuDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            shiftCutOffMenuDialog = null;
+                        }
+                    });
+
+                    shiftCutOffMenuDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            shiftCutOffMenuDialog = null;
+                        }
+                    });
+
+                    if (!shiftCutOffMenuDialog.isShowing()) {
+                        shiftCutOffMenuDialog.show();
+                    }
+
+                }
+                break;
             case 132: //PRINT SPOT AUDIT
 
 
@@ -5283,6 +5315,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (wul.size() > 0) {
                     int index = 0;
                     for (String str : wul) {
+
+
+
                         if (str.equalsIgnoreCase(selectedRoom.getName())) {
                             break;
                         }
@@ -5290,6 +5325,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                     wul.remove(index);
                 }
+                SharedPreferenceManager.saveString(
+                        getContext(),
+                        GsonHelper.getGson().toJson(wul),
+                        "room_no_list");
             }
 
             Log.d("POPOPO", selectedRoom.getControlNo());

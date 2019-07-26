@@ -29,7 +29,7 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
     private long secsOfDate = 0;
     private int occupiedCount = 0;
     public WakeUpCallReminderAsync(long secsOfDate) {
-        SharedPreferenceManager.getString(null, ApplicationConstants.ROOM_JSON);
+//        SharedPreferenceManager.getString(null, ApplicationConstants.ROOM_JSON);
         this.secsOfDate = secsOfDate;
     }
 
@@ -89,15 +89,17 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                                 SharedPreferenceManager.getString(null, "room_no_list"),
                                 roomToken.getType());
 
-        if (wul != null) {
-            if (wul.size() != occupiedCount) {
-                BusProvider.getInstance().post(new OpenWakeUpCallDialog(wakeUpCallModels));
+        if (occupiedCount > 0) {
+            if (wakeUpCallModels.size() > 0) {
+                if (wul != null) {
+                    if (wul.size() != occupiedCount) {
+                        BusProvider.getInstance().post(new OpenWakeUpCallDialog(wakeUpCallModels));
+                    }
+                } else {
+                    BusProvider.getInstance().post(new OpenWakeUpCallDialog(wakeUpCallModels));
+                }
             }
-        } else {
-            BusProvider.getInstance().post(new OpenWakeUpCallDialog(wakeUpCallModels));
         }
-
-
 
     }
 }

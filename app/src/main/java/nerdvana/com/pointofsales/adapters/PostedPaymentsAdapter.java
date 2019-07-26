@@ -15,6 +15,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
@@ -85,10 +86,23 @@ public class PostedPaymentsAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
         if (Double.valueOf(postedPaymentList.get(i).getCurrency_value()) != 1) {
             ((PostedPaymentsViewHolder)holder).paymentType.setText(postedPaymentList.get(i).getCurrency_id());
+
+            ((PostedPaymentsViewHolder)holder)
+                    .paymentAmount
+                    .setText(
+                            String.format(
+                                    "(%s)%s",
+                                    postedPaymentList.get(i).getAmount(),
+                                    Utils.returnWithTwoDecimal(
+                                            String.valueOf(
+                                                    ((1/Double.valueOf(postedPaymentList.get(i).getCurrency_value()))
+                                                            * Double.valueOf(postedPaymentList.get(i).getAmount()))))));
+        } else {
+            ((PostedPaymentsViewHolder)holder).paymentAmount.setText(postedPaymentList.get(i).getAmount());
         }
 
 
-        ((PostedPaymentsViewHolder)holder).paymentAmount.setText(postedPaymentList.get(i).getAmount());
+
 
 
     }

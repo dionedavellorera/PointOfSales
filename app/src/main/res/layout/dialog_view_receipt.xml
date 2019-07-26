@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/partial_header" android:id="@+id/header"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/header"
+        android:id="@+id/tilReceiptNumber"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/inputReceiptNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Receipt number ex. 0001"/>
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/tilReceiptNumber"
+        android:id="@+id/tilStartDate"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/inputDateStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Start date"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/tilStartDate"
+        android:id="@+id/tilEndDate"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/inputDateEnd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="End Date"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <CheckBox
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/tilEndDate"
+        android:id="@+id/chkTakeOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take Out"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_below="@id/tilEndDate"
+        android:layout_toRightOf="@id/chkTakeOut"
+        android:id="@+id/tilRoomNumber"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/inputRoomNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Room number"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:layout_margin="10dp"
+        android:layout_below="@id/tilRoomNumber"
+        android:id="@+id/btnSearch"
+        android:text="SEARCH"
+        android:background="@drawable/button_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

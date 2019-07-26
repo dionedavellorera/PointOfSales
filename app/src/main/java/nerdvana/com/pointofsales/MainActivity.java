@@ -1235,7 +1235,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         .saveString(
                                 MainActivity.this,
                                 null,
-                                ApplicationConstants.ROOM_JSON);
+                                "room_no_list");
 
                 userModel.setLoggedIn(false);
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);

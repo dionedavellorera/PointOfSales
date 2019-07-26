@@ -53,6 +53,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                 buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24));
 
                 buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24));
+                buttonsModelList.add(new ButtonsModel(133,"SHIFT CUT OFF", "",24));
                 break;
         }
 
@@ -69,16 +70,18 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",16));
         buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
 
-        buttonsModelList.add(new ButtonsModel(121,"XREAD", "",19));
         buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
-        buttonsModelList.add(new ButtonsModel(120,"ZREAD", "",21));
-        buttonsModelList.add(new ButtonsModel(123,"REPRINT X READING", "",22));
-        buttonsModelList.add(new ButtonsModel(127,"REPRINT Z READING", "",22));
+
+//        buttonsModelList.add(new ButtonsModel(121,"XREAD", "",19));
+//        buttonsModelList.add(new ButtonsModel(120,"ZREAD", "",21));
+//        buttonsModelList.add(new ButtonsModel(123,"REPRINT X READING", "",22));
+//        buttonsModelList.add(new ButtonsModel(127,"REPRINT Z READING", "",22));
 
 
         buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
         buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
         buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
+        buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT V2", "",100));
 
 //        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",99));
 

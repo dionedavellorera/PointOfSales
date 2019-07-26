@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:background="@color/colorWhite"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textStyle="bold"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/companyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/companyName"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/companyAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/companyAddress"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/telNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/telNumber"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/serial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/serial"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/vatReg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_below="@id/vatReg"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/permitNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</RelativeLayout>
