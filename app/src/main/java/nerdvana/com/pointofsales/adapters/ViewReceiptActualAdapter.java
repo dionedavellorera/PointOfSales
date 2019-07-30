@@ -6,14 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.dialogs.AvailableGcDialog;
-import nerdvana.com.pointofsales.model.AvailableGcModel;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
 
 public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -41,7 +38,7 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             companyName = itemView.findViewById(R.id.companyName);
             address = itemView.findViewById(R.id.companyAddress);
             number = itemView.findViewById(R.id.telNumber);
-            serial = itemView.findViewById(R.id.serialNumber);
+            serial = itemView.findViewById(R.id.serial);
             vatReg = itemView.findViewById(R.id.vatReg);
             permit = itemView.findViewById(R.id.permitNumber);
         }

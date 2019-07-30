@@ -17,6 +17,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.dialogs.AvailableGcDialog;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
@@ -91,7 +92,7 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         for (FetchRoomResponse.PostFood pf : roomDataList.get(i).getTransaction().getTransaction().getPostFood()) {
                             totalFnb += pf.getTotal() * pf.getQty();
                         }
-                        ((RoomDataHolder) holder).fnb.setText(String.valueOf(totalFnb));
+                        ((RoomDataHolder) holder).fnb.setText(Utils.returnWithTwoDecimal(String.valueOf(totalFnb)));
                     }
                 }
 
@@ -105,7 +106,14 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
                     ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
                     ((RoomDataHolder) holder).remarks.setText("-----");
-                    ((RoomDataHolder) holder).deposit.setText(String.valueOf(roomDataList.get(i).getTransaction().getTransaction().getAdvance()));
+                    ((RoomDataHolder) holder)
+                            .deposit
+                            .setText(Utils.returnWithTwoDecimal(String.valueOf(
+                                    roomDataList
+                                            .get(i)
+                                            .getTransaction()
+                                            .getTransaction()
+                                            .getAdvance())));
                 }
 
 

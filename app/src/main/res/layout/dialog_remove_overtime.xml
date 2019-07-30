@@ -38,7 +38,7 @@
         android:text="NEW OT HOURS"/>
 
 
-    <EditText
+    <nerdvana.com.pointofsales.custom.HidingEditText
         android:inputType="number"
         android:id="@+id/newOtValue"
         android:padding="5dp"

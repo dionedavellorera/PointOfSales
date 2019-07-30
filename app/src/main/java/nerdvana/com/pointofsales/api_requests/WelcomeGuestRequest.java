@@ -152,26 +152,11 @@ public class WelcomeGuestRequest extends BaseRequest {
         return tax;
     }
 
+
     @Override
     public String toString() {
         return "WelcomeGuestRequest{" +
-                "roomId='" + roomId + '\'' +
-                ", roomTypeId='" + roomTypeId + '\'' +
-                ", roomRateId='" + roomRateId + '\'' +
-                ", roomRatePriceId='" + roomRatePriceId + '\'' +
-                ", carId='" + carId + '\'' +
-                ", vehicleId='" + vehicleId + '\'' +
-                ", guestTypeId='" + guestTypeId + '\'' +
-                ", customer='" + customer + '\'' +
-                ", plateumber='" + plateumber + '\'' +
-                ", steward='" + steward + '\'' +
-                ", checkIn='" + checkIn + '\'' +
-                ", checkOut='" + checkOut + '\'' +
-                ", userId='" + userId + '\'' +
-                ", posId='" + posId + '\'' +
-                ", adult='" + adult + '\'' +
-                ", child='" + child + '\'' +
-                ", tax='" + tax + '\'' +
+                "mapValue=" + mapValue +
                 '}';
     }
 }

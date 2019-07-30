@@ -9,6 +9,7 @@ public class ApplicationConstants {
     public static final String userSettings = "user_settings";
 
     public static final String HOST = "host";
+    public static final String NODE_URL = "node_url";
     public static final String VERSION = "1.0.3";
     public static final String BRANCH = "branch";
     public static final String BRANCH_PERMIT = "branch_permit";

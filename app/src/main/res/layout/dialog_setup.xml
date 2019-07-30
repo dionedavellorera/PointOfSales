@@ -17,7 +17,7 @@
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="80"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
@@ -31,7 +31,7 @@
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
@@ -45,7 +45,7 @@
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
@@ -59,7 +59,7 @@
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <EditText
+                <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
                     android:imeOptions="actionNext"
@@ -67,6 +67,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Product key"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:maxLength="40"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:id="@+id/nodeUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Node url"/>
             </android.support.design.widget.TextInputLayout>
 
             <Button

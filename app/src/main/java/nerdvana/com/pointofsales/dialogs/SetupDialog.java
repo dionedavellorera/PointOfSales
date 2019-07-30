@@ -34,6 +34,7 @@ public class SetupDialog extends BaseDialog {
     EditText branchName;
     EditText branchCode;
     EditText serial;
+    EditText nodeUrl;
     Button proceed;
 
 
@@ -51,6 +52,7 @@ public class SetupDialog extends BaseDialog {
         branchName = findViewById(R.id.branchName);
         branchCode = findViewById(R.id.branchCode);
         serial =findViewById(R.id.serialNumber);
+        nodeUrl =findViewById(R.id.nodeUrl);
         proceed =findViewById(R.id.proceed);
 
 
@@ -59,6 +61,7 @@ public class SetupDialog extends BaseDialog {
             branchName.setText(SharedPreferenceManager.getString(context, ApplicationConstants.BRANCH));
             branchCode.setText(SharedPreferenceManager.getString(context, ApplicationConstants.CODE));
             serial.setText(SharedPreferenceManager.getString(context, ApplicationConstants.SERIAL_NUMBER));
+            nodeUrl.setText(SharedPreferenceManager.getString(context, ApplicationConstants.NODE_URL));
         }
 
         proceed.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +71,8 @@ public class SetupDialog extends BaseDialog {
                 if (!TextUtils.isEmpty(ipAddress.getText().toString().trim()) &&
                         !TextUtils.isEmpty(branchName.getText().toString().trim()) &&
                         !TextUtils.isEmpty(branchCode.getText().toString().trim()) &&
-                        !TextUtils.isEmpty(serial.getText().toString().trim())) {
+                        !TextUtils.isEmpty(serial.getText().toString().trim()) &&
+                        !TextUtils.isEmpty(nodeUrl.getText().toString().trim())) {
 
                     if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
                             ipAddress.getText().toString(),
@@ -84,6 +88,8 @@ public class SetupDialog extends BaseDialog {
                                 branchCode.getText().toString(),ApplicationConstants.CODE);
                         SharedPreferenceManager.saveString(context,
                                 serial.getText().toString(),ApplicationConstants.SERIAL_NUMBER);
+                        SharedPreferenceManager.saveString(context,
+                                nodeUrl.getText().toString(),ApplicationConstants.NODE_URL);
 
                         String apiBaseUrl = String.format("%s/%s/%s/%s/",
                                 ipAddress.getText().toString(),

@@ -289,6 +289,7 @@ public abstract class CollectionDialog extends BaseDialog {
         editText.setId(id);
         editText.setLayoutParams(params1);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editText.setTextIsSelectable(true);
         linearLayout.addView(editText);
 
         safeKeepDataModelList.add(new SafeKeepDataModel(editText, actualAmount));

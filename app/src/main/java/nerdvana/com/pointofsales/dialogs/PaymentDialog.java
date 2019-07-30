@@ -191,6 +191,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private String controlNumber = "";
     private GuestReceiptInfoModel guestReceiptInfoModel;
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
+    private boolean isTakeOut;
     public PaymentDialog(@NonNull Activity context,
                          List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
@@ -201,8 +202,10 @@ public abstract class PaymentDialog extends BaseDialog  {
                          List<FetchArOnlineResponse.Result> arOnlineList,
                          Double discountPayment,
                          final String controlNumber,
-                         GuestReceiptInfoModel guestReceiptInfoModel) {
+                         GuestReceiptInfoModel guestReceiptInfoModel,
+                         boolean isTakeOut) {
         super(context);
+        this.isTakeOut = isTakeOut;
         this.act = context;
         this.guestReceiptInfoModel = guestReceiptInfoModel;
         this.controlNumber = controlNumber;
@@ -671,7 +674,17 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onClick(View v) {
                 if (postedPaymentList.size() > 0) {
-                    paymentSuccess(postedPaymentList, empId);
+                    if (!isTakeOut) {
+                        if (TextUtils.isEmpty(empId)) {
+                            Toast.makeText(getContext(), "Steward is empty", Toast.LENGTH_LONG).show();
+                        } else {
+                            paymentSuccess(postedPaymentList, empId);
+                        }
+
+                    } else {
+                        paymentSuccess(postedPaymentList, empId);
+                    }
+
                 } else {
                     Utils.showDialogMessage(act, "No payment to post", "Warning");
                 }
@@ -761,7 +774,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         totalAmountDue.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 
         amountToPay.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
-        amountToPay.requestFocus();
+//        amountToPay.requestFocus();
         totalChange = (totalPayment + advancePayment + discountPayment) - totalBalance;
         Log.d("MYCHANGE", String.valueOf(totalChange));
         displayTotalChange.setText(String.valueOf(totalChange));

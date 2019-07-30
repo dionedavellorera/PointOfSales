@@ -6,6 +6,8 @@
 
     <include layout="@layout/partial_header" android:id="@+id/header" />
     <LinearLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:baselineAligned="false"
         android:layout_below="@id/header"
         android:background="@color/colorWhite"
@@ -110,7 +112,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:imeOptions="actionNext"
                         android:gravity="center"
                         android:hint="Guest Name"
@@ -124,7 +126,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:gravity="center"
@@ -138,7 +140,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:imeOptions="actionDone"
                         android:inputType="text"
                         android:gravity="center"
@@ -152,7 +154,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:imeOptions="actionDone"
                         android:inputType="text"
                         android:gravity="center"
@@ -196,7 +198,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:textSize="22sp"
                         android:selectAllOnFocus="true"
                         android:maxLines="1"
@@ -291,7 +293,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <EditText
+                            <nerdvana.com.pointofsales.custom.HidingEditText
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
@@ -306,7 +308,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <EditText
+                            <nerdvana.com.pointofsales.custom.HidingEditText
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
@@ -321,7 +323,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <EditText
+                            <nerdvana.com.pointofsales.custom.HidingEditText
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
@@ -336,7 +338,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <EditText
+                            <nerdvana.com.pointofsales.custom.HidingEditText
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
@@ -351,7 +353,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <EditText
+                            <nerdvana.com.pointofsales.custom.HidingEditText
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
                                 android:inputType="numberDecimal"
@@ -366,7 +368,7 @@
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <EditText
+                            <nerdvana.com.pointofsales.custom.HidingEditText
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionDone"
@@ -446,7 +448,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:inputType="text"
                         android:maxLines="1"
                         android:imeOptions="actionNext"
@@ -462,7 +464,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:maxLines="1"
                         android:imeOptions="actionDone"
                         android:inputType="numberDecimal"
@@ -521,7 +523,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:inputType="text"
                         android:maxLines="1"
                         android:imeOptions="actionNext"
@@ -536,7 +538,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:maxLines="1"
                         android:imeOptions="actionDone"
                         android:inputType="number"
@@ -656,7 +658,7 @@
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <EditText
+                    <nerdvana.com.pointofsales.custom.HidingEditText
                         android:gravity="center"
                         android:maxLines="1"
                         android:imeOptions="actionDone"

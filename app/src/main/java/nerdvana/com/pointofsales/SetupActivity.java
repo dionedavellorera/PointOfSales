@@ -32,6 +32,7 @@ import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
+import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.dialogs.SetupDialog;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
@@ -47,7 +48,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     private Button proceed;
     private ImageView setup;
-    private EditText username;
+    private HidingEditText username;
     private EditText password;
     private TextView loginLabel;
 
@@ -61,7 +62,6 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         InputMethodManager imm = (InputMethodManager)getBaseContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.RESULT_HIDDEN,InputMethodManager.RESULT_HIDDEN);
-
 
         dialogProgressBar = new DialogProgressBar(SetupActivity.this);
         dialogProgressBar.setCancelable(false);

@@ -34,7 +34,7 @@
                 android:layout_height="24dp"
                 android:src="@mipmap/outline_search_white_24"/>
 
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:layout_toRightOf="@id/srchImage"

@@ -45,7 +45,7 @@
             android:id="@+id/tilCardNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:id="@+id/cardNumber"
@@ -86,7 +86,7 @@
             android:id="@+id/tilSeniorPwdName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:id="@+id/seniorPwdName"
@@ -100,7 +100,7 @@
             android:id="@+id/tilSeniorPwdAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:id="@+id/seniorPwdAddress"
@@ -114,7 +114,7 @@
             android:id="@+id/tilSeniorPwdCardNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:id="@+id/seniorPwdCardNumber"
@@ -129,7 +129,7 @@
             android:id="@+id/tilTin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:id="@+id/seniorTin"
@@ -144,7 +144,7 @@
             android:id="@+id/tilSeniorBusinessStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <EditText
+            <nerdvana.com.pointofsales.custom.HidingEditText
                 android:imeOptions="actionDone"
                 android:singleLine="true"
                 android:id="@+id/seniorBusinessStyle"

@@ -3569,7 +3569,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     arOnlineList,
                     discountPayment,
                     selectedRoom.getControlNo(),
-                    guestReceiptInfoModel) {
+                    guestReceiptInfoModel,
+                    selectedRoom.isTakeOut()) {
                 @Override
                 public void removePaymentSuccess() {
                     if (selectedRoom != null) {
@@ -4053,7 +4054,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                     arOnlineList,
                                                     discountPayment,
                                                     selectedRoom.getControlNo(),
-                                                    guestReceiptInfoModel){
+                                                    guestReceiptInfoModel,
+                                                    selectedRoom.isTakeOut()){
 
                                                 @Override
                                                 public void removePaymentSuccess() {
@@ -4165,7 +4167,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 arOnlineList,
                                 discountPayment,
                                 selectedRoom.getControlNo(),
-                                guestReceiptInfoModel) {
+                                guestReceiptInfoModel,
+                                selectedRoom.isTakeOut()) {
                             @Override
                             public void removePaymentSuccess() {
                                 if (selectedRoom != null) {
@@ -4449,10 +4452,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     selectedRoom.setControlNo(r.getTransaction().getControlNo());
                     totalBalance = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
-                            fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount() +
-                            fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount())
+                            Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount()))) +
+                            Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount()))))
 //                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered());
-                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered() + fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt()))));
+                            - (Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered())))
+                            + Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt())))))));
 
                     advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
                     discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
@@ -4726,7 +4730,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     break;
                 case 59: //check in guest
                     showCheckInDialog();
-
                     break;
 
                 case 2: //already checked in, can now order

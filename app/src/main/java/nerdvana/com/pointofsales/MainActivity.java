@@ -612,6 +612,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+
+        new SocketManager(this);
 //        if (canTransact()) {
 //            checkSafeKeepingRequest();
 //        }

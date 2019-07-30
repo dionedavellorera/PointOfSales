@@ -21,6 +21,7 @@ public class CheckInRequest extends BaseRequest {
         mapValue.put("branch_code", branchCode);
         mapValue.put("branch_id", branchId);
         mapValue.put("post_trans_id", "0");
+        mapValue.put("platform", "1");
     }
 
     public Map<String, String> getMapValue() {

@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:text="New price"/>
 
-    <EditText
+    <nerdvana.com.pointofsales.custom.HidingEditText
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:inputType="numberDecimal"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:text="Quantity"/>
 
-    <EditText
+    <nerdvana.com.pointofsales.custom.HidingEditText
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:inputType="number"
