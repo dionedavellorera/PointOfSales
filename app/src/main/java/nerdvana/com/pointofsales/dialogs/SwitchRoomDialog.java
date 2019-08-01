@@ -240,7 +240,7 @@ public abstract class SwitchRoomDialog extends BaseDialog {
             @Override
             public void onResponse(Call<FetchRoomResponse> call, Response<FetchRoomResponse> response) {
                 if (response.body().getResult().size() > 0) {
-                    new RoomsTablesAsync(asyncContract, response.body().getResult()).execute();
+                    new RoomsTablesAsync(asyncContract, response.body().getResult(), null).execute();
                 }
             }
 

@@ -9,6 +9,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -31,10 +33,12 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
+import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.custom.SpacesItemDecoration;
 import nerdvana.com.pointofsales.dialogs.ChangeRoomStatusDialog;
 import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
+import nerdvana.com.pointofsales.interfaces.AsyncRequest;
 import nerdvana.com.pointofsales.interfaces.RoomFilterContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.FilterOptionModel;
@@ -46,7 +50,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RoomsActivity extends AppCompatActivity implements AsyncContract,
-        SelectionContract, RoomFilterContract {
+        SelectionContract, RoomFilterContract, AsyncRequest {
+
+    boolean isLoadingData = false;
+
     ChangeRoomStatusDialog changeRoomStatusDialog;
 
     private CoordinatorLayout rootView;
@@ -60,7 +67,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     private List<RoomTableModel> filteredRoomList;
 
     private SwipeRefreshLayout refreshRoom;
-    private android.support.v7.widget.SearchView searchView;
+    private HidingEditText searchView;
     private List<String> allowedRoomStatusList;
 
     @Override
@@ -109,22 +116,20 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
             }
         });
 
-        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        searchView.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-
-
-                return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
-
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 roomsTablesAdapter.getFilter().filter(s);
+            }
 
-                return false;
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -210,8 +215,12 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     }
 
     private void sendRoomListRequest() {
-        refreshRoom.setRefreshing(true);
-        BusProvider.getInstance().post(new FetchRoomRequest());
+        if (!isLoadingData) {
+            refreshRoom.setRefreshing(true);
+            isLoadingData = true;
+            BusProvider.getInstance().post(new FetchRoomRequest());
+        }
+
     }
 
     @Subscribe
@@ -223,8 +232,9 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                             RoomsActivity.this,
                             GsonHelper.getGson().toJson(fetchRoomResponse.getResult()),
                             ApplicationConstants.ROOM_JSON);
-            new RoomsTablesAsync(this, fetchRoomResponse.getResult()).execute();
+            new RoomsTablesAsync(this, fetchRoomResponse.getResult(), this).execute();
             setRoomFilter();
+//            isLoadingData = false;
         }
     }
 
@@ -274,11 +284,13 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         listFilters.setAdapter(roomFilterAdapter);
 
         roomFilterAdapter.notifyDataSetChanged();
+
+        roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
     }
 
     @Override
     public void filterSelected(int statusId) {
-        searchView.setQuery("", false);
+        searchView.setText("");
         rootView.requestFocus();
 
         if (statusId == 0) { //SHOW ALL
@@ -313,7 +325,20 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         });
     }
 
-//    ChangeRoomStatusRequest changeRoomStatusRequest = new ChangeRoomStatusRequest(
+    @Override
+    public void finished() {
+        Log.d("FINISHASYNC","TRUE");
+        isLoadingData = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("FINISHASYNC","TRUE DESTROY");
+        isLoadingData = false;
+    }
+
+    //    ChangeRoomStatusRequest changeRoomStatusRequest = new ChangeRoomStatusRequest(
 //            previousPersonCount,
 //            value.getText().toString(),
 //            roomId,

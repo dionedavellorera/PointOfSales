@@ -17,14 +17,17 @@ import nerdvana.com.pointofsales.api_responses.RatePrice;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.api_responses.RoomRateSub;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
+import nerdvana.com.pointofsales.interfaces.AsyncRequest;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
 public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomTableModel>>  {
     private AsyncContract asyncContract;
     private List<FetchRoomResponse.Result> roomList;
-    public RoomsTablesAsync(AsyncContract asyncContract, List<FetchRoomResponse.Result> roomList) {
+    private AsyncRequest asyncRequest;
+    public RoomsTablesAsync(AsyncContract asyncContract, List<FetchRoomResponse.Result> roomList, AsyncRequest asyncRequest) {
         this.asyncContract = asyncContract;
         this.roomList = roomList;
+        this.asyncRequest = asyncRequest;
     }
 
     @Override
@@ -195,6 +198,9 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
     @Override
     protected void onPostExecute(List<RoomTableModel> productsModels) {
         this.asyncContract.doneLoading(productsModels, "roomstables");
+        if (asyncRequest != null) {
+            asyncRequest.finished();
+        }
         super.onPostExecute(productsModels);
     }
 

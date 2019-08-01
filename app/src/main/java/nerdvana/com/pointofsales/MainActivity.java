@@ -334,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         role.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                TooltipCompat.setTooltipText(v, "v1.0.1");
+                TooltipCompat.setTooltipText(v, "v1.1.2");
                 return false;
             }
         });

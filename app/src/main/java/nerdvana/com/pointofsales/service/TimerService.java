@@ -84,21 +84,21 @@ public class TimerService extends Service {
                             BusProvider.getInstance().post(new CheckSafeKeepingRequest());
 
 
-                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
+//                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                            Call<ResponseBody> repatchData = iUsers.repatchData(
-                                    repatchDataRequest.getMapValue());
-                            repatchData.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
+//                            Call<ResponseBody> repatchData = iUsers.repatchData(
+//                                    repatchDataRequest.getMapValue());
+//                            repatchData.enqueue(new Callback<ResponseBody>() {
+//                                @Override
+//                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//
+//                                }
+//
+//                                @Override
+//                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                                }
+//                            });
 
 
                             CheckShiftRequest checkShiftRequest = new CheckShiftRequest();

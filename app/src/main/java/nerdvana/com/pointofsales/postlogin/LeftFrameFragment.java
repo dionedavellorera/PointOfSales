@@ -4698,6 +4698,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             }
         } else {
+            subTotal.setText("0.00");
+            discount.setText("0.00");
+            deposit.setText("0.00");
+            total.setText("0.00");
             totalBalance = 0;
         }
 

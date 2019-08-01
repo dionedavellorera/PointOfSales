@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.RoomRatesAdapter;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
+import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public abstract class RateDialog extends BaseDialog implements View.OnClickListener {
@@ -42,7 +44,7 @@ public abstract class RateDialog extends BaseDialog implements View.OnClickListe
     private RoomRateMain selectedRate;
     private List<RoomRateMain> roomRateMainList;
     private List<RoomRateMain> filteredRoomRateList;
-    private android.support.v7.widget.SearchView searchRate;
+    private HidingEditText searchRate;
     private Spinner qtySpinner;
 
     private String qtySelected = "1";
@@ -114,18 +116,13 @@ public abstract class RateDialog extends BaseDialog implements View.OnClickListe
             }
         });
 
-        searchRate.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchRate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String s) {
+            public void onClick(View v) {
                 filteredRoomRateList = new ArrayList<>();
                 for (RoomRateMain rrm : roomRateMainList) {
-                    if ((String.valueOf(rrm.getRatePrice().getAmount()).contains(s)) ||
-                            rrm.getRatePrice().getRoomRate().getRoomRate().toLowerCase().contains(s.toLowerCase())) {
+                    if ((String.valueOf(rrm.getRatePrice().getAmount()).contains(searchRate.getText().toString().toLowerCase())) ||
+                            rrm.getRatePrice().getRoomRate().getRoomRate().toLowerCase().contains(searchRate.getText().toString().toLowerCase())) {
                         filteredRoomRateList.add(rrm);
                     }
                 }
@@ -145,8 +142,6 @@ public abstract class RateDialog extends BaseDialog implements View.OnClickListe
                     listRates.setLayoutManager(linearLayoutManager);
                     listRates.setAdapter(roomRatesAdapter);
                 }
-
-                return false;
             }
         });
 

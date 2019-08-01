@@ -2,21 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <include layout="@layout/partial_header"
         android:id="@+id/header"/>
 
-    <android.support.v7.widget.SearchView
+    <nerdvana.com.pointofsales.custom.HidingEditText
+        android:layout_toLeftOf="@id/labelQty"
         android:layout_marginRight="55dp"
         android:layout_below="@id/header"
         android:id="@+id/searchRate"
         app:iconifiedByDefault="false"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
 
     <TextView
+
         android:id="@+id/labelQty"
         android:layout_width="wrap_content"
         android:layout_height="46dp"
@@ -33,7 +37,6 @@
         android:spinnerMode="dialog"
         android:layout_below="@id/header"
         android:gravity="center"
-        android:layout_toRightOf="@id/searchRate"
         android:id="@+id/qty"
         android:layout_width="wrap_content"
         android:layout_height="46dp"/>

@@ -8,6 +8,8 @@
     android:id="@+id/rootView">
 
     <android.support.design.widget.AppBarLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -22,7 +24,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <android.support.v7.widget.SearchView
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:hint="SEARCH ROOM HERE"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:id="@+id/search"

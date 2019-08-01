@@ -15,7 +15,7 @@ public class LoginResponse {
     private List<Token> token = null;
     @SerializedName("access")
     @Expose
-    private List<Object> access = null;
+    private List<String> access = null;
     @SerializedName("status")
     @Expose
     private Integer status;
@@ -39,11 +39,11 @@ public class LoginResponse {
         this.token = token;
     }
 
-    public List<Object> getAccess() {
+    public List<String> getAccess() {
         return access;
     }
 
-    public void setAccess(List<Object> access) {
+    public void setAccess(List<String> access) {
         this.access = access;
     }
 
