@@ -334,7 +334,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         role.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                TooltipCompat.setTooltipText(v, "v1.1.2");
+                //ROOM REFRESH NOT SPAM
+                //ROOM SEARCH APPLIES EVEN AFTER REFRESH
+                //SEARCH VIEW SWITCHED TO HIDINGEDITTEXT TO HIDE KEYBOARD
+                TooltipCompat.setTooltipText(v, "v1.1.9");
                 return false;
             }
         });

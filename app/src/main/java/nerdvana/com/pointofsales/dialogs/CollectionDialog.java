@@ -136,7 +136,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                                     GsonHelper.getGson().toJson(collectionFinalPostModels),
                                                     ""));
 
-                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+//                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
                                         } else {
                                             Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
                                         }

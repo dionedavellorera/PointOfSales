@@ -192,6 +192,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private GuestReceiptInfoModel guestReceiptInfoModel;
     private List<FetchCurrencyExceptDefaultResponse.Result> currencyList;
     private boolean isTakeOut;
+    private boolean isDeposit;
     public PaymentDialog(@NonNull Activity context,
                          List<FetchPaymentResponse.Result> paymentList,
                          boolean isCheckout,
@@ -203,8 +204,10 @@ public abstract class PaymentDialog extends BaseDialog  {
                          Double discountPayment,
                          final String controlNumber,
                          GuestReceiptInfoModel guestReceiptInfoModel,
-                         boolean isTakeOut) {
+                         boolean isTakeOut,
+                         boolean isDeposit) {
         super(context);
+        this.isDeposit = isDeposit;
         this.isTakeOut = isTakeOut;
         this.act = context;
         this.guestReceiptInfoModel = guestReceiptInfoModel;
@@ -674,16 +677,21 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onClick(View v) {
                 if (postedPaymentList.size() > 0) {
-                    if (!isTakeOut) {
-                        if (TextUtils.isEmpty(empId)) {
-                            Toast.makeText(getContext(), "Steward is empty", Toast.LENGTH_LONG).show();
+                    if (isDeposit) {
+                        paymentSuccess(postedPaymentList, "");
+                    } else {
+                        if (!isTakeOut) {
+                            if (TextUtils.isEmpty(empId)) {
+                                Toast.makeText(getContext(), "Steward is empty", Toast.LENGTH_LONG).show();
+                            } else {
+                                paymentSuccess(postedPaymentList, empId);
+                            }
+
                         } else {
                             paymentSuccess(postedPaymentList, empId);
                         }
-
-                    } else {
-                        paymentSuccess(postedPaymentList, empId);
                     }
+
 
                 } else {
                     Utils.showDialogMessage(act, "No payment to post", "Warning");

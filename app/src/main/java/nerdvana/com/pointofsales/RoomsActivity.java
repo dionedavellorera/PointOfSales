@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.LinearLayout;
@@ -195,6 +196,11 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                                 setRoomsTableAdapter();
                                 sendRoomListRequest();
                                 setRoomFilter();
+
+                                if (!TextUtils.isEmpty(searchView.getText().toString())) {
+                                    roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
+                                }
+
                                 changeRoomStatusDialog.dismiss();
                             } else {
                                 Utils.showDialogMessage(RoomsActivity.this, response.body().getMessage(), "Information");
@@ -285,7 +291,10 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
         roomFilterAdapter.notifyDataSetChanged();
 
-        roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
+        if (!TextUtils.isEmpty(searchView.getText().toString())) {
+            roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
+        }
+
     }
 
     @Override

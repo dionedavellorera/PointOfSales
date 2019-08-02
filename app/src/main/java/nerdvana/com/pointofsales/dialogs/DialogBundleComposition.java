@@ -44,6 +44,7 @@ import retrofit2.Response;
 
 public abstract class DialogBundleComposition extends BaseDialog {
     private boolean onBind = false;
+    private DialogBundleComposition d;
     private List<FetchProductsResponse.BranchGroup> branchGroupList = new ArrayList<>();
     private List<SelectedProductsInBundleModel> selectedProductsInBundleModelList;
     private List<FetchProductsResponse.BranchList> branchLists;
@@ -72,6 +73,7 @@ public abstract class DialogBundleComposition extends BaseDialog {
                                    int qtySelected) {
         super(context);
         this.act = context;
+        this.d = this;
         this.branchGroupList = new ArrayList<>();
         for (FetchProductsResponse.BranchGroup bg : bgl) {
             FetchProductsResponse.BranchGroup branchGroup =
@@ -418,18 +420,15 @@ public abstract class DialogBundleComposition extends BaseDialog {
             }
             if (hasCompletedData) {
 //                Utils.showDialogMessage(act, "Please show summary", "Information");
-                BundleSummaryDialog bundleSummaryDialog = new BundleSummaryDialog(act, selectedProductsInBundleModelList) {
+                final BundleSummaryDialog bundleSummaryDialog = new BundleSummaryDialog(act, selectedProductsInBundleModelList) {
                     @Override
                     public void confirm() {
                         bundleCompleted(selectedProductsInBundleModelList);
                         dismiss();
+                        d.dismiss();
                     }
                 };
-
                 bundleSummaryDialog.show();
-
-
-
             }
         }
 

@@ -25,6 +25,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:hint="SEARCH ROOM HERE"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"

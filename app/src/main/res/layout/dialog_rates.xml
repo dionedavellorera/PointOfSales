@@ -10,6 +10,9 @@
         android:id="@+id/header"/>
 
     <nerdvana.com.pointofsales.custom.HidingEditText
+        android:maxLines="1"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
         android:layout_toLeftOf="@id/labelQty"
         android:layout_marginRight="55dp"
         android:layout_below="@id/header"

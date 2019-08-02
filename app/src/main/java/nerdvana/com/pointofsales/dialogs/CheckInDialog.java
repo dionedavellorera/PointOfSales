@@ -413,9 +413,6 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
 
 
 
-
-
-//                welcomeGuestRequest();
                 dismiss();
                 break;
         }

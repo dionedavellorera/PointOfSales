@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -116,9 +118,19 @@ public abstract class RateDialog extends BaseDialog implements View.OnClickListe
             }
         });
 
-        searchRate.setOnClickListener(new View.OnClickListener() {
+        searchRate.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
                 filteredRoomRateList = new ArrayList<>();
                 for (RoomRateMain rrm : roomRateMainList) {
                     if ((String.valueOf(rrm.getRatePrice().getAmount()).contains(searchRate.getText().toString().toLowerCase())) ||

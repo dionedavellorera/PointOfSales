@@ -166,7 +166,7 @@ public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
         Dialog dialog = this;
         if (dialog != null) {
             int width = 600;
-            int height = 300;
+            int height = 450;
             dialog.getWindow().setLayout(width, height);
         }
     }
