@@ -15,6 +15,9 @@ public class ShiftCutOffMenuDialog extends BaseDialog implements View.OnClickLis
     private Button zRead;
     private Button reprintXRead;
     private Button reprintZRead;
+
+    private Button reprintXReadV2;
+    private Button reprintZReadV2;
     public ShiftCutOffMenuDialog(@NonNull Context context) {
         super(context);
     }
@@ -31,6 +34,12 @@ public class ShiftCutOffMenuDialog extends BaseDialog implements View.OnClickLis
         reprintXRead.setOnClickListener(this);
         reprintZRead = findViewById(R.id.btnReprintZread);
         reprintZRead.setOnClickListener(this);
+
+        reprintXReadV2 = findViewById(R.id.btnReprintXReadV2);
+        reprintXReadV2.setOnClickListener(this);
+
+        reprintZReadV2 = findViewById(R.id.btnReprintZReadV2);
+        reprintZReadV2.setOnClickListener(this);
     }
 
     @Override
@@ -47,6 +56,12 @@ public class ShiftCutOffMenuDialog extends BaseDialog implements View.OnClickLis
                 break;
             case R.id.btnReprintZread:
                 BusProvider.getInstance().post(new ButtonsModel(127,"REPRINT Z READING", "",22));
+                break;
+            case R.id.btnReprintXReadV2:
+                BusProvider.getInstance().post(new ButtonsModel(500,"REPRINT X READING V2", "",22));
+                break;
+            case R.id.btnReprintZReadV2:
+                BusProvider.getInstance().post(new ButtonsModel(501,"REPRINT Z READING V2", "",22));
                 break;
         }
     }

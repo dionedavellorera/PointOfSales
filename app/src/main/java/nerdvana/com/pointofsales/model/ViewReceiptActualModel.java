@@ -17,13 +17,44 @@ public class ViewReceiptActualModel {
     private String receiptNumber;
     private String machineNumber;
 
+    private String vatExempt;
+    private String discount;
+    private String advanceDepo;
+
+    private String amountDue;
+    private String tendered;
+    private String change;
+    private String vatableSales;
+    private String vatExemptsales;
+    private String twelveVat;
+
+    private String personCountValue;
+    private String itemCountValue;
+
+    private String subTotalValue;
+
     public ViewReceiptActualModel(String company, String address,
                                   String telNumber, String serialNumber,
                                   String regTin, String permitNumber,
                                   String minNumber, String roomNumber,
                                   String cashier, String roomBoy,
                                   String checkInTime, String expectedCheckOut,
-                                  String receiptNumber, String machineNumber) {
+                                  String receiptNumber, String machineNumber,
+                                  String vatExempt, String discount,
+                                  String advanceDepo, String amountDue,
+                                  String tendered, String change,
+                                  String vatableSales, String vatExemptsales,
+                                  String twelveVat, String personCountValue,
+                                  String itemCountValue, String subTotalValue) {
+        this.subTotalValue = subTotalValue;
+        this.personCountValue = personCountValue;
+        this.itemCountValue = itemCountValue;
+        this.amountDue = amountDue;
+        this.tendered = tendered;
+        this.change = change;
+        this.vatableSales = vatableSales;
+        this.vatExemptsales = vatExemptsales;
+        this.twelveVat = twelveVat;
         this.company = company;
         this.address = address;
         this.telNumber = telNumber;
@@ -38,6 +69,60 @@ public class ViewReceiptActualModel {
         this.expectedCheckOut = expectedCheckOut;
         this.receiptNumber = receiptNumber;
         this.machineNumber = machineNumber;
+        this.vatExempt = vatExempt;
+        this.discount = discount;
+        this.advanceDepo = advanceDepo;
+    }
+
+
+    public String getSubTotalValue() {
+        return subTotalValue;
+    }
+
+    public String getPersonCountValue() {
+        return personCountValue;
+    }
+
+    public String getItemCountValue() {
+        return itemCountValue;
+    }
+
+    public String getVatExempt() {
+        return vatExempt;
+    }
+
+    public String getDiscount() {
+        return discount;
+    }
+
+    public String getAdvanceDepo() {
+        return advanceDepo;
+    }
+
+
+
+    public String getAmountDue() {
+        return amountDue;
+    }
+
+    public String getTendered() {
+        return tendered;
+    }
+
+    public String getChange() {
+        return change;
+    }
+
+    public String getVatableSales() {
+        return vatableSales;
+    }
+
+    public String getVatExemptsales() {
+        return vatExemptsales;
+    }
+
+    public String getTwelveVat() {
+        return twelveVat;
     }
 
     public String getCompany() {

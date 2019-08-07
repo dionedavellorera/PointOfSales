@@ -1128,12 +1128,9 @@ public abstract class PaymentDialog extends BaseDialog  {
             @SuppressLint("ResourceAsColor")
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-
-
                 postedPaymentList.remove(viewHolder.getAdapterPosition());
                 computeTotal();
                 postedPaymentsAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-
             }
 
             @Override

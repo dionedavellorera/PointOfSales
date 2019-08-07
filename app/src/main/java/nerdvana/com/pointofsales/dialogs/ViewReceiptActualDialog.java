@@ -34,12 +34,16 @@ public class ViewReceiptActualDialog extends Dialog {
         list.add(new ViewReceiptActualModel("PANORAMA ENTERPRISE INC.", "BAGONG ILOG PASIG CITY",
                 "671-9782", "PC001LTR",
                 "000001010101", "FDSFPDFS-FDSFDSFDS-FDS04234DF",
-                "", "",
-                "", "",
-                "", "",
-                "", ""));
+                "15080516005415409", "321",
+                "MICHAEL JOHN LUBRICO", "MICHAEL JOHN LUBRICO",
+                "APR 25 9:05 AM", "APR 25 12:05 PM",
+                "00000000000018", "1",
+                "1000", "1000", "1000",
+                "1000", "1000", "1000",
+                "1000", "1000", "1000",
+                "2", "100", "2500.00"));
 
-        ViewReceiptActualAdapter viewReceiptActualAdapter = new ViewReceiptActualAdapter(list);
+        ViewReceiptActualAdapter viewReceiptActualAdapter = new ViewReceiptActualAdapter(list, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         rvReceiptList.setLayoutManager(linearLayoutManager);
         rvReceiptList.setAdapter(viewReceiptActualAdapter);

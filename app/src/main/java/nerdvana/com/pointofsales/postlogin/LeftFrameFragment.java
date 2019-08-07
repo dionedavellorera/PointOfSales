@@ -152,6 +152,8 @@ import nerdvana.com.pointofsales.dialogs.PasswordDialog;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
 import nerdvana.com.pointofsales.dialogs.RateDialog;
 import nerdvana.com.pointofsales.dialogs.RemoveOtDialog;
+import nerdvana.com.pointofsales.dialogs.ReprintActualXReadReceiptDialog;
+import nerdvana.com.pointofsales.dialogs.ReprintActualZReadReceiptDialog;
 import nerdvana.com.pointofsales.dialogs.ReprintXReadingDialog;
 import nerdvana.com.pointofsales.dialogs.ReprintZReadingDialog;
 import nerdvana.com.pointofsales.dialogs.SetupPrinterDialog;
@@ -1591,6 +1593,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void clickedButton(ButtonsModel clickedItem) {
 
         switch (clickedItem.getId()) {
+            case 500://REPRINT X READ V2
+                ReprintActualXReadReceiptDialog reprintActualXReadReceiptDialog = new ReprintActualXReadReceiptDialog(getActivity());
+                reprintActualXReadReceiptDialog.show();
+                break;
+            case 501://REPRINT ZREAD V2
+                ReprintActualZReadReceiptDialog reprintActualZReadReceiptDialog = new ReprintActualZReadReceiptDialog(getActivity());
+                reprintActualZReadReceiptDialog.show();
+                break;
             case 996://upon completion remove view receipt :: 112
                 ViewReceiptDialog viewReceiptDialog = new ViewReceiptDialog(getActivity());
                 viewReceiptDialog.show();
