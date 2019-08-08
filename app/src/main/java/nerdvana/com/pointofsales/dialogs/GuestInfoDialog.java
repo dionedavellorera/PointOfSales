@@ -166,12 +166,6 @@ public abstract class GuestInfoDialog extends BaseDialog {
                             }
                         }, jodatime.getYear(), jodatime.getMonthOfYear() -1, jodatime.getDayOfMonth());
                 datePickerDialog.show();
-
-
-
-
-
-
             }
         });
 

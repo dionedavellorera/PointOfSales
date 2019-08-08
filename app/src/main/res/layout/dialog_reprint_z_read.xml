@@ -5,8 +5,27 @@
 
     <include layout="@layout/partial_header" android:id="@+id/header"/>
 
-    <Button
+    <TextView
+        android:padding="10dp"
+        android:layout_margin="10dp"
         android:layout_below="@id/header"
+        android:id="@+id/startDate"
+        android:hint="Start Date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:layout_below="@id/startDate"
+        android:id="@+id/endDate"
+        android:hint="End Date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_margin="10dp"
+        android:layout_below="@id/endDate"
         android:text="SEARCH"
         android:id="@+id/search"
         android:layout_width="match_parent"

@@ -1,5 +1,9 @@
 package nerdvana.com.pointofsales.model;
 
+import java.util.List;
+
+import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
+
 public class ViewReceiptActualModel {
     private String company;
     private String address;
@@ -33,6 +37,10 @@ public class ViewReceiptActualModel {
 
     private String subTotalValue;
 
+    private String otHours;
+    private String otAmount;
+    private List<ViewReceiptViaDateResponse.Post_> postList;
+
     public ViewReceiptActualModel(String company, String address,
                                   String telNumber, String serialNumber,
                                   String regTin, String permitNumber,
@@ -45,7 +53,11 @@ public class ViewReceiptActualModel {
                                   String tendered, String change,
                                   String vatableSales, String vatExemptsales,
                                   String twelveVat, String personCountValue,
-                                  String itemCountValue, String subTotalValue) {
+                                  String itemCountValue, String subTotalValue,
+                                  List<ViewReceiptViaDateResponse.Post_> postList,
+                                  String otHours, String otAmount) {
+        this.otHours = otHours;
+        this.otAmount = otAmount;
         this.subTotalValue = subTotalValue;
         this.personCountValue = personCountValue;
         this.itemCountValue = itemCountValue;
@@ -72,8 +84,28 @@ public class ViewReceiptActualModel {
         this.vatExempt = vatExempt;
         this.discount = discount;
         this.advanceDepo = advanceDepo;
+        this.postList = postList;
     }
 
+    public List<ViewReceiptViaDateResponse.Post_> getPostList() {
+        return postList;
+    }
+
+    public String getOtHours() {
+        return otHours;
+    }
+
+    public void setOtHours(String otHours) {
+        this.otHours = otHours;
+    }
+
+    public String getOtAmount() {
+        return otAmount;
+    }
+
+    public void setOtAmount(String otAmount) {
+        this.otAmount = otAmount;
+    }
 
     public String getSubTotalValue() {
         return subTotalValue;

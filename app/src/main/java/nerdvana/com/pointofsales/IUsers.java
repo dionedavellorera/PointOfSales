@@ -47,8 +47,10 @@ import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadListResponse;
+import nerdvana.com.pointofsales.api_responses.FetchXReadListViaDateResponse;
 import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchZReadListResponse;
+import nerdvana.com.pointofsales.api_responses.FetchZReadListViaDateResponse;
 import nerdvana.com.pointofsales.api_responses.FocTransactionResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
@@ -60,6 +62,7 @@ import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.UpdateCheckInTimeResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
+import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 import nerdvana.com.pointofsales.api_responses.VoidDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.VoidPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
@@ -236,6 +239,10 @@ public interface IUsers {
     @FormUrlEncoded
     Call<ViewReceiptResponse> viewReceipt(@FieldMap Map<String, String> params);
 
+    @POST("viewReceiptViaDate")
+    @FormUrlEncoded
+    Call<ViewReceiptViaDateResponse> viewReceiptViaDate(@FieldMap Map<String, String> params);
+
     @POST("voidReceipt")
     @FormUrlEncoded
     Call<PostVoidResponse> voidReceipt(@FieldMap Map<String, String> params);
@@ -333,10 +340,17 @@ public interface IUsers {
     @POST("fetchXReading")
     @FormUrlEncoded
     Call<FetchXReadListResponse> fetchXReadListRequest(@FieldMap Map<String, String> params);
+    @POST("fetchXReadingViaDate")
+    @FormUrlEncoded
+    Call<FetchXReadListViaDateResponse> fetchXReadListRequestViaDate(@FieldMap Map<String, String> params);
+
 
     @POST("fetchZReading")
     @FormUrlEncoded
     Call<FetchZReadListResponse> fetchZReadListRequest(@FieldMap Map<String, String> params);
+    @POST("fetchZReadingViaDate")
+    @FormUrlEncoded
+    Call<FetchZReadListViaDateResponse> fetchZReadListRequestViaDate(@FieldMap Map<String, String> params);
     //region pending
     @POST("mysqlDump")
     @FormUrlEncoded

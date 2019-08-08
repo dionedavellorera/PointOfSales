@@ -18,6 +18,7 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
 
 public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -160,6 +161,42 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
                     .setText(model.getMachineNumber());
 
 
+            ((ViewHolder) holder)
+                    .layoutItemsInner.removeAllViews();
+
+            for (ViewReceiptViaDateResponse.Post_ data : model.getPostList()) {
+
+                LinearLayout childLayout = new LinearLayout(
+                        context);
+                LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                childLayout.setLayoutParams(linearParams);
+
+                LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.8f);
+                LinearLayout.LayoutParams llp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.4f);
+                LinearLayout.LayoutParams llp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.8f);
+                TextView tvQty = new TextView(context);
+                tvQty.setText(String.valueOf(data.getQty()));
+                tvQty.setLayoutParams(llp);
+                TextView tvItem = new TextView(context);
+                tvItem.setText(data.getProduct() == null ? data.getRoomRate() : data.getProduct().getProduct_initial());
+                tvItem.setLayoutParams(llp1);
+                TextView tvAmount = new TextView(context);
+                tvAmount.setText(String.valueOf(data.getTotal()));
+                tvAmount.setLayoutParams(llp2);
+
+
+                childLayout.addView(tvQty);
+                childLayout.addView(tvItem);
+                childLayout.addView(tvAmount);
+                ((ViewHolder) holder)
+                        .layoutItemsInner
+                        .addView(childLayout);
+
+            }
+
+
             LinearLayout childLayout = new LinearLayout(
                     context);
             LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
@@ -171,13 +208,13 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             LinearLayout.LayoutParams llp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.4f);
             LinearLayout.LayoutParams llp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.8f);
             TextView tvQty = new TextView(context);
-            tvQty.setText("100");
+            tvQty.setText(String.valueOf(model.getOtHours()));
             tvQty.setLayoutParams(llp);
             TextView tvItem = new TextView(context);
-            tvItem.setText("Pork Adobo sinigang");
+            tvItem.setText("OT HOURS");
             tvItem.setLayoutParams(llp1);
             TextView tvAmount = new TextView(context);
-            tvAmount.setText("150.00");
+            tvAmount.setText(String.valueOf(model.getOtAmount()));
             tvAmount.setLayoutParams(llp2);
 
 
@@ -187,6 +224,11 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             ((ViewHolder) holder)
                     .layoutItemsInner
                     .addView(childLayout);
+
+
+
+
+
 
             ((ViewHolder) holder)
                     .vatExemptValue

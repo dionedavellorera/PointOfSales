@@ -19,60 +19,48 @@
     </android.support.design.widget.TextInputLayout>
 
 
-    <android.support.design.widget.TextInputLayout
+    <TextView
+        android:padding="5dp"
         android:layout_below="@id/tilReceiptNumber"
-        android:id="@+id/tilStartDate"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
+        android:id="@+id/inputDateStart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/inputDateStart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Start date"/>
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:hint="Start date"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_below="@id/tilStartDate"
-        android:id="@+id/tilEndDate"
-        android:layout_margin="5dp"
+
+
+    <TextView
+        android:padding="5dp"
+        android:layout_margin="10dp"
+        android:layout_below="@id/inputDateStart"
+        android:id="@+id/inputDateEnd"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/inputDateEnd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="End Date"/>
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:hint="End Date"/>
 
     <CheckBox
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/tilEndDate"
+        android:layout_below="@id/inputDateEnd"
         android:id="@+id/chkTakeOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Take Out"/>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_below="@id/tilEndDate"
+    <Spinner
+        android:layout_below="@id/inputDateEnd"
         android:layout_toRightOf="@id/chkTakeOut"
-        android:id="@+id/tilRoomNumber"
+        android:id="@+id/spinrRoomNumber"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/inputRoomNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Room number"/>
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"/>
 
     <Button
         android:layout_margin="10dp"
-        android:layout_below="@id/tilRoomNumber"
+        android:layout_below="@id/chkTakeOut"
         android:id="@+id/btnSearch"
         android:text="SEARCH"
         android:background="@drawable/button_selector"

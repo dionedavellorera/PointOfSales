@@ -1717,7 +1717,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 130: //CHECK FOR ROOM FREEBIES / ROOM BUNDLE
                 if (fetchRoomPendingResult != null) {
                     if (fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList().size() > 0) {
+                        boolean hasValidData = false;
                         if (freebiesDialog == null) {
+
+                            for (FetchRoomPendingResponse.Freebies freebies : fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList()) {
+                                if (freebies.getFreebyRoomRatePrice() != null) {
+                                    hasValidData = true;
+                                    break;
+                                }
+                            }
+
+
                             freebiesDialog = new FreebiesDialog(
                                     getActivity(),
                                     fetchRoomPendingResult.getBooked().get(0).getTransaction().getFreebiesList(),
@@ -1730,8 +1740,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     if (freebiesDialog != null) {
                                         freebiesDialog.dismiss();
                                     }
-
-
                                 }
                             };
 
@@ -1751,7 +1759,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         }
 
                         if (!freebiesDialog.isShowing()) {
-                            freebiesDialog.show();
+                            if (hasValidData) {
+                                freebiesDialog.show();
+                            } else {
+                                Utils.showDialogMessage(getActivity(), "No freebies , e", "Information");
+                            }
+
                         }
                     } else {
                         Utils.showDialogMessage(getActivity(), "No freebies", "Information");

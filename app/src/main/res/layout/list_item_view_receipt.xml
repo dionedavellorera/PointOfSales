@@ -457,11 +457,11 @@
 
 
 
-        <TextView
-            android:gravity="center"
-            android:text="THIS IS NOT AN OFFICIAL RECEIPT"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <!--<TextView-->
+            <!--android:gravity="center"-->
+            <!--android:text="THIS IS NOT AN OFFICIAL RECEIPT"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
         <TextView
             android:gravity="center"
             android:text="THANK YOU COME AGAIN"
@@ -524,9 +524,20 @@
 
         <TextView
             android:gravity="center"
-            android:text="THIS INVOICE RECEIPT SHALL BE VALID FOR FIVE(5) YEARS FROM THE DATE OF THE PERMIT TO USE"
+            android:text="THIS RECEIPT SHALL BE VALID FOR"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <TextView
+            android:gravity="center"
+            android:text="FIVE(5) YEARS FROM THE DATE OF"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:gravity="center"
+            android:text="THE PERMIT TO USE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
 

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -48,13 +49,31 @@ public class FreebiesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         if(holder instanceof FreebiesListAdapter.ListViewHolder){
-            ((FreebiesListAdapter.ListViewHolder) holder).name.setText(freebyList.get(i).getFreebyRoomRatePrice().getFreebyRoomRate().getRoomRate());
-            ((FreebiesListAdapter.ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    freeby.clicked(i);
-                }
-            });
+
+            if (freebyList.get(i).getFreebyRoomRatePrice() != null) {
+                ((FreebiesListAdapter.ListViewHolder) holder).name.setText(freebyList.get(i).getFreebyRoomRatePrice().getFreebyRoomRate().getRoomRate());
+                ((FreebiesListAdapter.ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        freeby.clicked(i);
+                    }
+                });
+            } else {
+
+                ((ListViewHolder)holder)
+                        .row
+                        .setLayoutParams(new RelativeLayout.LayoutParams(0, 0));
+
+//                ((FreebiesListAdapter.ListViewHolder) holder).name.setText("NOT AVAILABLE");
+//                ((FreebiesListAdapter.ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        Toast.makeText()
+//                    }
+//                });
+            }
+
+
         }
     }
 
