@@ -22,6 +22,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.ViewReceiptViaDateRequest;
@@ -121,6 +122,9 @@ public class ViewReceiptDialog extends BaseDialog {
         });
 
         setRoomSpinner();
+
+        startDate.setText(Utils.getCurrentDate());
+        endDate.setText(Utils.getCurrentDate());
     }
 
     private void showDatePickerDialog(final String type) {

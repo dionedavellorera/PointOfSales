@@ -14,9 +14,18 @@
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_above="@id/btnPrintAll"
         android:id="@+id/rvList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btnPrintAll"
+        android:text="PRINT ALL"
+        android:background="@drawable/button_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

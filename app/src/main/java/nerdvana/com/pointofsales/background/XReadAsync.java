@@ -351,8 +351,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                 if (discountDetails != null) {
-
-
                     for (FetchDiscountSpecialResponse.Result d : discountDetails) {
                         Integer count = 0;
                         Double amount = 0.00;

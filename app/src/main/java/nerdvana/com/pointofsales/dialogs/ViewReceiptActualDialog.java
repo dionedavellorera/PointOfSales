@@ -11,7 +11,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.adapters.ViewReceiptActualAdapter;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
@@ -47,13 +49,13 @@ public class ViewReceiptActualDialog extends Dialog {
         for (ViewReceiptViaDateResponse.Result r : result) {
             Log.d("WATEKTEK", r.getReceiptNo());
             list.add(new ViewReceiptActualModel(
-                    "PANORAMA ENTERPRISE INC.",
-                    "BAGONG ILOG PASIG CITY",
-                    "671-9782",
-                    "PC001LTR",
-                    "000001010101",
-                    "FDSFPDFS-FDSFDSFDS-FDS04234DF",
-                    "15080516005415409",
+                    SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
+                    SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                    SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE),
+                    "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
+                    "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
+                    "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
+                    "MIN NO: ************",
                     r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoomNo().toString(),
                     r.getCashier().getName(),
                     r.getRoomBoy() == null ? "" : r.getRoomBoy().getName(),

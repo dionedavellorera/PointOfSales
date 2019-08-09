@@ -15,6 +15,7 @@ import java.util.Calendar;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.FetchXReadListRequest;
 import nerdvana.com.pointofsales.api_requests.FetchXReadListRequestViaDate;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
@@ -63,11 +64,11 @@ public class ReprintActualXReadReceiptDialog extends BaseDialog {
                 ZXActualDialog zxActualDialog = new ZXActualDialog(getContext(), "x", startDate.getText().toString(), endDate.getText().toString());
                 zxActualDialog.show();
 
-
-
-
             }
         });
+
+        startDate.setText(Utils.getCurrentDate());
+        endDate.setText(Utils.getCurrentDate());
     }
 
     private void showDatePickerDialog(final String type) {

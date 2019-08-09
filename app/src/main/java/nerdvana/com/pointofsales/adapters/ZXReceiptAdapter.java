@@ -7,12 +7,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.dialogs.ZXActualDialog;
 import nerdvana.com.pointofsales.dialogs.ZXReadModel;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
 
@@ -21,11 +23,13 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private String from;
     private List<ZXReadModel> viewReceiptList;
     private Context context;
+    private ZXActualDialog.ZXRead zxRead;
     public ZXReceiptAdapter(List<ZXReadModel> viewReceiptList, Context context,
-                            String from) {
+                            String from, ZXActualDialog.ZXRead zxRead) {
         this.viewReceiptList = viewReceiptList;
         this.context = context;
         this.from = from;
+        this.zxRead = zxRead;
     }
 
     @NonNull
@@ -69,8 +73,11 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private TextView newGrandTotal;
         private TextView oldGrandTotal;
         private TextView zReadNo;
+        private TextView voidValue;
 
         private LinearLayout linZReadOnly;
+
+        private Button btnReprint;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -105,6 +112,7 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             seniorValue = itemView.findViewById(R.id.seniorValue);
             seniorCount = itemView.findViewById(R.id.seniorCount);
             othersValue = itemView.findViewById(R.id.othersValue);
+            voidValue = itemView.findViewById(R.id.voidValue);
 
             begTrans = itemView.findViewById(R.id.begTrans);
             endTrans = itemView.findViewById(R.id.endTrans);
@@ -113,6 +121,7 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             zReadNo = itemView.findViewById(R.id.zReadNo);
 
             linZReadOnly = itemView.findViewById(R.id.linZReadOnly);
+            btnReprint = itemView.findViewById(R.id.btnReprint);
 
 
         }
@@ -123,8 +132,22 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
-        ZXReadModel model = viewReceiptList.get(holder.getAdapterPosition());
+        final ZXReadModel model = viewReceiptList.get(holder.getAdapterPosition());
         if(holder instanceof ZXReceiptAdapter.ViewHolder){
+
+            ((ViewHolder) holder)
+                    .btnReprint
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            zxRead.reprint(model.getId());
+                        }
+                    });
+
+
+            ((ViewHolder) holder)
+                    .voidValue
+                    .setText(model.getVoidAmount());
             ((ViewHolder) holder)
                     .companyName
                     .setText(model.getCompany());

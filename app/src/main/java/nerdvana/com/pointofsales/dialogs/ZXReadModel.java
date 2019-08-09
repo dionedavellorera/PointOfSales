@@ -1,6 +1,9 @@
 package nerdvana.com.pointofsales.dialogs;
 
 public class ZXReadModel {
+
+    private String id;
+
     private String company;
     private String address;
     private String telNumber;
@@ -45,8 +48,9 @@ public class ZXReadModel {
 
     private String zReadNo;
 
-    public ZXReadModel(String company, String address, String telNumber, String serialNumber, String regTin, String permitNumber, String minNumber, String title, String postingDate, String shiftNumber, String user, String manager, String machineNumber, String grossSales, String netSales, String vatableSales, String vatExemptSales, String twelveVat, String nonVat, String serviceCharge, String cashSales, String cardSales, String depositSales, String online, String depositAdjustment, String voidAmount, String pwdCount, String pwdAmount, String seniorCount, String seniorAmount, String others, String beginningTrans, String endTrans, String oldGrandTotal, String newGrandTotal, String zReadNo) {
+    public ZXReadModel(String company, String address, String telNumber, String serialNumber, String regTin, String permitNumber, String minNumber, String title, String postingDate, String shiftNumber, String user, String manager, String machineNumber, String grossSales, String netSales, String vatableSales, String vatExemptSales, String twelveVat, String nonVat, String serviceCharge, String cashSales, String cardSales, String depositSales, String online, String depositAdjustment, String voidAmount, String pwdCount, String pwdAmount, String seniorCount, String seniorAmount, String others, String beginningTrans, String endTrans, String oldGrandTotal, String newGrandTotal, String zReadNo, String id) {
         this.company = company;
+        this.id = id;
         this.address = address;
         this.telNumber = telNumber;
         this.serialNumber = serialNumber;
@@ -82,6 +86,10 @@ public class ZXReadModel {
         this.oldGrandTotal = oldGrandTotal;
         this.newGrandTotal = newGrandTotal;
         this.zReadNo = zReadNo;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getCompany() {

@@ -9,7 +9,8 @@ public class FetchXReadListRequestViaDate extends BaseRequest{
     public FetchXReadListRequestViaDate(String sDate, String eDate) {
         mapValue = new HashMap<>();
         mapValue.put("user_id", userId);
-        mapValue.put("pos_id", machineNumber);
+//        mapValue.put("pos_id", machineNumber);
+        mapValue.put("pos_id", "2");
         mapValue.put("branch_id", branchId);
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);

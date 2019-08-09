@@ -17,7 +17,8 @@ public class FetchZReadViaIdRequest extends BaseRequest {
         mapValue.put("zread_id", zReadId);
 
         mapValue.put("user_id", userId);
-        mapValue.put("pos_id", machineNumber);
+//        mapValue.put("pos_id", machineNumber);
+        mapValue.put("pos_id", "2");
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
         mapValue.put("branch_code", branchCode);

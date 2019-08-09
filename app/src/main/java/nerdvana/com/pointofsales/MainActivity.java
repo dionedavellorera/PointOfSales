@@ -64,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -230,8 +231,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+
+
         mainContainerBg = findViewById(R.id.mainContainerBg);
         separator = findViewById(R.id.separator);
         separator2 = findViewById(R.id.separator2);
