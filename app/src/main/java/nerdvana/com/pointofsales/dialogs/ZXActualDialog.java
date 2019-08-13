@@ -78,8 +78,6 @@ public class ZXActualDialog extends Dialog {
         progress = findViewById(R.id.progress);
         btnPrintAll = findViewById(R.id.btnPrintAll);
 
-
-
         if (from.equalsIgnoreCase("x")) {
             title = "X READ";
 
@@ -183,7 +181,21 @@ public class ZXActualDialog extends Dialog {
                     ZXRead zxRead = new ZXRead() {
                         @Override
                         public void reprint(String data) {
+                            FetchXReadingViaIdRequest fetchXReadingViaIdRequest = new FetchXReadingViaIdRequest(data);
+                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                            Call<FetchXReadingViaIdResponse> request = iUsers.fetchXReadingViaId(fetchXReadingViaIdRequest.getMapValue());
+                            request.enqueue(new Callback<FetchXReadingViaIdResponse>() {
+                                @Override
+                                public void onResponse(Call<FetchXReadingViaIdResponse> call, Response<FetchXReadingViaIdResponse> response) {
+                                    BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(response.body().getResult())));
+                                    BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(response.body().getResult())));
+                                }
 
+                                @Override
+                                public void onFailure(Call<FetchXReadingViaIdResponse> call, Throwable t) {
+
+                                }
+                            });
                         }
                     };
 
@@ -198,7 +210,6 @@ public class ZXActualDialog extends Dialog {
                         public void onClick(View v) {
                             if (from.equalsIgnoreCase("X")) {
                                 //print all x read
-//                                response.body().getResult().get()
                                 for (FetchXReadListViaDateResponse.Result r : response.body().getResult()) {
                                     FetchXReadingViaIdRequest fetchXReadingViaIdRequest = new FetchXReadingViaIdRequest(String.valueOf(r.getData().getId()));
                                     IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -240,7 +251,7 @@ public class ZXActualDialog extends Dialog {
 
             request.enqueue(new Callback<FetchZReadListViaDateResponse>() {
                 @Override
-                public void onResponse(Call<FetchZReadListViaDateResponse> call, Response<FetchZReadListViaDateResponse> response) {
+                public void onResponse(Call<FetchZReadListViaDateResponse> call, final Response<FetchZReadListViaDateResponse> response) {
                     progress.setVisibility(View.GONE);
                     List<ZXReadModel> zxReadModelList = new ArrayList<>();
 
@@ -337,8 +348,39 @@ public class ZXActualDialog extends Dialog {
                         zxReadModelList.add(zxReadModel);
 
 
-                        for (FetchZReadListViaDateResponse.Result r : response.body().getResult()) {
-                            FetchZReadViaIdRequest fetchZReadViaIdRequest = new FetchZReadViaIdRequest(String.valueOf(r.getData().getId()));
+                        btnPrintAll.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (from.equalsIgnoreCase("X")) {
+                                    //print all x read
+                                } else {
+                                    //print all z read
+                                    for (FetchZReadListViaDateResponse.Result r : response.body().getResult()) {
+                                        FetchZReadViaIdRequest fetchZReadViaIdRequest = new FetchZReadViaIdRequest(String.valueOf(r.getData().getId()));
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<ZReadResponse> request = iUsers.fetchZReadViaId(fetchZReadViaIdRequest.getMapValue());
+                                        request.enqueue(new Callback<ZReadResponse>() {
+                                            @Override
+                                            public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
+                                                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+                                            }
+                                            @Override
+                                            public void onFailure(Call<ZReadResponse> call, Throwable t) {
+
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        });
+
+
+
+                    }
+                    ZXRead zxRead = new ZXRead() {
+                        @Override
+                        public void reprint(String data) {
+                            FetchZReadViaIdRequest fetchZReadViaIdRequest = new FetchZReadViaIdRequest(data);
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             Call<ZReadResponse> request = iUsers.fetchZReadViaId(fetchZReadViaIdRequest.getMapValue());
                             request.enqueue(new Callback<ZReadResponse>() {
@@ -346,21 +388,12 @@ public class ZXActualDialog extends Dialog {
                                 public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
                                     BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
                                 }
-
                                 @Override
                                 public void onFailure(Call<ZReadResponse> call, Throwable t) {
 
                                 }
                             });
-                        }
 
-
-
-                    }
-
-                    ZXRead zxRead = new ZXRead() {
-                        @Override
-                        public void reprint(String data) {
 
                         }
                     };

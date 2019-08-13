@@ -606,12 +606,15 @@
                 android:text="MACHINE NO"/>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnReprint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="REPRINT"/>
+
 
     </LinearLayout>
 
+
+    <Button
+        android:layout_below="@id/linZReadOnly"
+        android:id="@+id/btnReprint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REPRINT"/>
 </RelativeLayout>

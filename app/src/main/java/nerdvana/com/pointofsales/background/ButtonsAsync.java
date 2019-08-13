@@ -67,7 +67,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
         buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
 
-        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",16));
+//        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",16));
         buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
 
         buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
@@ -81,7 +81,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
         buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
         buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
-        buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT V2", "",100));
+        buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100));
 
 //        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",99));
 
