@@ -6,10 +6,18 @@
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
+        android:layout_above="@id/btnReprintAll"
         android:background="@color/colorWhite"
-        android:layout_margin="10dp"
         android:id="@+id/rvReceiptList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+
+    <Button
+        android:background="@drawable/button_selector"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/btnReprintAll"
+        android:text="REPRINT ALL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

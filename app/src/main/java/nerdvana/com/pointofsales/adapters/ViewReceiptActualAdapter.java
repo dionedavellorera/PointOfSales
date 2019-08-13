@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Reprint;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
@@ -24,9 +26,12 @@ import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
 public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ViewReceiptActualModel> viewReceiptList;
     private Context context;
-    public ViewReceiptActualAdapter(List<ViewReceiptActualModel> viewReceiptList, Context context) {
+    private Reprint reprint;
+    public ViewReceiptActualAdapter(List<ViewReceiptActualModel> viewReceiptList,
+                                    Context context, Reprint reprint) {
         this.viewReceiptList = viewReceiptList;
         this.context = context;
+        this.reprint = reprint;
     }
 
     @NonNull
@@ -36,6 +41,7 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        private Button btnReprint;
         private TextView companyName;
         private TextView address;
         private TextView number;
@@ -63,8 +69,16 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
         private TextView itemCountValue;
         private TextView personCountValue;
         private TextView subtotalValue;
+
+
+        private TextView customerName;
+        private TextView customerAddress;
+        private TextView customerTin;
+        private TextView customerBusinessStyle;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            btnReprint = itemView.findViewById(R.id.btnReprint);
             companyName = itemView.findViewById(R.id.companyName);
             address = itemView.findViewById(R.id.companyAddress);
             number = itemView.findViewById(R.id.telNumber);
@@ -94,6 +108,11 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             itemCountValue = itemView.findViewById(R.id.itemCountValue);
             personCountValue = itemView.findViewById(R.id.personCountValue);
             subtotalValue = itemView.findViewById(R.id.subtotalValue);
+
+            customerName = itemView.findViewById(R.id.customerNameValue);
+            customerAddress = itemView.findViewById(R.id.customerAddress);
+            customerTin = itemView.findViewById(R.id.customerTinValue);
+            customerBusinessStyle = itemView.findViewById(R.id.customerBusinesStyle);
         }
 
     }
@@ -102,7 +121,7 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
-        ViewReceiptActualModel model = viewReceiptList.get(holder.getAdapterPosition());
+        final ViewReceiptActualModel model = viewReceiptList.get(holder.getAdapterPosition());
         if(holder instanceof ViewReceiptActualAdapter.ViewHolder){
             ((ViewReceiptActualAdapter.ViewHolder) holder)
                     .companyName
@@ -162,7 +181,18 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
 
 
             ((ViewHolder) holder)
+                    .btnReprint
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            reprint.data(model.getControlNumber());
+                        }
+                    });
+
+            ((ViewHolder) holder)
                     .layoutItemsInner.removeAllViews();
+
+
 
             for (ViewReceiptViaDateResponse.Post_ data : model.getPostList()) {
 

@@ -456,6 +456,77 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="NAME:"/>
+            <TextView
+                android:gravity="right"
+                android:text="_______________________________"
+                android:id="@+id/customerNameValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="ADDRESS:"/>
+            <TextView
+                android:gravity="right"
+                android:text="_______________________________"
+                android:id="@+id/customerAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="TIN#:"/>
+            <TextView
+                android:gravity="right"
+                android:text="_______________________________"
+                android:id="@+id/customerTinValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="BUSINESS STYLE:"/>
+            <TextView
+                android:gravity="right"
+                android:text="_______________________________"
+                android:id="@+id/customerBusinesStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
 
         <!--<TextView-->
             <!--android:gravity="center"-->
@@ -538,6 +609,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+
+        <Button
+            android:text="REPRINT"
+            android:id="@+id/btnReprint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 

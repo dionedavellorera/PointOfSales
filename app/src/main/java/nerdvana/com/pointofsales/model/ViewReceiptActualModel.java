@@ -5,6 +5,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 
 public class ViewReceiptActualModel {
+    private String controlNumber;
     private String company;
     private String address;
     private String telNumber;
@@ -41,6 +42,11 @@ public class ViewReceiptActualModel {
     private String otAmount;
     private List<ViewReceiptViaDateResponse.Post_> postList;
 
+    private String customerName;
+    private String customerAddress;
+    private String customerTin;
+    private String customerBusinessStyle;
+
     public ViewReceiptActualModel(String company, String address,
                                   String telNumber, String serialNumber,
                                   String regTin, String permitNumber,
@@ -55,7 +61,15 @@ public class ViewReceiptActualModel {
                                   String twelveVat, String personCountValue,
                                   String itemCountValue, String subTotalValue,
                                   List<ViewReceiptViaDateResponse.Post_> postList,
-                                  String otHours, String otAmount) {
+                                  String otHours, String otAmount,
+                                  String customerName, String customerAddress,
+                                  String customerTin, String customerBusinessStyle,
+                                  String controlNumber) {
+        this.controlNumber = controlNumber;
+        this.customerName = customerName;
+        this.customerAddress = customerAddress;
+        this.customerTin = customerTin;
+        this.customerBusinessStyle = customerBusinessStyle;
         this.otHours = otHours;
         this.otAmount = otAmount;
         this.subTotalValue = subTotalValue;
@@ -85,6 +99,10 @@ public class ViewReceiptActualModel {
         this.discount = discount;
         this.advanceDepo = advanceDepo;
         this.postList = postList;
+    }
+
+    public String getControlNumber() {
+        return controlNumber;
     }
 
     public List<ViewReceiptViaDateResponse.Post_> getPostList() {
@@ -211,5 +229,21 @@ public class ViewReceiptActualModel {
 
     public String getMachineNumber() {
         return machineNumber;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public String getCustomerTin() {
+        return customerTin;
+    }
+
+    public String getCustomerBusinessStyle() {
+        return customerBusinessStyle;
     }
 }
