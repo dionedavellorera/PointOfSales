@@ -5839,8 +5839,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         }
 
 
+
+                        if (cutOffDialog != null) {
+                            cutOffDialog.dismiss();
+                        }
+
+
                     } catch (JSONException e) {
                         e.printStackTrace();
+
+                        if (cutOffDialog != null) {
+                            cutOffDialog.dismiss();
+                        }
                     }
                 }
             };

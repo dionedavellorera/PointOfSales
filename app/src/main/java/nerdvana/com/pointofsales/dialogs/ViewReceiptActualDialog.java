@@ -134,7 +134,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
 //                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
                     "PERMIT NO:" + "***-***-***",
                     "MIN NO: " + "***-***-***",
-                    r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoomNo().toString(),
+                    r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoomNo() != null ? r.getGuestInfo().getRoomNo().toString() : "EMPTY",
                     r.getCashier().getName(),
                     r.getRoomBoy() == null ? "" : r.getRoomBoy().getName(),
                     r.getGuestInfo() == null ? "" : r.getGuestInfo().getCheckIn(),

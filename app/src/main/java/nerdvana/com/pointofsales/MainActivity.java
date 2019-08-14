@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 //ROOM REFRESH NOT SPAM
                 //ROOM SEARCH APPLIES EVEN AFTER REFRESH
                 //SEARCH VIEW SWITCHED TO HIDINGEDITTEXT TO HIDE KEYBOARD
-                TooltipCompat.setTooltipText(v, "v1.2.1");
+                TooltipCompat.setTooltipText(v, "v1.2.2");
                 return false;
             }
         });
@@ -1058,6 +1058,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (dialogProgressBar.isShowing()) dialogProgressBar.dismiss();
             }
         }
+
+        Log.d("ZCXZXC", progressBarModel.getMessage());
+
         Utils.showDialogMessage(MainActivity.this, progressBarModel.getMessage(), "ERROR");
     }
 

@@ -93,7 +93,13 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
             PrinterUtils.addHeader(printModel, printer);
 
+
+            Log.d("JSONDATA", printModel.getData());
+
+
             JSONObject jsonObject = new JSONObject(printModel.getData());
+
+
             JSONObject dataJsonObject = jsonObject.getJSONObject("data");
             JSONArray dataCashAndRecoJsonObject = jsonObject.getJSONObject("data").getJSONArray("cash_and_reco");
             JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
