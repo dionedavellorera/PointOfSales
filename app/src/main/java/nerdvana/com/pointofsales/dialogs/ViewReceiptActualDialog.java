@@ -134,7 +134,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
 //                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
                     "PERMIT NO:" + "***-***-***",
                     "MIN NO: " + "***-***-***",
-                    r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoomNo() != null ? r.getGuestInfo().getRoomNo().toString() : "EMPTY",
+                    r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoom().getRoomNo() != null ? r.getGuestInfo().getRoom().getRoomNo().toString() : "EMPTY",
                     r.getCashier().getName(),
                     r.getRoomBoy() == null ? "" : r.getRoomBoy().getName(),
                     r.getGuestInfo() == null ? "" : r.getGuestInfo().getCheckIn(),
@@ -178,7 +178,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                 String roomNo = "";
                 String roomType = "";
                 if (response.body().getResult().getGuestInfo() != null) {
-                    roomNo = response.body().getResult().getGuestInfo().getRoomNo().toString();
+                    roomNo = response.body().getResult().getGuestInfo().getRoom().getRoomNo().toString();
                     roomType = response.body().getResult().getGuestInfo().getRoomType();
                 } else {
                     roomNo = "TAKEOUT";

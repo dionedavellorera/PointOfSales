@@ -1348,7 +1348,23 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+    public class Room {
+        @SerializedName("room_no")
+        @Expose
+        private String roomNo;
+
+        public String getRoomNo() {
+            return roomNo;
+        }
+
+        public void setRoomNo(String roomNo) {
+            this.roomNo = roomNo;
+        }
+    }
+
     public class GuestInfo {
+        @SerializedName("room")
+        private Room room;
         @SerializedName("room_id")
         @Expose
         private String roomId;
@@ -1415,6 +1431,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("room_boy_in")
         @Expose
         private RoomBoy roomBoy;
+
+        public Room getRoom() {
+            return room;
+        }
+
+        public void setRoom(Room room) {
+            this.room = room;
+        }
 
         public String getRoomId() {
             return roomId;
