@@ -13,6 +13,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -60,6 +61,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -235,6 +238,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
+
+
+
+
         mainContainerBg = findViewById(R.id.mainContainerBg);
         separator = findViewById(R.id.separator);
         separator2 = findViewById(R.id.separator2);
@@ -340,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 //ROOM REFRESH NOT SPAM
                 //ROOM SEARCH APPLIES EVEN AFTER REFRESH
                 //SEARCH VIEW SWITCHED TO HIDINGEDITTEXT TO HIDE KEYBOARD
-                TooltipCompat.setTooltipText(v, "v1.2.2");
+                TooltipCompat.setTooltipText(v, "v1.2.5");
                 return false;
             }
         });

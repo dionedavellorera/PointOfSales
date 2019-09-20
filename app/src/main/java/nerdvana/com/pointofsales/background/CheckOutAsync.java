@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -14,6 +15,9 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +68,32 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         Log.d("STARTEXEC", "CHECKOUT EXECING");
+
+
+
+
+//        try {
+//
+//            File root = new File(Environment.getExternalStorageDirectory(), "Notes");
+//            if (!root.exists()) {
+//                root.mkdirs();
+//            }
+//            File gpxfile = new File(root, "mytextfile2.txt");
+//            FileWriter writer = null;
+//            writer = new FileWriter(gpxfile);
+//
+//            writer.append("mytextfile");
+//
+//            writer.flush();
+//
+//            writer.close();
+//
+//        } catch (IOException e) {
+//            Log.d("ETET", e.toString());
+//        }
+
+
+
 
         try {
             printer = new Printer(

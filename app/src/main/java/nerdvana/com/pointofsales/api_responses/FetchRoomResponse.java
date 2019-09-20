@@ -293,6 +293,7 @@ public class FetchRoomResponse {
         @Expose
         private Object deletedAt;
         @SerializedName("branch_room_rate")
+//        @SerializedName("room_rate")
         @Expose
         private List<RoomRateMain> roomRate = null;
 
