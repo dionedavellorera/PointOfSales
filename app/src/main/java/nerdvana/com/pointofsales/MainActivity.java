@@ -110,6 +110,7 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
+import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
@@ -126,6 +127,7 @@ import nerdvana.com.pointofsales.background.ChangeWakeUpCallAsync;
 import nerdvana.com.pointofsales.background.CheckInAsync;
 import nerdvana.com.pointofsales.background.CheckOutAsync;
 import nerdvana.com.pointofsales.background.CountUpTimer;
+import nerdvana.com.pointofsales.background.CreateReceiptAsync;
 import nerdvana.com.pointofsales.background.DepositAsync;
 import nerdvana.com.pointofsales.background.FetchOrderPendingAsync;
 import nerdvana.com.pointofsales.background.FoAsync;
@@ -163,6 +165,7 @@ import nerdvana.com.pointofsales.model.PrintJobModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
+import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
 import nerdvana.com.pointofsales.model.SwitchRoomPrintModel;
 import nerdvana.com.pointofsales.model.TimerModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -776,8 +779,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
                 break;
             case "PRINT_RECEIPT"://done //checkout
+
+
+                Log.d("PRINT_RECEIPT", "PRINT START");
                 willExecutGlobalPrint = false;
+
+                saveDataToLocal(printModel, userModel, currentDateTime);
+//                addAsync(new CreateReceiptAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "create_receipt");
+
+
                 addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "checkout");
+
+                Log.d("PRINT_RECEIPT", "PRINT END");
                 break;
             case "DEPOSIT"://done
                 willExecutGlobalPrint = false;
@@ -820,6 +833,438 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveDataToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
+
+
+
+        String finalString = "";
+        String receiptNo = "NA";
+        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
+        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
+        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
+        finalString += receiptString("671-9782", "", MainActivity.this, true);
+        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+
+        FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
+                ;
+        if (toList1 != null) {
+
+            //region create receipt data
+            finalString += receiptString("CASHIER", userModel.getUsername(), MainActivity.this, false);
+            finalString += receiptString("ROOM BOY", String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA"), MainActivity.this, false);
+            finalString += receiptString("CHECK IN", convertDateToReadableDate(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA"), MainActivity.this, false);
+            finalString += receiptString("CHECK OUT", convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA"), MainActivity.this, false);
+
+            if (toList1.getReceiptNo() == null) {
+                receiptNo = "NA";
+            } else {
+                receiptNo = toList1.getReceiptNo().toString();
+            }
+
+
+            finalString += receiptString("RECEIPT NO", toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(), MainActivity.this, false);
+            finalString += receiptString("MACHINE NO", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MACHINE_ID), MainActivity.this, false);
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+            finalString += receiptString("QTY   DESCRIPTION         AMOUNT", "", MainActivity.this, true);
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+            for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
+                if (soaTrans.getVoid() == 0) {
+                    String qty = "";
+
+                    qty += soaTrans.getQty();
+                    if (String.valueOf(soaTrans.getQty()).length() < 4) {
+                        for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                            qty += " ";
+                        }
+                    }
+                    String item = "";
+
+                    if (soaTrans.getProductId() == 0) {
+                        item =soaTrans.getRoomRate().toString();
+                    } else {
+                        item =soaTrans.getProduct().getProductInitial();
+                    }
+
+                    finalString += receiptString(qty + " " + item, returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty())), MainActivity.this, false);
+
+
+                    if (soaTrans.getFreebie() != null) {
+                        if (soaTrans.getFreebie().getPostAlaCart().size() > 0) {
+                            for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getFreebie().getPostAlaCart()) {
+
+                                finalString += receiptString("   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(), "", MainActivity.this, false);
+
+                            }
+                        }
+
+                        if (soaTrans.getFreebie().getPostGroup().size() > 0) {
+                            for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getFreebie().getPostGroup()) {
+                                for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+
+                                    finalString += receiptString("   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(), "", MainActivity.this, false);
+
+                                }
+                            }
+                        }
+
+
+                    }
+
+
+
+                    if (soaTrans.getPostAlaCartList().size() > 0) {
+                        for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
+
+                            finalString += receiptString("   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(), "", MainActivity.this, false);
+
+                        }
+                    }
+
+                    if (soaTrans.getPostGroupList().size() > 0) {
+                        for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
+                            for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+
+                                finalString += receiptString("   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(), "", MainActivity.this, false);
+
+                            }
+
+                        }
+                    }
+                }
+            }
+
+
+
+
+            if (toList1.getOtHours() > 0) {
+
+                finalString += receiptString(String.valueOf(toList1.getOtHours()) + " " + "OT HOURS",
+                        returnWithTwoDecimal(String.valueOf(toList1.getOtAmount())), MainActivity.this, false);
+
+            }
+
+            if (Integer.valueOf(toList1.getPersonCount()) > 2) {
+
+
+                finalString += receiptString(String.valueOf(Integer.valueOf(toList1.getPersonCount()) - 2) + " " + "EXTRA PERSON",
+                        returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount())), MainActivity.this, false);
+
+            }
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+
+            finalString += receiptString("NO OF PERSONS", returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
+
+            finalString += receiptString("NO OF ITEMS", returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            finalString += receiptString("LESS", "", MainActivity.this, false);
+
+
+            finalString += receiptString("   VAT EXEMPT", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
+
+
+            finalString += receiptString("   DISCOUNT", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
+
+            finalString += receiptString("   ADVANCED DEPOSIT", returnWithTwoDecimal(String.valueOf(toList1.getAdvance())), MainActivity.this, false);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+//            bookedList.get(0).getTransaction().getTotal() + bookedList.get(0).getTransaction().getOtAmount() + bookedList.get(0).getTransaction().getXPersonAmount()
+
+
+            finalString += receiptString("SUB TOTAL", returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))), MainActivity.this, false);
+
+
+
+            finalString += receiptString("AMOUNT DUE", returnWithTwoDecimal(String.valueOf(
+                    (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+                            - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))), MainActivity.this, false);
+
+
+            finalString += receiptString("TENDERED", returnWithTwoDecimal(String.valueOf(toList1.getTendered())), MainActivity.this, false);
+
+
+            finalString += receiptString("CHANGE", returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))), MainActivity.this, false);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            List<Integer> tmpArr = new ArrayList<>();
+            String pymType = "";
+            List<String> ccardArray = new ArrayList<>();
+            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                    tmpArr.add(pym.getPaymentTypeId());
+                    pymType = pym.getPaymentDescription();
+                }
+
+                if (pym.getPaymentTypeId() == 2) {
+                    if (pym.getCardDetail() != null) {
+                        if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
+                            int starCount = 0;
+                            String finalData = "";
+                            if (pym.getCardDetail().getCardNumber().length() < 3) {
+                                finalData += pym.getCardDetail().getCardNumber();
+                            } else {
+                                starCount = pym.getCardDetail().getCardNumber().length() - 3;
+                                finalData += new String(new char[starCount]).replace("\0", "*");
+                                finalData += pym.getCardDetail().getCardNumber().substring(starCount);
+                            }
+
+                            if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+
+                                finalString += receiptString("MASTER", "", MainActivity.this, false);
+
+                            } else {
+                                finalString += receiptString("VISA", "", MainActivity.this, false);
+
+                            }
+
+                            finalString += receiptString(pym.getPaymentDescription(), finalData, MainActivity.this, false);
+
+                        }
+                    }
+                }
+            }
+
+
+            finalString += receiptString("PAYMENT TYPE", tmpArr.size() > 1 ? "MULTIPLE" : pymType, MainActivity.this, false);
+
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+
+            finalString += receiptString("VATABLE SALES", returnWithTwoDecimal(String.valueOf(toList1.getVatable())), MainActivity.this, false);
+
+            finalString += receiptString("VAT-EXEMPT SALES", returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales())), MainActivity.this, false);
+
+            finalString += receiptString("12% VAT", returnWithTwoDecimal(String.valueOf(toList1.getVat())), MainActivity.this, false);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                if (pym.getIsAdvance() == 1) {
+
+                    finalString += receiptString(pym.getPaymentDescription(), returnWithTwoDecimal(String.valueOf(pym.getAmount())), MainActivity.this, false);
+
+                }
+            }
+
+            boolean hasSpecial = false;
+            List<SeniorReceiptCheckoutModel> seniorReceiptList = new ArrayList<>();
+            if (toList1.getDiscountsList().size() > 0) {
+                finalString += receiptString("DISCOUNT LIST", "", MainActivity.this, true);
+
+                for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
+
+
+                    if (TextUtils.isEmpty(d.getVoid_by())) {
+                        if (d.getId().equalsIgnoreCase("0")) { //MANUAL
+
+                        } else {
+
+                            if (d.getInfo() != null) {
+
+//                                if (d.getDiscountTypes().getIsSpecial() == 1) {
+//                                    hasSpecial = true;
+//                                    seniorReceiptList.add(
+//                                            new SeniorReceiptCheckoutModel(
+//                                                    d.getInfo().getName() == null ? "" : d.getInfo().getName(),
+//                                                    d.getInfo().getCardNo() == null ? "" : d.getInfo().getCardNo(),
+//                                                    d.getInfo().getAddress() == null ? "" : d.getInfo().getAddress(),
+//                                                    d.getInfo().getTin() == null ? "" : d.getInfo().getTin(),
+//                                                    d.getInfo().getBusinessStyle() == null ? "" : d.getInfo().getBusinessStyle()
+//                                            )
+//                                    );
+//                                }
+
+                                if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+
+                                    finalString += receiptString(d.getDiscountType(), "NA", MainActivity.this, false);
+
+
+                                } else {
+
+                                    if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+
+                                        finalString += receiptString(d.getDiscountType(), "NA", MainActivity.this, false);
+
+
+                                    } else {
+                                        if (d.getInfo().getCardNo() != null) {
+
+                                            finalString += receiptString(d.getDiscountType(), d.getInfo().getCardNo().toUpperCase(), MainActivity.this, false);
+
+
+                                        }
+
+                                        if (d.getInfo().getName() != null) {
+
+                                            finalString += receiptString("NAME", d.getInfo().getName().toUpperCase(), MainActivity.this, false);
+
+                                        }
+                                    }
+
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+
+
+            if (toList1.getCustomer() != null) {
+                if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+
+                    finalString += receiptString("", "", MainActivity.this, true);
+
+                    finalString += receiptString("THIS RECEIPT IS ISSUED TO", "", MainActivity.this, true);
+
+
+                    finalString += receiptString("NAME:"+toList1.getCustomer().getCustomer(), "", MainActivity.this, true);
+
+                    if (toList1.getCustomer().getAddress() != null) {
+
+                        finalString += receiptString("ADDRESS:"+toList1.getCustomer().getAddress(), "", MainActivity.this, true);
+
+                    } else {
+                        finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
+
+                    }
+
+                    if (toList1.getCustomer().getTin() != null) {
+                        finalString += receiptString("TIN#:"+toList1.getCustomer().getTin(), "", MainActivity.this, true);
+
+                    } else {
+
+                        finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
+
+                    }
+
+                    if (toList1.getCustomer().getBusinessStyle() != null) {
+                        finalString += receiptString("BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(), "", MainActivity.this, true);
+
+
+                        finalString += receiptString(toList1.getCustomer().getBusinessStyle(), "", MainActivity.this, true);
+
+                    } else {
+                        finalString += receiptString("BUSINESS STYLE:_________________", "", MainActivity.this, true);
+
+                    }
+
+
+
+                    finalString += receiptString("", "", MainActivity.this, true);
+
+
+                } else {
+
+                    finalString += receiptString("NAME:___________________________", "", MainActivity.this, true);
+                    finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
+                    finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
+                    finalString += receiptString("BUSINESS STYLE:_________________", "", MainActivity.this, true);
+
+                }
+            } else {
+
+                finalString += receiptString("NAME:___________________________", "", MainActivity.this, true);
+                finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
+                finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
+                finalString += receiptString("BUSINESS STYLE:_________________", "", MainActivity.this, true);
+
+            }
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            finalString += receiptString("Thank you come again", "", MainActivity.this, true);
+
+            finalString += receiptString("----- SYSTEM PROVIDER DETAILS -----", "", MainActivity.this, true);
+
+            finalString += receiptString("Provider : NERDVANA CORP.", "", MainActivity.this, true);
+
+            finalString += receiptString("Address : 1 CANLEY ROAD BRGY BAGONG ILOG PASIG CITY", "", MainActivity.this, true);
+
+            finalString += receiptString("TIN: 009-772-500-000", "", MainActivity.this, true);
+
+            finalString += receiptString("ACCRE No. : ******", "", MainActivity.this, true);
+
+            finalString += receiptString("Date issued : " + toList1.getCreatedAt(), "", MainActivity.this, true);
+
+            finalString += receiptString("Valid until : " + PrinterUtils.yearPlusFive(toList1.getCreatedAt()), "", MainActivity.this, true);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            finalString += receiptString("THIS RECEIPT SHALL BE VALID FOR", "", MainActivity.this, true);
+
+            finalString += receiptString("FIVE(5) YEARS FROM THE DATE OF", "", MainActivity.this, true);
+
+            finalString += receiptString("THE PERMIT TO USE", "", MainActivity.this, true);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+
+            //endregion
+
+
+
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+            String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
+
+            try {
+                File root = new File(Environment.getExternalStorageDirectory(), "POS/"+folderName);
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+                File gpxfile = new File(root, receiptNo +".txt");
+                FileWriter writer = null;
+                writer = new FileWriter(gpxfile);
+
+                writer.append(finalString);
+//                writer.append("test data");
+
+                writer.flush();
+
+                writer.close();
+
+            } catch (IOException e) {
+                Log.d("ERRORMESSAGE", e.getMessage());
+//                asyncFinishCallBack.doneProcessing();
+            }
+
+
+
+
+        } else {
+            Log.d("DATANUL"," DATAI SNULL");
+        }
+
+
+
+
+
     }
 
 
@@ -1302,6 +1747,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Subscribe
     public void updateTime(TimerModel timerModel) {
+
         currentDateTime = timerModel.getTime();
         timer.setText(timerModel.getTime());
 
@@ -1621,6 +2067,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void runTask(String taskName, AsyncTask asyncTask) {
         switch (taskName) {
+            case "create_receipt":
+                CreateReceiptAsync createReceiptAsync = (CreateReceiptAsync) asyncTask;
+                createReceiptAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "spot_audit":
                 SpotAuditAsync spotAuditAsync = (SpotAuditAsync) asyncTask;
                 spotAuditAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -1771,6 +2221,42 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
 
         }
+    }
+
+    private String receiptString(String partOne, String partTwo, Context context, boolean isCenter) {
+        String finalString = "";
+        int filler = 0;
+        int maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)) / 2);
+
+        if (isCenter) {
+            if (partOne.length() > Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))) {
+                finalString = partOne.substring(0, Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)));
+            } else {
+                int custFillter = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)) - partOne.length()) / 2;
+                finalString = repeat(" ", custFillter) + partOne + repeat(" ", custFillter);
+            }
+
+        } else {
+
+            if (partOne.length() < maxColumnDivideTwo) {
+                filler += (maxColumnDivideTwo - partOne.length());
+            }
+            if (partTwo.length() < maxColumnDivideTwo) {
+                filler += (maxColumnDivideTwo - partTwo.length());
+            }
+            finalString = (partOne.length() >= maxColumnDivideTwo ? partOne.substring(0, maxColumnDivideTwo) : partOne)
+                    + repeat(" ", filler)
+                    + (partTwo.length() >= maxColumnDivideTwo ? partTwo.substring(0, maxColumnDivideTwo) : partTwo);
+
+        }
+
+
+
+        return finalString + "\n";
+    }
+
+    private static String repeat(String str, int i){
+        return new String(new char[i]).replace("\0", str);
     }
 }
 

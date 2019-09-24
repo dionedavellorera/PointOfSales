@@ -75,6 +75,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                                 asyncFinishCallBack.doneProcessing();
                             } catch (Epos2Exception e) {
                                 e.printStackTrace();
+//                                asyncFinishCallBack.doneProcessing();
                             }
                         }
                     }).start();
@@ -84,6 +85,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
 
         try {
@@ -91,6 +93,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
         } catch (Epos2Exception e) {
             e.printStackTrace();
             hasConnected = false;
+//            asyncFinishCallBack.doneProcessing();
         }
 
 
@@ -99,6 +102,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
         } catch (Epos2Exception e) {
             e.printStackTrace();
             hasConnected = false;
+//            asyncFinishCallBack.doneProcessing();
         }
 
 
@@ -173,6 +177,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
             }
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
         return null;
     }
@@ -180,6 +185,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
+
 
     }
 

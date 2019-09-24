@@ -78,6 +78,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                                 asyncFinishCallBack.doneProcessing();
                             } catch (Epos2Exception e) {
                                 e.printStackTrace();
+//                                asyncFinishCallBack.doneProcessing();
                             }
                         }
                     }).start();
@@ -93,6 +94,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
 
         PrinterUtils.addHeader(printModel, printer);
@@ -284,6 +286,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
 
 
@@ -293,6 +296,8 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
+
+
 
     }
 

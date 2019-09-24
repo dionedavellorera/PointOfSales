@@ -92,6 +92,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                 asyncFinishCallBack.doneProcessing();
                             } catch (Epos2Exception e) {
                                 e.printStackTrace();
+//                                asyncFinishCallBack.doneProcessing();
                             }
                         }
                     }).start();
@@ -134,6 +135,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
 
         PrinterUtils.addHeader(printModel, printer);
@@ -483,6 +485,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 //            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
         return null;
     }
@@ -501,6 +504,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+//                asyncFinishCallBack.doneProcessing();
             }
         } else {
             if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT).isEmpty()) {
@@ -515,9 +519,12 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                     printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
                 } catch (Epos2Exception e) {
                     e.printStackTrace();
+//                    asyncFinishCallBack.doneProcessing();
                 }
             }
         }
+
+
 
     }
 
@@ -540,6 +547,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 printer.addFeedLine(feedLine);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+//                asyncFinishCallBack.doneProcessing();
             }
         }
     }

@@ -70,6 +70,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                                 asyncFinishCallBack.doneProcessing();
                             } catch (Epos2Exception e) {
                                 e.printStackTrace();
+//                                asyncFinishCallBack.doneProcessing();
                             }
                         }
                     }).start();
@@ -78,6 +79,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
             PrinterUtils.connect(context, printer);
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
 
         PrinterUtils.addHeader(printModel, printer);
@@ -179,10 +181,18 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 //            printer.endTransaction();
         } catch (Epos2Exception e) {
             e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
         }
 
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+
+
     }
 
     private String roomRatePrice(String roomRatePriceId) {
