@@ -1718,30 +1718,38 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
         if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
 
-            if (collectionDialog == null) {
-                collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
-                    @Override
-                    public void printCashRecoData(String cashNRecoData) {
 
-                    }
-                };
+            if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+                if (collectionDialog == null) {
+                    ApplicationConstants.IS_ACTIVE = "T";
+                    collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
+                        @Override
+                        public void printCashRecoData(String cashNRecoData) {
 
-                collectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        collectionDialog = null;
-                    }
-                });
+                        }
+                    };
 
-                collectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        collectionDialog = null;
-                    }
-                });
+                    collectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            collectionDialog = null;
+                            ApplicationConstants.IS_ACTIVE = "F";
+                        }
+                    });
 
-                if (!collectionDialog.isShowing()) collectionDialog.show();
+                    collectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            collectionDialog = null;
+                            ApplicationConstants.IS_ACTIVE = "F";
+                        }
+                    });
+
+                    if (!collectionDialog.isShowing()) collectionDialog.show();
+                }
             }
+
+
         }
     }
 

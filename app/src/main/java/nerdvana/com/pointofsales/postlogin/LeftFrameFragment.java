@@ -3244,29 +3244,36 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void doSafeKeepFunction() {
-        if (safeKeepingDialog == null) {
-            safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
-                @Override
-                public void printCashRecoData(String cashNRecoData) {
 
-                }
-            };
+        if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+            if (safeKeepingDialog == null) {
+                ApplicationConstants.IS_ACTIVE = "T";
+                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
+                    @Override
+                    public void printCashRecoData(String cashNRecoData) {
 
-            safeKeepingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    safeKeepingDialog = null;
-                }
-            });
+                    }
+                };
 
-            safeKeepingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    safeKeepingDialog = null;
-                }
-            });
-            if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+                safeKeepingDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        ApplicationConstants.IS_ACTIVE = "F";
+                        safeKeepingDialog = null;
+                    }
+                });
+
+                safeKeepingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        ApplicationConstants.IS_ACTIVE = "F";
+                        safeKeepingDialog = null;
+                    }
+                });
+                if (!safeKeepingDialog.isShowing()) safeKeepingDialog.show();
+            }
         }
+
 
     }
 
@@ -5821,41 +5828,74 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void cashNReconcile() {
 
-        if (cutOffDialog != null) {
-            if (!cutOffDialog.isShowing()) cutOffDialog.show();
-        } else {
-            cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
-                @Override
-                public void printCashRecoData(String cashNRecoData) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(cashNRecoData);
-                        JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
-                        JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
+        if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
 
-                        JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
-                        if (dataJsonObject != null) {
-                            fetchXReadViaIdRequest(dataJsonObject.getString("id"));
+            if (cutOffDialog == null) {
+                ApplicationConstants.IS_ACTIVE = "T";
 
-                        }
+                cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
+                    @Override
+                    public void printCashRecoData(String cashNRecoData) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(cashNRecoData);
+                            JSONObject dataJsonObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs");
+                            JSONObject cashierDataObject = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("cashier");
 
+                            JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
+                            if (dataJsonObject != null) {
+                                fetchXReadViaIdRequest(dataJsonObject.getString("id"));
 
-
-                        if (cutOffDialog != null) {
-                            cutOffDialog.dismiss();
-                        }
+                            }
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
 
-                        if (cutOffDialog != null) {
-                            cutOffDialog.dismiss();
+                            if (cutOffDialog != null) {
+                                cutOffDialog.dismiss();
+                            }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                            if (cutOffDialog != null) {
+                                cutOffDialog.dismiss();
+                            }
                         }
                     }
-                }
-            };
-            if (!cutOffDialog.isShowing()) cutOffDialog.show();
+                };
+
+
+                cutOffDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        ApplicationConstants.IS_ACTIVE = "F";
+                        cutOffDialog = null;
+                    }
+                });
+
+                cutOffDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        ApplicationConstants.IS_ACTIVE = "F";
+                        cutOffDialog = null;
+                    }
+                });
+
+                if (!cutOffDialog.isShowing()) cutOffDialog.show();
+            }
+
+
+
+
         }
+
+//        if (cutOffDialog != null) {
+//
+//        } else {
+//
+//
+//            if (!cutOffDialog.isShowing()) cutOffDialog.show();
+//        }
 
 
 
@@ -6205,7 +6245,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 public void onClick(DialogInterface dialog, int which) {
                                     switch (which){
                                         case DialogInterface.BUTTON_POSITIVE:
-                                            BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                            if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+                                                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                            }
                                             break;
                                         case DialogInterface.BUTTON_NEGATIVE:
                                             break;
@@ -6231,7 +6273,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             public void onClick(DialogInterface dialog, int which) {
                                 switch (which){
                                     case DialogInterface.BUTTON_POSITIVE:
-                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                        if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+                                            BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                        }
+
                                         break;
 
                                     case DialogInterface.BUTTON_NEGATIVE:

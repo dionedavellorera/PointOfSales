@@ -72,6 +72,8 @@ public class ApplicationConstants {
 
     public static final String ROOM_JSON = "room_json";
 
+
+    public static String IS_ACTIVE = "F";
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 
 }
