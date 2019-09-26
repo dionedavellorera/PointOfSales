@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.background;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -51,55 +52,70 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        try {
-            printer = new Printer(
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
-                    context);
-            printer.setReceiveEventListener(new ReceiveListener() {
-                @Override
-                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                printer.disconnect();
-                                asyncFinishCallBack.doneProcessing();
-                            } catch (Epos2Exception e) {
-                                e.printStackTrace();
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
+                !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
+
+
+            try {
+                printer = new Printer(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
+                printer.setReceiveEventListener(new ReceiveListener() {
+                    @Override
+                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    printer.disconnect();
+                                    asyncFinishCallBack.doneProcessing();
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    }).start();
+                        }).start();
+                    }
+                });
+                PrinterUtils.connect(context, printer);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+            PrinterUtils.addHeader(printModel, printer);
+
+
+            addTextToPrinter(printer, "CASHIER RECONCILE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            TypeToken<List<CollectionFinalPostModel>> cashrecotoken = new TypeToken<List<CollectionFinalPostModel>>() {};
+            List<CollectionFinalPostModel> cashrecodetails = GsonHelper.getGson().fromJson(printModel.getData(), cashrecotoken.getType());
+            addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            fixDenoPrint(cashrecodetails);
+
+
+
+            try {
+
+                printer.addCut(Printer.CUT_FEED);
+
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
                 }
-            });
-            PrinterUtils.connect(context, printer);
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
-        }
-        PrinterUtils.addHeader(printModel, printer);
 
-
-        addTextToPrinter(printer, "CASHIER RECONCILE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        TypeToken<List<CollectionFinalPostModel>> cashrecotoken = new TypeToken<List<CollectionFinalPostModel>>() {};
-        List<CollectionFinalPostModel> cashrecodetails = GsonHelper.getGson().fromJson(printModel.getData(), cashrecotoken.getType());
-        addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        fixDenoPrint(cashrecodetails);
-
-
-
-        try {
-
-            printer.addCut(Printer.CUT_FEED);
-
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
             }
 
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+
+        } else {
+            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+
+
+
+
+
 
 
         return null;

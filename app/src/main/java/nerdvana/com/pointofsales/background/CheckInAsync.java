@@ -2,6 +2,8 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -54,135 +56,151 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        try {
-            printer = new Printer(
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
-                    context);
-            printer.setReceiveEventListener(new ReceiveListener() {
-                @Override
-                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                printer.disconnect();
-                                asyncFinishCallBack.doneProcessing();
-                            } catch (Epos2Exception e) {
-                                e.printStackTrace();
+
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
+                !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
+
+
+            try {
+                printer = new Printer(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
+                printer.setReceiveEventListener(new ReceiveListener() {
+                    @Override
+                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    printer.disconnect();
+                                    asyncFinishCallBack.doneProcessing();
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
 //                                asyncFinishCallBack.doneProcessing();
+                                }
                             }
-                        }
-                    }).start();
-                }
-            });
-            PrinterUtils.connect(context, printer);
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+                        }).start();
+                    }
+                });
+                PrinterUtils.connect(context, printer);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
-        }
+            }
 
-        PrinterUtils.addHeader(printModel, printer);
+            PrinterUtils.addHeader(printModel, printer);
 
-        TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
-        List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
-        addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
+            List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
+            addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "ROOM TYPE",
-                checkinDetails.get(0).getRoomType().toUpperCase(),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "ROOM TYPE",
+                    checkinDetails.get(0).getRoomType().toUpperCase(),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "RATE DESC.",
-                checkinDetails.get(0).getRoomRate().toUpperCase(),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "RATE DESC.",
+                    checkinDetails.get(0).getRoomRate().toUpperCase(),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "STARTING RATE",
-                roomRatePrice(String.valueOf(checkinDetails.get(0).getRoomRatePriceId())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "STARTING RATE",
+                    roomRatePrice(String.valueOf(checkinDetails.get(0).getRoomRatePriceId())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "DATE / TIME",
-                convertDateToReadableDate(checkinDetails.get(0).getCheckIn() != null ? checkinDetails.get(0).getCheckIn() : "NA"),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "DATE / TIME",
+                    convertDateToReadableDate(checkinDetails.get(0).getCheckIn() != null ? checkinDetails.get(0).getCheckIn() : "NA"),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "VEHICLE TYPE",
-                fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId() != null ? checkinDetails.get(0).getVehicleId() : "NA")).toUpperCase(),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "VEHICLE TYPE",
+                    fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId() != null ? checkinDetails.get(0).getVehicleId() : "NA")).toUpperCase(),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "CAR MAKE",
-                checkinDetails.get(0).getCar().getCarMake() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA",
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "CAR MAKE",
+                    checkinDetails.get(0).getCar().getCarMake() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA",
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "PLATE NUMBER",
-                checkinDetails.get(0).getPlateNo() != null ? checkinDetails.get(0).getPlateNo().toUpperCase() : "NA",
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "PLATE NUMBER",
+                    checkinDetails.get(0).getPlateNo() != null ? checkinDetails.get(0).getPlateNo().toUpperCase() : "NA",
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "ROOM BOY",
-                getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "ROOM BOY",
+                    getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 //        addTextToPrinter(printer,
 //                "ROOM BOY:  " + getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
-        try {
+            try {
 
-            printer.addCut(Printer.CUT_FEED);
+                printer.addCut(Printer.CUT_FEED);
 
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
-            }
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
+                }
 
 
 //            printer.endTransaction();
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
+            }
+
+
+
+
+        } else {
+            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+
+
+
 
 
         return null;

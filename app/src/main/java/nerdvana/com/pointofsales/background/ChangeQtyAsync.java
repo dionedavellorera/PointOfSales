@@ -2,7 +2,9 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -54,64 +56,73 @@ public class ChangeQtyAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        try {
-            printer = new Printer(
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
-                    context);
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
+                !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
+
+            try {
+                printer = new Printer(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
 
 
-            printer.setReceiveEventListener(new ReceiveListener() {
-                @Override
-                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                printer.disconnect();
-                                asyncFinishCallBack.doneProcessing();
-                            } catch (Epos2Exception e) {
-                                e.printStackTrace();
+                printer.setReceiveEventListener(new ReceiveListener() {
+                    @Override
+                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    printer.disconnect();
+                                    asyncFinishCallBack.doneProcessing();
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    }).start();
-                }
-            });
-            PrinterUtils.connect(context, printer);
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
-        }
-
-        if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
-            addTextToPrinter(printer,"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
-        } else {
-            addTextToPrinter(printer,"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
-        }
-
-        addPrinterSpace(1);
-        addTextToPrinter(printer, "VOID QUANTITY", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addPrinterSpace(1);
-
-
-
-        CartItemsModel cim = GsonHelper.getGson().fromJson(printModel.getData(), CartItemsModel.class);
-
-
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                cim.getName(),
-                String.valueOf(cim.getQuantity() - printModel.getNewQty()),
-                40,
-                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        try {
-            printer.addCut(Printer.CUT_FEED);
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
+                        }).start();
+                    }
+                });
+                PrinterUtils.connect(context, printer);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
             }
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
-        }
 
+            if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
+                addTextToPrinter(printer,"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+            } else {
+                addTextToPrinter(printer,"TAKEOUT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+            }
+
+            addPrinterSpace(1);
+            addTextToPrinter(printer, "VOID QUANTITY", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addPrinterSpace(1);
+
+
+
+            CartItemsModel cim = GsonHelper.getGson().fromJson(printModel.getData(), CartItemsModel.class);
+
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    cim.getName(),
+                    String.valueOf(cim.getQuantity() - printModel.getNewQty()),
+                    40,
+                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            try {
+                printer.addCut(Printer.CUT_FEED);
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
+                }
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+
+
+
+        } else {
+            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+        }
 
         return null;
     }

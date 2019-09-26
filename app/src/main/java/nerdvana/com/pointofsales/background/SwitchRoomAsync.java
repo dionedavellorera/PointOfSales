@@ -2,6 +2,8 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -48,71 +50,83 @@ public class SwitchRoomAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        try {
-            printer = new Printer(
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
-                    context);
-            printer.setReceiveEventListener(new ReceiveListener() {
-                @Override
-                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                printer.disconnect();
-                                asyncFinishCallBack.doneProcessing();
-                            } catch (Epos2Exception e) {
-                                e.printStackTrace();
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
+                !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
+
+            try {
+                printer = new Printer(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
+                printer.setReceiveEventListener(new ReceiveListener() {
+                    @Override
+                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    printer.disconnect();
+                                    asyncFinishCallBack.doneProcessing();
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    }).start();
-                }
-            });
-            PrinterUtils.connect(context, printer);
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
-        }
-        PrinterUtils.addHeader(printModel, printer);
+                        }).start();
+                    }
+                });
+                PrinterUtils.connect(context, printer);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+            PrinterUtils.addHeader(printModel, printer);
 
 
-        SwitchRoomPrintModel switchRoomPrintModel = GsonHelper.getGson().fromJson(printModel.getData(), SwitchRoomPrintModel.class);
+            SwitchRoomPrintModel switchRoomPrintModel = GsonHelper.getGson().fromJson(printModel.getData(), SwitchRoomPrintModel.class);
 
-        addTextToPrinter(printer, "SWITCH ROOM SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-        addPrinterSpace(1);
-        addTextToPrinter(printer, "FROM : "+switchRoomPrintModel.getFromRoomNumber() +"(" + switchRoomPrintModel.getFromRoomType() + ")", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "SWITCH ROOM SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+            addPrinterSpace(1);
+            addTextToPrinter(printer, "FROM : "+switchRoomPrintModel.getFromRoomNumber() +"(" + switchRoomPrintModel.getFromRoomType() + ")", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(printer, "SWITCHED TO : " +switchRoomPrintModel.getToRoomNumber() + "(" + switchRoomPrintModel.getToRoomType() + ")", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "SWITCHED TO : " +switchRoomPrintModel.getToRoomNumber() + "(" + switchRoomPrintModel.getToRoomType() + ")", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 //                addTextToPrinter(printer, "CASHIER : " + getUserInfo(switchRoomPrintModel.getUserId()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "CASHIER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "CASHIER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(printer, "CHECK IN TIME : " + convertDateToReadableDate(switchRoomPrintModel.getCheckInTime()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "CHECK IN TIME : " + convertDateToReadableDate(switchRoomPrintModel.getCheckInTime()), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addTextToPrinter(printer, "REMARKS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, printModel.getRemarks(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "REMARKS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, printModel.getRemarks(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        addPrinterSpace(1);
+            addPrinterSpace(1);
 
-        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "Printed date" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Printed by: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-        try {
+            try {
 
-            printer.addCut(Printer.CUT_FEED);
+                printer.addCut(Printer.CUT_FEED);
 
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
-            }
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
+                }
 
 
 //            printer.endTransaction();
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+            }
+
+
+        } else {
+            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+
+
+
         return null;
     }
 }

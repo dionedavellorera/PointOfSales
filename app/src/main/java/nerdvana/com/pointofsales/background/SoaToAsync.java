@@ -2,6 +2,8 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
@@ -62,103 +64,93 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        try {
-            printer = new Printer(
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
-                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
-                    context);
-            printer.setReceiveEventListener(new ReceiveListener() {
-                @Override
-                public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                printer.disconnect();
-                                asyncFinishCallBack.doneProcessing();
-                            } catch (Epos2Exception e) {
-                                e.printStackTrace();
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
+                !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
+
+            try {
+                printer = new Printer(
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                        context);
+                printer.setReceiveEventListener(new ReceiveListener() {
+                    @Override
+                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    printer.disconnect();
+                                    asyncFinishCallBack.doneProcessing();
+                                } catch (Epos2Exception e) {
+                                    e.printStackTrace();
 //                                asyncFinishCallBack.doneProcessing();
+                                }
                             }
-                        }
-                    }).start();
-                }
-            });
+                        }).start();
+                    }
+                });
 
 
 
-            PrinterUtils.connect(context, printer);
+                PrinterUtils.connect(context, printer);
 
 
 
 
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
-        }
+            }
 
-        PrinterUtils.addHeader(printModel, printer);
+            PrinterUtils.addHeader(printModel, printer);
 
-        PrintSoaResponse.Result toList = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Result.class)
-                ;
+            PrintSoaResponse.Result toList = GsonHelper.getGson().fromJson(printModel.getData(), PrintSoaResponse.Result.class)
+                    ;
 //
 //
 //        addTextToPrinter(printer, toList.getCreatedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-        addPrinterSpace(1);
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "MACHINE NO",
-                SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addPrinterSpace(1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "MACHINE NO",
+                    SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-        addTextToPrinter(printer, "SOA-TAKE OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-        for (PrintSoaResponse.SoaToPost soaTrans : toList.getToPostList()) {
+            addTextToPrinter(printer, "SOA-TAKE OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            for (PrintSoaResponse.SoaToPost soaTrans : toList.getToPostList()) {
 
-            String qty = "";
+                String qty = "";
 
-            qty += soaTrans.getQty();
-            if (String.valueOf(soaTrans.getQty()).length() < 4) {
-                for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
-                    qty += " ";
-                }
-            }
-            String item = "";
-            item =soaTrans.getToProduct().getProductInitial();
-
-            if (soaTrans.getVoidd().equalsIgnoreCase("0")) {
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        qty+ " "+item,
-                        String.valueOf(Double.valueOf(soaTrans.getPrice()) * Integer.valueOf(soaTrans.getQty()))
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-                if (soaTrans.getPostAlaCartList().size() > 0) {
-                    for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
-                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
-                                ""
-                                ,
-                                40,
-                                2,
-                                context),
-                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                qty += soaTrans.getQty();
+                if (String.valueOf(soaTrans.getQty()).length() < 4) {
+                    for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                        qty += " ";
                     }
                 }
+                String item = "";
+                item =soaTrans.getToProduct().getProductInitial();
 
-                if (soaTrans.getPostGroupList().size() > 0) {
-                    for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
-                        for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+                if (soaTrans.getVoidd().equalsIgnoreCase("0")) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            qty+ " "+item,
+                            String.valueOf(Double.valueOf(soaTrans.getPrice()) * Integer.valueOf(soaTrans.getQty()))
+                            ,
+                            40,
+                            2,
+                            context),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    if (soaTrans.getPostAlaCartList().size() > 0) {
+                        for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                    "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
+                                    "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
                                     ""
                                     ,
                                     40,
@@ -166,128 +158,150 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                                     context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         }
-
                     }
+
+                    if (soaTrans.getPostGroupList().size() > 0) {
+                        for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
+                            for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
+                                        ""
+                                        ,
+                                        40,
+                                        2,
+                                        context),
+                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            }
+
+                        }
+                    }
+
                 }
-
             }
-        }
 //
-        addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "   VAT EXEMPT",
-                returnWithTwoDecimal(String.valueOf(toList.getVatExempt())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "   VAT EXEMPT",
+                    returnWithTwoDecimal(String.valueOf(toList.getVatExempt())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "   DISCOUNT",
-                returnWithTwoDecimal(String.valueOf(toList.getDiscount())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "   DISCOUNT",
+                    returnWithTwoDecimal(String.valueOf(toList.getDiscount())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "   ADVANCED DEPOSIT",
-                returnWithTwoDecimal(String.valueOf(toList.getAdvance())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "   ADVANCED DEPOSIT",
+                    returnWithTwoDecimal(String.valueOf(toList.getAdvance())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "SUB TOTAL",
-                returnWithTwoDecimal(String.valueOf(toList.getTotal())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "SUB TOTAL",
+                    returnWithTwoDecimal(String.valueOf(toList.getTotal())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "AMOUNT DUE",
-                returnWithTwoDecimal(String.valueOf((Double.valueOf(toList.getTotal())) - (Double.valueOf(toList.getDiscount()) + Double.valueOf(toList.getAdvance()) + Double.valueOf(toList.getVatExempt())))),
-                40,
-                2,
-                context)
-                ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "AMOUNT DUE",
+                    returnWithTwoDecimal(String.valueOf((Double.valueOf(toList.getTotal())) - (Double.valueOf(toList.getDiscount()) + Double.valueOf(toList.getAdvance()) + Double.valueOf(toList.getVatExempt())))),
+                    40,
+                    2,
+                    context)
+                    ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 //
-        addPrinterSpace(2);
+            addPrinterSpace(2);
 //
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "SOA NO:",
-                toList.getSoaCount(),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "SOA NO:",
+                    toList.getSoaCount(),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 //
-        addPrinterSpace(1);
+            addPrinterSpace(1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "VATABLE SALES",
-                returnWithTwoDecimal(String.valueOf(toList.getVatable())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "VATABLE SALES",
+                    returnWithTwoDecimal(String.valueOf(toList.getVatable())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "VAT-EXEMPT SALES",
-                returnWithTwoDecimal(String.valueOf(toList.getVatExemptSales())),
-                40,
-                2,
-                context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "VAT-EXEMPT SALES",
+                    returnWithTwoDecimal(String.valueOf(toList.getVatExemptSales())),
+                    40,
+                    2,
+                    context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                "12% VAT",
-                returnWithTwoDecimal(String.valueOf(toList.getVat())),
-                40,
-                2,context)
-                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "12% VAT",
+                    returnWithTwoDecimal(String.valueOf(toList.getVat())),
+                    40,
+                    2,context)
+                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-        addPrinterSpace(1);
+            addPrinterSpace(1);
 
-        if (toList.getCustomer() != null) {
-            if (!toList.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
-                addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                addTextToPrinter(printer, toList.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+            if (toList.getCustomer() != null) {
+                if (!toList.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+                    addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    addTextToPrinter(printer, toList.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
 
-                if (toList.getCustomer().getAddress() != null) {
-                    addTextToPrinter(printer, toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    if (toList.getCustomer().getAddress() != null) {
+                        addTextToPrinter(printer, toList.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
+                    if (toList.getCustomer().getTin() != null) {
+                        addTextToPrinter(printer, toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                    }
+
                 }
+            }
 
-                if (toList.getCustomer().getTin() != null) {
-                    addTextToPrinter(printer, toList.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+            addPrinterSpace(1);
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+            try {
+                printer.addCut(Printer.CUT_FEED);
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
                 }
-
-            }
-        }
-
-        addPrinterSpace(1);
-        addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-        addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-
-
-        try {
-            printer.addCut(Printer.CUT_FEED);
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
-            }
 
 
 //            printer.endTransaction();
-        } catch (Epos2Exception e) {
-            e.printStackTrace();
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
+            }
+
+
+        } else {
+            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+
+
+
 
 
         return null;
