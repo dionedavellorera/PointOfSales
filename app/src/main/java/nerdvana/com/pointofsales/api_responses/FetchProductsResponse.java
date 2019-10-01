@@ -736,9 +736,9 @@ public class FetchProductsResponse {
         @SerializedName("branch_price")
         @Expose
         private BranchPrice branchPrice;
-        @SerializedName("branch_categories")
-        @Expose
-        private List<BranchCategory> branchCategories;
+//        @SerializedName("branch_categories")
+//        @Expose
+//        private List<BranchCategory> branchCategories;
         @SerializedName("branch_departments")
         @Expose
         private List<BranchDepartment> branchDepartments;
@@ -927,13 +927,13 @@ public class FetchProductsResponse {
             this.branchPrice = branchPrice;
         }
 
-        public List<BranchCategory> getBranchCategories() {
-            return branchCategories;
-        }
-
-        public void setBranchCategories(List<BranchCategory> branchCategories) {
-            this.branchCategories = branchCategories;
-        }
+//        public List<BranchCategory> getBranchCategories() {
+//            return branchCategories;
+//        }
+//
+//        public void setBranchCategories(List<BranchCategory> branchCategories) {
+//            this.branchCategories = branchCategories;
+//        }
 
         public List<BranchDepartment> getBranchDepartments() {
             return branchDepartments;
@@ -971,9 +971,9 @@ public class FetchProductsResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
-        @SerializedName("branch_category")
-        @Expose
-        private BranchCategoryInner branchCategory;
+//        @SerializedName("branch_category")
+//        @Expose
+//        private BranchCategoryInner branchCategory;
 
         public Integer getId() {
             return id;
@@ -1039,13 +1039,13 @@ public class FetchProductsResponse {
             this.deletedAt = deletedAt;
         }
 
-        public BranchCategoryInner getBranchCategory() {
-            return branchCategory;
-        }
-
-        public void setBranchCategory(BranchCategoryInner branchCategory) {
-            this.branchCategory = branchCategory;
-        }
+//        public BranchCategoryInner getBranchCategory() {
+//            return branchCategory;
+//        }
+//
+//        public void setBranchCategory(BranchCategoryInner branchCategory) {
+//            this.branchCategory = branchCategory;
+//        }
 
     }
 

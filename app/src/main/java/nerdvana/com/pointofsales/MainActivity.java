@@ -30,9 +30,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.SimpleAdapter;
@@ -166,6 +168,7 @@ import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
+import nerdvana.com.pointofsales.model.ServerConnectionModel;
 import nerdvana.com.pointofsales.model.SwitchRoomPrintModel;
 import nerdvana.com.pointofsales.model.TimerModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -233,6 +236,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private String currentDateTime = "";
 
+    private TextView onlineTextIndicator;
+    private ImageView onlineImageIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +247,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-
+        onlineImageIndicator = findViewById(R.id.onlineImageIndicator);
+        onlineTextIndicator = findViewById(R.id.onlineTextIndicator);
 
 
         mainContainerBg = findViewById(R.id.mainContainerBg);
@@ -637,6 +643,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         loadPrinter();
 
         changeTheme();
+
+//        Log.d("ONRESUME", "ON RESUME CALLED");
+//
+//        View view = this.getCurrentFocus();
+//        if (view != null) {
+//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//        }
     }
 
     @Subscribe
@@ -959,7 +973,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-            finalString += receiptString("NO OF PERSONS", returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
+            finalString += receiptString("NO OF PERSON/S", returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
 
             finalString += receiptString("NO OF ITEMS", returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
 
@@ -1748,8 +1762,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     if (!collectionDialog.isShowing()) collectionDialog.show();
                 }
             }
-
-
         }
     }
 
@@ -2265,6 +2277,20 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private static String repeat(String str, int i){
         return new String(new char[i]).replace("\0", str);
+    }
+
+    @Subscribe
+    public void listenToServerConnection(ServerConnectionModel serverConnectionModel) {
+
+        Log.d("MYDATARES", String.valueOf(serverConnectionModel.isCanConnect()));
+
+        if (serverConnectionModel.isCanConnect()) {
+            onlineTextIndicator.setText("ONLINE");
+            onlineImageIndicator.setBackground(getResources().getDrawable(R.drawable.circle_online));
+        } else {
+            onlineTextIndicator.setText("OFFLINE");
+            onlineImageIndicator.setBackground(getResources().getDrawable(R.drawable.circle_offline));
+        }
     }
 }
 

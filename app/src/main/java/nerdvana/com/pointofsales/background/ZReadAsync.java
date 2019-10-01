@@ -95,7 +95,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
             if (zReadResponse != null) {
 
-                addTextToPrinter(printer, "Z READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                addTextToPrinter(printer, "Z READING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "POSTING DATE: " + zReadResponse.getData().getGeneratedAt(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "USER : " + userModel.getUsername(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "MANAGER : " + zReadResponse.getData().getDutyManager().getName(), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -451,7 +451,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                 addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "BEGINNING TRANS",
+                        "BEGINNING OR No",
                         zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA"
                         ,
                         40,
@@ -460,7 +460,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ENDING TRANS",
+                        "ENDING OR No",
                         zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA"
                         ,
                         40,
@@ -468,17 +468,10 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NEW GRAND TOTAL",
-                        returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal()))
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "OLD GRAND TOTAL",
+                        "BEGINNING BALANCE",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal()))
                         ,
                         40,
@@ -486,6 +479,14 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ENDING BALANCe",
+                        returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal()))
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
@@ -531,9 +532,10 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-        } else {
-            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+//        else {
+//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//        }
 
 
 

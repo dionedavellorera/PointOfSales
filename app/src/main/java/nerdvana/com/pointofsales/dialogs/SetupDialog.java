@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
@@ -73,6 +74,12 @@ public class SetupDialog extends BaseDialog {
                         !TextUtils.isEmpty(branchCode.getText().toString().trim()) &&
                         !TextUtils.isEmpty(serial.getText().toString().trim()) &&
                         !TextUtils.isEmpty(nodeUrl.getText().toString().trim())) {
+
+                    Log.d("ISALID", String.valueOf(URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
+                            ipAddress.getText().toString(),
+                            "api",
+                            branchName.getText().toString(),
+                            branchCode.getText().toString()))));
 
                     if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
                             ipAddress.getText().toString(),

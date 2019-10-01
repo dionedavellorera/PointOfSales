@@ -13,19 +13,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <android.support.design.widget.TextInputLayout
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:maxLength="80"
-                    android:maxLines="1"
-                    android:imeOptions="actionNext"
-                    android:id="@+id/ipAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="Host name"/>
-            </android.support.design.widget.TextInputLayout>
+           <LinearLayout
+               android:orientation="horizontal"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+               <Spinner
+                   android:padding="10dp"
+                   android:backgroundTint="@color/colorBlack"
+                   android:gravity="center"
+                   android:entries="@array/https"
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"></Spinner>
+               <android.support.design.widget.TextInputLayout
+                   android:padding="10dp"
+                   android:layout_weight="1"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content">
+                   <nerdvana.com.pointofsales.custom.HidingEditText
+                       android:maxLength="80"
+                       android:maxLines="1"
+                       android:singleLine="true"
+                       android:imeOptions="actionDone"
+                       android:id="@+id/ipAddress"
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent"
+                       android:hint="Host name"/>
+               </android.support.design.widget.TextInputLayout>
+           </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:padding="10dp"
@@ -34,7 +48,8 @@
                 <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
-                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:id="@+id/branchName"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -48,7 +63,8 @@
                 <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
-                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:id="@+id/branchCode"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -62,7 +78,8 @@
                 <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
-                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:id="@+id/serialNumber"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -76,7 +93,8 @@
                 <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLength="40"
                     android:maxLines="1"
-                    android:imeOptions="actionNext"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
                     android:id="@+id/nodeUrl"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

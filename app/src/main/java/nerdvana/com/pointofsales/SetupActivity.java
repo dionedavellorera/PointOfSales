@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,32 +54,68 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     private EditText password;
     private TextView loginLabel;
 
+    private ProgressBar progressBar;
+
     private UserModel userModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
+        progressBar = findViewById(R.id.progressBar);
 
-        InputMethodManager imm = (InputMethodManager)getBaseContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.RESULT_HIDDEN,InputMethodManager.RESULT_HIDDEN);
-
-        dialogProgressBar = new DialogProgressBar(SetupActivity.this);
+        progressBar.setVisibility(View.GONE);
+        dialogProgressBar = new DialogProgressBar(this);
         dialogProgressBar.setCancelable(false);
 
         loginLabel = findViewById(R.id.loginLabel);
         proceed = findViewById(R.id.proceed);
         proceed.setOnClickListener(this);
         username = findViewById(R.id.username);
-//        username.requestFocus();
-//        username.setShowSoftInputOnFocus(false);
         password = findViewById(R.id.password);
-//        password.requestFocus();
-//        password.setShowSoftInputOnFocus(false);
 
         setup = findViewById(R.id.setup);
-        setup.setOnClickListener(this);
+        setup.setOnClickListener(SetupActivity.this);
+
+
+        InputMethodManager imm = (InputMethodManager)getBaseContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.RESULT_HIDDEN,InputMethodManager.RESULT_HIDDEN);
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL))) {
+            PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
+        }
+        userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
+        if (userModel != null) {
+            progressBar.setVisibility(View.GONE);
+            if (userModel.isLoggedIn()) { //post login
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                disableViews();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        enableViews();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }, 3000);
+            }
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+            disableViews();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    enableViews();
+                    progressBar.setVisibility(View.GONE);
+                }
+            }, 3000);
+        }
+
+
+
 
 //        loginLabel.setText("SERIAL: " + Build.SERIAL + "\n" +
 //                "MODEL: " + Build.MODEL + "\n" +
@@ -96,26 +134,20 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 //                "Version Code: " + Build.VERSION.RELEASE + "\n");
 
 
-        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL))) {
-            PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
-        }
+    }
 
+    private void enableViews() {
+        username.setEnabled(true);
+        password.setEnabled(true);
+        setup.setEnabled(true);
+        proceed.setEnabled(true);
+    }
 
-
-        userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
-
-        if (userModel != null) {
-            if (userModel.isLoggedIn()) { //post login
-
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-
-
-
-
-            }
-
-        }
+    private void disableViews() {
+        username.setEnabled(false);
+        password.setEnabled(false);
+        setup.setEnabled(false);
+        proceed.setEnabled(false);
     }
 
     @Override

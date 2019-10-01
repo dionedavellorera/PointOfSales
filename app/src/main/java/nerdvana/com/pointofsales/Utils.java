@@ -19,7 +19,19 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
+import nerdvana.com.pointofsales.api_requests.TestConnectionRequest;
+import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
+import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Utils {
+
+    static boolean canConnect;
+
+
     public static boolean checkConnection(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -163,5 +175,40 @@ public class Utils {
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return simpleDateFormat.format(c);
+    }
+
+    public static boolean canConnectToServer() {
+
+        TestConnectionRequest testConnectionRequest = new TestConnectionRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<TestConnectionResponse> request = iUsers.sendTestRequest(
+                testConnectionRequest.getMapValue());
+
+        request.enqueue(new Callback<TestConnectionResponse>() {
+            @Override
+            public void onResponse(Call<TestConnectionResponse> call, Response<TestConnectionResponse> response) {
+                Utils.canConnect = true;
+            }
+
+            @Override
+            public void onFailure(Call<TestConnectionResponse> call, Throwable t) {
+
+                Log.d("MYDATA", "FALSE");
+
+
+                Utils.canConnect = false;
+            }
+        });
+
+
+
+        return Utils.canConnect;
+    }
+
+    public static String birDateTimeFormat(String currentString) {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime jodatime = dtf.parseDateTime(currentString);
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm");
+        return dtfOut.print(jodatime);
     }
 }

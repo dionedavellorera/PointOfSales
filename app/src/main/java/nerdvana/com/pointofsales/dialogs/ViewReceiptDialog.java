@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import nerdvana.com.pointofsales.Helper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
@@ -104,11 +105,16 @@ public class ViewReceiptDialog extends BaseDialog {
                 request.enqueue(new Callback<ViewReceiptViaDateResponse>() {
                     @Override
                     public void onResponse(Call<ViewReceiptViaDateResponse> call, Response<ViewReceiptViaDateResponse> response) {
-                        Log.d("TESTDATA", "SUCCESS");
-                        ViewReceiptActualDialog viewReceiptActualDialog =
-                                new ViewReceiptActualDialog(getContext(),
-                                        response.body().getResult());
-                        viewReceiptActualDialog.show();
+
+                        if (response.body().getResult().size() > 0) {
+                            ViewReceiptActualDialog viewReceiptActualDialog =
+                                    new ViewReceiptActualDialog(getContext(),
+                                            response.body().getResult());
+                            viewReceiptActualDialog.show();
+                        } else {
+                            Utils.showDialogMessage(getContext(), "No data", "Information");
+                        }
+
 
                     }
 

@@ -3,11 +3,14 @@ package nerdvana.com.pointofsales;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.media.MediaCodec;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PatternMatcher;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -44,71 +47,74 @@ public class SocketManager {
         try {
 //            mSocket = IO.socket("http://192.168.1.23:6965", opts);
 
-            Log.d("SOCKET_CONNECTION1", "CONNECTED TO SOCKET ONE");
-            Log.d("SOCKET_CONNECTION1", SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL));
-            mSocket = IO.socket(SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL), opts);
+            if (android.util.Patterns.WEB_URL.matcher(SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL)).matches()) {
+                mSocket = IO.socket(SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL), opts);
 
-            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
-                @Override
-                public void call(Object... args) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d("SOCKET_CONNECTION", "CONNECTED TO SOCKET ONE");
-                            Log.d("SOCKET_CONNECTION", SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL));
-                            isConnected = true;
+                    @Override
+                    public void call(Object... args) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("SOCKET_CONNECTION", "CONNECTED TO SOCKET ONE");
+                                Log.d("SOCKET_CONNECTION", SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL));
+                                isConnected = true;
 //                            BusProvider.getInstance().post(new SocketConnectionModel("T"));
-                        }
-                    });
-                }
+                            }
+                        });
+                    }
 
-            }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+                }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
 
-                @Override
-                public void call(Object... args) {
-                    isConnected = false;
-                    Log.d("SOCKET_CONNECTION", "ERROR");
+                    @Override
+                    public void call(Object... args) {
+                        isConnected = false;
+                        Log.d("SOCKET_CONNECTION", "ERROR");
 //                    BusProvider.getInstance().post(new SocketConnectionModel("T"));
-                }
+                    }
 
-            }).on("reminder", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) { //to be used in future
+                }).on("reminder", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) { //to be used in future
 
 //                    SocketManager.showNotification("New Priority Inspection");
 
-                }
-            }).on("online_users", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
+                    }
+                }).on("online_users", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
 //                    SocketManager.showNotification("New Priority Inspection");
-                    Log.d("TEKTEK", "TETEMO");
-                    Log.d("TEKTEK", "TETEMO");
-                    JSONObject data = (JSONObject) args[0];
+                        Log.d("TEKTEK", "TETEMO");
+                        Log.d("TEKTEK", "TETEMO");
+                        JSONObject data = (JSONObject) args[0];
 
 
-                    try {
-                        Log.d("TEKTEK", data.getString("locale_id"));
-
-                        BusProvider.getInstance().post(new UpdateDataModel("y"));
-
-                        if (data.getString("locale_id").equalsIgnoreCase("8")) {
-
-                        }
-                    } catch (JSONException e) {
                         try {
                             Log.d("TEKTEK", data.getString("locale_id"));
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
+
+                            BusProvider.getInstance().post(new UpdateDataModel("y"));
+
+                            if (data.getString("locale_id").equalsIgnoreCase("8")) {
+
+                            }
+                        } catch (JSONException e) {
+                            try {
+                                Log.d("TEKTEK", data.getString("locale_id"));
+                            } catch (JSONException e1) {
+                                e1.printStackTrace();
+                            }
+                            e.printStackTrace();
                         }
-                        e.printStackTrace();
                     }
+                });
+                if (!mSocket.connected()) {
+                    mSocket.connect();
                 }
-            });
-            if (!mSocket.connected()) {
-                mSocket.connect();
+            } else {
+                Toast.makeText(context, "Invalid node url", Toast.LENGTH_LONG).show();
             }
+
 
         } catch (URISyntaxException e) {
         }

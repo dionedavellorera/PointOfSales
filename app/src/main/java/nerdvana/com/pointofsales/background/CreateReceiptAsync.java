@@ -182,7 +182,7 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-            finalString += receiptString("NO OF PERSONS", returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), context, false);
+            finalString += receiptString("NO OF PERSON/S", returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), context, false);
 
             finalString += receiptString("NO OF ITEMS", returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), context, false);
 

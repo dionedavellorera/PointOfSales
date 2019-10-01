@@ -37,6 +37,7 @@ import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
 import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
+import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
@@ -114,14 +115,6 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
             PrinterUtils.addHeader(printModel, printer);
-
-            addTextToPrinter(printer, "NERDVANA CORP.", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "1 CANLEY ROAD BRGY BAGONG", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "ILOG PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer," 671-9782", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-            addTextToPrinter(printer, "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
 
             FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
@@ -334,7 +327,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF PERSONS",
+                        "NO OF PERSON/S",
                         returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
                         ,
                         40,
@@ -520,6 +513,12 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "VAT AMOUNT",
+                        returnWithTwoDecimal(String.valueOf(toList1.getVat())),
+                        40,
+                        2,context)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VAT-EXEMPT SALES",
@@ -529,13 +528,16 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                         context)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "12% VAT",
-                        returnWithTwoDecimal(String.valueOf(toList1.getVat())),
+                        "ZERO-RATED SALES",
+                        "0.00",
                         40,
-                        2,context)
+                        2,
+                        context)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
 
 
                 addPrinterSpace(1);
@@ -586,7 +588,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
                                         addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                                d.getDiscountType(),
+                                                d.getDiscountType() + " ID",
                                                 "NA",
                                                 40,
                                                 2,
@@ -599,7 +601,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
                                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                                    d.getDiscountType(),
+                                                    d.getDiscountType() + " ID",
                                                     "NA",
                                                     40,
                                                     2,
@@ -612,7 +614,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
                                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                                        d.getDiscountType(),
+                                                        d.getDiscountType() + " ID",
                                                         d.getInfo().getCardNo().toUpperCase(),
                                                         40,
                                                         2,
@@ -638,6 +640,14 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                                     }
 
                                 }
+
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "SIGNATURE",
+                                        "",
+                                        40,
+                                        2,
+                                        context)
+                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             }
                         }
                     }
@@ -889,9 +899,10 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
             }
 
 
-        } else {
-            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+//        else {
+//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//        }
 
 
 
@@ -972,14 +983,19 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "Address : 1 CANLEY ROAD BRGY BAGONG ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "TIN: 009-772-500-000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "ACCRE No. : ******", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Date issued : " + currentDate, Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Valid until : " + currentDatePlus5, Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Date issued : " + Utils.birDateTimeFormat(currentDate), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Valid until : " + Utils.birDateTimeFormat(currentDatePlus5), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //            addTextToPrinter(printer, "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);
             addTextToPrinter(printer, "THIS RECEIPT SHALL BE VALID FOR", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "FIVE(5) YEARS FROM THE DATE OF", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "THE PERMIT TO USE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);
+
+//            addTextToPrinter(printer, "THIS DOCUMENT IS NOT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "VALID FOR CLAIM", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "OF INPUT TAX", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addPrinterSpace(1);
         }
     }
 

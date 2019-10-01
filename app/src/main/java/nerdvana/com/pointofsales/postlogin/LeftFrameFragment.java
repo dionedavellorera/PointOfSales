@@ -1132,7 +1132,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void computeTotal(ProductsModel itemAdded) {
         amountToPay += itemAdded.getPrice();
 
-        total.setText(String.valueOf(amountToPay));
+        total.setText(Utils.returnWithTwoDecimal(String.valueOf(amountToPay)));
     }
 
     @Override
@@ -2201,11 +2201,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     ;
 
                             if (toListPV != null) {
-                                BusProvider.getInstance().post(new PrintModel("",
-                                        toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
-                                        "POST_VOID",
-                                        jsonData,
-                                        toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomType() : ""));
+
+
+                                postVoidPrinter(toListPV.getControlNo(), toListPV.getPost().get(0).getRoomNo(), toListPV.getPost().get(0).getRoomType());
+//                                BusProvider.getInstance().post(new PrintModel("",
+//                                        toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
+//                                        "POST_VOID",
+//                                        jsonData,
+//                                        toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomType() : ""));
                             }
 
 
@@ -3292,11 +3295,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             ;
 
                     if (toListPV != null) {
-                        BusProvider.getInstance().post(new PrintModel("",
-                                toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
-                                "POST_VOID",
-                                jsonData,
-                                toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomType() : ""));
+
+                        postVoidPrinter(toListPV.getControlNo(), toListPV.getPost().get(0).getRoomNo(), toListPV.getPost().get(0).getRoomType());
+
+//                        BusProvider.getInstance().post(new PrintModel("",
+//                                toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomNo() : "TAKEOUT",
+//                                "POST_VOID",
+//                                jsonData,
+//                                toListPV.getGuestInfo() != null ? toListPV.getGuestInfo().getRoomType() : ""));
                     }
 
 
@@ -3870,7 +3876,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         temp += currentTransaction.get(0).getAmount();
 
-        total.setText(temp < 1 ? "0.00": String.valueOf(temp));
+        total.setText(temp < 1 ? "0.00": Utils.returnWithTwoDecimal(String.valueOf(temp)));
     }
 
 
@@ -5056,35 +5062,95 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
                 fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                BusProvider.getInstance().post(new PrintModel("",
-                        "takeout",
-                        "SOA-TO",
-                        GsonHelper.getGson().toJson(printSoaResponse.getResult())
-                ));
+//                BusProvider.getInstance().post(new PrintModel("",
+//                        "takeout",
+//                        "SOA-TO",
+//                        GsonHelper.getGson().toJson(response.body().getResult())
+//                ));
+
+
+                printSoaFromCentralizedCallTo(printSoaResponse.getResult().getControlNumber());
 
                 if (printSoaResponse.getResult().getToPostList().size() > 0) {
                     Utils.showDialogMessage(getActivity(), "Printing statement of account", "Information");
                 } else {
                     Utils.showDialogMessage(getActivity(), "No item/s to print", "Information");
                 }
+
+
             } else {
 
-                BusProvider.getInstance().post(new PrintModel("",
-                        selectedRoom.getName(),
-                        "SOA-ROOM",
-                        GsonHelper.getGson().toJson(printSoaResponse.getResult().getBooked())
-                ));
+
+//                BusProvider.getInstance().post(new PrintModel("",
+//                        selectedRoom.getName(),
+//                        "SOA-ROOM",
+//                        GsonHelper.getGson().toJson(printSoaResponse.getResult().getBooked())
+//                ));
                 fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
 
+                printSoaFromCentralizedCallRoom(printSoaResponse.getResult().getBooked().get(0).getTransaction().getControlNo());
                 if (printSoaResponse.getResult().getBooked().size() > 0) {
                     Utils.showDialogMessage(getActivity(), "Printing statement of account", "Information");
                 } else {
                     Utils.showDialogMessage(getActivity(), "No item/s to print", "Information");
                 }
+
+                Log.d("TESTDATADIONe", printSoaResponse.getResult().getBooked().get(0).getTransaction().getControlNo());
+
+
+
             }
 
             hasExistingRequest = false;
         }
+
+
+    }
+
+    private void printSoaFromCentralizedCallTo(String controlNo) {
+        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNo);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+            @Override
+            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+
+
+                BusProvider.getInstance().post(new PrintModel("",
+                        "takeout",
+                        "SOA-TO",
+                        GsonHelper.getGson().toJson(response.body().getResult())
+                ));
+            }
+
+            @Override
+            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void printSoaFromCentralizedCallRoom(String controlNo) {
+
+        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNo);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+            @Override
+            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+
+                BusProvider.getInstance().post(new PrintModel("",
+                        selectedRoom.getName(),
+                        "SOA-ROOM",
+                        GsonHelper.getGson().toJson(response.body().getResult())
+                ));
+            }
+
+            @Override
+            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+            }
+        });
 
 
     }
@@ -5154,13 +5220,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 guestReceiptInfoModel = new GuestReceiptInfoModel(fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getCustomer(), fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress(), fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getTin());
             }
 
-            discount.setText(String.valueOf(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
-            subTotal.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal()));
-            deposit.setText(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance()));
+            discount.setText(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
+            subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal())));
+            deposit.setText(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())));
             total.setText(String.valueOf(
                     (fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())) < 0 ?
                             "0.00" :
-                            fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())
+                            Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))
             ));
             if (fetchOrderPendingViaControlNoResponse.getResult().getPayments().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : fetchOrderPendingViaControlNoResponse.getResult().getPayments()) {
@@ -5741,6 +5807,71 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     }
 
+    private void postVoidPrinter(String controlNumber, final String roomName, final String roomType) {
+        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNumber);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+            @Override
+            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+
+                if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+
+                    BusProvider.getInstance().post(new PrintModel(
+                            "", "",
+                            "FRANCHISE_OR",
+                            GsonHelper.getGson().toJson(response.body().getResult()),
+                            ""));
+                }
+                else {
+
+                    //comment this later on after tesint
+//                    BusProvider.getInstance().post(new PrintModel(
+//                            "", roomName,
+//                            "PRINT_RECEIPT",
+//                            GsonHelper.getGson().toJson(response.body().getResult()),
+//                            roomType));
+
+                    BusProvider.getInstance().post(new PrintModel(
+                            "", TextUtils.isEmpty(roomName) ? "takeout" : roomName,
+                            "POST_VOID",
+                            GsonHelper.getGson().toJson(response.body().getResult()),
+                            roomType));
+
+
+//                    if (selectedRoom != null) {
+//
+//                        if (selectedRoom.isTakeOut()) {
+//
+//
+//                        }
+//                        else {
+//
+//                            BusProvider.getInstance().post(new PrintModel(
+//                                    "", roomName,
+//                                    "POST_VOID",
+//                                    GsonHelper.getGson().toJson(response.body().getResult()),
+//                                    roomType));
+//                        }
+//                    } else {
+//                        Utils.showDialogMessage(getActivity(), "Empty selected room on printing, please reprint", "Information");;
+//                    }
+                }
+
+
+
+                clearCartItems();
+                defaultView();
+                detectSystem();
+            }
+
+            @Override
+            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
     private void printReceiptFromCheckout(String controlNumber, final String roomName, final String roomType) {
         FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNumber);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -5749,11 +5880,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
 
-                Log.d("SSTEM_TRACE", Utils.getSystemType(getContext()));
-
                 if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
-
-                    Log.d("SSTEM_TRACE", "franchise");
 
                     BusProvider.getInstance().post(new PrintModel(
                             "", "",
@@ -5774,10 +5901,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                         if (selectedRoom.isTakeOut()) {
 
-
-                            Log.d("SSTEM_TRACE", "room to");
-
-
                             BusProvider.getInstance().post(new PrintModel(
                                     "", "takeout",
                                     "PRINT_RECEIPT",
@@ -5785,8 +5908,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     roomType));
                         }
                         else {
-
-                            Log.d("SSTEM_TRACE", "room not to");
 
                             BusProvider.getInstance().post(new PrintModel(
                                     "", roomName,
@@ -6148,6 +6269,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void doSoaFunction() {
+
+        Log.d("MYSOAFUNc", String.valueOf(selectedRoom.isTakeOut()));
+
         if (selectedRoom.isTakeOut()) {
             printSoaRequest("", selectedRoom.getControlNo());
         } else {
@@ -6228,71 +6352,141 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
         SharedPreferenceManager.saveString(getContext(), infoModel.getInformation(), ApplicationConstants.SHIFT_BLOCKER);
 
-        if (!canTransact()) {
-
+        if (ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("F")) {
             if (infoModel.getInformation().equalsIgnoreCase("please execute end of day")) {
                 Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
-            } else {
-                if (cutOffDialog != null) {
-                    if (!cutOffDialog.isShowing()) {
-                        if (blockerDialog != null) {
-                            if (!blockerDialog.isShowing()) {
-                                blockerDialog.show();
-                            }
-                        } else {
-                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    switch (which){
-                                        case DialogInterface.BUTTON_POSITIVE:
-                                            if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
-                                                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
-                                            }
-                                            break;
-                                        case DialogInterface.BUTTON_NEGATIVE:
-                                            break;
+
+                if (blockerDialog == null) {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
                                     }
-                                }
-                            };
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setMessage("You need to execute cutoff before you can transact, Continue?")
-                                    .setPositiveButton("Yes", dialogClickListener)
-                                    .setNegativeButton("No", dialogClickListener);
-                            blockerDialog = builder.create();
-                            builder.show();
-                        }
-                    }
-                } else {
-                    if (blockerDialog != null) {
-                        if (!blockerDialog.isShowing()) {
-                            blockerDialog.show();
-                        }
-                    } else {
-                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                switch (which){
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
-                                            BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
-                                        }
-
-                                        break;
-
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        break;
-                                }
+                                    blockerDialog = null;
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    blockerDialog = null;
+                                    break;
                             }
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("You need to execute cutoff before you can transact, Continue?")
-                                .setPositiveButton("Yes", dialogClickListener)
-                                .setNegativeButton("No", dialogClickListener);
-                        blockerDialog = builder.create();
-                        builder.show();
-                    }
+                        }
+                    };
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("You need to execute cutoff before you can transact, Continue?")
+                            .setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener);
+
+                    blockerDialog = builder.create();
+                    builder.setCancelable(false);
+                    builder.show();
+
                 }
+            } else if(infoModel.getInformation().equalsIgnoreCase("Generate end of day")) {//
+
+                if (blockerDialog == null) {
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+
+                                    zReadRequest();
+                                    blockerDialog = null;
+                                    break;
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    blockerDialog = null;
+                                    break;
+                            }
+                        }
+                    };
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("This will generate end of day, continue?")
+                            .setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener);
+
+                    blockerDialog = builder.create();
+                    builder.setCancelable(false);
+                    builder.show();
+                }
+
+
+
+
             }
+        }
+
+
+
+        if (!canTransact()) {
+
+
+//            else {
+
+
+
+
+//                if (cutOffDialog != null) {
+//                    if (!cutOffDialog.isShowing()) {
+//                        if (blockerDialog != null) {
+//                            if (!blockerDialog.isShowing()) {
+//                                blockerDialog.show();
+//                            }
+//                        } else {
+//                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    switch (which){
+//                                        case DialogInterface.BUTTON_POSITIVE:
+//                                            if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+//                                                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+//                                            }
+//                                            break;
+//                                        case DialogInterface.BUTTON_NEGATIVE:
+//                                            break;
+//                                    }
+//                                }
+//                            };
+//                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                            builder.setMessage("You need to execute cutoff before you can transact, Continue?")
+//                                    .setPositiveButton("Yes", dialogClickListener)
+//                                    .setNegativeButton("No", dialogClickListener);
+//                            blockerDialog = builder.create();
+//                            builder.show();
+//                        }
+//                    }
+//                } else {
+//                    if (blockerDialog != null) {
+//                        if (!blockerDialog.isShowing()) {
+//                            blockerDialog.show();
+//                        }
+//                    } else {
+//                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                switch (which){
+//                                    case DialogInterface.BUTTON_POSITIVE:
+//                                        if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+//                                            BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+//                                        }
+//
+//                                        break;
+//
+//                                    case DialogInterface.BUTTON_NEGATIVE:
+//                                        break;
+//                                }
+//                            }
+//                        };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                        builder.setMessage("You need to execute cutoff before you can transact, Continue?")
+//                                .setPositiveButton("Yes", dialogClickListener)
+//                                .setNegativeButton("No", dialogClickListener);
+//                        blockerDialog = builder.create();
+//                        builder.show();
+//                    }
+//                }
+//            }
 
 
         }

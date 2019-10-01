@@ -94,7 +94,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
             TypeToken<List<CheckInResponse.Booked>> checkInToken = new TypeToken<List<CheckInResponse.Booked>>() {};
             List<CheckInResponse.Booked> checkinDetails = GsonHelper.getGson().fromJson(printModel.getData(), checkInToken.getType());
-            addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "CHECK IN SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "ROOM TYPE",
@@ -195,9 +195,10 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-        } else {
-            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+//        else {
+//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//        }
 
 
 

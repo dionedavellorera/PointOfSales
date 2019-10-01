@@ -304,7 +304,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "DEPOSIT ADJ.",
-                        cashRecoObj.getString("adjustment_deposit"),
+                        String.format("(%s)", String.valueOf(Double.valueOf(cashRecoObj.getString("adjustment_deposit")) * -1)),
                         40,
                         2,
                         context),
@@ -491,32 +491,33 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                 //short over
-                printer.addCut(Printer.CUT_FEED);
-
-                addTextToPrinter(printer, "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-                addPrinterSpace(1);
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "SHORT / OVER",
-                        String.valueOf(jsonObject.getString("short_over"))
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-                addPrinterSpace(1);
-                addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-                addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                printer.addCut(Printer.CUT_FEED);
+//
+//                addTextToPrinter(printer, "SHORT OVER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+//                addPrinterSpace(1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "SHORT / OVER",
+//                        String.valueOf(jsonObject.getString("short_over"))
+//                        ,
+//                        40,
+//                        2,
+//                        context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//                addPrinterSpace(1);
+//                addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+//                addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
 
             } catch (JSONException e) {
                 Log.d("ERROR", e.getMessage());
-            } catch (Epos2Exception e) {
-                e.printStackTrace();
             }
+//            catch (Epos2Exception e) {
+//                e.printStackTrace();
+//            }
 
             try {
 
@@ -535,9 +536,10 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-        } else {
-            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+//        else {
+//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//        }
 
 
 

@@ -81,7 +81,7 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
 
                 RoomTableModel selectedRoom = GsonHelper.getGson().fromJson(printModel.getData(), RoomTableModel.class);
 
-                addTextToPrinter(printer, "BACK OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                addTextToPrinter(printer, "BACK OUT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 if (selectedRoom.getRoomId() != 0) {
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -179,9 +179,10 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                 }
 
 
-            } else {
-                Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
             }
+//            else {
+//                Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//            }
 
         } catch (Epos2Exception e) {
             e.printStackTrace();

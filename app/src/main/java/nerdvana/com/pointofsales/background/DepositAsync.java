@@ -92,7 +92,7 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
             List<PostedPaymentsModel> depositDetails = GsonHelper.getGson().fromJson(printModel.getData(), depositToken.getType());
 
 
-            addTextToPrinter(printer, "DEPOSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "DEPOSIT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -154,9 +154,10 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
             }
 
 
-        } else {
-            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+//        else {
+//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//        }
 
 
 

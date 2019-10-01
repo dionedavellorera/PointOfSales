@@ -158,7 +158,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     private void setRoomsTableAdapter() {
         roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
-        listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
+//        listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
         roomsTablesAdapter.notifyDataSetChanged();
     }

@@ -1,48 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <include layout="@layout/partial_header" />
+    <LinearLayout
 
-    <CheckBox
-        android:layout_gravity="center"
-        android:checked="true"
-        android:layout_margin="10dp"
-        android:id="@+id/isEmployeeChkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Employee order"/>
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-        android:layout_margin="10dp"
-        android:visibility="gone"
-        android:id="@+id/employeeSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <include layout="@layout/partial_header" />
 
-    <nerdvana.com.pointofsales.custom.HidingEditText
-        android:visibility="gone"
-        android:layout_margin="10dp"
-        android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Customer name"/>
+        <CheckBox
+            android:layout_gravity="center"
+            android:checked="true"
+            android:layout_margin="10dp"
+            android:id="@+id/isEmployeeChkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Employee order"/>
 
-    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-        android:layout_margin="10dp"
-        android:id="@+id/roomArea"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            android:id="@+id/employeeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <Button
-        android:layout_margin="10dp"
-        android:background="@drawable/button_selector"
-        android:id="@+id/create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="CREATE"/>
+        <nerdvana.com.pointofsales.custom.HidingEditText
+            android:visibility="gone"
+            android:layout_margin="10dp"
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Customer name"/>
 
-</LinearLayout>
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            android:layout_margin="10dp"
+            android:id="@+id/roomArea"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:layout_margin="10dp"
+            android:background="@drawable/button_selector"
+            android:id="@+id/create"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CREATE"/>
+
+    </LinearLayout>
+
+
+</ScrollView>

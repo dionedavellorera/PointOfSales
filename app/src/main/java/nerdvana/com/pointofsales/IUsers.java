@@ -295,6 +295,10 @@ public interface IUsers {
     @FormUrlEncoded
     Call<CheckShiftResponse> checkShift(@FieldMap Map<String, String> params);
 
+    @POST("checkShift")
+    @FormUrlEncoded
+    Call<ResponseBody> checkShiftRaw(@FieldMap Map<String, String> params);
+
     @POST("fetchXReadingViaId")
     @FormUrlEncoded
     Call<FetchXReadingViaIdResponse> fetchXReadingViaId(@FieldMap Map<String, String> params);

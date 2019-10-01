@@ -120,9 +120,10 @@ public class ChangeQtyAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-        } else {
-            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
         }
+//        else {
+//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
+//        }
 
         return null;
     }

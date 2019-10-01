@@ -9,12 +9,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
+import com.squareup.otto.Bus;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +44,7 @@ import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.WakeUpCallReminderAsync;
 import nerdvana.com.pointofsales.model.InfoModel;
+import nerdvana.com.pointofsales.model.ServerConnectionModel;
 import nerdvana.com.pointofsales.model.TimerModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -81,7 +87,7 @@ public class TimerService extends Service {
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
                         if (secsOfDate % 10 == 0) {
 
-                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+
 
 
 //                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
@@ -102,46 +108,104 @@ public class TimerService extends Service {
 
 
                             CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
-//                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                            Call<CheckShiftResponse> request = iUsers.checkShift(checkShiftRequest.getMapValue());
-                            request.enqueue(new Callback<CheckShiftResponse>() {
+                            Call<ResponseBody> request = iUsers.checkShiftRaw(checkShiftRequest.getMapValue());
+                            request.enqueue(new Callback<ResponseBody>() {
                                 @Override
-                                public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
-                                    if (response.body().getStatus() == 1) {
-                                        if (response.body().getResult().size() > 0) {
-                                            if (response.body().getResult().get(0).getETime() == null) {
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    try {
+                                        String rawResponse = response.body().string();
+                                        JSONObject responseObject = new JSONObject(rawResponse);
+                                        if (responseObject.getInt("status") == 0) {
+                                            if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+                                                BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+                                            } else {
+                                                BusProvider.getInstance().post(new InfoModel("Generate end of day"));
+                                            }
+
+                                        } else {
+                                            JSONArray resultArray = responseObject.getJSONArray("result");
+                                            if (resultArray.length() > 0) {
+                                                if (resultArray.getJSONObject(0).getString("eTime") == null) {
+                                                    shiftDisplay = "0";
+                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                    BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                } else {
+                                                    DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                                                    DateTime endShiftTime = fff.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
+                                                    shiftDisplay = String.valueOf(resultArray.getJSONObject(0).getString("shift_no"));
+                                                    if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+                                                        BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                                    } else {
+                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                        BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                    }
+                                                }
+                                            } else {
                                                 shiftDisplay = "0";
                                                 BusProvider.getInstance().post(new InfoModel("ALLOW"));
-                                            } else {
-                                                DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                                                DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
-                                                shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
-                                                if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
-                                                    BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
-                                                } else {
-                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
-                                                }
+                                                BusProvider.getInstance().post(new CheckSafeKeepingRequest());
                                             }
-                                        } else {
-                                            shiftDisplay = "0";
-                                            BusProvider.getInstance().post(new InfoModel("ALLOW"));
-                                        }
-                                    } else {
-                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
-                                    }
 
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                                 @Override
-                                public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
-                                    BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+
                                 }
                             });
+
+//                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//                            Call<CheckShiftResponse> request = iUsers.checkShift(checkShiftRequest.getMapValue());
+//                            request.enqueue(new Callback<CheckShiftResponse>() {
+//                                @Override
+//                                public void onResponse(Call<CheckShiftResponse> call, Response<CheckShiftResponse> response) {
+//                                    if (response.body().getStatus() == 1) {
+//                                        if (response.body().getResult().size() > 0) {
+//                                            if (response.body().getResult().get(0).getETime() == null) {
+//                                                shiftDisplay = "0";
+//                                                BusProvider.getInstance().post(new InfoModel("ALLOW"));
+//                                            } else {
+//                                                DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+//                                                DateTime endShiftTime = fff.parseDateTime(response.body().getResult().get(0).getLastTransDate() + " " + response.body().getResult().get(0).getETime());
+//                                                shiftDisplay = String.valueOf(response.body().getResult().get(0).getShiftNo());
+//                                                if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+//                                                    BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+//                                                } else {
+//                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
+//                                                }
+//                                            }
+//                                        } else {
+//                                            shiftDisplay = "0";
+//                                            BusProvider.getInstance().post(new InfoModel("ALLOW"));
+//                                        }
+//                                    } else {
+//                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+//                                    }
+//
+//                                }
+//
+//                                @Override
+//                                public void onFailure(Call<CheckShiftResponse> call, Throwable t) {
+//                                    BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+//                                }
+//                            });
                         }
+//                        else if (secsOfDate % 15 == 0) {
+//                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+//                        }
                         if (secsOfDate % 10 == 0){
-
                             new WakeUpCallReminderAsync(secsOfDate).execute();
+                        }
 
+
+                        if (secsOfDate % 5 == 0) {
+                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
                         }
                     }
                 }.start();
