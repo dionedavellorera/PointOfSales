@@ -14,7 +14,7 @@ public class ViewReceiptViaDateRequest extends BaseRequest {
 
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
-//        mapValue.put("pos_id", "2");
+//        mapValue.put("pos_id", "1");
         mapValue.put("branch_id", branchId);
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);

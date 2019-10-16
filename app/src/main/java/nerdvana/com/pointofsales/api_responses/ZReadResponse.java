@@ -285,7 +285,9 @@ public class ZReadResponse {
 
 
     public class Result {
-
+        @SerializedName("change")
+        @Expose
+        private Double change;
         @SerializedName("old_grand_total")
         @Expose
         private Double oldGrandTotal;
@@ -307,6 +309,14 @@ public class ZReadResponse {
         @SerializedName("discount")
         @Expose
         private List<Discount> discount = null;
+
+        public Double getChange() {
+            return change;
+        }
+
+        public void setChange(Double change) {
+            this.change = change;
+        }
 
         public Double getOldGrandTotal() {
             return oldGrandTotal;

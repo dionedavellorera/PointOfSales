@@ -153,7 +153,7 @@ public class FranchiseCheckoutAsync extends AsyncTask<Void, Void, Void>
 //                    context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "RECEIPT NO",
+                        "TRANSACITON NO",
                         toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(),
                         40,
                         2,
@@ -161,7 +161,7 @@ public class FranchiseCheckoutAsync extends AsyncTask<Void, Void, Void>
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "MACHINE NO",
+                        "TERMINAL NO",
                         SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                         40,
                         2,

@@ -91,7 +91,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         String[]images = {"", ""};
         buttonsModelList.add(new ButtonsModel(1000,
                 "MANUAL",
-                "http://www.twentyonepilots.com/sites/g/files/g2000004896/f/styles/media_gallery_large/public/Sample-image10-highres.jpg?itok=-UQ2667f",
+                "",
                 1));
         buttonsModelList.add(new ButtonsModel(1001,"CUSTOM", "",2));
 //        buttonsModelList.add(new ButtonsModel(1002,"CARD", "",3));
@@ -245,7 +245,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                         if (r.getIsSpecial() == 1) {
                             buttonsModelList.add(new ButtonsModel(r.getId(),
                                     r.getDiscountCard(),
-                                    "http://www.twentyonepilots.com/sites/g/files/g2000004896/f/styles/media_gallery_large/public/Sample-image10-highres.jpg?itok=-UQ2667f",
+                                    "",
                                     1,
                                     true));
                         }

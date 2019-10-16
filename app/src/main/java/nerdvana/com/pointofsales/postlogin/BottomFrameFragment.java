@@ -33,6 +33,7 @@ import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
+import nerdvana.com.pointofsales.model.MachineChangeRefresh;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -126,6 +127,11 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     @Subscribe
     public void changeTheme(ChangeThemeModel changeThemeModel) {
         changeTheme();
+    }
+
+    @Subscribe
+    public void machineChangeReqeust(MachineChangeRefresh machineChangeRefresh) {
+        setButtonsAdapter();
     }
 
 

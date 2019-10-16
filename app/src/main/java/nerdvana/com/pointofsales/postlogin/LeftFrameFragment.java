@@ -1206,7 +1206,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         dismiss();
                                     }
                                 };
-                        openPriceDialog.show();
+
+                        if (itemSelected.isPosted()) {
+                            Utils.showDialogMessage(getActivity(), "Cannot change qty, item already posted", "Information");
+                        } else {
+                            openPriceDialog.show();
+                        }
+
+
                         break;
                     case R.id.voidItem:
                         doVoidFunction();
@@ -1575,17 +1582,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
     private boolean canTransact() {
-
-        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute end of day")) {
-            Toast.makeText(getContext(), "Please execute end of day", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("NOT_ALLOW") ||
-                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("") ||
-                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute cutoff")) {
-            Toast.makeText(getContext(), "Please execute cutoff", Toast.LENGTH_SHORT).show();
-            return false;
-        }
         return true;
+//        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute end of day")) {
+//            Toast.makeText(getContext(), "Please execute end of day", Toast.LENGTH_SHORT).show();
+//            return false;
+//        } else if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("NOT_ALLOW") ||
+//                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("") ||
+//                SharedPreferenceManager.getString(getContext(), ApplicationConstants.SHIFT_BLOCKER).equalsIgnoreCase("please execute cutoff")) {
+//            Toast.makeText(getContext(), "Please execute cutoff", Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+//        return true;
     }
 
 
@@ -4632,7 +4639,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 for (FetchRoomPendingResponse.PostGroup sipm : tpost.getPostGroupList()) {
                                     groupCompoList = new ArrayList<>();
                                     groupCompoProductsList = new ArrayList<>();
-                                    if (sipm.getPostGroupInfo() != null) {
+//                                    if (sipm.getPostGroupInfo() != null) {
                                         for (FetchRoomPendingResponse.PostGroupItem bpm : sipm.getPostGroupItems()) {
                                             groupCompoProductsList.add(
                                                     new AddRateProductModel(
@@ -4652,15 +4659,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                 new AddRateProductModel.Group(
                                                         new AddRateProductModel.GroupCompo(
                                                                 0,
-                                                                sipm.getPostGroupInfo().getGroupName(),
+                                                                sipm.getPostGroupInfo() == null ? "PB" : sipm.getPostGroupInfo().getGroupName(),
                                                                 0,
                                                                 groupCompoProductsList)));
-                                    }
+//                                    }
                                 }
                             }
 
 
                             for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
+
+                                Log.d("TETE", String.valueOf(balac.getQty()));
+                                Log.d("TETE", "00---");
+
                                 alaCartes.add(new AddRateProductModel.AlaCarte(
                                         "",
                                         "0",
@@ -5095,9 +5106,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     Utils.showDialogMessage(getActivity(), "No item/s to print", "Information");
                 }
 
-                Log.d("TESTDATADIONe", printSoaResponse.getResult().getBooked().get(0).getTransaction().getControlNo());
-
-
 
             }
 
@@ -5485,6 +5493,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     selectedRoom.getName(),
                     selectedRoom.getRoomType());
             Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+
 
 
 
@@ -5906,6 +5915,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     "PRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
                                     roomType));
+
+
                         }
                         else {
 
@@ -6349,7 +6360,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void infoModel(InfoModel infoModel) {
-        Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
         SharedPreferenceManager.saveString(getContext(), infoModel.getInformation(), ApplicationConstants.SHIFT_BLOCKER);
 
         if (ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("F")) {

@@ -316,7 +316,9 @@ public class FetchXReadingViaIdResponse {
     }
 
     public class Result {
-
+        @SerializedName("change")
+        @Expose
+        private Double change;
         @SerializedName("data")
         @Expose
         private Datum data;
@@ -332,6 +334,14 @@ public class FetchXReadingViaIdResponse {
         @SerializedName("currency")
         @Expose
         private Currency currency;
+
+        public Double getChange() {
+            return change;
+        }
+
+        public void setChange(Double change) {
+            this.change = change;
+        }
 
         public Datum getData() {
             return data;

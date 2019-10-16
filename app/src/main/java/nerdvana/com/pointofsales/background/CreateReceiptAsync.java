@@ -89,8 +89,8 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
             }
 
 
-            finalString += receiptString("RECEIPT NO", toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(), context, false);
-            finalString += receiptString("MACHINE NO", SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID), context, false);
+            finalString += receiptString("OR NO", toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(), context, false);
+            finalString += receiptString("TERMINAL NO", SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID), context, false);
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", context, true);
             finalString += receiptString("QTY   DESCRIPTION         AMOUNT", "", context, true);
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", context, true);

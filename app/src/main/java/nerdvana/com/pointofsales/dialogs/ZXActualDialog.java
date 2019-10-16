@@ -87,6 +87,9 @@ public class ZXActualDialog extends Dialog {
             request.enqueue(new Callback<FetchXReadListViaDateResponse>() {
                 @Override
                 public void onResponse(Call<FetchXReadListViaDateResponse> call, final Response<FetchXReadListViaDateResponse> response) {
+
+                    Log.d("DSADASDSA", "DASDASDSADSA");
+
                     progress.setVisibility(View.GONE);
                     List<ZXReadModel> zxReadModelList = new ArrayList<>();
                     for (FetchXReadListViaDateResponse.Result res : response.body().getResult()) {
@@ -186,14 +189,18 @@ public class ZXActualDialog extends Dialog {
                     ZXRead zxRead = new ZXRead() {
                         @Override
                         public void reprint(String data) {
+                            Log.d("MYDATAXREAD", "REQ");
                             FetchXReadingViaIdRequest fetchXReadingViaIdRequest = new FetchXReadingViaIdRequest(data);
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             Call<FetchXReadingViaIdResponse> request = iUsers.fetchXReadingViaId(fetchXReadingViaIdRequest.getMapValue());
                             request.enqueue(new Callback<FetchXReadingViaIdResponse>() {
                                 @Override
                                 public void onResponse(Call<FetchXReadingViaIdResponse> call, Response<FetchXReadingViaIdResponse> response) {
-                                    BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(response.body().getResult())));
-                                    BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(response.body().getResult())));
+
+                                    Log.d("MYDATAXREAD", "XREDVIAID");
+
+                                    BusProvider.getInstance().post(new PrintModel("", "X READING", "REPRINTXREADING", GsonHelper.getGson().toJson(response.body().getResult())));
+//                                    BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(response.body().getResult())));
                                 }
 
                                 @Override
@@ -372,7 +379,7 @@ public class ZXActualDialog extends Dialog {
                                         request.enqueue(new Callback<ZReadResponse>() {
                                             @Override
                                             public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
-                                                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+                                                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "REPRINTZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
                                             }
                                             @Override
                                             public void onFailure(Call<ZReadResponse> call, Throwable t) {
@@ -396,7 +403,7 @@ public class ZXActualDialog extends Dialog {
                             request.enqueue(new Callback<ZReadResponse>() {
                                 @Override
                                 public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
-                                    BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+                                    BusProvider.getInstance().post(new PrintModel("", "ZREAD", "REPRINTZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
                                 }
                                 @Override
                                 public void onFailure(Call<ZReadResponse> call, Throwable t) {

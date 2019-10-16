@@ -214,7 +214,12 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                     });
                 }
             };
-            changeRoomStatusDialog.show();
+            if (selectedItem.getStatus().equalsIgnoreCase("2") || selectedItem.getStatus().equalsIgnoreCase("17")) {
+                Utils.showDialogMessage(RoomsActivity.this, "Room is occupied, please checkout properly", "Information");
+            } else {
+                changeRoomStatusDialog.show();
+            }
+
         } else {
             Utils.showDialogMessage(RoomsActivity.this, "Room status empty", "Information");
         }
@@ -268,8 +273,8 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         allowedPosStatus.add("occupied");
         allowedPosStatus.add("soa");
         allowedPosStatus.add("clean");
-        allowedPosStatus.add("on-going rc with waiting guest");
-        allowedPosStatus.add("dirty with waiting guest");
+//        allowedPosStatus.add("on-going rc with waiting guest");
+//        allowedPosStatus.add("dirty with waiting guest");
         List<FilterOptionModel> filterOptionsList = new ArrayList<>();
 //        List<RoomStatusEntity> rse = RoomStatusEntity.listAll(RoomStatusEntity.class);
 

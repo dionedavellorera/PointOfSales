@@ -70,7 +70,7 @@ public class Utils {
             if (tempArray[1].length() > 2) {
                 finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
             } else {
-                finalValue = tempArray[0] + "." + tempArray[1];
+                finalValue = tempArray[0] + "." + (tempArray[1].length() == 1 ? tempArray[1] + "0" : tempArray[1]);
             }
         } else {
             finalValue = amount;
@@ -210,5 +210,9 @@ public class Utils {
         DateTime jodatime = dtf.parseDateTime(currentString);
         DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm");
         return dtfOut.print(jodatime);
+    }
+
+    public static String removeStartingZero(String myString) {
+        return myString.replaceAll("^0*", "");
     }
 }

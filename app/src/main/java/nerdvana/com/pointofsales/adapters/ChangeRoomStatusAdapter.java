@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -33,9 +34,11 @@ public class ChangeRoomStatusAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     static class ListViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
+        private RelativeLayout rootView;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
+            rootView = itemView.findViewById(R.id.rootView);
         }
 
     }
@@ -45,14 +48,31 @@ public class ChangeRoomStatusAdapter extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         if(holder instanceof ChangeRoomStatusAdapter.ListViewHolder){
-            ((ChangeRoomStatusAdapter.ListViewHolder) holder).name.setText(statusList.get(i).getRoomStatus());
 
-            ((ChangeRoomStatusAdapter.ListViewHolder) holder).name.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    newRoomStatus.clicked(statusList.get(i).getCoreId(), statusList.get(i).getRoomStatus());
-                }
-            });
+            //CLEAN, DIRTY, PREVENTIVE MAINTENANCE only for change status
+            if (statusList.get(i).getCoreId() != 1 && statusList.get(i).getCoreId() != 3 &&
+                    statusList.get(i).getCoreId() != 35) {
+
+                ((ListViewHolder) holder).rootView.setVisibility(View.GONE);
+                ((ListViewHolder) holder).rootView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+
+            } else {
+                ((ListViewHolder) holder).rootView.setVisibility(View.VISIBLE);
+                ((ListViewHolder) holder).rootView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                ((ChangeRoomStatusAdapter.ListViewHolder) holder).name.setText(statusList.get(i).getRoomStatus());
+
+                ((ChangeRoomStatusAdapter.ListViewHolder) holder).name.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        newRoomStatus.clicked(statusList.get(i).getCoreId(), statusList.get(i).getRoomStatus());
+                    }
+                });
+            }
+
+
+
+
         }
     }
 

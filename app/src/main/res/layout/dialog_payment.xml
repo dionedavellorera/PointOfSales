@@ -327,7 +327,7 @@
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
-                                android:hint="Expiration"
+                                android:hint="01/19"
                                 android:id="@+id/expiration"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />

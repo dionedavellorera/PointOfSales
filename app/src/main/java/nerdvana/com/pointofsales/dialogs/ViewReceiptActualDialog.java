@@ -74,7 +74,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                             String roomNo = "";
                             String roomType = "";
                             if (response.body().getResult().getGuestInfo() != null) {
-                                roomNo = response.body().getResult().getGuestInfo().getRoomNo().toString();
+                                roomNo = response.body().getResult().getGuestInfo().getRoomNo() == null ? "NA" : response.body().getResult().getGuestInfo().getRoomNo();
                                 roomType = response.body().getResult().getGuestInfo().getRoomType();
                             } else {
                                 roomNo = "TAKEOUT";
@@ -82,7 +82,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                             }
                             BusProvider.getInstance().post(new PrintModel(
                                     "", roomNo,
-                                    "PRINT_RECEIPT",
+                                    "REPRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
                                     roomType));
                         }
@@ -126,7 +126,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                     "NERDVANA CORP",
 //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
                     "1 CANLEY ROAD BRGY. BAGONG ILOG PASIG CITY 1600",
-                    SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE),
+                    "TEL NO: 8671-9782",
 //                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
                     "SERIAL NO:" + "***-***-***",
                     "VAT REG TIN NO:" + "009-772-500-000",
@@ -135,8 +135,8 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                     "PERMIT NO:" + "***-***-***",
                     "MIN NO: " + "***-***-***",
                     r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoom().getRoomNo() != null ? r.getGuestInfo().getRoom().getRoomNo().toString() : "EMPTY",
-                    r.getCashier().getName(),
-                    r.getRoomBoy() == null ? "" : r.getRoomBoy().getName(),
+                    r.getCashierOut().getName(),
+                    r.getRoomBoy() == null ? "" : r.getGuestInfo().getRoomBoyIn().getName(),
                     r.getGuestInfo() == null ? "" : r.getGuestInfo().getCheckIn(),
                     r.getGuestInfo() == null ? "" : r.getGuestInfo().getCheckOut(),
                     r.getReceiptNo(),
@@ -177,6 +177,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
             public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
                 String roomNo = "";
                 String roomType = "";
+
                 if (response.body().getResult().getGuestInfo() != null) {
                     roomNo = response.body().getResult().getGuestInfo().getRoom().getRoomNo().toString();
                     roomType = response.body().getResult().getGuestInfo().getRoomType();
@@ -184,9 +185,12 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                     roomNo = "TAKEOUT";
                     roomType = "NA";
                 }
+
+                Log.d("ROOMNO", roomNo);
+
                 BusProvider.getInstance().post(new PrintModel(
                         "", roomNo,
-                        "PRINT_RECEIPT",
+                        "REPRINT_RECEIPT",
                         GsonHelper.getGson().toJson(response.body().getResult()),
                         roomType));
             }

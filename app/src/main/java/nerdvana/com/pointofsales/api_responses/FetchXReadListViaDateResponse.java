@@ -1444,35 +1444,35 @@ public class FetchXReadListViaDateResponse {
 
         @SerializedName("PHP")
         @Expose
-        private Integer pHP;
+        private Double pHP;
         @SerializedName("USD")
         @Expose
-        private Integer uSD;
+        private Double uSD;
         @SerializedName("EUR")
         @Expose
-        private Integer eUR;
+        private Double eUR;
 
-        public Integer getPHP() {
+        public Double getPHP() {
             return pHP;
         }
 
-        public void setPHP(Integer pHP) {
+        public void setPHP(Double pHP) {
             this.pHP = pHP;
         }
 
-        public Integer getUSD() {
+        public Double getUSD() {
             return uSD;
         }
 
-        public void setUSD(Integer uSD) {
+        public void setUSD(Double uSD) {
             this.uSD = uSD;
         }
 
-        public Integer getEUR() {
+        public Double getEUR() {
             return eUR;
         }
 
-        public void setEUR(Integer eUR) {
+        public void setEUR(Double eUR) {
             this.eUR = eUR;
         }
 

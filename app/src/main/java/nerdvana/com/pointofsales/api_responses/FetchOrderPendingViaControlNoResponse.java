@@ -402,8 +402,47 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+    public class PostObjectDiscount {
+        @SerializedName("deleted_at")
+        @Expose
+        private String deleted_at;
+        @SerializedName("discount_percentage")
+        @Expose
+        private String discountPercentage;
+
+        @SerializedName("discount_amount")
+        @Expose
+        private String discountAmount;
+
+        public String getDeleted_at() {
+            return deleted_at;
+        }
+
+        public void setDeleted_at(String deleted_at) {
+            this.deleted_at = deleted_at;
+        }
+
+        public String getDiscountPercentage() {
+            return discountPercentage;
+        }
+
+        public void setDiscountPercentage(String discountPercentage) {
+            this.discountPercentage = discountPercentage;
+        }
+
+        public String getDiscountAmount() {
+            return discountAmount;
+        }
+
+        public void setDiscountAmount(String discountAmount) {
+            this.discountAmount = discountAmount;
+        }
+    }
 
     public class Post {
+        @SerializedName("discounts")
+        @Expose
+        private List<PostObjectDiscount> discounts;
         @SerializedName("freebie")
         @Expose
         private Freebie freebie;
@@ -518,6 +557,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+
+        public List<PostObjectDiscount> getDiscounts() {
+            return discounts;
+        }
+
+        public void setDiscounts(List<PostObjectDiscount> discounts) {
+            this.discounts = discounts;
+        }
 
         public Freebie getFreebie() {
             return freebie;
@@ -1704,6 +1751,15 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
     public class Result {
+        @SerializedName("special")
+        @Expose
+        private int special;
+        @SerializedName("void_count")
+        @Expose
+        private String voidCount;
+        @SerializedName("soa_count")
+        @Expose
+        private String soaCount;
         @SerializedName("person_count")
         @Expose
         private String personCount;
@@ -1845,6 +1901,30 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("vat_exempt_sales")
         @Expose
         private Double vatExemptSales;
+
+        public int getSpecial() {
+            return special;
+        }
+
+        public void setSpecial(int special) {
+            this.special = special;
+        }
+
+        public String getVoidCount() {
+            return voidCount;
+        }
+
+        public void setVoidCount(String voidCount) {
+            this.voidCount = voidCount;
+        }
+
+        public String getSoaCount() {
+            return soaCount;
+        }
+
+        public void setSoaCount(String soaCount) {
+            this.soaCount = soaCount;
+        }
 
         public String getPersonCount() {
             return personCount;

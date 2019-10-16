@@ -372,25 +372,6 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
         switch (v.getId()) {
             case R.id.checkin:
 
-                Log.d("WATUTU", new WelcomeGuestRequest(
-                        String.valueOf(selectedRoom.getRoomId()),
-                        String.valueOf(selectedRoom.getRoomTypeId()),
-                        String.valueOf(roomRateId),
-                        String.valueOf(roomRatePriecId),
-                        String.valueOf(carId),
-                        String.valueOf(vehicleId),
-                        String.valueOf(guestTypeId),
-                        customer.getText().toString().trim(),
-                        plateNumber.getText().toString().trim(),
-                        userId,
-                        "",
-                        "",
-                        adult.getText().toString(),
-                        child.getText().toString(),
-                        SharedPreferenceManager.getString(context.getApplicationContext(), ApplicationConstants.TAX_RATE),
-                        String.valueOf(areaId),
-                        String.valueOf(nationalityId)
-                ).toString());
                 successCheckIn(new WelcomeGuestRequest(
                         String.valueOf(selectedRoom.getRoomId()),
                         String.valueOf(selectedRoom.getRoomTypeId()),

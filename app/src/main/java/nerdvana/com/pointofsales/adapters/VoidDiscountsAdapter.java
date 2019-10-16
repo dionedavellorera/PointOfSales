@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
 import nerdvana.com.pointofsales.interfaces.VoidItemContract;
 import nerdvana.com.pointofsales.model.ForVoidDiscountModel;
@@ -62,7 +63,7 @@ public class VoidDiscountsAdapter extends RecyclerView.Adapter<RecyclerView.View
             });
 
             ((VoidDiscountHolder)holder).paymentType.setText(voidDiscountModelList.get(i).getDiscountName());
-            ((VoidDiscountHolder)holder).paymentAmount.setText(voidDiscountModelList.get(i).getDiscountAmount());
+            ((VoidDiscountHolder)holder).paymentAmount.setText(Utils.returnWithTwoDecimal(voidDiscountModelList.get(i).getDiscountAmount()));
         }
     }
 

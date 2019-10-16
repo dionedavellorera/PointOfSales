@@ -287,7 +287,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     private void setOrDetails(ViewReceiptResponse.Result selectedOr) {
         if (selectedOr != null) {
 
-            postVoidPrint(GsonHelper.getGson().toJson(selectedOrToPrintOrVoid));
+//            postVoidPrint(GsonHelper.getGson().toJson(selectedOrToPrintOrVoid));
 
 
             selectedOrToPrintOrVoid = selectedOr;

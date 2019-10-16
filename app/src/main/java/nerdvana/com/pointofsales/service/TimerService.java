@@ -116,11 +116,25 @@ public class TimerService extends Service {
                                         String rawResponse = response.body().string();
                                         JSONObject responseObject = new JSONObject(rawResponse);
                                         if (responseObject.getInt("status") == 0) {
-                                            if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
-                                                BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+
+                                            if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                                                if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+
+                                                } else {
+                                                    if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+                                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+                                                    } else {
+                                                        BusProvider.getInstance().post(new InfoModel("Generate end of day"));
+                                                    }
+                                                }
                                             } else {
-                                                BusProvider.getInstance().post(new InfoModel("Generate end of day"));
+                                                if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+                                                    BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+                                                } else {
+                                                    BusProvider.getInstance().post(new InfoModel("Generate end of day"));
+                                                }
                                             }
+
 
                                         } else {
                                             JSONArray resultArray = responseObject.getJSONArray("result");
@@ -131,19 +145,57 @@ public class TimerService extends Service {
                                                     BusProvider.getInstance().post(new CheckSafeKeepingRequest());
                                                 } else {
                                                     DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                                                    DateTime endShiftTime = fff.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
+
+
                                                     shiftDisplay = String.valueOf(resultArray.getJSONObject(0).getString("shift_no"));
-                                                    if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
-                                                        BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
-                                                    } else {
-                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+
+                                                    if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
                                                         BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                    } else {
+                                                        if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
+                                                            BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                        } else {
+                                                            DateTime endShiftTime = fff.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
+                                                            if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                                                                if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+
+                                                                } else {
+                                                                    if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+                                                                        BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                                                    } else {
+                                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                                        BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+                                                                    BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                                                } else {
+                                                                    BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                                }
+                                                            }
+                                                        }
+
+
                                                     }
+
+
                                                 }
                                             } else {
                                                 shiftDisplay = "0";
                                                 BusProvider.getInstance().post(new InfoModel("ALLOW"));
-                                                BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+
+                                                if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                                                    if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+
+                                                    } else {
+                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                    }
+                                                } else {
+                                                    BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                }
+
                                             }
 
                                         }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:visible="false"
         android:id="@+id/voidItem"
         android:title="Void" />
     <item
@@ -8,7 +9,6 @@
         android:title="Update product price" />
 
     <item
-        android:visible="false"
         android:id="@+id/changeQty"
         android:title="Update product quantity" />
 </menu>

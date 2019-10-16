@@ -33,6 +33,7 @@ public class ThemeFragment extends Fragment {
         themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ApplicationConstants.IS_THEME_CHANGED = "T";
                 SharedPreferenceManager.saveString(getContext(), isChecked ? "dark" : "light", ApplicationConstants.THEME_SELECTED);
             }
         });

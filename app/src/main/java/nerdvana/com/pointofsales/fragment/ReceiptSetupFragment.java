@@ -19,6 +19,9 @@ public class ReceiptSetupFragment extends Fragment {
     private View view;
     private SeekBar seekbarProgress;
     private TextView seekbarValue;
+
+    public ReceiptSetupFragment(){}
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

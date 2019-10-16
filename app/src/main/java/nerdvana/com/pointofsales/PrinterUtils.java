@@ -50,7 +50,8 @@ public class PrinterUtils {
             if (tempArray[1].length() > 2) {
                 finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
             } else {
-                finalValue = tempArray[0] + "." + tempArray[1];
+//                finalValue = tempArray[0] + "." + tempArray[1];
+                finalValue = tempArray[0] + "." + (tempArray[1].length() == 1 ? tempArray[1] +  "0" : tempArray[1]);
             }
         } else {
             finalValue = amount;
@@ -220,11 +221,11 @@ public class PrinterUtils {
 //        addTextToPrinter(printer, "PERMIT NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
 
-        addTextToPrinter(printer, "NERDVANA CORP.", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "1 CANLEY ROAD BRGY BAGONG", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "ILOG PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer," 671-9782", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "ABC COMPANY", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "1 ABC ST. DE AVE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer," TEL NO: 8123-4567", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "VAT REG TIN NO: 009-123-456-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
         addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
         addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
@@ -246,15 +247,27 @@ public class PrinterUtils {
         if (printModel.getType().equalsIgnoreCase("VOID"))  addTextToPrinter(printer,"VOID SLIP" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("SOA-ROOM"))  addTextToPrinter(printer,"STATEMENT OF ACCOUNT" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("SOA-TO"))  addTextToPrinter(printer,"STATEMENT OF ACCOUNT" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
-        if (printModel.getType().equalsIgnoreCase("POST_VOID"))  addTextToPrinter(printer,"VOID" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+        if (printModel.getType().equalsIgnoreCase("POST_VOID"))  addTextToPrinter(printer,"V O I D" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("ZREAD"))  addTextToPrinter(printer,"Z-READING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+        //REPRINTZREAD
+        if (printModel.getType().equalsIgnoreCase("REPRINTZREAD")) {
+            addTextToPrinter(printer,"Z-READING(REPRINT)" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+        }
+
+
+        if (printModel.getType().equalsIgnoreCase("REPRINTXREADING")){
+            addTextToPrinter(printer,"X-READING(REPRINT)" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+        }
+        if (printModel.getType().equalsIgnoreCase("REPRINT_RECEIPT")) {
+            addTextToPrinter(printer,"OFFICIAL RECEIPT(REPRINT)" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+        }
 
 
         if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
                 printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
                 printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID") ||
                 printModel.getType().equalsIgnoreCase("SOA-ROOM") || printModel.getType().equalsIgnoreCase("POST_VOID") ||
-                printModel.getType().equalsIgnoreCase("SOA-TO")) {
+                printModel.getType().equalsIgnoreCase("SOA-TO") || printModel.getType().equalsIgnoreCase("REPRINT_RECEIPT")) { //
             if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
                 addTextToPrinter(printer,"ROOM #" + printModel.getRoomNumber(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
             } else {

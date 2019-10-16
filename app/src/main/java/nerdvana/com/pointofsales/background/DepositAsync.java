@@ -96,7 +96,7 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
 
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                    "MACHINE NO",
+                    "TERMINAL NO",
                     SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                     40,
                     2,

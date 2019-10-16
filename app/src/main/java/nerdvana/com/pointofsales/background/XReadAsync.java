@@ -27,6 +27,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
@@ -121,7 +122,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "MACHINE NO.",
+                            "TERMINAL NO",
                             dataJsonObject.getString("pos_id")
                             ,
                             40,
@@ -143,7 +144,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "Net Sales",
-                            returnWithTwoDecimal(dataJsonObject.getString("net_sales"))
+                            returnWithTwoDecimal(String.valueOf(Double.valueOf(dataJsonObject.getString("net_sales"))))
                             ,
                             40,
                             2,context),
@@ -168,35 +169,43 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                             context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "12% VAT",
-                            returnWithTwoDecimal(dataJsonObject.getString("vat"))
-                            ,
-                            40,
-                            2,context),
-                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "NON VAT",
+                            "VAT EXEMPT",
                             returnWithTwoDecimal(dataJsonObject.getString("vat_exempt"))
                             ,
                             40,
                             2,context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "SERVICE CHARGE",
-                            "0.00"
+                            "VAT AMOUNT",
+                            returnWithTwoDecimal(dataJsonObject.getString("vat"))
                             ,
                             40,
-                            2,
-                            context),
+                            2,context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+//                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                            "SERVICE CHARGE",
+//                            "0.00"
+//                            ,
+//                            40,
+//                            2,
+//                            context),
+//                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 }
 
 
                 JSONArray paymentJsonArray = jsonObject.getJSONArray("payment");
+
+                Log.d("MYCHANGE", String.valueOf(jsonObject.getDouble("change")));
+
+                Double change = jsonObject.getDouble("change");
 
                 addPrinterSpace(1);
 
@@ -252,20 +261,36 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             } else {
 
+                                if (payment.getPaymentType().equalsIgnoreCase("cash")) {
 
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        payment.getPaymentType() + " Sales",
-                                        String.valueOf(value)
-                                        ,
-                                        40,
-                                        2,
-                                        context),
-                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    Log.d("WETWET", String.valueOf(value));
+                                    Log.d("WETWET", String.valueOf(change));
+                                    Log.d("WETWET", String.valueOf(value + change));
+
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            payment.getPaymentType() + " Sales",
+                                            PrinterUtils.returnWithTwoDecimal(String.valueOf(value + change))
+                                            ,
+                                            40,
+                                            2,
+                                            context),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            payment.getPaymentType() + " Sales",
+                                            PrinterUtils.returnWithTwoDecimal(String.valueOf(value))
+                                            ,
+                                            40,
+                                            2,
+                                            context),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+
 
                                 if (payment.getPaymentType().equalsIgnoreCase("card")) {
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             "DEPOSIT SALES",
-                                            String.valueOf(totalAdvancePayment)
+                                            PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAdvancePayment))
                                             ,
                                             40,
                                             2,
@@ -301,14 +326,26 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                 JSONObject cashRecoObj = dataCashAndRecoJsonObject.getJSONObject(0);
 
+//                if (Double.valueOf(cashRecoObj.getString("adjustment_deposit")) > 0) {
+//                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                            "DEPOSIT ADJ.",
+//                            String.format("-%s",
+//                                    String.valueOf(Double.valueOf(cashRecoObj.getString("adjustment_deposit")))),
+//                            40,
+//                            2,
+//                            context),
+//                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                } else {
+//                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                            "DEPOSIT ADJ.",
+//                            String.format("%s",
+//                                    String.valueOf(Double.valueOf(cashRecoObj.getString("adjustment_deposit")))),
+//                            40,
+//                            2,
+//                            context),
+//                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                }
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "DEPOSIT ADJ.",
-                        String.format("(%s)", String.valueOf(Double.valueOf(cashRecoObj.getString("adjustment_deposit")) * -1)),
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 //            addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -357,13 +394,17 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                     TypeToken<List<FetchDiscountSpecialResponse.Result>> discToken = new TypeToken<List<FetchDiscountSpecialResponse.Result>>() {};
                     List<FetchDiscountSpecialResponse.Result> discountDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.DISCOUNT_SPECIAL_JSON), discToken.getType());
 
-                    double otherDiscAmount = 0.00;
 
+
+
+                    double otherDiscAmount = 0.00;
 
                     if (discountDetails != null) {
                         for (FetchDiscountSpecialResponse.Result d : discountDetails) {
                             Integer count = 0;
                             Double amount = 0.00;
+
+
 
                             if (discountJsonArray.length() > 0) {
                                 for (int i = 0; i < discountJsonArray.length(); i++) {
@@ -385,7 +426,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     d.getDiscountCard(),
-                                    String.valueOf(amount)
+                                    returnWithTwoDecimal(String.valueOf(amount))
                                     ,
                                     40,
                                     2,
@@ -402,22 +443,28 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
 
+
                         }
+
+
+
                     }
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "OTHERS",
+                            returnWithTwoDecimal(String.valueOf(otherDiscAmount))
+                            ,
+                            40,
+                            2,
+                            context),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
                     int otherDiscCount = 0;
 //                double otherDiscAmount = 0.00;
 
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "OTHERS",
-                            String.valueOf(otherDiscAmount)
-                            ,
-                            40,
-                            2,
-                            context),
-                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "OTHERS" + "(COUNT)",
 //                        String.valueOf(otherDiscCount)
@@ -513,7 +560,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
             } catch (JSONException e) {
-                Log.d("ERROR", e.getMessage());
+//                Log.d("ERROR", e.getMessage());
             }
 //            catch (Epos2Exception e) {
 //                e.printStackTrace();

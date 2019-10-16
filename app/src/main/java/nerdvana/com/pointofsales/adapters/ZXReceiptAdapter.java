@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.dialogs.ZXActualDialog;
 import nerdvana.com.pointofsales.dialogs.ZXReadModel;
@@ -147,7 +148,7 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             ((ViewHolder) holder)
                     .voidValue
-                    .setText(model.getVoidAmount());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getVoidAmount()));
             ((ViewHolder) holder)
                     .companyName
                     .setText(model.getCompany());
@@ -162,7 +163,7 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .setText(model.getSerialNumber());
             ((ViewHolder) holder)
                     .vatReg
-                    .setText(model.getRegTin());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getRegTin()));
             ((ViewHolder) holder)
                     .permit
                     .setText(model.getPermitNumber());
@@ -186,58 +187,58 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .setText(model.getMachineNumber());
             ((ViewHolder) holder)
                     .grossSalesValue
-                    .setText(model.getGrossSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getGrossSales()));
             ((ViewHolder) holder)
                     .netSalesValue
-                    .setText(model.getNetSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getNetSales()));
             ((ViewHolder) holder)
                     .vatableSalesValue
-                    .setText(model.getVatableSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getVatableSales()));
             ((ViewHolder) holder)
                     .vatExemptSalesValue
-                    .setText(model.getVatExemptSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getVatExemptSales()));
             ((ViewHolder) holder)
                     .twelveVatValue
-                    .setText(model.getTwelveVat());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getTwelveVat()));
             ((ViewHolder) holder)
                     .nonVatValue
-                    .setText(model.getNonVat());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getNonVat()));
             ((ViewHolder) holder)
                     .serviceChargeValue
-                    .setText(model.getServiceCharge());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getServiceCharge()));
             ((ViewHolder) holder)
                     .cashSalesValue
-                    .setText(model.getCashSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getCashSales()));
             ((ViewHolder) holder)
                     .cardSalesValue
-                    .setText(model.getCardSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getCardSales()));
             ((ViewHolder) holder)
                     .depositSalesValue
-                    .setText(model.getDepositSales());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getDepositSales()));
             ((ViewHolder) holder)
                     .onlineValue
-                    .setText(model.getOnline());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getOnline()));
             ((ViewHolder) holder)
                     .depositAdjustmentValue
-                    .setText(model.getDepositAdjustment());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getDepositAdjustment()));
             ((ViewHolder) holder)
                     .pwdValue
-                    .setText(model.getPwdAmount());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getPwdAmount()));
             ((ViewHolder) holder)
                     .pwdCount
-                    .setText(model.getPwdCount());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getPwdCount()));
             ((ViewHolder) holder)
                     .seniorValue
-                    .setText(model.getSeniorAmount());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getSeniorAmount()));
             ((ViewHolder) holder)
                     .seniorCount
                     .setText(model.getSeniorCount());
             ((ViewHolder) holder)
                     .othersValue
-                    .setText(model.getOthers());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getOthers()));
             ((ViewHolder) holder)
                     .depositAdjustmentValue
-                    .setText(model.getDepositAdjustment());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getDepositAdjustment()));
 
             ((ViewHolder) holder)
                     .begTrans
@@ -247,10 +248,10 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     .setText(model.getEndTrans());
             ((ViewHolder) holder)
                     .newGrandTotal
-                    .setText(model.getNewGrandTotal());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getNewGrandTotal()));
             ((ViewHolder) holder)
                     .oldGrandTotal
-                    .setText(model.getOldGrandTotal());
+                    .setText(PrinterUtils.returnWithTwoDecimal(model.getOldGrandTotal()));
             ((ViewHolder) holder)
                     .zReadNo
                     .setText(model.getzReadNo());

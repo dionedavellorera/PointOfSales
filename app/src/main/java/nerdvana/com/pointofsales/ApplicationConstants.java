@@ -10,7 +10,7 @@ public class ApplicationConstants {
 
     public static final String HOST = "host";
     public static final String NODE_URL = "node_url";
-    public static final String VERSION = "1.0.3";
+    public static final String VERSION = "1.1.0";
     public static final String BRANCH = "branch";
     public static final String BRANCH_PERMIT = "branch_permit";
     public static final String IS_SYSTEM_ROOM = "is_room";
@@ -69,11 +69,14 @@ public class ApplicationConstants {
     public static final String SHIFT_BLOCKER = "shift_blocker";
     public static final String PRINTER_PATH = "printer_path";
     public static final String THEME_SELECTED = "theme_selected";
+    public static final String MACHINE_SETUP = "machine_setup";
 
     public static final String ROOM_JSON = "room_json";
 
 
     public static String IS_ACTIVE = "F";
+    public static String IS_THEME_CHANGED = "T";
+    public static String IS_MACHINE_CHANGED = "T";
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.SettingListAdapter;
+import nerdvana.com.pointofsales.fragment.MachineSetupFragment;
 import nerdvana.com.pointofsales.fragment.PrinterConnectionFragment;
 import nerdvana.com.pointofsales.fragment.PrinterFragment;
 import nerdvana.com.pointofsales.fragment.ReceiptSetupFragment;
@@ -36,6 +37,7 @@ public class SettingsActivity extends AppCompatActivity {
     private PrinterConnectionFragment printerConnectionFragment;
     private ThemeFragment themeFragment;
     private ReceiptSetupFragment receiptSetupFragment;
+    private MachineSetupFragment machineSetupFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
         printerConnectionFragment = new PrinterConnectionFragment();
         themeFragment = new ThemeFragment();
         receiptSetupFragment = new ReceiptSetupFragment();
+        machineSetupFragment = new MachineSetupFragment();
 
         listMainItems = findViewById(R.id.listMainItems);
 
@@ -61,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
         settingMenuList.add(new ListSettingMenu(1, R.mipmap.baseline_print_black_24, "Printer Connection"));
         settingMenuList.add(new ListSettingMenu(2, R.mipmap.baseline_print_black_24, "Theme"));
         settingMenuList.add(new ListSettingMenu(3, R.mipmap.baseline_print_black_24, "Receipt Setup"));
+        settingMenuList.add(new ListSettingMenu(4, R.mipmap.baseline_print_black_24, "Machine Setup"));
 
 
         Setting setting = new Setting() {
@@ -78,6 +82,9 @@ public class SettingsActivity extends AppCompatActivity {
                         break;
                     case 3: //RECEIPT SETUP
                         openFragment(receiptSetupFragment);
+                        break;
+                    case 4: //MACHINE SETUP
+                        openFragment(machineSetupFragment);
                         break;
                 }
             }

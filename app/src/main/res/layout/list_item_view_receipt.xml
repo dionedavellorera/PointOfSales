@@ -533,6 +533,14 @@
             <!--android:text="THIS IS NOT AN OFFICIAL RECEIPT"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content" />-->
+
+        <TextView
+            android:gravity="center"
+            android:text="THIS IS NOT AN OFFICIAL RECEIPT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
         <TextView
             android:gravity="center"
             android:text="THANK YOU COME AGAIN"
@@ -553,41 +561,48 @@
 
         <TextView
             android:gravity="center"
-            android:text="Provider : Nerdvana"
+            android:text="POS Provider : NERDVANA CORP."
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:gravity="center"
-            android:text="Address : Bagong ilog Pasig city"
+            android:text="Address : 1 CANLEY ROAD BRGY"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:gravity="center"
-            android:text="Tin : 432554043435"
+            android:text="BAGONG ILOG PASIG CITY"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:gravity="center"
-            android:text="ACCRE No. 131231231232131"
+            android:text="VAT REG TIN : 009-772-500-000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:gravity="center"
-            android:text="Date Issued : 01/01/2019"
+            android:text="ACCRED NO:**********************"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
             android:gravity="center"
-            android:text="Valid until : 01/01/2024"
+            android:text="Date Issued : 10/10/2019"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:gravity="center"
+            android:text="Valid until : 10/10/2024"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:visibility="gone"
             android:gravity="center"
             android:text="PTU No : FPU 2324254354353"
             android:layout_width="match_parent"

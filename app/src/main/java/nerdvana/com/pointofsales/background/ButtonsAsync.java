@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
@@ -25,74 +27,144 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
     protected List<ButtonsModel> doInBackground(ButtonsModel... buttonsModels) {
         List<ButtonsModel> buttonsModelList = new ArrayList<>();
         String[]images = {"", ""};
+
+
+
+
+
         switch (Utils.getSystemType(context)) {
             case "not_supported":
                 break;
             case "franchise":
-                buttonsModelList.add(new ButtonsModel(105,"PAYMENT", "",6));
-                buttonsModelList.add(new ButtonsModel(100,"SAVE TRANSACTION", "",3));
-                buttonsModelList.add(new ButtonsModel(9988,"RESUME TRANSACTION", "",2));
+
+                if (!SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                    if (SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+                        buttonsModelList.add(new ButtonsModel(100,"SAVE TRANSACTION", "",3));
+                        buttonsModelList.add(new ButtonsModel(9988,"RESUME TRANSACTION", "",2));
+                    } else {
+                        buttonsModelList.add(new ButtonsModel(105,"PAYMENT", "",6));
+                        buttonsModelList.add(new ButtonsModel(100,"SAVE TRANSACTION", "",3));
+                        buttonsModelList.add(new ButtonsModel(9988,"RESUME TRANSACTION", "",2));
+                    }
+                } else {
+                    buttonsModelList.add(new ButtonsModel(105,"PAYMENT", "",6));
+                    buttonsModelList.add(new ButtonsModel(100,"SAVE TRANSACTION", "",3));
+                    buttonsModelList.add(new ButtonsModel(9988,"RESUME TRANSACTION", "",2));
+                }
+
                 break;
             case "table":
                 break;
             case "room":
-                buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
-                buttonsModelList.add(new ButtonsModel(9988,"TAKE ORDER", "",2));
-                buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3));
-                buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1));
-                buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4));
-                buttonsModelList.add(new ButtonsModel(106,"SOA", "",5));
-                buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10));
-                buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11));
-                buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14));
-                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15));
-                buttonsModelList.add(new ButtonsModel(122,"CANCEL OVERTIME", "",18));
-                buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
-                buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3));
-                buttonsModelList.add(new ButtonsModel(126,"FOC", "",24));
-                buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24));
 
-                buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24));
-                buttonsModelList.add(new ButtonsModel(133,"SHIFT CUT OFF", "",24));
+
+                if (!SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                    if (SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+                        buttonsModelList.add(new ButtonsModel(9988,"TAKE ORDER", "",2));
+                        buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3));
+                        buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1));
+                        buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4));
+                        buttonsModelList.add(new ButtonsModel(106,"SOA", "",5));
+                        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10));
+                        buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11));
+                        buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14));
+                        buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15));
+                        buttonsModelList.add(new ButtonsModel(122,"CANCEL OVERTIME", "",18));
+                        buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
+                        buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3));
+                        buttonsModelList.add(new ButtonsModel(126,"FOC", "",24)); // return later
+                        buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24));
+                        buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24));
+                    } else {
+                        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
+                        buttonsModelList.add(new ButtonsModel(9988,"TAKE ORDER", "",2));
+                        buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3));
+                        buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1));
+                        buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4));
+                        buttonsModelList.add(new ButtonsModel(106,"SOA", "",5));
+                        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10));
+                        buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11));
+                        buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14));
+                        buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15));
+                        buttonsModelList.add(new ButtonsModel(122,"CANCEL OVERTIME", "",18));
+                        buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
+                        buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3));
+                        buttonsModelList.add(new ButtonsModel(126,"FOC", "",24)); //return later
+                        buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24));
+                        buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24));
+                        buttonsModelList.add(new ButtonsModel(133,"SHIFT CUT OFF", "",24));
+                    }
+                } else {
+                    buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
+                    buttonsModelList.add(new ButtonsModel(9988,"TAKE ORDER", "",2));
+                    buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3));
+                    buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1));
+                    buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4));
+                    buttonsModelList.add(new ButtonsModel(106,"SOA", "",5));
+                    buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10));
+                    buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11));
+                    buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14));
+                    buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15));
+                    buttonsModelList.add(new ButtonsModel(122,"CANCEL OVERTIME", "",18));
+                    buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8));
+                    buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3));
+                    buttonsModelList.add(new ButtonsModel(126,"FOC", "",24)); //return later
+                    buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24));
+
+                    buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24));
+                    buttonsModelList.add(new ButtonsModel(133,"SHIFT CUT OFF", "",24));
+                }
+
+
+
                 break;
         }
 
 
 
 
-        buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
-//        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6));
-        buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
-        buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
-        buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
-        buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
+        if (!SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+            if (SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+                buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
+                buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
+                buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
+                buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
+                buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100));
+                buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
+                buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
 
-//        buttonsModelList.add(new ButtonsModel(112,"VIEW RECEIPT", "",16));
-        buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
+            } else {
+                buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
+                buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
+//                buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
+                buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
+                buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
+                buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
+                buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
+                buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
+                buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
+                buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
+                buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100));
+            }
+        } else {
+            buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
+            buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
+//            buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
+            buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
+            buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
+            buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
+            buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
+            buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
+            buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
+            buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
+            buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100));
+        }
 
-        buttonsModelList.add(new ButtonsModel(116,"CANCEL", "",20));
-
-//        buttonsModelList.add(new ButtonsModel(121,"XREAD", "",19));
-//        buttonsModelList.add(new ButtonsModel(120,"ZREAD", "",21));
-//        buttonsModelList.add(new ButtonsModel(123,"REPRINT X READING", "",22));
-//        buttonsModelList.add(new ButtonsModel(127,"REPRINT Z READING", "",22));
 
 
-        buttonsModelList.add(new ButtonsModel(128,"BACKUP", "",24));
-        buttonsModelList.add(new ButtonsModel(129,"SETTINGS", "",24));
-        buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100));
-        buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100));
 
-//        buttonsModelList.add(new ButtonsModel(110,"SET PRINTER", "",99));
 
         Collections.sort(buttonsModelList);
-
-//        Collections.sort(buttonsModelList, new Comparator<ButtonsModel>() {
-//            @Override
-//            public int compare(ButtonsModel o1, ButtonsModel o2) {
-//                return String.valueOf(o1.getPosition()).compareTo(String.valueOf(o2.getPosition()));
-//            }
-//        });
         return buttonsModelList;
     }
 

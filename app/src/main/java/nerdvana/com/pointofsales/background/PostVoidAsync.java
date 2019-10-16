@@ -113,6 +113,14 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "VOID NUMBER",
+                        toList1.getVoidCount()
+                        ,
+                        40,
+                        2,
+                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "CASHIER",
                         userModel.getUsername()
                         ,
@@ -150,7 +158,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "RECEIPT NO",
+                        "REF. OR NO",
                         toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(),
                         40,
                         2,
@@ -159,13 +167,20 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "MACHINE NO",
+                        "TERMINAL NO",
                         SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                         40,
                         2,
                         context)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "SOA REF NO.",
+//                        toList1.getControlNo().split("-")[2],
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
@@ -177,12 +192,22 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                 for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
                     if (soaTrans.getVoid() == 0) {
                         String qty = "";
+                        String qtyFiller = "";
 
+                        for (int i = 0; i < soaTrans.getQty(); i++) {
+                            qtyFiller += " ";
+                        }
                         qty += soaTrans.getQty();
+
+
+
                         if (String.valueOf(soaTrans.getQty()).length() < 4) {
                             for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
                                 qty += " ";
+                                qtyFiller += " ";
                             }
+                        } else {
+                            qtyFiller = "    ";
                         }
                         String item = "";
 
@@ -245,7 +270,6 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                         if (soaTrans.getPostAlaCartList().size() > 0) {
                             for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
 
-
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
                                         ""
@@ -257,23 +281,26 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                             }
                         }
 
-                        if (soaTrans.getPostGroupList().size() > 0) {
-                            for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
-                                for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
-
-
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
-                                            ""
-                                            ,
-                                            40,
-                                            2,
-                                            context),
-                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                }
-
-                            }
-                        }
+//                        if (soaTrans.getDiscounts().size() > 0) {
+//                            for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
+//                                if (TextUtils.isEmpty(d.getDeleted_at())) {
+//                                    String itemDiscount = "";
+//                                    if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
+//                                        itemDiscount = "LESS ";
+//                                    } else {
+//                                        itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
+//                                    }
+//
+//                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                            qtyFiller+ " "+itemDiscount,
+//                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
+//                                            ,
+//                                            40,
+//                                            2,context),
+//                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                                }
+//                            }
+//                        }
                     }
                 }
 
@@ -340,7 +367,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "   VAT EXEMPT",
-                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
                         40,
                         2,
                         context)
@@ -350,7 +377,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "   DISCOUNT",
-                        returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
                         40,
                         2,
                         context)
@@ -359,7 +386,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "   ADVANCED DEPOSIT",
-                        returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
+                        toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
                         40,
                         2,
                         context)
@@ -372,13 +399,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "SUB TOTAL",
-                        returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 
 
 //            addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -390,35 +411,44 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 //                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "AMOUNT DUE",
-                        returnWithTwoDecimal(String.valueOf(
-                                (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
-                                        - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
-                        40,
-                        2,
-                        context)
-                        ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "TENDERED",
-                        returnWithTwoDecimal(String.valueOf(toList1.getTendered())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "CHANGE",
-                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "SUB TOTAL",
+//                        returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "AMOUNT DUE",
+//                        returnWithTwoDecimal(String.valueOf(
+//                                (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+//                                        - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "TENDERED",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getTendered())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "CHANGE",
+//                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
@@ -494,7 +524,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VATABLE SALES",
-                        returnWithTwoDecimal(String.valueOf(toList1.getVatable())),
+                        returnWithTwoDecimal(String.valueOf(toList1.getVatable() * -1)),
                         40,
                         2,
                         context)
@@ -504,14 +534,14 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VAT AMOUNT",
-                        returnWithTwoDecimal(String.valueOf(toList1.getVat())),
+                        returnWithTwoDecimal(String.valueOf(toList1.getVat() * -1)),
                         40,
                         2,context)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VAT-EXEMPT SALES",
-                        returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales())),
+                        returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales() * -1)),
                         40,
                         2,
                         context)
@@ -631,12 +661,25 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                                 }
 
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "ADDRESS",
+                                        d.getInfo().getAddress().toUpperCase(),
+                                        40,
+                                        2,
+                                        context)
+                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "SIGNATURE",
                                         "",
                                         40,
                                         2,
                                         context)
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                                addPrinterSpace(1);
+
+
                             }
                         }
                     }
@@ -686,6 +729,51 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addPrinterSpace(1);
 
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "SUB TOTAL",
+//                        returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
+                        "0.00",
+                        40,
+                        2,
+                        context)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "AMOUNT DUE",
+                        "0.00",
+//                        returnWithTwoDecimal(String.valueOf(
+//                                (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+//                                        - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
+                        40,
+                        2,
+                        context)
+                        ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "TENDERED",
+                        "0.00",
+//                        "0.00",
+                        40,
+                        2,
+                        context)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "CHANGE",
+                        "0.00",
+                        40,
+                        2,
+                        context)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addPrinterSpace(1);
+
                 if (toList1.getCustomer() != null) {
                     if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
 
@@ -694,7 +782,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-                        addTextToPrinter(printer, "THIS RECEIPT IS ISSUED TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                        addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
                         addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
@@ -735,7 +823,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                     } else {
 
-
+                        addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                         addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                         addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                         addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
@@ -743,7 +831,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                     }
                 } else {
 
-
+                    addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
@@ -752,6 +840,11 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addPrinterSpace(1);
+
+                addTextToPrinter(printer, "THIS SERVES AS YOUR", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+//                addPrinterSpace(1);
 
                 addFooterToPrinter(toList1.getCreatedAt(), PrinterUtils.yearPlusFive(toList1.getCreatedAt()));
 
@@ -803,13 +896,14 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
         if (printer != null) {
 //            addTextToPrinter(printer, "THIS IS NOT AN OFFICIAL RECEIPT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "Thank you come again", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "----- SYSTEM PROVIDER DETAILS -----", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Provider : NERDVANA CORP.", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Address : 1 CANLEY ROAD BRGY BAGONG ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "TIN: 009-772-500-000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "ACCRE No. : ******", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Date issued : " + Utils.birDateTimeFormat(currentDate), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "Valid until : " + Utils.birDateTimeFormat(currentDatePlus5), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "----- SYSTEM PROVIDER DETAILS -----", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "POS Provider : NERDVANA CORP.", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Address : 1 CANLEY ROAD BRGY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "BAGONG ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "VAT REG TIN: 009-772-500-000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "ACCRED NO:**********************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Date Issued : " + Utils.birDateTimeFormat(currentDate), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "Valid Until : " + Utils.birDateTimeFormat(currentDatePlus5), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //            addTextToPrinter(printer, "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);
             addTextToPrinter(printer, "THIS RECEIPT SHALL BE VALID FOR", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -821,6 +915,11 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "VALID FOR CLAIM", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "OF INPUT TAX", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addPrinterSpace(1);
+
+            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+            addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         }
     }
 

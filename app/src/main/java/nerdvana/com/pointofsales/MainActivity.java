@@ -46,6 +46,7 @@ import android.widget.Toast;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
+import com.epson.epos2.printer.ReceiveListener;
 import com.epson.eposprint.Print;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -160,6 +161,7 @@ import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.ChangeWakeUpCallPrintModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.InfoModel;
+import nerdvana.com.pointofsales.model.MachineChangeRefresh;
 import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
@@ -182,6 +184,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
+import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
+import static nerdvana.com.pointofsales.PrinterUtils.returnWithTwoDecimal;
+import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
     private CollectionDialog collectionDialog;
@@ -239,11 +246,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private TextView onlineTextIndicator;
     private ImageView onlineImageIndicator;
 
+    private String branchAndCode = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        branchAndCode = SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.BRANCH) + "_"  +
+                SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CODE) + "_";
 
 
 
@@ -264,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         toggleTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                ApplicationConstants.IS_THEME_CHANGED = "T";
                 SharedPreferenceManager.saveString(getApplicationContext(), isChecked ? "dark" : "light", ApplicationConstants.THEME_SELECTED);
                 changeTheme();
             }
@@ -643,15 +655,32 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         loadPrinter();
 
         changeTheme();
+        changeMachine();
 
-//        Log.d("ONRESUME", "ON RESUME CALLED");
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (!hasPermission()) {
+//                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+//                requestPermissions(permissions, 100);
+//            } else {
+//                Toast.makeText(MainActivity.this, "Allowed", Toast.LENGTH_LONG).show();
+//            }
 //
-//        View view = this.getCurrentFocus();
-//        if (view != null) {
-//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //        }
+
     }
+
+    private boolean hasPermission() {
+        boolean isPermitted = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                isPermitted = true;
+            }
+        }
+        return isPermitted;
+    }
+
+
 
     @Subscribe
     public void apiError(ApiError apiError) {
@@ -741,82 +770,95 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
         switch (printModel.getType()) {
             case "SPOT_AUDIT_PRINT":
-                willExecutGlobalPrint = false;
-                addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
+                //willExecutGlobalPrint = false;
+                //addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
                 break;
             case "CHANGE_QTY":
-                willExecutGlobalPrint = false;
-                addAsync(new ChangeQtyAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "change_qty");
+                //willExecutGlobalPrint = false;
+                //addAsync(new ChangeQtyAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "change_qty");
                 break;
             case "FRANCHISE_OR":
                 willExecutGlobalPrint = false;
                 addAsync(new FranchiseCheckoutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "franchise_or");
                 break;
             case "IN_TRANSIT": //ignore header
-                willExecutGlobalPrint = false;
-                addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
+                //willExecutGlobalPrint = false;
+                //addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
                 break;
             case "POST_VOID": //ignore header
                 willExecutGlobalPrint = false;
+                savePostVoidToLocal(printModel, MainActivity.this, userModel, currentDateTime);
                 addAsync(new PostVoidAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "postvoid");
                 break;
             case "CHANGE_WAKE_UP_CALL": //done
-                willExecutGlobalPrint = false;
-                addAsync(new ChangeWakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "changewakeupcall");
+                //willExecutGlobalPrint = false;
+                //addAsync(new ChangeWakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "changewakeupcall");
                 break;
             case "BACKOUT": //done
-                willExecutGlobalPrint = false;
-                addAsync(new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "backout");
+                //willExecutGlobalPrint = false;
+                //addAsync(new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "backout");
                 break;
             case "SHORTOVER"://ignore
-                willExecutGlobalPrint = false;
-                addAsync(new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "shortover");
+                //willExecutGlobalPrint = false;
+                //addAsync(new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "shortover");
                 break;
             case "CASHRECONCILE"://ignore
-                willExecutGlobalPrint = false;
-                addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
+                //willExecutGlobalPrint = false;
+                saveCashierReconcileToLocal(printModel, userModel, currentDateTime);
+                //addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
                 break;
             case "SAFEKEEPING"://ignore
+                //willExecutGlobalPrint = false;
+                saveSafeKeepToLocal(printModel, userModel, currentDateTime);
+                //addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
+                break;//REPRINTZREAD
+            case "REPRINTZREAD"://ignore
                 willExecutGlobalPrint = false;
-                addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
+                saveZReadToLocal(printModel, userModel, currentDateTime);
+                addAsync(new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "zread");
                 break;
             case "ZREAD"://ignore
                 willExecutGlobalPrint = false;
+                saveZReadToLocal(printModel, userModel, currentDateTime);
                 addAsync(new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "zread");
                  break;
-            case "REXREADING"://ignore
+            case "REPRINTXREADING"://ignore
+
+                Log.d("REPRINT", "PLEASE");
+
                 willExecutGlobalPrint = false;
                 addAsync(new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "xread");
                 break;
-            case "SWITCH_ROOM"://done
+            case "REXREADING"://ignore
                 willExecutGlobalPrint = false;
-                addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
+                saveXReadToLocal(printModel, userModel, currentDateTime);
+                addAsync(new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "xread");
+                break;
+            case "SWITCH_ROOM"://done
+                //willExecutGlobalPrint = false;
+                //addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
                 break;
             case "PRINT_RECEIPT"://done //checkout
-
-
-                Log.d("PRINT_RECEIPT", "PRINT START");
                 willExecutGlobalPrint = false;
-
                 saveDataToLocal(printModel, userModel, currentDateTime);
-//                addAsync(new CreateReceiptAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "create_receipt");
-
-
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "checkout");
-
-                Log.d("PRINT_RECEIPT", "PRINT END");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout");
+                break;
+            case "REPRINT_RECEIPT"://done //checkout
+                willExecutGlobalPrint = false;
+                saveDataToLocal(printModel, userModel, currentDateTime);
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "reprint_checkout");
                 break;
             case "DEPOSIT"://done
-                willExecutGlobalPrint = false;
-                addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
+                //willExecutGlobalPrint = false;
+                //addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
                 break;
             case "SOA-TO"://done
                 willExecutGlobalPrint = false;
                 addAsync(new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soato");
                 break;
             case "CHECKIN"://done
-                willExecutGlobalPrint = false;
-                addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
+                //willExecutGlobalPrint = false;
+                //addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
                 break;
             case "VOID"://done
                 willExecutGlobalPrint = false;
@@ -849,22 +891,36 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
     }
 
-    private void saveDataToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
-
-
+    private void savePostVoidToLocal(PrintModel printModel, MainActivity mainActivity, UserModel userModel, String currentDateTime) {
 
         String finalString = "";
+
         String receiptNo = "NA";
+
+
         finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
         finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("671-9782", "", MainActivity.this, true);
+        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
         finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
         finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
+        finalString += receiptString("V O I D", "", MainActivity.this, true);
+
         FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
                 ;
+
+
+        finalString += receiptString("", "", MainActivity.this, true);
+
+        if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
+            finalString += receiptString("ROOM #" + printModel.getRoomNumber(), "", MainActivity.this, true);
+        } else {
+            finalString += receiptString("TAKEOUT", "", MainActivity.this, true);
+        }
+
+
         if (toList1 != null) {
 
             //region create receipt data
@@ -880,20 +936,28 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
 
 
-            finalString += receiptString("RECEIPT NO", toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(), MainActivity.this, false);
-            finalString += receiptString("MACHINE NO", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MACHINE_ID), MainActivity.this, false);
+            finalString += receiptString("OR NO", toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(), MainActivity.this, false);
+            finalString += receiptString("TERMINAL NO", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MACHINE_ID), MainActivity.this, false);
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
             finalString += receiptString("QTY   DESCRIPTION         AMOUNT", "", MainActivity.this, true);
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
             for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
                 if (soaTrans.getVoid() == 0) {
                     String qty = "";
+                    String qtyFiller = "";
+
+                    for (int i = 0; i < soaTrans.getQty(); i++) {
+                        qtyFiller += " ";
+                    }
 
                     qty += soaTrans.getQty();
                     if (String.valueOf(soaTrans.getQty()).length() < 4) {
                         for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
                             qty += " ";
+                            qtyFiller += " ";
                         }
+                    } else {
+                        qtyFiller = "    ";
                     }
                     String item = "";
 
@@ -948,6 +1012,22 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                         }
                     }
+
+                    if (soaTrans.getDiscounts().size() > 0) {
+                        for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
+                            if (TextUtils.isEmpty(d.getDeleted_at())) {
+                                String itemDiscount = "";
+                                if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
+                                    itemDiscount = "LESS ";
+                                } else {
+                                    itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
+                                }
+
+                                finalString += receiptString(qtyFiller+ " "+itemDiscount,"-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount())) ,MainActivity.this, false);
+
+                            }
+                        }
+                    }
                 }
             }
 
@@ -983,12 +1063,13 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("LESS", "", MainActivity.this, false);
 
 
-            finalString += receiptString("   VAT EXEMPT", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
 
 
-            finalString += receiptString("   DISCOUNT", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
+            finalString += receiptString("   VAT EXEMPT", toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
 
-            finalString += receiptString("   ADVANCED DEPOSIT", returnWithTwoDecimal(String.valueOf(toList1.getAdvance())), MainActivity.this, false);
+            finalString += receiptString("   DISCOUNT", toList1.getDiscount() > 0 ? String.format("-%s",returnWithTwoDecimal(String.valueOf(toList1.getDiscount()))) : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
+
+//            finalString += receiptString("   ADVANCED DEPOSIT", toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())), MainActivity.this, false);
 
             finalString += receiptString("", "", MainActivity.this, true);
 
@@ -1052,7 +1133,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
 
 
-            finalString += receiptString("PAYMENT TYPE", tmpArr.size() > 1 ? "MULTIPLE" : pymType, MainActivity.this, false);
+//            finalString += receiptString("PAYMENT TYPE", tmpArr.size() > 1 ? "MULTIPLE" : pymType, MainActivity.this, false);
 
 
 
@@ -1191,7 +1272,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
                 } else {
-
+                    finalString += receiptString("THIS RECEIPT IS ISSUED TO", "", MainActivity.this, true);
                     finalString += receiptString("NAME:___________________________", "", MainActivity.this, true);
                     finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
                     finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
@@ -1199,7 +1280,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                 }
             } else {
-
+                finalString += receiptString("THIS RECEIPT IS ISSUED TO", "", MainActivity.this, true);
                 finalString += receiptString("NAME:___________________________", "", MainActivity.this, true);
                 finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
                 finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
@@ -1215,18 +1296,13 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("Thank you come again", "", MainActivity.this, true);
 
             finalString += receiptString("----- SYSTEM PROVIDER DETAILS -----", "", MainActivity.this, true);
-
-            finalString += receiptString("Provider : NERDVANA CORP.", "", MainActivity.this, true);
-
-            finalString += receiptString("Address : 1 CANLEY ROAD BRGY BAGONG ILOG PASIG CITY", "", MainActivity.this, true);
-
-            finalString += receiptString("TIN: 009-772-500-000", "", MainActivity.this, true);
-
-            finalString += receiptString("ACCRE No. : ******", "", MainActivity.this, true);
-
-            finalString += receiptString("Date issued : " + toList1.getCreatedAt(), "", MainActivity.this, true);
-
-            finalString += receiptString("Valid until : " + PrinterUtils.yearPlusFive(toList1.getCreatedAt()), "", MainActivity.this, true);
+            finalString += receiptString("POS Provider : NERDVANA CORP.", "", MainActivity.this, true);
+            finalString += receiptString("Address : 1 CANLEY ROAD BRGY", "", MainActivity.this, true);
+            finalString += receiptString("BAGONG ILOG PASIG CITY", "", MainActivity.this, true);
+            finalString += receiptString("VAT REG TIN: 009-772-500-000", "", MainActivity.this, true);
+            finalString += receiptString("ACCRED NO:**********************", "", MainActivity.this, true);
+            finalString += receiptString("Date Issued : " + toList1.getCreatedAt(), "", MainActivity.this, true);
+            finalString += receiptString("Valid Until : " + PrinterUtils.yearPlusFive(toList1.getCreatedAt()), "", MainActivity.this, true);
 
             finalString += receiptString("", "", MainActivity.this, true);
 
@@ -1252,7 +1328,1113 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (!root.exists()) {
                     root.mkdirs();
                 }
-                File gpxfile = new File(root, receiptNo +".txt");
+                File gpxfile = new File(root, branchAndCode +"PV_"+receiptNo +".txt");
+                FileWriter writer = null;
+                writer = new FileWriter(gpxfile);
+
+                writer.append(finalString);
+//                writer.append("test data");
+
+                writer.flush();
+
+                writer.close();
+
+            } catch (IOException e) {
+                Log.d("ERRORMESSAGE", e.getMessage());
+//                asyncFinishCallBack.doneProcessing();
+            }
+
+
+
+
+        } else {
+            Log.d("DATANUL"," DATAI SNULL");
+        }
+
+
+
+
+
+
+
+    }
+
+    private void saveZReadToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
+
+        String finalString = "";
+
+
+        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
+        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
+        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
+        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
+        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+
+        finalString += receiptString("X READING", "", MainActivity.this, true);
+
+
+
+
+        ZReadResponse.Result zReadResponse = GsonHelper.getGson().fromJson(printModel.getData(), ZReadResponse.Result.class);
+
+        if (zReadResponse != null) {
+
+            finalString += receiptString("POSTING DATE: ", zReadResponse.getData().getGeneratedAt(), MainActivity.this, false);
+            finalString += receiptString("USER : ", userModel.getUsername(), MainActivity.this, false);
+            finalString += receiptString("MANAGER : ", zReadResponse.getData().getDutyManager().getName(), MainActivity.this, false);
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+            finalString += receiptString("DESCRIPTION                VALUE", "", MainActivity.this, true);
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+
+
+
+            finalString += receiptString("TERMINAL NO", String.valueOf(zReadResponse.getData().getPosId()), MainActivity.this, false);
+            finalString += receiptString("", "", MainActivity.this, false);
+            finalString += receiptString("GROSS SALES", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getGrossSales())), MainActivity.this, false);
+            finalString += receiptString("NET SALES", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getNetSales())), MainActivity.this, false);
+            finalString += receiptString("", "", MainActivity.this, false);
+            finalString += receiptString("VATABLES SALES", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatable())), MainActivity.this, false);
+            finalString += receiptString("VAT EXEMPT SALES", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExemptSales())), MainActivity.this, false);
+            finalString += receiptString("VAT EXEMPT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt())), MainActivity.this, false);
+            finalString += receiptString("12% VAT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVat())), MainActivity.this, false);
+//            finalString += receiptString("NON VAT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt())), MainActivity.this, false);
+//            finalString += receiptString("SERVICE CHARGE", "0.00", MainActivity.this, false);
+            finalString += receiptString("", "", MainActivity.this, false);
+
+            if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON))) {
+
+                TypeToken<List<FetchPaymentResponse.Result>> paymentTypeToken = new TypeToken<List<FetchPaymentResponse.Result>>() {
+                };
+                List<FetchPaymentResponse.Result> paymentTypeList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON), paymentTypeToken.getType());
+
+                List<PaymentPrintModel> paymentPrintModels = new ArrayList<>();
+
+                Double totalAdvancePayment = 0.00;
+                for (ZReadResponse.Payment pym : zReadResponse.getPayment()) {
+                    if (pym.getIsAdvance() == 1) {
+                        totalAdvancePayment += pym.getAmount();
+                    }
+
+                }
+
+
+                for (FetchPaymentResponse.Result payment : paymentTypeList) {
+
+                    Double value = 0.00;
+                    String isAdvance = "0";
+
+                    for (ZReadResponse.Payment pym : zReadResponse.getPayment()) {
+                        if (pym.getPaymentDescription().equalsIgnoreCase(payment.getPaymentType())) {
+                            value = Double.valueOf(pym.getAmount());
+                            isAdvance = String.valueOf(pym.getIsAdvance());
+                            break;
+                        }
+                    }
+                    if (payment.getPaymentType().equalsIgnoreCase("cash") || payment.getPaymentType().equalsIgnoreCase("card")) {
+
+                        if (isAdvance.equalsIgnoreCase("1")) {
+                            paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
+
+                            finalString += receiptString(payment.getPaymentType(), "0.00", MainActivity.this, false);
+
+                        } else {
+
+                            finalString += receiptString(payment.getPaymentType().toUpperCase()+ " SALES", String.valueOf(value), MainActivity.this, false);
+
+
+                            if (payment.getPaymentType().equalsIgnoreCase("card")) {
+
+                                finalString += receiptString("DEPOSIT SALES", String.valueOf(totalAdvancePayment), MainActivity.this, false);
+
+                            }
+                        }
+
+                    } else {
+
+                        if (value > 0) {
+                            if (isAdvance.equalsIgnoreCase("1")) {
+
+                                paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
+                            } else {
+
+
+                                finalString += receiptString(payment.getPaymentType(), String.valueOf(value), MainActivity.this, false);
+
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            finalString += receiptString("", "", MainActivity.this, false);
+
+            double depositAdjustment = 0.00;
+            for (ZReadResponse.CutOff cutOff : zReadResponse.getData().getCutOff()) {
+                depositAdjustment += Double.valueOf(cutOff.getCashAndReco().get(0).getAdjustmentDeposit());
+            }
+
+
+//            finalString += receiptString("DEPO. ADJUSTMENT", String.valueOf(depositAdjustment), MainActivity.this, false);
+            finalString += receiptString("VOID", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVoidAmount())), MainActivity.this, false);
+
+            addPrinterSpace(1);
+            if (zReadResponse.getDiscount().size() > 0) {
+
+                finalString += receiptString("DISCOUNT LIST", "", MainActivity.this, false);
+
+
+                TypeToken<List<FetchDiscountSpecialResponse.Result>> discToken = new TypeToken<List<FetchDiscountSpecialResponse.Result>>() {};
+                List<FetchDiscountSpecialResponse.Result> discountDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.DISCOUNT_SPECIAL_JSON), discToken.getType());
+
+                if (discountDetails != null) {
+                    for (FetchDiscountSpecialResponse.Result d : discountDetails) {
+                        Integer count = 0;
+                        Double amount = 0.00;
+                        for (ZReadResponse.Discount disc : zReadResponse.getDiscount()) {
+                            if (disc.getIsSpecial() == 1) {
+                                if (d.getId() == disc.getDiscountTypeId()) {
+                                    amount = disc.getDiscountAmount();
+                                    count = disc.getCount();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (d.getIsSpecial() == 1) {
+
+                            finalString += receiptString(d.getDiscountCard(), returnWithTwoDecimal(String.valueOf(amount)), MainActivity.this, false);
+                            finalString += receiptString(d.getDiscountCard()+"(COUNT)", String.valueOf(count), MainActivity.this, false);
+
+                        }
+
+                    }
+                }
+
+
+
+                int otherDiscCount = 0;
+                double otherDiscAmount = 0.00;
+
+
+                for (ZReadResponse.Discount disc : zReadResponse.getDiscount()) {
+                    if (disc.getIsSpecial() == 0) {
+                        otherDiscAmount+= disc.getDiscountAmount();
+                        otherDiscCount+= disc.getCount();
+                    }
+                }
+
+                finalString += receiptString("OTHERS(AMOUNT)", String.valueOf(otherDiscAmount), MainActivity.this, false);
+                finalString += receiptString("OTHERS(COUNT)", String.valueOf(otherDiscCount), MainActivity.this, false);
+
+            } else {
+
+                finalString += receiptString("SENIOR CITIZEN", "0.00", MainActivity.this, false);
+                finalString += receiptString("SENIOR CITIZEN(COUNT)", "0", MainActivity.this, false);
+
+                finalString += receiptString("PWD", "0.00", MainActivity.this, false);
+                finalString += receiptString("PWD(COUNT)", "0", MainActivity.this, false);
+
+                finalString += receiptString("OTHERS", "0.00", MainActivity.this, false);
+                finalString += receiptString("OTHERS(COUNT)", "0", MainActivity.this, false);
+
+            }
+
+            finalString += receiptString("", "", MainActivity.this, false);
+
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]), "", MainActivity.this, true);
+
+
+            finalString += receiptString("BEG. OR NO", zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA", MainActivity.this, false);
+            finalString += receiptString("ENDING OR NO", zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA", MainActivity.this, false);
+
+            finalString += receiptString("BEG. BALANCE", returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal())), MainActivity.this, false);
+            finalString += receiptString("ENDING BALANCE", returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal())), MainActivity.this, false);
+
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            finalString += receiptString("Z KEEPING COUNTER", returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), MainActivity.this, false);
+
+            finalString += receiptString("------ END OF REPORT ------", "", MainActivity.this, true);
+            finalString += receiptString("PRINTED DATE", "", MainActivity.this, true);
+            finalString += receiptString(currentDateTime, "", MainActivity.this, true);
+            finalString += receiptString("PRINTED BY", userModel.getUsername(), MainActivity.this, false);
+
+
+        } else {
+
+        }
+
+
+
+
+
+
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+        String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
+        String fileName = dtf.parseDateTime(currentDateTime).toString("yyyy_MM_dd_HH_mm_ss");
+
+        try {
+            File root = new File(Environment.getExternalStorageDirectory(), "POS/"+folderName);
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+
+
+            File gpxfile = new File(root, branchAndCode +"ZREAD_"+fileName +".txt");
+            FileWriter writer = null;
+            writer = new FileWriter(gpxfile);
+
+            writer.append(finalString);
+//                writer.append("test data");
+
+            writer.flush();
+
+            writer.close();
+
+        } catch (IOException e) {
+            Log.d("ERRORMESSAGE", e.getMessage());
+//                asyncFinishCallBack.doneProcessing();
+        }
+
+
+    }
+
+    private void saveXReadToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
+
+        String finalString = "";
+
+
+        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
+        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
+        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
+        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
+        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+
+        finalString += receiptString("X READING", "", MainActivity.this, true);
+
+            try {
+
+
+                JSONObject jsonObject = new JSONObject(printModel.getData());
+
+
+                JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                JSONArray dataCashAndRecoJsonObject = jsonObject.getJSONObject("data").getJSONArray("cash_and_reco");
+                JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
+                JSONObject dutyManager = jsonObject.getJSONObject("data").getJSONObject("duty_manager");
+                if (dataJsonObject != null) {
+
+                    finalString += receiptString("POSTING DATE: ", dataJsonObject.getString("cut_off_date"), MainActivity.this, false);
+                    finalString += receiptString("SHIFT : ", (dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA"), MainActivity.this, false);
+                    finalString += receiptString("USER : ", userModel.getUsername(), MainActivity.this, false);
+                    finalString += receiptString("MANAGER : ", dutyManager.getString("name"), MainActivity.this, false);
+                    finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+                    finalString += receiptString("DESCRIPTION                VALUE", "", MainActivity.this, true);
+                    finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+
+                    finalString += receiptString("TERMINAL NO: ", dataJsonObject.getString("pos_id"), MainActivity.this, false);
+                    finalString += receiptString("", "", MainActivity.this, false);
+                    finalString += receiptString("Gross Sales", returnWithTwoDecimal(dataJsonObject.getString("gross_sales")), MainActivity.this, false);
+                    finalString += receiptString("Net Sales", returnWithTwoDecimal(dataJsonObject.getString("net_sales")), MainActivity.this, false);
+                    finalString += receiptString("", "", MainActivity.this, false);
+                    finalString += receiptString("VATable Sales", returnWithTwoDecimal(dataJsonObject.getString("vatable")), MainActivity.this, false);
+                    finalString += receiptString("VAT EXEMPT SALES", returnWithTwoDecimal(dataJsonObject.getString("vat_exempt_sales")), MainActivity.this, false);
+                    finalString += receiptString("VAT EXEMPT", returnWithTwoDecimal(dataJsonObject.getString("vat_exempt")), MainActivity.this, false);
+                    finalString += receiptString("12% VAT", returnWithTwoDecimal(dataJsonObject.getString("vat")), MainActivity.this, false);
+//                    finalString += receiptString("SERVICE CHARGE", "0.00", MainActivity.this, false);
+
+
+                }
+
+
+                JSONArray paymentJsonArray = jsonObject.getJSONArray("payment");
+
+                finalString += receiptString("", "", MainActivity.this, false);
+
+
+
+                if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON))) {
+
+                    TypeToken<List<FetchPaymentResponse.Result>> paymentTypeToken = new TypeToken<List<FetchPaymentResponse.Result>>() {
+                    };
+                    List<FetchPaymentResponse.Result> paymentTypeList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON), paymentTypeToken.getType());
+
+                    Double totalAdvancePayment = 0.00;
+                    for (int i = 0; i < paymentJsonArray.length(); i++) {
+                        JSONObject temp = paymentJsonArray.getJSONObject(i);
+                        if (temp.getString("is_advance").equalsIgnoreCase("1") || temp.getString("is_advance").equalsIgnoreCase("1.0")) {
+                            totalAdvancePayment += Double.valueOf(temp.getString("amount"));
+                        }
+                    }
+
+
+
+
+                    List<PaymentPrintModel> paymentPrintModels = new ArrayList<>();
+                    for (FetchPaymentResponse.Result payment : paymentTypeList) {
+
+                        Double value = 0.00;
+                        String isAdvance = "0";
+                        for (int i = 0; i < paymentJsonArray.length(); i++) {
+                            JSONObject temp = paymentJsonArray.getJSONObject(i);
+                            if (temp.getString("payment_description").equalsIgnoreCase(payment.getPaymentType())) {
+                                value = Double.valueOf(temp.getString("amount"));
+                                isAdvance = temp.getString("is_advance");
+                                break;
+                            }
+                        }
+
+
+
+
+                        if (payment.getPaymentType().equalsIgnoreCase("cash") || payment.getPaymentType().equalsIgnoreCase("card")) {
+
+                            if (isAdvance.equalsIgnoreCase("1")) {
+
+                                paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
+
+
+                                finalString += receiptString(payment.getPaymentType(), "0.00", MainActivity.this, false);
+
+                            } else {
+
+
+                                finalString += receiptString(payment.getPaymentType() + " Sales", String.valueOf(value), MainActivity.this, false);
+
+                                if (payment.getPaymentType().equalsIgnoreCase("card")) {
+
+                                    finalString += receiptString("DEPOSIT SALES", String.valueOf(totalAdvancePayment), MainActivity.this, false);
+
+                                }
+                            }
+
+                        } else {
+
+                            if (value > 0) {
+                                if (isAdvance.equalsIgnoreCase("1")) {
+
+                                    paymentPrintModels.add(new PaymentPrintModel(payment.getPaymentType() + "(adv)", String.valueOf(value)));
+                                } else {
+
+                                    finalString += receiptString(payment.getPaymentType(), String.valueOf(value), MainActivity.this, false);
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                finalString += receiptString("", "", MainActivity.this, false);
+                JSONObject cashRecoObj = dataCashAndRecoJsonObject.getJSONObject(0);
+//                finalString += receiptString("DEPOSIT ADJ.", String.format("(%s)", String.valueOf(Double.valueOf(cashRecoObj.getString("adjustment_deposit")))), MainActivity.this, false);
+                finalString += receiptString("VOID", returnWithTwoDecimal(String.valueOf(dataJsonObject.get("void_amount"))), MainActivity.this, false);
+                JSONArray discountJsonArray = jsonObject.getJSONArray("discount");
+                finalString += receiptString("", "", MainActivity.this, false);
+                if (discountJsonArray.length() > 0) {
+                    finalString += receiptString("DISCOUNT LIST", "", MainActivity.this, false);
+                    TypeToken<List<FetchDiscountSpecialResponse.Result>> discToken = new TypeToken<List<FetchDiscountSpecialResponse.Result>>() {};
+                    List<FetchDiscountSpecialResponse.Result> discountDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.DISCOUNT_SPECIAL_JSON), discToken.getType());
+                    double otherDiscAmount = 0.00;
+                    if (discountDetails != null) {
+                        for (FetchDiscountSpecialResponse.Result d : discountDetails) {
+                            Integer count = 0;
+                            Double amount = 0.00;
+                            if (discountJsonArray.length() > 0) {
+                                for (int i = 0; i < discountJsonArray.length(); i++) {
+                                    JSONObject temp = discountJsonArray.getJSONObject(i);
+                                    if (temp.getString("is_special").equalsIgnoreCase("1") || temp.getString("is_special").equalsIgnoreCase("1.0")) {
+                                        if (temp.getString("discount_type_id").equalsIgnoreCase(String.valueOf(d.getId()))) {
+                                            amount = Double.valueOf(temp.getString("discount_amount"));
+                                            count = Integer.valueOf(temp.getString("count"));
+                                        }
+                                    } else {
+                                        otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
+                                    }
+                                }
+                            }
+                            finalString += receiptString(d.getDiscountCard(), String.valueOf(amount), MainActivity.this, false);
+                            finalString += receiptString(d.getDiscountCard() + "(COUNT)", String.valueOf(count), MainActivity.this, false);
+
+
+
+
+                        }
+                    }
+                    int otherDiscCount = 0;
+//                double otherDiscAmount = 0.00;
+                    finalString += receiptString("OTHERS", String.valueOf(otherDiscAmount), MainActivity.this, false);
+                } else {
+
+                    finalString += receiptString("SENIOR CITIZEN", "0.00", MainActivity.this, false);
+                    finalString += receiptString("SENIOR CITIZEN(COUNT)", "0", MainActivity.this, false);
+
+                    finalString += receiptString("PWD", "0.00", MainActivity.this, false);
+                    finalString += receiptString("PWD(COUNT)", "0", MainActivity.this, false);
+
+                    finalString += receiptString("OTHERS", "0.00", MainActivity.this, false);
+
+
+                }
+
+                finalString += receiptString("", "", MainActivity.this, false);
+
+                finalString += receiptString("------ END OF REPORT ------", "", MainActivity.this, true);
+                finalString += receiptString("PRINTED DATE", "", MainActivity.this, true);
+                finalString += receiptString(currentDateTime, "", MainActivity.this, true);
+                finalString += receiptString("PRINTED BY:", userModel.getUsername(), MainActivity.this, true);
+
+
+
+            } catch (JSONException e) {
+                Log.d("ERROR", e.getMessage());
+            }
+
+
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+        String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
+        String fileName = dtf.parseDateTime(currentDateTime).toString("yyyy_MM_dd_HH_mm_ss");
+
+        try {
+            File root = new File(Environment.getExternalStorageDirectory(), "POS/"+folderName);
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+            File gpxfile = new File(root, branchAndCode +"XREAD_"+fileName +".txt");
+            FileWriter writer = null;
+            writer = new FileWriter(gpxfile);
+
+            writer.append(finalString);
+//                writer.append("test data");
+
+            writer.flush();
+
+            writer.close();
+
+        } catch (IOException e) {
+            Log.d("ERRORMESSAGE", e.getMessage());
+//                asyncFinishCallBack.doneProcessing();
+        }
+    }
+
+    private void saveCashierReconcileToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
+
+        String finalString = "";
+
+        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
+        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
+        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
+        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
+        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+
+        finalString += receiptString("CASHIER RECONCILE", "", MainActivity.this, true);
+
+
+
+        TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
+        List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
+        finalString += receiptString("BILLS", "", MainActivity.this, true);
+        finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]), "", MainActivity.this, true);
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON))) {
+            TypeToken<List<FetchDenominationResponse.Result>> collectionToken2 = new TypeToken<List<FetchDenominationResponse.Result>>() {};
+            List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON), collectionToken2.getType());
+            Double finalAmount = 0.00;
+            for (FetchDenominationResponse.Result cfm : denoDetails) {
+                String valueCount = "0";
+                String valueAmount = "0.00";
+                for (CollectionFinalPostModel c : collectionDetails) {
+                    if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
+                        valueCount = c.getAmount();
+                        valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
+                        break;
+                    }
+                }
+                finalString += receiptString(String.format("%s  x %s", valueCount, cfm.getAmount()), valueAmount, MainActivity.this, false);
+                finalAmount += Double.valueOf(valueAmount);
+            }
+            finalString += receiptString("", "", MainActivity.this, false);
+            finalString += receiptString("CASH COUNT", String.valueOf(finalAmount), MainActivity.this, false);
+            finalString += receiptString("CASH OUT", String.valueOf(0.00), MainActivity.this, false);
+            finalString += receiptString("", "", MainActivity.this, false);
+            finalString += receiptString("------------", "", MainActivity.this, true);
+            finalString += receiptString("PRINTED DATE", "", MainActivity.this, true);
+            finalString += receiptString(currentDateTime, "", MainActivity.this, true);
+            finalString += receiptString("PRINTED BY:", userModel.getUsername(), MainActivity.this, true);
+
+
+
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+            String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
+            String fileName = dtf.parseDateTime(currentDateTime).toString("yyyy_MM_dd_HH_mm_ss");
+
+            try {
+                File root = new File(Environment.getExternalStorageDirectory(), "POS/"+folderName);
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+                File gpxfile = new File(root, branchAndCode +"CR_"+fileName +".txt");
+                FileWriter writer = null;
+                writer = new FileWriter(gpxfile);
+
+                writer.append(finalString);
+//                writer.append("test data");
+
+                writer.flush();
+
+                writer.close();
+
+            } catch (IOException e) {
+                Log.d("ERRORMESSAGE", e.getMessage());
+//                asyncFinishCallBack.doneProcessing();
+            }
+
+
+        }
+
+
+
+
+    }
+
+    private void saveSafeKeepToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
+
+        String finalString = "";
+
+        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
+        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
+        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
+        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
+        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+
+        finalString += receiptString("SAFEKEEPING", "", MainActivity.this, true);
+
+
+
+        TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
+        List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
+        finalString += receiptString("BILLS", "", MainActivity.this, true);
+        finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]), "", MainActivity.this, true);
+
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON))) {
+            TypeToken<List<FetchDenominationResponse.Result>> collectionToken2 = new TypeToken<List<FetchDenominationResponse.Result>>() {};
+            List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON), collectionToken2.getType());
+            Double finalAmount = 0.00;
+            for (FetchDenominationResponse.Result cfm : denoDetails) {
+                String valueCount = "0";
+                String valueAmount = "0.00";
+                for (CollectionFinalPostModel c : collectionDetails) {
+                    if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
+                        valueCount = c.getAmount();
+                        valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
+                        break;
+                    }
+                }
+                finalString += receiptString(String.format("%s  x %s", valueCount, cfm.getAmount()), valueAmount, MainActivity.this, false);
+                finalAmount += Double.valueOf(valueAmount);
+            }
+            finalString += receiptString("", "", MainActivity.this, false);
+            finalString += receiptString("CASH COUNT", String.valueOf(finalAmount), MainActivity.this, false);
+            finalString += receiptString("CASH OUT", String.valueOf(0.00), MainActivity.this, false);
+            finalString += receiptString("", "", MainActivity.this, false);
+            finalString += receiptString("------------", "", MainActivity.this, true);
+            finalString += receiptString("PRINTED DATE", "", MainActivity.this, true);
+            finalString += receiptString(currentDateTime, "", MainActivity.this, true);
+            finalString += receiptString("PRINTED BY:", userModel.getUsername(), MainActivity.this, true);
+
+
+
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+            String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
+            String fileName = dtf.parseDateTime(currentDateTime).toString("yyyy_MM_dd_HH_mm_ss");
+
+            try {
+                File root = new File(Environment.getExternalStorageDirectory(), "POS/"+folderName);
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+                File gpxfile = new File(root, branchAndCode +"SK_"+fileName +".txt");
+                FileWriter writer = null;
+                writer = new FileWriter(gpxfile);
+
+                writer.append(finalString);
+//                writer.append("test data");
+
+                writer.flush();
+
+                writer.close();
+
+            } catch (IOException e) {
+                Log.d("ERRORMESSAGE", e.getMessage());
+//                asyncFinishCallBack.doneProcessing();
+            }
+
+
+        }
+
+
+
+
+    }
+
+    private void saveDataToLocal(PrintModel printModel, UserModel userModel, String currentDateTime) {
+
+        String finalString = "";
+        String receiptNo = "NA";
+        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
+        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
+        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
+        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
+        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+
+
+
+        finalString += receiptString("OFFICIAL RECEIPT", "", MainActivity.this, true);
+        finalString += receiptString("", "", MainActivity.this, true);
+
+        if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
+            finalString += receiptString("ROOM #" + printModel.getRoomNumber(), "", MainActivity.this, true);
+        } else {
+            finalString += receiptString("TAKEOUT", "", MainActivity.this, true);
+        }
+
+
+
+
+
+
+        FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
+                ;
+        if (toList1 != null) {
+
+            //region create receipt data
+            finalString += receiptString("CASHIER", userModel.getUsername(), MainActivity.this, false);
+            finalString += receiptString("ROOM BOY", String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA"), MainActivity.this, false);
+            finalString += receiptString("CHECK IN", convertDateToReadableDate(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA"), MainActivity.this, false);
+            finalString += receiptString("CHECK OUT", convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA"), MainActivity.this, false);
+
+            if (toList1.getReceiptNo() == null) {
+                receiptNo = "NA";
+            } else {
+                receiptNo = toList1.getReceiptNo().toString();
+            }
+
+
+            finalString += receiptString("OR NO", toList1.getReceiptNo() == null ? "NOT YET CHECKOUT" : toList1.getReceiptNo().toString(), MainActivity.this, false);
+            finalString += receiptString("TERMINAL NO", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MACHINE_ID), MainActivity.this, false);
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+            finalString += receiptString("QTY   DESCRIPTION         AMOUNT", "", MainActivity.this, true);
+            finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
+            for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
+                if (soaTrans.getVoid() == 0) {
+                    String qty = "";
+                    String qtyFiller = "";
+
+                    for (int i = 0; i < soaTrans.getQty(); i++) {
+                        qtyFiller += " ";
+                    }
+
+
+                    qty += soaTrans.getQty();
+                    if (String.valueOf(soaTrans.getQty()).length() < 4) {
+                        for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                            qty += " ";
+                            qtyFiller += " ";
+                        }
+                    } else {
+                        qtyFiller = "    ";
+                    }
+                    String item = "";
+
+                    if (soaTrans.getProductId() == 0) {
+                        item =soaTrans.getRoomRate().toString();
+                    } else {
+                        item =soaTrans.getProduct().getProductInitial();
+                    }
+
+                    finalString += receiptString(qty + " " + item, returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty())), MainActivity.this, false);
+
+
+                    if (soaTrans.getFreebie() != null) {
+                        if (soaTrans.getFreebie().getPostAlaCart().size() > 0) {
+                            for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getFreebie().getPostAlaCart()) {
+
+                                finalString += receiptString("   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(), "", MainActivity.this, false);
+
+                            }
+                        }
+
+                        if (soaTrans.getFreebie().getPostGroup().size() > 0) {
+                            for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getFreebie().getPostGroup()) {
+                                for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+
+                                    finalString += receiptString("   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(), "", MainActivity.this, false);
+
+                                }
+                            }
+                        }
+
+
+                    }
+
+
+
+                    if (soaTrans.getPostAlaCartList().size() > 0) {
+                        for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
+
+                            finalString += receiptString("   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(), "", MainActivity.this, false);
+
+                        }
+                    }
+
+                    if (soaTrans.getPostGroupList().size() > 0) {
+                        for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
+                            for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+
+                                finalString += receiptString("   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(), "", MainActivity.this, false);
+
+                            }
+
+                        }
+                    }
+
+                    if (soaTrans.getDiscounts().size() > 0) {
+                        for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
+                            if (TextUtils.isEmpty(d.getDeleted_at())) {
+                                String itemDiscount = "";
+                                if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
+                                    itemDiscount = "LESS ";
+                                } else {
+                                    itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
+                                }
+
+                                finalString += receiptString(qtyFiller+ " "+itemDiscount,"-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount())) ,MainActivity.this, false);
+
+                            }
+                        }
+                    }
+
+                }
+            }
+
+
+
+
+            if (toList1.getOtHours() > 0) {
+
+                finalString += receiptString(String.valueOf(toList1.getOtHours()) + " " + "OT HOURS",
+                        returnWithTwoDecimal(String.valueOf(toList1.getOtAmount())), MainActivity.this, false);
+
+            }
+
+            if (Integer.valueOf(toList1.getPersonCount()) > 2) {
+
+
+                finalString += receiptString(String.valueOf(Integer.valueOf(toList1.getPersonCount()) - 2) + " " + "EXTRA PERSON",
+                        returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount())), MainActivity.this, false);
+
+            }
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+
+            finalString += receiptString("NO OF PERSON/S", returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
+
+            finalString += receiptString("NO OF FOOD ITEMS", returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            finalString += receiptString("LESS", "", MainActivity.this, false);
+
+
+            finalString += receiptString("   VAT EXEMPT", toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
+
+            finalString += receiptString("   DISCOUNT", toList1.getDiscount() > 0 ? String.format("-%s",returnWithTwoDecimal(String.valueOf(toList1.getDiscount()))) : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
+
+//            finalString += receiptString("   ADVANCED DEPOSIT", toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())), MainActivity.this, false);
+
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+//            bookedList.get(0).getTransaction().getTotal() + bookedList.get(0).getTransaction().getOtAmount() + bookedList.get(0).getTransaction().getXPersonAmount()
+
+
+            finalString += receiptString("SUB TOTAL", returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))), MainActivity.this, false);
+
+
+
+            finalString += receiptString("AMOUNT DUE", returnWithTwoDecimal(String.valueOf(
+                    (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+                            - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))), MainActivity.this, false);
+
+
+            finalString += receiptString("TENDERED", returnWithTwoDecimal(String.valueOf(toList1.getTendered())), MainActivity.this, false);
+
+
+            finalString += receiptString("CHANGE", returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))), MainActivity.this, false);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            List<Integer> tmpArr = new ArrayList<>();
+            String pymType = "";
+            List<String> ccardArray = new ArrayList<>();
+            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                    tmpArr.add(pym.getPaymentTypeId());
+                    pymType = pym.getPaymentDescription();
+                }
+
+                if (pym.getPaymentTypeId() == 2) {
+                    if (pym.getCardDetail() != null) {
+                        if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
+                            int starCount = 0;
+                            String finalData = "";
+                            if (pym.getCardDetail().getCardNumber().length() < 3) {
+                                finalData += pym.getCardDetail().getCardNumber();
+                            } else {
+                                starCount = pym.getCardDetail().getCardNumber().length() - 3;
+                                finalData += new String(new char[starCount]).replace("\0", "*");
+                                finalData += pym.getCardDetail().getCardNumber().substring(starCount);
+                            }
+
+                            if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+
+                                finalString += receiptString("MASTER", "", MainActivity.this, false);
+
+                            } else {
+                                finalString += receiptString("VISA", "", MainActivity.this, false);
+
+                            }
+
+                            finalString += receiptString(pym.getPaymentDescription(), finalData, MainActivity.this, false);
+
+                        }
+                    }
+                }
+            }
+
+
+//            finalString += receiptString("PAYMENT TYPE", tmpArr.size() > 1 ? "MULTIPLE" : pymType, MainActivity.this, false);
+
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+
+            finalString += receiptString("VATABLE SALES", returnWithTwoDecimal(String.valueOf(toList1.getVatable())), MainActivity.this, false);
+
+            finalString += receiptString("VAT-EXEMPT SALES", returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales())), MainActivity.this, false);
+
+            finalString += receiptString("12% VAT", returnWithTwoDecimal(String.valueOf(toList1.getVat())), MainActivity.this, false);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                if (pym.getIsAdvance() == 1) {
+
+                    finalString += receiptString(pym.getPaymentDescription(), returnWithTwoDecimal(String.valueOf(pym.getAmount())), MainActivity.this, false);
+
+                }
+            }
+
+            boolean hasSpecial = false;
+            List<SeniorReceiptCheckoutModel> seniorReceiptList = new ArrayList<>();
+            if (toList1.getDiscountsList().size() > 0) {
+                finalString += receiptString("DISCOUNT LIST", "", MainActivity.this, true);
+
+                for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
+
+
+                    if (TextUtils.isEmpty(d.getVoid_by())) {
+                        if (d.getId().equalsIgnoreCase("0")) { //MANUAL
+
+                        } else {
+
+                            if (d.getInfo() != null) {
+
+//                                if (d.getDiscountTypes().getIsSpecial() == 1) {
+//                                    hasSpecial = true;
+//                                    seniorReceiptList.add(
+//                                            new SeniorReceiptCheckoutModel(
+//                                                    d.getInfo().getName() == null ? "" : d.getInfo().getName(),
+//                                                    d.getInfo().getCardNo() == null ? "" : d.getInfo().getCardNo(),
+//                                                    d.getInfo().getAddress() == null ? "" : d.getInfo().getAddress(),
+//                                                    d.getInfo().getTin() == null ? "" : d.getInfo().getTin(),
+//                                                    d.getInfo().getBusinessStyle() == null ? "" : d.getInfo().getBusinessStyle()
+//                                            )
+//                                    );
+//                                }
+
+                                if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+
+                                    finalString += receiptString(d.getDiscountType(), "NA", MainActivity.this, false);
+
+
+                                } else {
+
+                                    if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+
+                                        finalString += receiptString(d.getDiscountType(), "NA", MainActivity.this, false);
+
+
+                                    } else {
+                                        if (d.getInfo().getCardNo() != null) {
+
+                                            finalString += receiptString(d.getDiscountType(), d.getInfo().getCardNo().toUpperCase(), MainActivity.this, false);
+
+
+                                        }
+
+                                        if (d.getInfo().getName() != null) {
+
+                                            finalString += receiptString("NAME", d.getInfo().getName().toUpperCase(), MainActivity.this, false);
+
+                                        }
+                                    }
+
+
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            finalString += receiptString("THIS IS NOT AN OFFICIAL RECEIPT", "", MainActivity.this, true);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            if (toList1.getCustomer() != null) {
+                if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+
+                    finalString += receiptString("", "", MainActivity.this, true);
+
+                    finalString += receiptString("THIS RECEIPT IS ISSUED TO", "", MainActivity.this, true);
+
+
+                    finalString += receiptString("NAME:"+toList1.getCustomer().getCustomer(), "", MainActivity.this, true);
+
+                    if (toList1.getCustomer().getAddress() != null) {
+
+                        finalString += receiptString("ADDRESS:"+toList1.getCustomer().getAddress(), "", MainActivity.this, true);
+
+                    } else {
+                        finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
+
+                    }
+
+                    if (toList1.getCustomer().getTin() != null) {
+                        finalString += receiptString("TIN#:"+toList1.getCustomer().getTin(), "", MainActivity.this, true);
+
+                    } else {
+
+                        finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
+
+                    }
+
+                    if (toList1.getCustomer().getBusinessStyle() != null) {
+                        finalString += receiptString("BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(), "", MainActivity.this, true);
+
+
+                        finalString += receiptString(toList1.getCustomer().getBusinessStyle(), "", MainActivity.this, true);
+
+                    } else {
+                        finalString += receiptString("BUSINESS STYLE:_________________", "", MainActivity.this, true);
+
+                    }
+
+
+
+                    finalString += receiptString("", "", MainActivity.this, true);
+
+
+                } else {
+                    finalString += receiptString("THIS RECEIPT IS ISSUED TO", "", MainActivity.this, true);
+                    finalString += receiptString("NAME:___________________________", "", MainActivity.this, true);
+                    finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
+                    finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
+                    finalString += receiptString("BUSINESS STYLE:_________________", "", MainActivity.this, true);
+
+                }
+            } else {
+                finalString += receiptString("THIS RECEIPT IS ISSUED TO", "", MainActivity.this, true);
+                finalString += receiptString("NAME:___________________________", "", MainActivity.this, true);
+                finalString += receiptString("ADDRESS:________________________", "", MainActivity.this, true);
+                finalString += receiptString("TIN#:___________________________", "", MainActivity.this, true);
+                finalString += receiptString("BUSINESS STYLE:_________________", "", MainActivity.this, true);
+
+            }
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            finalString += receiptString("Thank you come again", "", MainActivity.this, true);
+
+            finalString += receiptString("----- SYSTEM PROVIDER DETAILS -----", "", MainActivity.this, true);
+            finalString += receiptString("POS Provider : NERDVANA CORP.", "", MainActivity.this, true);
+            finalString += receiptString("Address : 1 CANLEY ROAD BRGY", "", MainActivity.this, true);
+            finalString += receiptString("BAGONG ILOG PASIG CITY", "", MainActivity.this, true);
+            finalString += receiptString("VAT REG TIN: 009-772-500-000", "", MainActivity.this, true);
+            finalString += receiptString("ACCRED NO:**********************", "", MainActivity.this, true);
+            finalString += receiptString("Date Issued : " + toList1.getCreatedAt(), "", MainActivity.this, true);
+            finalString += receiptString("Valid Until : " + PrinterUtils.yearPlusFive(toList1.getCreatedAt()), "", MainActivity.this, true);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+            finalString += receiptString("THIS RECEIPT SHALL BE VALID FOR", "", MainActivity.this, true);
+
+            finalString += receiptString("FIVE(5) YEARS FROM THE DATE OF", "", MainActivity.this, true);
+
+            finalString += receiptString("THE PERMIT TO USE", "", MainActivity.this, true);
+
+            finalString += receiptString("", "", MainActivity.this, true);
+
+
+
+            //endregion
+
+
+
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+            String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
+
+            try {
+                File root = new File(Environment.getExternalStorageDirectory(), "POS/"+folderName);
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+                File gpxfile = new File(root, branchAndCode +"OR_"+receiptNo +".txt");
                 FileWriter writer = null;
                 writer = new FileWriter(gpxfile);
 
@@ -1707,7 +2889,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (timerIntent != null) {
                     stopService(timerIntent);
                 }
-
+                ApplicationConstants.IS_THEME_CHANGED = "T";
                 SharedPreferenceManager
                         .saveString(
                                 MainActivity.this,
@@ -1730,36 +2912,38 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
         Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
-        if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
+        if (safeKeepAmount != 0) {
+            if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
 
 
-            if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
-                if (collectionDialog == null) {
-                    ApplicationConstants.IS_ACTIVE = "T";
-                    collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
-                        @Override
-                        public void printCashRecoData(String cashNRecoData) {
+                if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+                    if (collectionDialog == null) {
+                        ApplicationConstants.IS_ACTIVE = "T";
+                        collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
+                            @Override
+                            public void printCashRecoData(String cashNRecoData) {
 
-                        }
-                    };
+                            }
+                        };
 
-                    collectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            collectionDialog = null;
-                            ApplicationConstants.IS_ACTIVE = "F";
-                        }
-                    });
+                        collectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                collectionDialog = null;
+                                ApplicationConstants.IS_ACTIVE = "F";
+                            }
+                        });
 
-                    collectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            collectionDialog = null;
-                            ApplicationConstants.IS_ACTIVE = "F";
-                        }
-                    });
+                        collectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                collectionDialog = null;
+                                ApplicationConstants.IS_ACTIVE = "F";
+                            }
+                        });
 
-                    if (!collectionDialog.isShowing()) collectionDialog.show();
+                        if (!collectionDialog.isShowing()) collectionDialog.show();
+                    }
                 }
             }
         }
@@ -1772,10 +2956,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         timer.setText(timerModel.getTime());
 
         user.setText(currentText);
-        role.setText(String.format("%s SHIFT : %s", userModel.getUserGroup().toUpperCase(), timerModel.getShiftNumber()));
-
-
-
+//        role.setText(String.format("%s SHIFT : %s", userModel.getUserGroup().toUpperCase(), timerModel.getShiftNumber()));
+        role.setText(String.format("%s SHIFT : %s", "CASHIER", timerModel.getShiftNumber()));
     }
 
     private void fetchTimeRequest() {
@@ -2111,6 +3293,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 CheckInAsync checkInAsync = (CheckInAsync) asyncTask;
                 checkInAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
+            case "reprint_checkout":
+                CheckOutAsync reprintAsync = (CheckOutAsync) asyncTask;
+                reprintAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "checkout":
                 CheckOutAsync checkOutAsync = (CheckOutAsync) asyncTask;
                 checkOutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -2174,7 +3360,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
     }
 
+    private void changeMachine() {
+        if (ApplicationConstants.IS_MACHINE_CHANGED.equalsIgnoreCase("T")) {
+            BusProvider.getInstance().post(new MachineChangeRefresh(""));
+            ApplicationConstants.IS_MACHINE_CHANGED = "F";
+        }
+    }
+
     private void changeTheme() {
+
         BusProvider.getInstance().post(new ChangeThemeModel(""));
         if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).isEmpty()) {
             lightTheme();
@@ -2185,9 +3379,16 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 darkTheme();
             }
         }
+
+
+        if (ApplicationConstants.IS_THEME_CHANGED.equalsIgnoreCase("T")) {
+
+        }
+
     }
 
     private void lightTheme() {
+        ApplicationConstants.IS_THEME_CHANGED = "F";
         cardRole.setCardBackgroundColor(getResources().getColor(R.color.lightColorAccent));
         role.setBackgroundColor(getResources().getColor(R.color.lightColorAccent));
         role.setTextColor(getResources().getColor(R.color.lightColorAccentFont));
@@ -2202,6 +3403,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void darkTheme() {
+        ApplicationConstants.IS_THEME_CHANGED = "T";
         cardRole.setCardBackgroundColor(getResources().getColor(R.color.darkColorAccent));
         role.setBackgroundColor(getResources().getColor(R.color.darkColorAccent));
         role.setTextColor(getResources().getColor(R.color.darkColorAccentFont));

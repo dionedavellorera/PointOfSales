@@ -39,9 +39,10 @@ public class FetchOrderPendingAsync extends AsyncTask<RoomTableModel, Void, List
                 if (r.getCustomer() != null) {
                     if (!r.getCustomer().getCustomer().equalsIgnoreCase("to be filled") && !r.getCustomer().getCustomer().equalsIgnoreCase("empty")) {
                         String[] myName = r.getCustomer().getCustomer().trim().split(" ");
-                        for (int i = 0; i < myName.length; i++) {
-                            displayName += myName[i].trim().substring(0,1).toUpperCase();
-                        }
+                        displayName = myName[0];
+//                        for (int i = 0; i < myName.length; i++) {
+//                            displayName += myName[i].trim().substring(0,1).toUpperCase();
+//                        }
                     } else {
                         displayName = "GUEST";
                     }

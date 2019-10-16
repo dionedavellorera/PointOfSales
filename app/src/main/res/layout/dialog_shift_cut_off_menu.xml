@@ -12,7 +12,7 @@
 
         <Button
             android:layout_margin="5dp"
-            android:text="SHIFT CUT OFF"
+            android:text="X READING"
             android:id="@+id/btnXread"
             android:background="@drawable/button_selector"
             android:layout_width="match_parent"
@@ -20,7 +20,7 @@
 
         <Button
             android:layout_margin="5dp"
-            android:text="END OF DAY"
+            android:text="Z READING"
             android:id="@+id/btnZread"
             android:background="@drawable/button_selector"
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
         <Button
             android:visibility="gone"
             android:layout_margin="5dp"
-            android:text="REPRINT SHIFT CUT OFF"
+            android:text="REPRINT X READING"
             android:id="@+id/btnReprintXRead"
             android:background="@drawable/button_selector"
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         <Button
             android:visibility="gone"
             android:layout_margin="5dp"
-            android:text="REPRINT ZREAD"
+            android:text="REPRINT Z READING"
             android:id="@+id/btnReprintZread"
             android:background="@drawable/button_selector"
             android:layout_width="match_parent"
@@ -46,7 +46,7 @@
 
         <Button
             android:layout_margin="5dp"
-            android:text="REPRINT SHIFT CUT OFF."
+            android:text="REPRINT X READING"
             android:id="@+id/btnReprintXReadV2"
             android:background="@drawable/button_selector"
             android:layout_width="match_parent"
@@ -54,7 +54,7 @@
 
         <Button
             android:layout_margin="5dp"
-            android:text="REPRINT ZREAD."
+            android:text="REPRINT Z READING"
             android:id="@+id/btnReprintZReadV2"
             android:background="@drawable/button_selector"
             android:layout_width="match_parent"

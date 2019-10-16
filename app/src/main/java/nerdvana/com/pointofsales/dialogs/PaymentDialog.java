@@ -285,7 +285,6 @@ public abstract class PaymentDialog extends BaseDialog  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
 
         rootView = findViewById(R.id.rootView);
@@ -376,7 +375,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 
         } else {
 
-            pay.setText("PAY");
+            pay.setText("POSTING");
 
         }
 
@@ -778,13 +777,13 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
         totalPayment = normalPayment;
-        amountDue = (totalBalance - (advancePayment + discountPayment)) <= 0 ? 0.00 : Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)))));
+        amountDue = (totalBalance - (advancePayment + discountPayment + normalPayment)) <= 0 ? 0.00 : Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment + normalPayment)))));
         totalAmountDue.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 
         amountToPay.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 //        amountToPay.requestFocus();
         totalChange = (totalPayment + advancePayment + discountPayment) - totalBalance;
-        Log.d("MYCHANGE", String.valueOf(totalChange));
+
         displayTotalChange.setText(String.valueOf(totalChange));
 //        totalChange = (totalPayment + advancePayment) - (totalBalance - discountPayment);
         if (Double.valueOf(totalChange) < 1) {

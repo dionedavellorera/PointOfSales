@@ -20,6 +20,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
@@ -105,7 +106,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "MACHINE NO.",
+                        "TERMINAL NO",
                         String.valueOf(zReadResponse.getData().getPosId())
                         ,
                         40,
@@ -114,7 +115,12 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addPrinterSpace(1);
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
+
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "GROSS SALES",
@@ -134,7 +140,11 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addPrinterSpace(1);
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "VATABLE SALES",
@@ -155,6 +165,16 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "VAT EXEMPT",
+                        returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt()))
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "12% VAT",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVat()))
                         ,
@@ -163,26 +183,31 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NON VAT",
-                        returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt()))
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "NON VAT",
+//                        returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt()))
+//                        ,
+//                        40,
+//                        2,
+//                        context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "SERVICE CHARGE",
-                        "0.00"
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "SERVICE CHARGE",
+//                        "0.00"
+//                        ,
+//                        40,
+//                        2,
+//                        context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addPrinterSpace(1);
+
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
 
 
                 if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.PAYMENT_TYPE_JSON))) {
@@ -206,7 +231,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                         Double value = 0.00;
                         String isAdvance = "0";
-
+                        Double change = zReadResponse.getChange();
                         for (ZReadResponse.Payment pym : zReadResponse.getPayment()) {
                             if (pym.getPaymentDescription().equalsIgnoreCase(payment.getPaymentType())) {
                                 value = Double.valueOf(pym.getAmount());
@@ -226,19 +251,34 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                                         2,context),
                                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             } else {
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        payment.getPaymentType().toUpperCase()+ " SALES",
-                                        String.valueOf(value)
-                                        ,
-                                        40,
-                                        2,
-                                        context),
-                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                                if (payment.getPaymentType().equalsIgnoreCase("cash")) {
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            payment.getPaymentType().toUpperCase()+ " SALES",
+                                            returnWithTwoDecimal(String.valueOf(value + change))
+                                            ,
+                                            40,
+                                            2,
+                                            context),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            payment.getPaymentType().toUpperCase()+ " SALES",
+                                            returnWithTwoDecimal(String.valueOf(value))
+                                            ,
+                                            40,
+                                            2,
+                                            context),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+
+
 
                                 if (payment.getPaymentType().equalsIgnoreCase("card")) {
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             "DEPOSIT SALES",
-                                            String.valueOf(totalAdvancePayment)
+                                            returnWithTwoDecimal(String.valueOf(totalAdvancePayment))
                                             ,
                                             40,
                                             2,
@@ -268,7 +308,12 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                     }
                 }
 
-                addPrinterSpace(1);
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
+
 //            addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                    "CASH OUT",
 //                    "0.00"
@@ -281,14 +326,14 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                 for (ZReadResponse.CutOff cutOff : zReadResponse.getData().getCutOff()) {
                     depositAdjustment += Double.valueOf(cutOff.getCashAndReco().get(0).getAdjustmentDeposit());
                 }
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "DEPO. ADJUSTMENT",
-                        String.valueOf(depositAdjustment)
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "DEPO. ADJUSTMENT",
+//                        returnWithTwoDecimal(String.valueOf(depositAdjustment))
+//                        ,
+//                        40,
+//                        2,
+//                        context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 //            addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                    "REFUND",
@@ -308,7 +353,13 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addPrinterSpace(1);
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
+
+
                 if (zReadResponse.getDiscount().size() > 0) {
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "DISCOUNT LIST",
@@ -340,7 +391,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                             if (d.getIsSpecial() == 1) {
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         d.getDiscountCard(),
-                                        returnWithTwoDecimal(String.valueOf(amount))
+                                        returnWithTwoDecimal(returnWithTwoDecimal(String.valueOf(amount)))
                                         ,
                                         40,
                                         2,
@@ -375,7 +426,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "OTHERS(AMOUNT)",
-                            String.valueOf(otherDiscAmount)
+                            returnWithTwoDecimal(String.valueOf(otherDiscAmount))
                             ,
                             40,
                             2,
@@ -446,12 +497,17 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
 
-                addPrinterSpace(1);
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
+
 
                 addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "BEGINNING OR No",
+                        "BEG. OR NO",
                         zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA"
                         ,
                         40,
@@ -460,7 +516,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ENDING OR No",
+                        "ENDING OR NO",
                         zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA"
                         ,
                         40,
@@ -471,7 +527,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "BEGINNING BALANCE",
+                        "BEG. BALANCE",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal()))
                         ,
                         40,
@@ -480,7 +536,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ENDING BALANCe",
+                        "ENDING BALANCE",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal()))
                         ,
                         40,
@@ -490,11 +546,15 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addPrinterSpace(1);
+                try {
+                    printer.addFeedLine(1);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                }
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "Z-READ NO",
+                        "Z KEEPING COUNTER",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getCount()))
                         ,
                         40,
@@ -545,20 +605,20 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private String returnWithTwoDecimal(String amount) {
-        String finalValue = "";
-        if (amount.contains(".")) {
-            String[] tempArray = amount.split("\\.");
-            if (tempArray[1].length() > 2) {
-                finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
-            } else {
-                finalValue = tempArray[0] + "." + tempArray[1];
-            }
-        } else {
-            finalValue = amount;
-        }
-
-        return finalValue;
-
-    }
+//    private String returnWithTwoDecimal(String amount) {
+//        String finalValue = "";
+//        if (amount.contains(".")) {
+//            String[] tempArray = amount.split("\\.");
+//            if (tempArray[1].length() > 2) {
+//                finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
+//            } else {
+//                finalValue = tempArray[0] + "." + tempArray[1];
+//            }
+//        } else {
+//            finalValue = amount;
+//        }
+//
+//        return finalValue;
+//
+//    }
 }

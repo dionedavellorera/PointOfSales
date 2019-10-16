@@ -51,12 +51,13 @@ public class ViewReceiptDialog extends BaseDialog {
 
     private String roomId;
 
+    private EditText inputReceiptNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_view_receipt, "View Receipt");
         btnSearch = findViewById(R.id.btnSearch);
-
+        inputReceiptNumber = findViewById(R.id.inputReceiptNumber);
         chkTakeOut = findViewById(R.id.chkTakeOut);
         spinrRoomNumber = findViewById(R.id.spinrRoomNumber);
 
@@ -96,8 +97,8 @@ public class ViewReceiptDialog extends BaseDialog {
 
                 ViewReceiptViaDateRequest viewReceiptViaDateRequest =
                         new ViewReceiptViaDateRequest(
-                        isRoom ? roomId : "",
-                        "",
+                        isRoom ? "" : "",
+                                inputReceiptNumber.getText().toString(),
                         startDate.getText().toString(), endDate.getText().toString());
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                 Call<ViewReceiptViaDateResponse> request = iUsers.viewReceiptViaDate(
@@ -120,7 +121,7 @@ public class ViewReceiptDialog extends BaseDialog {
 
                     @Override
                     public void onFailure(Call<ViewReceiptViaDateResponse> call, Throwable t) {
-                        Log.d("TESTDATA_FAIL", t.getMessage());
+//                        Log.d("TESTDATA_FAIL", t.getMessage());
                     }
                 });
 

@@ -64,18 +64,15 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="1dp"
             android:text="VEHICLE"
             android:textStyle="italic"
             android:padding="10dp"/>
 
-
-
         <com.toptoche.searchablespinnerlibrary.SearchableSpinner
             android:id="@+id/spinnerVehicle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
+            android:layout_height="1dp"/>
 
         <TextView
             android:layout_width="match_parent"
