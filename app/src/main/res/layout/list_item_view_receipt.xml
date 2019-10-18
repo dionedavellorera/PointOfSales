@@ -30,16 +30,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:layout_below="@id/telNumber"
-        android:text="berd"
-        android:gravity="center"
-        android:id="@+id/serial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
 
     <TextView
-        android:layout_below="@id/serial"
+        android:layout_below="@id/telNumber"
         android:text="berd"
         android:gravity="center"
         android:id="@+id/vatReg"
@@ -50,22 +44,33 @@
         android:layout_below="@id/vatReg"
         android:text="berd"
         android:gravity="center"
-        android:id="@+id/permitNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_below="@id/permitNumber"
-        android:text="berd"
-        android:gravity="center"
         android:id="@+id/minNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
+        android:layout_below="@id/minNumber"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/serial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:layout_below="@id/serial"
+        android:text="berd"
+        android:gravity="center"
+        android:id="@+id/permitNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+
+    <TextView
         android:textStyle="bold"
         android:layout_margin="20dp"
-        android:layout_below="@id/minNumber"
+        android:layout_below="@id/permitNumber"
         android:text="berd"
         android:gravity="center"
         android:id="@+id/roomNumber"
@@ -158,7 +163,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:text="MACHINE NUMBER"
+                android:text="OR NO"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:gravity="right"
+                android:id="@+id/receiptNumberValue"
+                android:text="CASHIER"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="SOA REF NO."
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:gravity="right"
+                android:id="@+id/soaRefValue"
+                android:text="CASHIER"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="TERMINAL NO."
                 android:layout_weight="0.5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content" />
@@ -171,23 +214,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="RECEIPT NUMBER"
-                android:layout_weight="0.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:gravity="right"
-                android:id="@+id/receiptNumberValue"
-                android:text="CASHIER"
-                android:layout_weight="0.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -225,6 +252,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:id="@+id/layoutNoOfPerosn"
         android:layout_below="@id/layoutItemsInner"
         android:orientation="horizontal"
@@ -234,7 +262,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:text="NO OF PERSONS"/>
+            android:text="NO OF PERSON/S"/>
         <TextView
             android:gravity="right"
             android:text="d"
@@ -267,7 +295,9 @@
     <TextView
         android:id="@+id/less"
         android:textStyle="bold"
-        android:layout_margin="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/layoutNoOfItems"
         android:text="LESS"
         android:gravity="left"
@@ -317,6 +347,7 @@
                 android:layout_weight="0.5"/>
         </LinearLayout>
         <LinearLayout
+            android:visibility="gone"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -324,7 +355,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="         VAT EXEMPT"/>
+                android:text="         DEPOSIT"/>
             <TextView
                 android:gravity="right"
                 android:text="d"
@@ -335,6 +366,86 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="VATABLE SALES"/>
+            <TextView
+                android:gravity="right"
+                android:text="d"
+                android:id="@+id/vatableSalesValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="VAT AMOUNT"/>
+            <TextView
+                android:gravity="right"
+                android:text="d"
+                android:id="@+id/tweleVatValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="VAT-EXEMPT SALES"/>
+            <TextView
+                android:gravity="right"
+                android:text="d"
+                android:id="@+id/vatExemptSalesValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="ZERO RATED SALES"/>
+            <TextView
+                android:gravity="right"
+                android:text="0.00"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:id="@+id/layoutDiscountsInner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -403,58 +514,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"/>
         </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="VATABLE SALES"/>
-            <TextView
-                android:gravity="right"
-                android:text="d"
-                android:id="@+id/vatableSalesValue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"/>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="VATABLE EXEMPT SALES"/>
-            <TextView
-                android:gravity="right"
-                android:text="d"
-                android:id="@+id/vatExemptSalesValue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"/>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="12% VAT"/>
-            <TextView
-                android:gravity="right"
-                android:text="d"
-                android:id="@+id/tweleVatValue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"/>
-        </LinearLayout>
 
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="SOLD TO"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -535,8 +602,9 @@
             <!--android:layout_height="wrap_content" />-->
 
         <TextView
+            android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="THIS IS NOT AN OFFICIAL RECEIPT"
+            android:text="THIS SERVERS AS YOUR\nOFFICIAL RECEIPT"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -544,18 +612,6 @@
         <TextView
             android:gravity="center"
             android:text="THANK YOU COME AGAIN"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:gravity="center"
-            android:text="----------------------------------------------------------------------------------------"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:gravity="center"
-            android:text="SYSTEM PROVIDER DETAILS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -590,25 +646,22 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/dateIssued"
             android:gravity="center"
             android:text="Date Issued : 10/10/2019"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/validUntil"
             android:gravity="center"
             android:text="Valid until : 10/10/2024"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:visibility="gone"
-            android:gravity="center"
-            android:text="PTU No : FPU 2324254354353"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <TextView
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="THIS RECEIPT SHALL BE VALID FOR"
             android:layout_width="match_parent"

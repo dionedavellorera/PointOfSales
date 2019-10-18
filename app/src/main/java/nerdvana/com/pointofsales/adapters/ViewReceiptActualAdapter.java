@@ -20,6 +20,7 @@ import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Reprint;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
 
@@ -57,6 +58,7 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
         private TextView machineNumberValue;
         private TextView receiptNumberValue;
         private LinearLayout layoutItemsInner;
+        private LinearLayout layoutDiscountsInner;
         private TextView vatExemptValue;
         private TextView discountValue;
         private TextView advanceDepoValue;
@@ -69,6 +71,10 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
         private TextView itemCountValue;
         private TextView personCountValue;
         private TextView subtotalValue;
+        private TextView soaRefValue;
+
+        private TextView dateIssued;
+        private TextView validUntil;
 
 
         private TextView customerName;
@@ -78,6 +84,8 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            dateIssued = itemView.findViewById(R.id.dateIssued);
+            validUntil = itemView.findViewById(R.id.validUntil);
             btnReprint = itemView.findViewById(R.id.btnReprint);
             companyName = itemView.findViewById(R.id.companyName);
             address = itemView.findViewById(R.id.companyAddress);
@@ -100,19 +108,19 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             amountdueValue = itemView.findViewById(R.id.amountDueValue);
             tenderedValue = itemView.findViewById(R.id.tenderedValue);
             changeValue = itemView.findViewById(R.id.changeValue);
-            changeValue = itemView.findViewById(R.id.changeValue);
-            changeValue = itemView.findViewById(R.id.changeValue);
             tweleVatValue = itemView.findViewById(R.id.tweleVatValue);
             vatExemptSaleValue = itemView.findViewById(R.id.vatExemptSalesValue);
             vatableSalesValue = itemView.findViewById(R.id.vatableSalesValue);
             itemCountValue = itemView.findViewById(R.id.itemCountValue);
             personCountValue = itemView.findViewById(R.id.personCountValue);
             subtotalValue = itemView.findViewById(R.id.subtotalValue);
+            soaRefValue = itemView.findViewById(R.id.soaRefValue);
 
             customerName = itemView.findViewById(R.id.customerNameValue);
             customerAddress = itemView.findViewById(R.id.customerAddress);
             customerTin = itemView.findViewById(R.id.customerTinValue);
             customerBusinessStyle = itemView.findViewById(R.id.customerBusinesStyle);
+            layoutDiscountsInner = itemView.findViewById(R.id.layoutDiscountsInner);
         }
 
     }
@@ -123,6 +131,17 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         final ViewReceiptActualModel model = viewReceiptList.get(holder.getAdapterPosition());
         if(holder instanceof ViewReceiptActualAdapter.ViewHolder){
+
+            ((ViewHolder) holder)
+                    .dateIssued
+                    .setText("Date Issued : " + Utils.birDateTimeFormat(model.getCheckedOutAt()));
+
+            ((ViewHolder) holder)
+                    .validUntil
+                    .setText("Valid Until : " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(model.getCheckedOutAt())));
+
+
+
             ((ViewReceiptActualAdapter.ViewHolder) holder)
                     .companyName
                     .setText(model.getCompany());
@@ -179,6 +198,9 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
                     .machineNumberValue
                     .setText(model.getMachineNumber());
 
+            ((ViewHolder) holder)
+                    .soaRefValue
+                    .setText(model.getSoaRefValue());
 
             ((ViewHolder) holder)
                     .btnReprint
@@ -192,7 +214,130 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             ((ViewHolder) holder)
                     .layoutItemsInner.removeAllViews();
 
+            for (ViewReceiptViaDateResponse.VRDiscounts disc : model.getVrDiscountsList()) {
 
+
+                LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f);
+                LinearLayout.LayoutParams llp1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, 0.5f);
+
+
+                TextView discLabel = new TextView(context);
+                discLabel.setText("DISCOUNT LIST");
+                discLabel.setLayoutParams(llp);
+                TextView discValue = new TextView(context);
+                discValue.setText("");
+                discValue.setLayoutParams(llp1);
+
+                LinearLayout childLayout0 = new LinearLayout(
+                        context);
+                LinearLayout.LayoutParams linearParams0 = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                childLayout0.setLayoutParams(linearParams0);
+
+                childLayout0.addView(discLabel);
+                childLayout0.addView(discValue);
+                ((ViewHolder) holder)
+                        .layoutDiscountsInner
+                        .addView(childLayout0);
+
+
+
+
+
+                TextView tvId = new TextView(context);
+                tvId.setText(disc.getDiscountType() + " ID");
+                tvId.setLayoutParams(llp);
+                TextView tvCardNo = new TextView(context);
+                tvCardNo.setGravity(Gravity.RIGHT);
+                tvCardNo.setText(disc.getVrInfo() != null ? disc.getVrInfo().getCardNo().toUpperCase() : "");
+                tvCardNo.setLayoutParams(llp1);
+
+                LinearLayout childLayout = new LinearLayout(
+                        context);
+                LinearLayout.LayoutParams linearParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                childLayout.setLayoutParams(linearParams);
+
+                childLayout.addView(tvId);
+                childLayout.addView(tvCardNo);
+                ((ViewHolder) holder)
+                        .layoutDiscountsInner
+                        .addView(childLayout);
+
+
+                TextView tvName = new TextView(context);
+                tvName.setText("NAME");
+                tvName.setLayoutParams(llp);
+                TextView tvNameValue = new TextView(context);
+                tvNameValue.setGravity(Gravity.RIGHT);
+                tvNameValue.setText(disc.getVrInfo() != null ? disc.getVrInfo().getName().toUpperCase() : "");
+                tvNameValue.setLayoutParams(llp1);
+
+
+                LinearLayout childLayout1 = new LinearLayout(
+                        context);
+                LinearLayout.LayoutParams linearParams1 = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                childLayout1.setLayoutParams(linearParams1);
+
+                childLayout1.addView(tvName);
+                childLayout1.addView(tvNameValue);
+                ((ViewHolder) holder)
+                        .layoutDiscountsInner
+                        .addView(childLayout1);
+
+
+                TextView tvAddress = new TextView(context);
+                tvAddress.setText("ADDRESS");
+                tvAddress.setLayoutParams(llp);
+                TextView tvAddressValue = new TextView(context);
+                tvAddressValue.setGravity(Gravity.RIGHT);
+                tvAddressValue.setText(disc.getVrInfo() != null ? disc.getVrInfo().getAddress().toUpperCase() : "");
+                tvAddressValue.setLayoutParams(llp1);
+
+
+                LinearLayout childLayout2 = new LinearLayout(
+                        context);
+                LinearLayout.LayoutParams linearParams2 = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                childLayout2.setLayoutParams(linearParams2);
+
+                childLayout2.addView(tvAddress);
+                childLayout2.addView(tvAddressValue);
+                ((ViewHolder) holder)
+                        .layoutDiscountsInner
+                        .addView(childLayout2);
+
+                TextView tvSignature = new TextView(context);
+                tvSignature.setText("SIGNATURE");
+                tvSignature.setLayoutParams(llp);
+                TextView tvSigValue = new TextView(context);
+                tvSigValue.setText("");
+                tvSigValue.setLayoutParams(llp1);
+
+
+                LinearLayout childLayout3 = new LinearLayout(
+                        context);
+                LinearLayout.LayoutParams linearParams3 = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                childLayout3.setLayoutParams(linearParams3);
+                childLayout3.addView(tvSignature);
+                childLayout3.addView(tvSigValue);
+                ((ViewHolder) holder)
+                        .layoutDiscountsInner
+                        .addView(childLayout3);
+
+
+
+
+
+            }
 
             for (ViewReceiptViaDateResponse.Post_ data : model.getPostList()) {
 
@@ -213,7 +358,8 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
                 tvItem.setText(data.getProduct() == null ? data.getRoomRate() : data.getProduct().getProduct_initial());
                 tvItem.setLayoutParams(llp1);
                 TextView tvAmount = new TextView(context);
-                tvAmount.setText(String.valueOf(data.getTotal()));
+                tvAmount.setGravity(Gravity.RIGHT);
+                tvAmount.setText(PrinterUtils.returnWithTwoDecimal(String.valueOf(data.getPrice())));
                 tvAmount.setLayoutParams(llp2);
 
 
@@ -244,6 +390,7 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
             tvItem.setText("OT HOURS");
             tvItem.setLayoutParams(llp1);
             TextView tvAmount = new TextView(context);
+            tvAmount.setGravity(Gravity.RIGHT);
             tvAmount.setText(String.valueOf(model.getOtAmount()));
             tvAmount.setLayoutParams(llp2);
 

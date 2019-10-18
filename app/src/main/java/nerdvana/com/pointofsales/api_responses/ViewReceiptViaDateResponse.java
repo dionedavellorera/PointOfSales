@@ -2822,7 +2822,7 @@ public class ViewReceiptViaDateResponse {
         private List<Payment> payments = null;
         @SerializedName("discounts")
         @Expose
-        private List<Object> discounts = null;
+        private List<VRDiscounts> discounts = null;
         @SerializedName("post")
         @Expose
         private List<Post_> post = null;
@@ -3291,11 +3291,11 @@ public class ViewReceiptViaDateResponse {
             this.payments = payments;
         }
 
-        public List<Object> getDiscounts() {
+        public List<VRDiscounts> getDiscounts() {
             return discounts;
         }
 
-        public void setDiscounts(List<Object> discounts) {
+        public void setDiscounts(List<VRDiscounts> discounts) {
             this.discounts = discounts;
         }
 
@@ -3307,6 +3307,89 @@ public class ViewReceiptViaDateResponse {
             this.post = post;
         }
 
+    }
+
+    public class VRDiscounts {
+        @SerializedName("discount_type")
+        @Expose
+        private String discountType;
+        @SerializedName("info")
+        @Expose
+        private VRInfo vrInfo;
+
+        public String getDiscountType() {
+            return discountType;
+        }
+
+        public void setDiscountType(String discountType) {
+            this.discountType = discountType;
+        }
+
+        public VRInfo getVrInfo() {
+            return vrInfo;
+        }
+
+        public void setVrInfo(VRInfo vrInfo) {
+            this.vrInfo = vrInfo;
+        }
+    }
+
+    public class VRInfo {
+        @SerializedName("card_no")
+        @Expose
+        private String cardNo;
+        @SerializedName("name")
+        @Expose
+        private String name;
+        @SerializedName("tin")
+        @Expose
+        private String tin;
+        @SerializedName("address")
+        @Expose
+        private String address;
+        @SerializedName("business_style")
+        @Expose
+        private String businessStyle;
+
+        public String getCardNo() {
+            return cardNo;
+        }
+
+        public void setCardNo(String cardNo) {
+            this.cardNo = cardNo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getTin() {
+            return tin;
+        }
+
+        public void setTin(String tin) {
+            this.tin = tin;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        public String getBusinessStyle() {
+            return businessStyle;
+        }
+
+        public void setBusinessStyle(String businessStyle) {
+            this.businessStyle = businessStyle;
+        }
     }
 
     public class BranchRoomRate {

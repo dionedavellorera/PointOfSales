@@ -184,6 +184,26 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
+                    Log.d("TEKTEK", String.valueOf(Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount()))));
+//                    if ((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1)  == 1) {
+//                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                "CANCELLED SOA",
+//                                Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) ,
+//                                40,
+//                                2,
+//                                context)
+//                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                    } else {
+//                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                "CANCELLED SOA",
+//                                Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +String.valueOf((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1) - 1) ,
+//                                40,
+//                                2,
+//                                context)
+//                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                    }
+
+
                     List<List<String>> allData = new ArrayList<>();
                     List<String> str = new ArrayList<>();
                     for (int i = Integer.valueOf(toList1.getSoaCount()) - 1; i > 0; i--) {

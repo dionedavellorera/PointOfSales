@@ -12,7 +12,7 @@ public class FetchRoomViaIdResponse {
     @SerializedName("status")
     @Expose
     private Integer status;
-    @SerializedName("mesage")
+    @SerializedName("message")
     @Expose
     private String mesage;
 

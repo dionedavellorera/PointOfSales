@@ -37,6 +37,7 @@ public class ViewReceiptActualModel {
     private String itemCountValue;
 
     private String subTotalValue;
+    private String soaRefValue;
 
     private String otHours;
     private String otAmount;
@@ -46,6 +47,10 @@ public class ViewReceiptActualModel {
     private String customerAddress;
     private String customerTin;
     private String customerBusinessStyle;
+
+    private String checkedOutAt;
+
+    private List<ViewReceiptViaDateResponse.VRDiscounts> vrDiscountsList;
 
     public ViewReceiptActualModel(String company, String address,
                                   String telNumber, String serialNumber,
@@ -64,7 +69,11 @@ public class ViewReceiptActualModel {
                                   String otHours, String otAmount,
                                   String customerName, String customerAddress,
                                   String customerTin, String customerBusinessStyle,
-                                  String controlNumber) {
+                                  String controlNumber, String soaRefValue,
+                                  List<ViewReceiptViaDateResponse.VRDiscounts> vrDiscountsList,
+                                  String checkedOutAt) {
+        this.checkedOutAt = checkedOutAt;
+        this.vrDiscountsList = vrDiscountsList;
         this.controlNumber = controlNumber;
         this.customerName = customerName;
         this.customerAddress = customerAddress;
@@ -99,6 +108,19 @@ public class ViewReceiptActualModel {
         this.discount = discount;
         this.advanceDepo = advanceDepo;
         this.postList = postList;
+        this.soaRefValue = soaRefValue;
+    }
+
+    public String getCheckedOutAt() {
+        return checkedOutAt;
+    }
+
+    public List<ViewReceiptViaDateResponse.VRDiscounts> getVrDiscountsList() {
+        return vrDiscountsList;
+    }
+
+    public String getSoaRefValue() {
+        return soaRefValue;
     }
 
     public String getControlNumber() {

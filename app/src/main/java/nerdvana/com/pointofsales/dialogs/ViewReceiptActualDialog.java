@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Printer;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,9 +19,11 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Reprint;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.ViewReceiptActualAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
@@ -102,7 +105,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
 
 
         for (ViewReceiptViaDateResponse.Result r : result) {
-            Log.d("WATEKTEK", r.getReceiptNo());
+
 
             String customerName = "";
             String customerAddress = "=";
@@ -123,44 +126,49 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
 
             list.add(new ViewReceiptActualModel(
                     //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
-                    "NERDVANA CORP",
+                    "ABC COMPANY",
 //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
-                    "1 CANLEY ROAD BRGY. BAGONG ILOG PASIG CITY 1600",
-                    "TEL NO: 8671-9782",
+                    "1 ABC ST. DE AVE\nPASIG CITY 1600",
+                    "TEL NO: 8123-4567",
 //                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
-                    "SERIAL NO:" + "***-***-***",
+                    "SERIAL NO:" + "*******",
                     "VAT REG TIN NO:" + "009-772-500-000",
 //                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
 //                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
-                    "PERMIT NO:" + "***-***-***",
+                    "PERMIT NO:" + "*******-***-******-*****",
                     "MIN NO: " + "***-***-***",
-                    r.getGuestInfo() == null ? "TAKEOUT" : r.getGuestInfo().getRoom().getRoomNo() != null ? r.getGuestInfo().getRoom().getRoomNo().toString() : "EMPTY",
+                    r.getGuestInfo() == null ? "OFFICIAL RECEIPT(REPRINT)\n\n"+ "TAKEOUT" :  r.getGuestInfo().getRoom().getRoomNo() != null ? "OFFICIAL RECEIPT(REPRINT)\n\n"+"ROOM #" + r.getGuestInfo().getRoom().getRoomNo().toString() : "EMPTY",
                     r.getCashierOut().getName(),
                     r.getRoomBoy() == null ? "" : r.getGuestInfo().getRoomBoyIn().getName(),
-                    r.getGuestInfo() == null ? "" : r.getGuestInfo().getCheckIn(),
-                    r.getGuestInfo() == null ? "" : r.getGuestInfo().getCheckOut(),
+                    r.getGuestInfo() == null ? "" : Utils.birDateTimeFormat(r.getGuestInfo().getCheckIn()),
+                    r.getGuestInfo() == null ? "" : Utils.birDateTimeFormat(r.getGuestInfo().getCheckOut()),
                     r.getReceiptNo(),
                     String.valueOf(r.getPosId()),
-                    String.valueOf(r.getVatExempt()),
-                    String.valueOf(r.getDiscount()),
-                    String.valueOf(r.getAdvance()),
-                    String.valueOf(r.getTotal()),
-                    String.valueOf(r.getTendered()),
-                    String.valueOf(r.getChange()),
-                    String.valueOf(r.getVatable()),
-                    String.valueOf(r.getVatExemptSales()),
-                    String.valueOf(r.getVat()),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getVatExempt() > 0 ? r.getVatExempt() * -1 : 0.00)),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getDiscount() > 0 ? r.getDiscount() * -1 : 0.00)),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getAdvance())),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf((r.getTotal() + r.getOtAmount() + r.getxPersonAmount())
+                            - (r.getAdvance() + r.getDiscount() + r.getVatExempt())
+                    )),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getTendered())),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getChange() < 1 ? -1 * r.getChange() : r.getChange())),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getVatable())),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getVatExemptSales())),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getVat())),
                     String.valueOf(r.getPersonCount()),
                     String.valueOf(r.getTotalItem()),
-                    "--",
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf((r.getTotal() + r.getOtAmount() + r.getxPersonAmount()))),
                     r.getPost(),
                     String.valueOf(r.getOtHours()),
-                    String.valueOf(r.getOtAmount()),
+                    PrinterUtils.returnWithTwoDecimal(String.valueOf(r.getOtAmount())),
                     customerName,
                     customerAddress,
                     customerTin,
                     customerBusinessStyle,
-                    r.getControlNo()));
+                    r.getControlNo(),
+                    r.getControlNo().split("-")[2],
+                    r.getDiscounts(),
+                    r.getCheckedOutAt()));
 
         }
 

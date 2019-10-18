@@ -324,7 +324,6 @@ public interface IUsers {
     @FormUrlEncoded
     Call<UpdateCheckInTimeResponse> updateCheckInTime(@FieldMap Map<String, String> params);
 
-
     @POST("fetchBranchInfo")
     @FormUrlEncoded
     Call<FetchBranchInfoResponse> fetchBranchInfo(@FieldMap Map<String, String> params);
