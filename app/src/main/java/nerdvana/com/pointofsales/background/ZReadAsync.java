@@ -175,7 +175,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "12% VAT",
+                        "VAT AMOUNT",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVat()))
                         ,
                         40,

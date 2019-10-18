@@ -26,6 +26,7 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
+import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.adapters.ZXReceiptAdapter;
@@ -79,7 +80,7 @@ public class ZXActualDialog extends Dialog {
         btnPrintAll = findViewById(R.id.btnPrintAll);
 
         if (from.equalsIgnoreCase("x")) {
-            title = "X READ";
+            title = "X READING(REPRINT)";
 
             FetchXReadListRequestViaDate fetchXReadListRequest = new FetchXReadListRequestViaDate(startDate, endDate);
             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -142,40 +143,40 @@ public class ZXActualDialog extends Dialog {
 
                         ZXReadModel zxReadModel = new ZXReadModel(
 //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
-                                "NERDVANA CORP",
+                                "ABC COMPANY",
 //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
-                                "1 CANLEY ROAD BRGY. BAGONG ILOG PASIG CITY 1600",
-                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE),
+                                "1 ABC ST. DE AVE\nPASIG CITY 1600",
+                                "TEL NO: 8123-4567",
 //                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
                                 "SERIAL NO:" + "***-***-***",
                                 "VAT REG TIN NO:" + "009-772-500-000",
 //                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
 //                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
-                                "PERMIT NO:" + "***-***-***",
-                                "MIN NO: " + "***-***-***",
+                                "PERMIT NO:" + "********-***-*******-*****",
+                                "MIN NO: " + "****************",
                                 title,
-                                res.getData().getCutOffDate(),
+                                "POSTING DATE:" + res.getData().getCutOffDate(),
                                 from.equalsIgnoreCase("x") ? "SHIFT " + String.valueOf(res.getData().getShiftNo()) : "",
                                 res.getData().getCashier().getName(),
                                 res.getData().getDutyManager().getName(),
                                 String.valueOf(res.getData().getPosId()),
-                                String.valueOf(res.getData().getGrossSales()),
-                                String.valueOf(res.getData().getNetSales()),
-                                String.valueOf(res.getData().getVatable()),
-                                String.valueOf(res.getData().getVatExemptSales()),
-                                String.valueOf(res.getData().getVat()),
-                                String.valueOf(res.getData().getVatExempt()),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getGrossSales())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getNetSales())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVatable())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVatExemptSales())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVat())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVatExempt())),
                                 "0.00",
-                                String.valueOf(cashSales),
-                                String.valueOf(cardSales),
-                                String.valueOf(totalAdvancePayment),
-                                String.valueOf(onlineSales),
-                                res.getData().getCashAndReco().get(0).getAdjustmentDeposit(),
-                                String.valueOf(res.getData().getVoidAmount()),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(cashSales)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(cardSales)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAdvancePayment)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(onlineSales)),
+                                PrinterUtils.returnWithTwoDecimal(res.getData().getCashAndReco().get(0).getAdjustmentDeposit()),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVoidAmount())),
                                 String.valueOf(pwdCount),
-                                String.valueOf(pwdAmount),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(pwdAmount)),
                                 String.valueOf(seniorCount),
-                                String.valueOf(seniorAmount),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(seniorAmount)),
                                 String.valueOf(othersAmount),
                                 "--",
                                 "--",
@@ -256,7 +257,7 @@ public class ZXActualDialog extends Dialog {
             });
 
         } else { //z
-            title = "Z READ";
+            title = "Z READING(REPRINT)";
             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
             FetchZReadListRequestViaDate fetchZReadListRequest = new FetchZReadListRequestViaDate(startDate, endDate);
             Call<FetchZReadListViaDateResponse> request = iUsers.fetchZReadListRequestViaDate(fetchZReadListRequest.getMapValue());
@@ -321,45 +322,45 @@ public class ZXActualDialog extends Dialog {
 
                         ZXReadModel zxReadModel = new ZXReadModel(
 //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
-                                "NERDVANA CORP",
+                                "ABC COMPANY",
 //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
-                                "1 CANLEY ROAD BRGY. BAGONG ILOG PASIG CITY 1600",
-                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE),
+                                "1 ABC ST. DE AVE\nPASIG CITY 1600",
+                                "TEL NO: 8123-4567",
 //                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
                                 "SERIAL NO:" + "***-***-***",
                                 "VAT REG TIN NO:" + "009-772-500-000",
 //                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
 //                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
-                                "PERMIT NO:" + "***-***-***",
-                                "MIN NO: " + "***-***-***",
+                                "PERMIT NO:" + "********-***-*******-*****",
+                                "MIN NO: " + "****************",
                                 title,
-                                res.getData().getGeneratedAt(),
+                                "POSTING DATE: " + res.getData().getGeneratedAt(),
                                 from.equalsIgnoreCase("x") ? "xxxx" : "",
                                 res.getData().getCashier().getName(),
                                 res.getData().getDutyManager().getName(),
                                 String.valueOf(res.getData().getPosId()),
-                                String.valueOf(res.getData().getGrossSales()),
-                                String.valueOf(res.getData().getNetSales()),
-                                String.valueOf(res.getData().getVatable()),
-                                String.valueOf(res.getData().getVatExemptSales()),
-                                String.valueOf(res.getData().getVat()),
-                                String.valueOf(res.getData().getVatExempt()),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getGrossSales())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getNetSales())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVatable())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVatExemptSales())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVat())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVatExempt())),
                                 "0.00",
-                                String.valueOf(cashSales),
-                                String.valueOf(cardSales),
-                                String.valueOf(totalAdvancePayment),
-                                String.valueOf(onlineSales),
-                                String.valueOf(depositAdjustment),
-                                String.valueOf(res.getData().getVoidAmount()),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(cashSales)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(cardSales)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAdvancePayment)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(onlineSales)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(depositAdjustment)),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVoidAmount())),
                                 String.valueOf(pwdCount),
-                                String.valueOf(pwdAmount),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(pwdAmount)),
                                 String.valueOf(seniorCount),
-                                String.valueOf(seniorAmount),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(seniorAmount)),
                                 String.valueOf(othersAmount),
                                 res.getControlNo().size() > 0 ? res.getControlNo().get(0) : "NA",
                                 res.getControlNo().size() > 0 ? res.getControlNo().get(res.getControlNo().size() - 1) : "NA",
-                                returnWithTwoDecimal(String.valueOf(res.getOldGrandTotal())),
-                                returnWithTwoDecimal(String.valueOf(res.getNewGrandTotal())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getOldGrandTotal())),
+                                PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getNewGrandTotal())),
                                 String.valueOf(res.getCount()),
                                 String.valueOf(res.getData().getId()));
                         zxReadModelList.add(zxReadModel);

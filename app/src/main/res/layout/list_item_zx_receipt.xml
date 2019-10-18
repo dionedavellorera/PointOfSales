@@ -158,7 +158,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="MACHINE NO"/>
+                android:text="TERMINAL NO"/>
             <TextView
                 android:gravity="right"
                 android:id="@+id/machineNumberValue"
@@ -192,7 +192,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="NET SALEs"/>
+                android:text="NET SALES"/>
             <TextView
                 android:gravity="right"
                 android:id="@+id/netSalesValue"
@@ -243,7 +243,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="12% VAT"/>
+                android:text="VAT EXEMPT"/>
+            <TextView
+                android:gravity="right"
+                android:id="@+id/vatExemptValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="MACHINE NO"/>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="VAT AMOUNT"/>
             <TextView
                 android:gravity="right"
                 android:id="@+id/twelveVatValue"
@@ -253,6 +270,7 @@
                 android:text="MACHINE NO"/>
         </LinearLayout>
         <LinearLayout
+            android:visibility="gone"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -270,11 +288,11 @@
                 android:text="MACHINE NO"/>
         </LinearLayout>
         <LinearLayout
+            android:visibility="gone"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
-                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
@@ -391,6 +409,7 @@
                 android:text="MACHINE NO"/>
         </LinearLayout>
         <LinearLayout
+            android:visibility="gone"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -406,6 +425,45 @@
                 android:layout_weight="0.5"
                 android:text=""/>
         </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="SENIOR CITIZEN"/>
+            <TextView
+                android:gravity="right"
+                android:id="@+id/seniorValue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="MACHINE NO"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="SENIOR(COUNT)"/>
+            <TextView
+                android:gravity="right"
+                android:id="@+id/seniorCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="MACHINE NO"/>
+        </LinearLayout>
+
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -442,41 +500,7 @@
                 android:text="MACHINE NO"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="SENIOR"/>
-            <TextView
-                android:gravity="right"
-                android:id="@+id/seniorValue"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="MACHINE NO"/>
-        </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="SENIOR(COUNT)"/>
-            <TextView
-                android:gravity="right"
-                android:id="@+id/seniorCount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="MACHINE NO"/>
-        </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -521,7 +545,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="BEGINNING TRANS"/>
+                android:text="BEG. OR NO"/>
             <TextView
                 android:id="@+id/begTrans"
                 android:gravity="right"
@@ -539,7 +563,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="ENDING TRANS"/>
+                android:text="ENDING OR NO"/>
             <TextView
                 android:id="@+id/endTrans"
                 android:gravity="right"
@@ -548,6 +572,7 @@
                 android:layout_weight="0.5"
                 android:text="MACHINE NO"/>
         </LinearLayout>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -556,24 +581,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="NEW GRAND TOTAL"/>
-            <TextView
-                android:id="@+id/newGrandTotal"
-                android:gravity="right"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="MACHINE NO"/>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="OLD GRAND TOTAL"/>
+                android:text="BEG. BALANCE"/>
             <TextView
                 android:id="@+id/oldGrandTotal"
                 android:gravity="right"
@@ -583,6 +591,23 @@
                 android:text="MACHINE NO"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="ENDING BALANCE"/>
+            <TextView
+                android:id="@+id/newGrandTotal"
+                android:gravity="right"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:text="MACHINE NO"/>
+        </LinearLayout>
 
         <TextView
             android:gravity="center"
@@ -598,7 +623,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Z READ NO"/>
+                android:text="Z KEEPING COUNTER"/>
             <TextView
                 android:id="@+id/zReadNo"
                 android:gravity="right"

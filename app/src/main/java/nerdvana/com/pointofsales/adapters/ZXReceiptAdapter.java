@@ -56,6 +56,7 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private TextView netSalesValue;
         private TextView vatableSalesValue;
         private TextView vatExemptSalesValue;
+        private TextView vatExemptValue;
         private TextView twelveVatValue;
         private TextView nonVatValue;
         private TextView serviceChargeValue;
@@ -93,6 +94,7 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             title = itemView.findViewById(R.id.title);
             userValue = itemView.findViewById(R.id.userValue);
             managerValue = itemView.findViewById(R.id.managerValue);
+            vatExemptValue = itemView.findViewById(R.id.vatExemptValue);
 
 
             machineNumberValue = itemView.findViewById(R.id.machineNumberValue);
@@ -152,6 +154,9 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((ViewHolder) holder)
                     .companyName
                     .setText(model.getCompany());
+            ((ViewHolder) holder)
+                    .vatExemptValue
+                    .setText(model.getNonVat());
             ((ViewHolder) holder)
                     .address
                     .setText(model.getAddress());

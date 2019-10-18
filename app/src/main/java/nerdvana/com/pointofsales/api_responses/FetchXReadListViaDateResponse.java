@@ -317,7 +317,6 @@ public class FetchXReadListViaDateResponse {
     }
 
     public class Result {
-
         @SerializedName("data")
         @Expose
         private Data data;
