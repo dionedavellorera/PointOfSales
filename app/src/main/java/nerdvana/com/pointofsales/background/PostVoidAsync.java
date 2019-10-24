@@ -362,11 +362,11 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                 addPrinterSpace(1);
 
 
-                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "   VAT EXEMPT",
+                        "VAT EXEMPT",
                         toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
                         40,
                         2,
@@ -376,7 +376,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "   DISCOUNT",
+                        "DISCOUNT",
                         toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
                         40,
                         2,
@@ -385,7 +385,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "   ADVANCED DEPOSIT",
+                        "ADVANCED DEPOSIT",
                         toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
                         40,
                         2,

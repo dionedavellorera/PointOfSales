@@ -98,10 +98,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                 PrinterUtils.addHeader(printModel, printer);
 
-
-                Log.d("JSONDATA", printModel.getData());
-
-
                 JSONObject jsonObject = new JSONObject(printModel.getData());
 
 
@@ -426,7 +422,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     d.getDiscountCard(),
-                                    returnWithTwoDecimal(String.valueOf(amount))
+                                    amount > 0 ? "-" + returnWithTwoDecimal(String.valueOf(amount)) : returnWithTwoDecimal(String.valueOf(amount))
                                     ,
                                     40,
                                     2,
@@ -452,7 +448,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "OTHERS",
-                            returnWithTwoDecimal(String.valueOf(otherDiscAmount))
+                            otherDiscAmount > 0 ? "-" + returnWithTwoDecimal(String.valueOf(otherDiscAmount)) : returnWithTwoDecimal(String.valueOf(otherDiscAmount))
                             ,
                             40,
                             2,

@@ -101,10 +101,14 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                             @Override
                             public void run() {
                                 try {
+                                    printer.clearCommandBuffer();
+                                    printer.setReceiveEventListener(null);
+//                                    printer.endTransaction();
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
                                     e.printStackTrace();
+                                    Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
 //                                asyncFinishCallBack.doneProcessing();
                                 }
                             }
@@ -114,6 +118,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+                Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
 //            asyncFinishCallBack.doneProcessing();
             }
             //endregion
@@ -521,11 +526,11 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 addPrinterSpace(1);
 
 
-                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "   VAT EXEMPT",
+                        "VAT EXEMPT",
                         toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
                         40,
                         2,
@@ -535,7 +540,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "   DISCOUNT",
+                        "DISCOUNT",
                         toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
                         40,
                         2,
@@ -988,7 +993,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                             addTextToPrinter(printer, "BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
 
 
-                            addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+//                            addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                         } else {
 
                             addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);

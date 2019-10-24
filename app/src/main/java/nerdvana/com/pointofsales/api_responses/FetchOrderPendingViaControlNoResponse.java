@@ -1902,6 +1902,8 @@ public class FetchOrderPendingViaControlNoResponse {
         @Expose
         private Double vatExemptSales;
 
+
+
         public int getSpecial() {
             return special;
         }

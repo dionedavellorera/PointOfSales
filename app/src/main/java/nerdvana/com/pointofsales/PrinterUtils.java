@@ -13,6 +13,7 @@ import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 
 import static nerdvana.com.pointofsales.MainActivity.formatSeconds;
@@ -189,10 +190,11 @@ public class PrinterUtils {
 
                     Log.d("PRINER_CONNECTION", SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY));
                     printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
+//                    printer.beginTransaction();
                     isConnected = true;
                 }
             } catch (Epos2Exception e) {
-
+                Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
                 e.printStackTrace();
             }
         } else {
@@ -202,9 +204,11 @@ public class PrinterUtils {
                 try {
                     if (printer != null) {
                         printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+//                        printer.beginTransaction();
                         isConnected = true;
                     }
                 } catch (Epos2Exception e) {
+                    Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -245,8 +249,22 @@ public class PrinterUtils {
         if (printModel.getType().equalsIgnoreCase("DEPOSIT"))  addTextToPrinter(printer,"DEPOSIT SLIP" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("CHECKIN"))  addTextToPrinter(printer,"CHECK IN SLIP" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("VOID"))  addTextToPrinter(printer,"VOID SLIP" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
-        if (printModel.getType().equalsIgnoreCase("SOA-ROOM"))  addTextToPrinter(printer,"STATEMENT OF ACCOUNT" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
-        if (printModel.getType().equalsIgnoreCase("SOA-TO"))  addTextToPrinter(printer,"STATEMENT OF ACCOUNT" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+        if (printModel.getType().equalsIgnoreCase("SOA-ROOM")) {
+            FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class);
+            if (toList1.getIsSoa() > 1) {
+                addTextToPrinter(printer, "STATEMENT OF ACCOUNT(REPRINT)", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            } else {
+                addTextToPrinter(printer,"STATEMENT OF ACCOUNT" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+            }
+        }
+        if (printModel.getType().equalsIgnoreCase("SOA-TO")) {
+            FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class);
+            if (toList1.getIsSoa() > 1) {
+                addTextToPrinter(printer, "STATEMENT OF ACCOUNT(REPRINT)", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+            } else {
+                addTextToPrinter(printer,"STATEMENT OF ACCOUNT" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
+            }
+        }
         if (printModel.getType().equalsIgnoreCase("POST_VOID"))  addTextToPrinter(printer,"V O I D" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("ZREAD"))  addTextToPrinter(printer,"Z-READING" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         //REPRINTZREAD

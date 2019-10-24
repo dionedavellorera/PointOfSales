@@ -391,7 +391,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                             if (d.getIsSpecial() == 1) {
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         d.getDiscountCard(),
-                                        returnWithTwoDecimal(returnWithTwoDecimal(String.valueOf(amount)))
+                                        amount > 0 ? "-" + returnWithTwoDecimal(String.valueOf(amount)) : returnWithTwoDecimal(String.valueOf(amount))
                                         ,
                                         40,
                                         2,
@@ -426,7 +426,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "OTHERS(AMOUNT)",
-                            returnWithTwoDecimal(String.valueOf(otherDiscAmount))
+                            otherDiscAmount > 0 ? "-" + returnWithTwoDecimal(String.valueOf(otherDiscAmount)) : returnWithTwoDecimal(String.valueOf(otherDiscAmount))
                             ,
                             40,
                             2,
@@ -553,14 +553,17 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                 }
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "Z KEEPING COUNTER",
-                        returnWithTwoDecimal(String.valueOf(zReadResponse.getCount()))
-                        ,
-                        40,
-                        2,
-                        context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, "Z KEEPING COUNTER:" + returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "Z KEEPING COUNTER",
+//                        returnWithTwoDecimal(String.valueOf(zReadResponse.getCount()))
+//                        ,
+//                        40,
+//                        2,
+//                        context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
                 addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
