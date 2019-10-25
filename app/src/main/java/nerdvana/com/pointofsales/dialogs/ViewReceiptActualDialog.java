@@ -62,7 +62,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
         rvReceiptList.setLayoutManager(linearLayoutManager);
         rvReceiptList.setAdapter(viewReceiptActualAdapter);
 
-        Log.d("WATEKTEK", String.valueOf(result.size()));
+
 
         btnReprintAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +194,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                     roomType = "NA";
                 }
 
-                Log.d("ROOMNO", roomNo);
+
 
                 BusProvider.getInstance().post(new PrintModel(
                         "", roomNo,

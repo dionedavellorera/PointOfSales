@@ -68,13 +68,13 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        Log.d("STARTEXEC", "CHECKOUT");
+
 
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.d("STARTEXEC", "CHECKOUT EXECING");
+
 
 
         if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
@@ -108,7 +108,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
                                     e.printStackTrace();
-                                    Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
+
 //                                asyncFinishCallBack.doneProcessing();
                                 }
                             }
@@ -118,7 +118,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
-                Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
+
 //            asyncFinishCallBack.doneProcessing();
             }
             //endregion
@@ -270,9 +270,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                                 str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +count);
                             }
 
-                            Log.d("TESTDATA1", String.valueOf(count));
-                            Log.d("TESTDATA2", String.valueOf(count % 3));
-                            Log.d("TESTDATA3", String.valueOf(i));
+
                             if (str.size() % 3 == 0) {
                                 allData.add(str);
                                 str = new ArrayList<>();
@@ -1138,7 +1136,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
             } else {
-                Log.d("DATANUL"," DATAI SNULL");
+
             }
 
 

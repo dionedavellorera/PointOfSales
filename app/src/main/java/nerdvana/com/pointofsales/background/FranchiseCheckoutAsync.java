@@ -506,7 +506,7 @@ public class FranchiseCheckoutAsync extends AsyncTask<Void, Void, Void>
 //
 
             } else {
-                Log.d("DATANUL"," DATAI SNULL");
+
             }
 
 

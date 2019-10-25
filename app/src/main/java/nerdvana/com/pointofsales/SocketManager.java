@@ -57,8 +57,7 @@ public class SocketManager {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.d("SOCKET_CONNECTION", "CONNECTED TO SOCKET ONE");
-                                Log.d("SOCKET_CONNECTION", SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL));
+
                                 isConnected = true;
 //                            BusProvider.getInstance().post(new SocketConnectionModel("T"));
                             }
@@ -70,7 +69,7 @@ public class SocketManager {
                     @Override
                     public void call(Object... args) {
                         isConnected = false;
-                        Log.d("SOCKET_CONNECTION", "ERROR");
+
 //                    BusProvider.getInstance().post(new SocketConnectionModel("T"));
                     }
 
@@ -85,13 +84,12 @@ public class SocketManager {
                     @Override
                     public void call(Object... args) {
 //                    SocketManager.showNotification("New Priority Inspection");
-                        Log.d("TEKTEK", "TETEMO");
-                        Log.d("TEKTEK", "TETEMO");
+
                         JSONObject data = (JSONObject) args[0];
 
 
                         try {
-                            Log.d("TEKTEK", data.getString("locale_id"));
+
 
                             BusProvider.getInstance().post(new UpdateDataModel("y"));
 
@@ -99,11 +97,11 @@ public class SocketManager {
 
                             }
                         } catch (JSONException e) {
-                            try {
-                                Log.d("TEKTEK", data.getString("locale_id"));
-                            } catch (JSONException e1) {
-                                e1.printStackTrace();
-                            }
+//                            try {
+//                                Log.d("TEKTEK", data.getString("locale_id"));
+//                            } catch (JSONException e1) {
+//                                e1.printStackTrace();
+//                            }
                             e.printStackTrace();
                         }
                     }

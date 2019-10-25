@@ -193,7 +193,7 @@ public class Utils {
             @Override
             public void onFailure(Call<TestConnectionResponse> call, Throwable t) {
 
-                Log.d("MYDATA", "FALSE");
+
 
 
                 Utils.canConnect = false;

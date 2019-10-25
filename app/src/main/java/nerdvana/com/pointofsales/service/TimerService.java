@@ -62,7 +62,7 @@ public class TimerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("TIMER_SERVICe", "TIMER STARTED");
+
     }
 
     @Override

@@ -121,7 +121,7 @@ public class ViewReceiptDialog extends BaseDialog {
 
                     @Override
                     public void onFailure(Call<ViewReceiptViaDateResponse> call, Throwable t) {
-//                        Log.d("TESTDATA_FAIL", t.getMessage());
+
                     }
                 });
 

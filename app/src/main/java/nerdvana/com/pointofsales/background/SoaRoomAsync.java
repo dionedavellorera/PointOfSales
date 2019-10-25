@@ -89,7 +89,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 try {
                     printer.addPulse(Printer.DRAWER_HIGH, Printer.PULSE_100);
                 } catch (Epos2Exception e) {
-                    Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
+
                     e.printStackTrace();
 //                asyncFinishCallBack.doneProcessing();
                 }
@@ -107,7 +107,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
-                                    Log.d("PTRLOG", "ERR" + e.getMessage());
+
                                     e.printStackTrace();
 //                                asyncFinishCallBack.doneProcessing();
                                 }
@@ -117,7 +117,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
-                Log.d("PTRLOG", "ERR_OUT" + e.getMessage());
+
                 e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
             }
@@ -191,7 +191,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                    Log.d("TEKTEK", String.valueOf(Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount()))));
+
 //                    if ((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1)  == 1) {
 //                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                                "CANCELLED SOA",
@@ -220,9 +220,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                             str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +count);
                         }
 
-                        Log.d("TESTDATA1", String.valueOf(count));
-                        Log.d("TESTDATA2", String.valueOf(str.size() % 3));
-                        Log.d("TESTDATA3", String.valueOf(i));
+
                         if (str.size() % 3 == 0) {
                             allData.add(str);
                             str = new ArrayList<>();
@@ -901,7 +899,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
             } else {
-                Log.d("DATANUL"," DATAI SNULL");
+
             }
 
 
@@ -1008,7 +1006,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         if (amount.contains(".")) {
             String[] tempArray = amount.split("\\.");
             if (tempArray[1].length() > 2) {
-                Log.d("ZXCZXC-IF", tempArray[1].substring(0, 2));
+
                 finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
             } else {
                 finalValue = tempArray[0] + "." + (tempArray[1].length() == 1 ? tempArray[1] + "0" : tempArray[1]);

@@ -54,13 +54,13 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
     protected void onPreExecute() {
         super.onPreExecute();
 
-        Log.d("STARTEXEC", "CREATE RECEIPT");
+
 
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
-        Log.d("STARTEXEC", "CREATING RECEIPT");
+
 
         String finalString = "";
         String receiptNo = "NA";
@@ -473,7 +473,7 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
                 writer.close();
 
             } catch (IOException e) {
-                Log.d("ERRORMESSAGE", e.getMessage());
+
                 asyncFinishCallBack.doneProcessing();
             }
 
@@ -481,7 +481,7 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
 
 
         } else {
-            Log.d("DATANUL"," DATAI SNULL");
+
         }
 
 

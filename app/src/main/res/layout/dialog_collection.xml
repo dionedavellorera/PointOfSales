@@ -8,8 +8,8 @@
         />
 
     <ScrollView
-        android:layout_marginBottom="40dp"
         android:layout_below="@id/header"
+        android:layout_above="@id/totalSafeKeep"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -20,6 +20,16 @@
             android:layout_height="match_parent">
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:text="PHP 0.00"
+        android:layout_marginRight="10dp"
+        android:layout_above="@id/save"
+        android:padding="5dp"
+        android:gravity="right"
+        android:id="@+id/totalSafeKeep"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:layout_margin="10dp"

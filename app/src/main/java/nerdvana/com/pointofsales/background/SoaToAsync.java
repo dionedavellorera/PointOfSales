@@ -119,7 +119,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-            Log.d("WATWAT", printModel.getData());
+
 
             FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
                     ;
@@ -929,7 +929,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
             } else {
-                Log.d("DATANUL"," DATAI SNULL");
+
             }
 
 

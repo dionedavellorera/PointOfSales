@@ -188,13 +188,13 @@ public class PrinterUtils {
             try {
                 if (printer != null) {
 
-                    Log.d("PRINER_CONNECTION", SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY));
+
                     printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
 //                    printer.beginTransaction();
                     isConnected = true;
                 }
             } catch (Epos2Exception e) {
-                Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
+
                 e.printStackTrace();
             }
         } else {
@@ -208,7 +208,7 @@ public class PrinterUtils {
                         isConnected = true;
                     }
                 } catch (Epos2Exception e) {
-                    Log.d("PTRLOG", "PELSE_ERR" + e.getMessage());
+
                     e.printStackTrace();
                 }
             }

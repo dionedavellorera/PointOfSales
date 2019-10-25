@@ -96,7 +96,7 @@ public class ShortOverAsync extends AsyncTask<Void, Void, Void> {
 
             addPrinterSpace(1);
 
-//                Log.d("SHORTOVERDATA", String.valueOf(shorover.getShortOver()));
+
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "SHORT / OVER",

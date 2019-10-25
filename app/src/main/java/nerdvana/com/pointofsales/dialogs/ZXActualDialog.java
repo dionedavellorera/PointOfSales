@@ -89,7 +89,7 @@ public class ZXActualDialog extends Dialog {
                 @Override
                 public void onResponse(Call<FetchXReadListViaDateResponse> call, final Response<FetchXReadListViaDateResponse> response) {
 
-                    Log.d("DSADASDSA", "DASDASDSADSA");
+
 
                     progress.setVisibility(View.GONE);
                     List<ZXReadModel> zxReadModelList = new ArrayList<>();
@@ -190,7 +190,7 @@ public class ZXActualDialog extends Dialog {
                     ZXRead zxRead = new ZXRead() {
                         @Override
                         public void reprint(String data) {
-                            Log.d("MYDATAXREAD", "REQ");
+
                             FetchXReadingViaIdRequest fetchXReadingViaIdRequest = new FetchXReadingViaIdRequest(data);
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                             Call<FetchXReadingViaIdResponse> request = iUsers.fetchXReadingViaId(fetchXReadingViaIdRequest.getMapValue());
@@ -198,7 +198,7 @@ public class ZXActualDialog extends Dialog {
                                 @Override
                                 public void onResponse(Call<FetchXReadingViaIdResponse> call, Response<FetchXReadingViaIdResponse> response) {
 
-                                    Log.d("MYDATAXREAD", "XREDVIAID");
+
 
                                     BusProvider.getInstance().post(new PrintModel("", "X READING", "REPRINTXREADING", GsonHelper.getGson().toJson(response.body().getResult())));
 //                                    BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(response.body().getResult())));
@@ -251,7 +251,6 @@ public class ZXActualDialog extends Dialog {
 
                 @Override
                 public void onFailure(Call<FetchXReadListViaDateResponse> call, Throwable t) {
-                    Log.d("TESTDATA_FAIL", t.getLocalizedMessage());
                     progress.setVisibility(View.GONE);
                 }
             });
@@ -421,14 +420,13 @@ public class ZXActualDialog extends Dialog {
                     rvList.setAdapter(zxReceiptAdapter);
                     zxReceiptAdapter.notifyDataSetChanged();
 
-                    Log.d("TESTDATA_ZREAD", "SUCCESS");
                 }
 
 
 
                 @Override
                 public void onFailure(Call<FetchZReadListViaDateResponse> call, Throwable t) {
-                    Log.d("TESTDATA_FAIL", t.getLocalizedMessage());
+
                     progress.setVisibility(View.GONE);
                 }
             });

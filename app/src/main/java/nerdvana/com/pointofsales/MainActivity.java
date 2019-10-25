@@ -300,16 +300,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             @Override
             public void doneProcessing() {
 
-                Log.d("MYPROCESS-PRE", "START");
-                Log.d("MYPROCESS-PRE", myPrintJobs.get(0).getTaskName());
+
 
                 myPrintJobs.remove(0);
 
-                Log.d("MYPROCESS-MIND", "AFTER REMOVE");
-                Log.d("MYPROCESS-MIND", String.valueOf(myPrintJobs.size()));
+
 
                 if (myPrintJobs.size() > 0) {
-                    Log.d("MYPROCESS-MIND", myPrintJobs.get(0).getTaskName());
+
 
 
 
@@ -1368,7 +1366,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 writer.close();
 
             } catch (IOException e) {
-                Log.d("ERRORMESSAGE", e.getMessage());
+
 //                asyncFinishCallBack.doneProcessing();
             }
 
@@ -1376,7 +1374,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
         } else {
-            Log.d("DATANUL"," DATAI SNULL");
+
         }
 
 
@@ -1638,7 +1636,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             writer.close();
 
         } catch (IOException e) {
-            Log.d("ERRORMESSAGE", e.getMessage());
+
 //                asyncFinishCallBack.doneProcessing();
         }
 
@@ -1873,7 +1871,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
             } catch (JSONException e) {
-                Log.d("ERROR", e.getMessage());
+
             }
 
 
@@ -1898,7 +1896,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             writer.close();
 
         } catch (IOException e) {
-            Log.d("ERRORMESSAGE", e.getMessage());
+
 //                asyncFinishCallBack.doneProcessing();
         }
     }
@@ -1973,7 +1971,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 writer.close();
 
             } catch (IOException e) {
-                Log.d("ERRORMESSAGE", e.getMessage());
+
 //                asyncFinishCallBack.doneProcessing();
             }
 
@@ -2055,7 +2053,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 writer.close();
 
             } catch (IOException e) {
-                Log.d("ERRORMESSAGE", e.getMessage());
+
 //                asyncFinishCallBack.doneProcessing();
             }
 
@@ -2659,12 +2657,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 writer.close();
 
             } catch (IOException e) {
-                Log.d("ERRORMESSAGE", e.getMessage());
+                ;
 //                asyncFinishCallBack.doneProcessing();
             }
             //endregion
         } else {
-            Log.d("DATANUL"," DATAI SNULL");
+
         }
 
     }
@@ -2913,14 +2911,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
         }
 
-        Log.d("ZCXZXC", progressBarModel.getMessage());
+
 
         Utils.showDialogMessage(MainActivity.this, progressBarModel.getMessage(), "ERROR");
     }
 
 
     private void fetchCompanyUserRequest() {
-        Toast.makeText(getApplicationContext(), "REQ COM USER", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "REQ COM USER", Toast.LENGTH_SHORT).show();
         BusProvider.getInstance().post(new FetchCompanyUserRequest());
     }
 
@@ -2930,7 +2928,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 GsonHelper.getGson().toJson(fetchCompanyUserResponse.getResult()),
                 ApplicationConstants.COMPANY_USER);
 
-        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "FETCH COMPANY USER SAVED", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -3474,7 +3472,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void runTask(String taskName, AsyncTask asyncTask) {
-        Log.d("ASYNCTASK_EXEC", taskName);
+
         switch (taskName) {
             case "create_receipt":
                 CreateReceiptAsync createReceiptAsync = (CreateReceiptAsync) asyncTask;
@@ -3691,7 +3689,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void listenToServerConnection(ServerConnectionModel serverConnectionModel) {
 
-        Log.d("MYDATARES", String.valueOf(serverConnectionModel.isCanConnect()));
+
 
         if (serverConnectionModel.isCanConnect()) {
             onlineTextIndicator.setText("ONLINE");

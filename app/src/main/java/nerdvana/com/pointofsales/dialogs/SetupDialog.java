@@ -75,11 +75,7 @@ public class SetupDialog extends BaseDialog {
                         !TextUtils.isEmpty(serial.getText().toString().trim()) &&
                         !TextUtils.isEmpty(nodeUrl.getText().toString().trim())) {
 
-                    Log.d("ISALID", String.valueOf(URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
-                            ipAddress.getText().toString(),
-                            "api",
-                            branchName.getText().toString(),
-                            branchCode.getText().toString()))));
+
 
                     if (URLUtil.isValidUrl(String.format("%s/%s/%s/%s/",
                             ipAddress.getText().toString(),

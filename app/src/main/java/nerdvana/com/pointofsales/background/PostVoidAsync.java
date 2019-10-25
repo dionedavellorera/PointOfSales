@@ -855,7 +855,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
             } else {
-                Log.d("DATANUL"," DATAI SNULL");
+
             }
 
 

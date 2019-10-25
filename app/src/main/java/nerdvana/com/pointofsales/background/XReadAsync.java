@@ -199,7 +199,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                 JSONArray paymentJsonArray = jsonObject.getJSONArray("payment");
 
-                Log.d("MYCHANGE", String.valueOf(jsonObject.getDouble("change")));
+
 
                 Double change = jsonObject.getDouble("change");
 
@@ -259,9 +259,6 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
                                 if (payment.getPaymentType().equalsIgnoreCase("cash")) {
 
-                                    Log.d("WETWET", String.valueOf(value));
-                                    Log.d("WETWET", String.valueOf(change));
-                                    Log.d("WETWET", String.valueOf(value + change));
 
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                             payment.getPaymentType() + " Sales",
@@ -556,7 +553,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
             } catch (JSONException e) {
-//                Log.d("ERROR", e.getMessage());
+
             }
 //            catch (Epos2Exception e) {
 //                e.printStackTrace();

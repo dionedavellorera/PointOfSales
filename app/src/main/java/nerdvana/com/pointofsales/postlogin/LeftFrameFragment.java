@@ -3736,14 +3736,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 public void save(String remarks) {
                                     BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
 
-                                    Log.d("VOIDVOID", new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                            String.valueOf(selectedRoom.getAreaId()),
-                                            selectedRoom.getControlNo(),
-                                            model,
-                                            remarks,
-                                            "0",
-                                            "0",
-                                            new ArrayList<UpdateProductModel>()).toString());
+
 
                                     BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             String.valueOf(selectedRoom.getAreaId()),
@@ -3765,11 +3758,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 public void save(String remarks) {
                                     BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
 
-                                    Log.d("VOIDVOID", new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
-                                            model, remarks,
-                                            employeeId,
-                                            "0", "0",
-                                            new ArrayList<UpdateProductModel>()).toString());
+
                                     BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             model, remarks,
                                             employeeId,
@@ -4531,9 +4520,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
                     subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
 
-                    Log.d("TETETe", String.valueOf(totalBalance - (advancePayment + discountPayment)));
-                    Log.d("TETETe", String.valueOf(advancePayment));
-                    Log.d("TETETe", String.valueOf(discountPayment));
 
                     total.setText(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))));
                     discount.setText(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)));
@@ -4669,8 +4655,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
 
-                                Log.d("TETE", String.valueOf(balac.getQty()));
-                                Log.d("TETE", "00---");
 
                                 alaCartes.add(new AddRateProductModel.AlaCarte(
                                         "",
@@ -4848,8 +4832,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
                 BusProvider.getInstance().post(welcomeGuestRequest);
 
-                Log.d("WELCOMEGUESTDATA", welcomeGuestRequest.toString());
-
                 if (!status.equalsIgnoreCase("19") &&
                         !status.equalsIgnoreCase("3") &&
                         !status.equalsIgnoreCase("20")) {
@@ -4860,9 +4842,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void save(String remarks) {
 
-                                    Log.d("CHECKINDATA", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
-                                            welcomeGuestRequest.getRoomRatePriceId(),
-                                            remarks).toString());
+
 //                                    Log.d("CHECKNREQU", new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
 //                                            welcomeGuestRequest.getRoomRatePriceId(),
 //                                            remarks).toString());
@@ -5444,7 +5424,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void checkoutRoom(String roomId, String controlNumber, String roomBoyId) {
 
-        Log.d("CHECKOUT_VAL", new CheckOutRequest(roomId, controlNumber, roomBoyId).toString());
 
         BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
     }
@@ -5486,7 +5465,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         "room_no_list");
             }
 
-            Log.d("POPOPO", selectedRoom.getControlNo());
+
 
 
             printReceiptFromCheckout(selectedRoom.getControlNo(),
@@ -5572,8 +5551,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchCCardRespose(FetchCreditCardResponse fetchCreditCardResponse) {
         if (fetchCreditCardResponse.getResult().size() > 0) {
-            Log.d("CCARD", "YYY");
-            Log.d("CCARD", String.valueOf(fetchCreditCardResponse.getResult().size()));
+
             SharedPreferenceManager.saveString(getContext(),
                     GsonHelper.getGson().toJson(fetchCreditCardResponse.getResult()),
                     ApplicationConstants.CREDIT_CARD);
@@ -5613,7 +5591,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             try {
 
-                Log.d("GFGFGFG", SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT));
+
                 SPrinter.getPrinter().connect(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
@@ -6281,7 +6259,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void doSoaFunction() {
 
-        Log.d("MYSOAFUNc", String.valueOf(selectedRoom.isTakeOut()));
+
 
         if (selectedRoom.isTakeOut()) {
             printSoaRequest("", selectedRoom.getControlNo());

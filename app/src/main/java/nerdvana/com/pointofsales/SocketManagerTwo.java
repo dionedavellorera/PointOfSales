@@ -48,7 +48,7 @@ public class SocketManagerTwo {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d("SOCKET_CONNECTION", "CONNECTED TO SOCKET TWO");
+
                             isConnected = true;
 //                            BusProvider.getInstance().post(new SocketConnectionModel("T"));
                         }

@@ -93,8 +93,7 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
             if (wakeUpCallModels.size() > 0) {
                 if (wul != null) {
 
-                    Log.d("TUTUTU", String.valueOf(wul.size()));
-                    Log.d("TUTUTU", String.valueOf(occupiedCount));
+
 
                     if (wul.size() != occupiedCount) {
 //                        BusProvider.getInstance().post(new OpenWakeUpCallDialog(wakeUpCallModels));

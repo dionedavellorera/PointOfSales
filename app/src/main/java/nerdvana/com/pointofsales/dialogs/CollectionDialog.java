@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.Layout;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -61,11 +64,17 @@ public abstract class CollectionDialog extends BaseDialog {
     private Button save;
 
     private List<SafeKeepDataModel> safeKeepDataModelList;
+//    private List<SafeKeepDataModel> safeKeepDataModelListDisplay;
     private Activity act;
     private boolean willCashReco;
     List<CollectionFinalPostModel> collectionFinalPostModels;
 
     private Double totalSafeKeepAmount = 0.00;
+    private Double totalSafeKeepAmountDisp = 0.00;
+
+    private TextView totalSafeKeep;
+    List<Double> totalAmountList = new ArrayList<>();
+
 
     public CollectionDialog(@NonNull Activity context, String type, boolean continueCashReco) {
         super(context);
@@ -81,7 +90,7 @@ public abstract class CollectionDialog extends BaseDialog {
         safeKeepDataModelList = new ArrayList<>();
         relContainer = findViewById(R.id.relContainer);
         save = findViewById(R.id.save);
-
+        totalSafeKeep = findViewById(R.id.totalSafeKeep);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +128,7 @@ public abstract class CollectionDialog extends BaseDialog {
                             CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
 
 
-//                            Log.d("CASHRECODATA", collectionRequest.toString());
+
 
                             Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
                             request.enqueue(new Callback<Object>() {
@@ -188,7 +197,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                     if (totalSafeKeepAmount <= response.body().getResult().getUnCollected()) {
                                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                         CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
-//                                    Log.d("CASHRECODATA", collectionRequest.toString());
+
 
                                         Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
 
@@ -261,7 +270,7 @@ public abstract class CollectionDialog extends BaseDialog {
                     addView(r.getDenomination(), String.valueOf(r.getAmount()), r.getCoreId());
                 }
 
-                addView("CHECK", "CHECK", 9999);
+//                addView("CHECK", "CHECK", 9999);
             }
 
             @Override
@@ -271,7 +280,7 @@ public abstract class CollectionDialog extends BaseDialog {
         });
     }
 
-    private  void addView(String amountToDisplay, String actualAmount, int id) {
+    private  void addView(String amountToDisplay, final String actualAmount, int id) {
         LinearLayout linearLayout = new LinearLayout(getContext());
         LinearLayout.LayoutParams parentParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1);
         linearLayout.setLayoutParams(parentParams);
@@ -280,19 +289,50 @@ public abstract class CollectionDialog extends BaseDialog {
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.5f);
 
         TextView textView = new TextView(getContext());
+        textView.setHeight(50);
+        textView.setGravity(Gravity.CENTER);
         textView.setText(amountToDisplay);
         textView.setLayoutParams(params1);
         linearLayout.addView(textView);
 
-        EditText editText = new EditText(getContext());
+        final EditText editText = new EditText(getContext());
+        editText.setHeight(50);
         editText.setHint(actualAmount);
         editText.setId(id);
         editText.setLayoutParams(params1);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
         editText.setTextIsSelectable(true);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                totalSafeKeepAmountDisp = 0.00;
+                for (SafeKeepDataModel skdm : safeKeepDataModelList) {
+                    if (!TextUtils.isEmpty(skdm.getEditText().getText().toString())) {
+                        totalSafeKeepAmountDisp += Double.valueOf(skdm.getValue()) * Double.valueOf(skdm.getEditText().getText().toString());
+                    }
+
+                }
+
+                totalSafeKeep.setText("PHP " + totalSafeKeepAmountDisp);
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         linearLayout.addView(editText);
 
         safeKeepDataModelList.add(new SafeKeepDataModel(editText, actualAmount));
+//        safeKeepDataModelListDisplay.add(new SafeKeepDataModel(editText, actualAmount));
 
         relContainer.addView(linearLayout);
     }
