@@ -1,168 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <include layout="@layout/partial_header"
-        android:id="@+id/header"/>
-
-    <TextView
-        android:padding="10dp"
-        android:id="@+id/optionHeader"
-        android:layout_below="@id/header"
-        android:textSize="17sp"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorSecondary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="DISCOUNT TYPE"/>
-
-    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-        android:padding="10dp"
-        android:layout_below="@id/optionHeader"
-        android:id="@+id/spinnerDiscountType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
 
-    <TextView
-        android:padding="10dp"
-        android:id="@+id/formHeader"
-        android:layout_below="@id/spinnerDiscountType"
-        android:textSize="17sp"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorSecondary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="FORM"/>
     <RelativeLayout
-        android:visibility="gone"
-        android:layout_below="@id/formHeader"
-        android:id="@+id/formCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilCardNumber"
+        <RelativeLayout
+            android:id="@+id/rel1"
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <nerdvana.com.pointofsales.custom.HidingEditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:id="@+id/cardNumber"
+
+            <include layout="@layout/partial_header"
+                android:id="@+id/header"/>
+
+
+            <TextView
+                android:id="@+id/optionHeader"
+                android:layout_below="@id/header"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Card number"/>
-        </android.support.design.widget.TextInputLayout>
+                android:text="DISCOUNT TYPE"/>
+
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:padding="10dp"
+                android:layout_below="@id/optionHeader"
+                android:id="@+id/spinnerDiscountType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <TextView
+                android:id="@+id/formHeader"
+                android:layout_below="@id/spinnerDiscountType"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FORM"/>
+            <RelativeLayout
+                android:visibility="gone"
+                android:layout_below="@id/formHeader"
+                android:id="@+id/formCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:padding="10dp"
+                    android:background="@drawable/edittext_round"
+                    android:maxLines="1"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:id="@+id/cardNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Card number"/>
+
+                <!---->
+                <!--<android.support.design.widget.TextInputLayout-->
+                <!--android:id="@+id/tilCardNumber"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content">-->
+                <!---->
+                <!--</android.support.design.widget.TextInputLayout>-->
+
+                <Button
+                    android:layout_below="@id/cardNumber"
+                    android:id="@+id/verifyCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="VERIFY"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:layout_below="@id/formHeader"
+                android:id="@+id/formEmployee"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="10dp"
+                    android:id="@+id/spinnerEmployee"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:layout_below="@id/formHeader"
+                android:id="@+id/formSpecial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:padding="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/edittext_round"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:id="@+id/seniorPwdName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Name"/>
+
+
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:padding="10dp"
+                    android:background="@drawable/edittext_round"
+                    android:layout_below="@id/seniorPwdName"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:id="@+id/seniorPwdAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Address"/>
+
+
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:padding="10dp"
+                    android:background="@drawable/edittext_round"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@id/seniorPwdAddress"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:id="@+id/seniorPwdCardNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Card Number"/>
+
+
+
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:padding="10dp"
+                    android:background="@drawable/edittext_round"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@+id/seniorPwdCardNumber"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:id="@+id/seniorTin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tin #"/>
+
+
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:padding="10dp"
+                    android:background="@drawable/edittext_round"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_below="@id/seniorTin"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
+                    android:id="@+id/seniorBusinessStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Business style"/>
+
+            </RelativeLayout>
+
+
+
+
+
+        </RelativeLayout>
 
         <Button
-            android:layout_below="@id/tilCardNumber"
-            android:id="@+id/verifyCard"
-            android:layout_width="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/rel1"
+            android:id="@+id/submit"
+            android:background="@drawable/green_button_selector"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="VERIFY"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:visibility="gone"
-        android:layout_below="@id/formHeader"
-        android:id="@+id/formEmployee"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-            android:padding="10dp"
-            android:id="@+id/spinnerEmployee"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:visibility="gone"
-        android:layout_below="@id/formHeader"
-        android:id="@+id/formSpecial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/tilSeniorPwdName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <nerdvana.com.pointofsales.custom.HidingEditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:id="@+id/seniorPwdName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Name"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_below="@id/tilSeniorPwdName"
-            android:id="@+id/tilSeniorPwdAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <nerdvana.com.pointofsales.custom.HidingEditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:id="@+id/seniorPwdAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Address"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:layout_below="@id/tilSeniorPwdAddress"
-            android:id="@+id/tilSeniorPwdCardNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <nerdvana.com.pointofsales.custom.HidingEditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:id="@+id/seniorPwdCardNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Card Number"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:visibility="gone"
-            android:layout_below="@+id/tilSeniorPwdCardNumber"
-            android:id="@+id/tilTin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <nerdvana.com.pointofsales.custom.HidingEditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:id="@+id/seniorTin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Tin #"/>
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:visibility="gone"
-            android:layout_below="@+id/tilTin"
-            android:id="@+id/tilSeniorBusinessStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <nerdvana.com.pointofsales.custom.HidingEditText
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:id="@+id/seniorBusinessStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Business style"/>
-        </android.support.design.widget.TextInputLayout>
+            android:text="APPLY"/>
     </RelativeLayout>
 
 
 
-    <Button
-        android:layout_margin="10dp"
-        android:id="@+id/submit"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/button_selector"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SUBMIT"/>
 
-</RelativeLayout>
+
+</ScrollView>

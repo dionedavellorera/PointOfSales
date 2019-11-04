@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -50,7 +51,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     private RecyclerView listPosts;
     private FetchRoomPendingResponse.Result fetchRoomPendingData;
     private CheckBoxItem checkBoxItem;
-    private FloatingActionButton fabSave;
+    private Button fabSave;
     private RadioGroup discountOptionGroup;
     private EditText inputReason;
     private EditText inputAmount;
@@ -123,7 +124,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
                     }
                 }
 
-                PasswordDialog passwordDialog = new PasswordDialog(context, "63") {
+                PasswordDialog passwordDialog = new PasswordDialog(context,"CONFIRM DISCOUNTING", "63") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         dismiss();
@@ -185,12 +186,12 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     @Override
     protected void onStart() {
         super.onStart();
-        Dialog dialog = this;
-        if (dialog != null) {
-            int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
-            dialog.getWindow().setLayout(width, height);
-        }
+//        Dialog dialog = this;
+//        if (dialog != null) {
+//            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+//            dialog.getWindow().setLayout(width, height);
+//        }
     }
 
     private void fixDepartmentData() {

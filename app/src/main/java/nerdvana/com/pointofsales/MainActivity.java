@@ -929,7 +929,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
         finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
         finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
         finalString += receiptString("V O I D", "", MainActivity.this, true);
@@ -1325,7 +1325,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("POS Provider : NERDVANA CORP.", "", MainActivity.this, true);
             finalString += receiptString("Address : 1 CANLEY ROAD BRGY", "", MainActivity.this, true);
             finalString += receiptString("BAGONG ILOG PASIG CITY", "", MainActivity.this, true);
-            finalString += receiptString("VAT REG TIN: 009-772-500-000", "", MainActivity.this, true);
+            finalString += receiptString("VAT REG TIN: 009-772-500-00000", "", MainActivity.this, true);
             finalString += receiptString("ACCRED NO:**********************", "", MainActivity.this, true);
             finalString += receiptString("Date Issued : " + toList1.getCreatedAt(), "", MainActivity.this, true);
             finalString += receiptString("Valid Until : " + PrinterUtils.yearPlusFive(toList1.getCreatedAt()), "", MainActivity.this, true);
@@ -1395,8 +1395,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
         finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
+//        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
         finalString += receiptString("Z READING", "", MainActivity.this, true);
 
@@ -1480,11 +1480,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-                            if (payment.getPaymentType().equalsIgnoreCase("card")) {
-
-                                finalString += receiptString("DEPOSIT SALES", returnWithTwoDecimal(String.valueOf(totalAdvancePayment)), MainActivity.this, false);
-
-                            }
+//                            if (payment.getPaymentType().equalsIgnoreCase("card")) {
+//
+//                                finalString += receiptString("DEPOSIT SALES", returnWithTwoDecimal(String.valueOf(totalAdvancePayment)), MainActivity.this, false);
+//
+//                            }
                         }
 
                     } else {
@@ -1586,7 +1586,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("BEG. OR NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA", MainActivity.this, false);
             finalString += receiptString("ENDING OR NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA", MainActivity.this, false);
             finalString += receiptString("BEG. BALANCE" , returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal())), MainActivity.this, false);
-            finalString += receiptString("ENDING BALANCE" , returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal())), MainActivity.this, false);
+            finalString += receiptString("GRAND TOTAL SALES" , returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal())), MainActivity.this, false);
 
 
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
@@ -1599,6 +1599,39 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("Z KEEPING COUNTER", returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), MainActivity.this, false);
 
             finalString += receiptString("------ END OF REPORT ------", "", MainActivity.this, true);
+            finalString += receiptString("-------------", "", MainActivity.this, true);
+
+            finalString += receiptString("POS Provider : NERDVANA CORP.",
+                    "", MainActivity.this, true);
+            finalString += receiptString("Address : 1 CANLEY ROAD BRGY",
+                    "", MainActivity.this, true);
+            finalString += receiptString("BAGONG ILOG PASIG CITY",
+                    "", MainActivity.this, true);
+            finalString += receiptString("VAT REG TIN: 009-772-500-00000",
+                    "", MainActivity.this, true);
+            finalString += receiptString("",
+                    "", MainActivity.this, true);
+
+            Log.d("tESTDATA", currentDateTime);
+            DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+            String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd hh:mm:ss");
+
+
+            finalString += receiptString("ACCRED NO:**********************",
+                    "", MainActivity.this, true);
+            finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(folderName),
+                    "", MainActivity.this, true);
+            finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(folderName)),
+                    "", MainActivity.this, true);
+
+            finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+            finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(folderName),
+                    "", MainActivity.this, true);
+            finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(folderName)),
+                    "", MainActivity.this, true);
+
+
+            finalString += receiptString("-------------", "", MainActivity.this, true);
             finalString += receiptString("PRINTED DATE", "", MainActivity.this, true);
             finalString += receiptString(currentDateTime, "", MainActivity.this, true);
             finalString += receiptString("PRINTED BY", userModel.getUsername(), MainActivity.this, false);
@@ -1653,8 +1686,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
         finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
+//        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
         finalString += receiptString("X READING", "", MainActivity.this, true);
 
@@ -1757,11 +1790,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                                 }
 
 
-                                if (payment.getPaymentType().equalsIgnoreCase("card")) {
-
-                                    finalString += receiptString("DEPOSIT SALES", PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAdvancePayment)), MainActivity.this, false);
-
-                                }
+//                                if (payment.getPaymentType().equalsIgnoreCase("card")) {
+//
+//                                    finalString += receiptString("DEPOSIT SALES", PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAdvancePayment)), MainActivity.this, false);
+//
+//                                }
                             }
 
                         } else {
@@ -1864,6 +1897,37 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 finalString += receiptString("", "", MainActivity.this, false);
 
                 finalString += receiptString("------ END OF REPORT ------", "", MainActivity.this, true);
+                finalString += receiptString("---------------", "", MainActivity.this, true);
+                finalString += receiptString("POS Provider : NERDVANA CORP.",
+                        "", MainActivity.this, true);
+                finalString += receiptString("Address : 1 CANLEY ROAD BRGY",
+                        "", MainActivity.this, true);
+                finalString += receiptString("BAGONG ILOG PASIG CITY",
+                        "", MainActivity.this, true);
+                finalString += receiptString("VAT REG TIN: 009-772-500-00000",
+                        "", MainActivity.this, true);
+                finalString += receiptString("",
+                        "", MainActivity.this, true);
+
+                DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+                String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd hh:mm:ss");
+
+
+                finalString += receiptString("ACCRED NO:**********************",
+                        "", MainActivity.this, true);
+                finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(folderName),
+                        "", MainActivity.this, true);
+                finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(folderName)),
+                        "", MainActivity.this, true);
+
+                finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+                finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(folderName),
+                        "", MainActivity.this, true);
+                finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(folderName)),
+                        "", MainActivity.this, true);
+
+
+                finalString += receiptString("---------------", "", MainActivity.this, true);
                 finalString += receiptString("PRINTED DATE", "", MainActivity.this, true);
                 finalString += receiptString(currentDateTime, "", MainActivity.this, true);
                 finalString += receiptString("PRINTED BY:", userModel.getUsername(), MainActivity.this, true);
@@ -1910,7 +1974,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
         finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
         finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
         finalString += receiptString("CASHIER RECONCILE", "", MainActivity.this, true);
@@ -1992,7 +2056,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
         finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
         finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
         finalString += receiptString("SAFEKEEPING", "", MainActivity.this, true);
@@ -2074,8 +2138,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
         finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
         finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", MainActivity.this, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
+//        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
 
 
 
@@ -2616,7 +2680,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     "", MainActivity.this, true);
             finalString += receiptString("BAGONG ILOG PASIG CITY",
                     "", MainActivity.this, true);
-            finalString += receiptString("VAT REG TIN: 009-772-500-000",
+            finalString += receiptString("VAT REG TIN: 009-772-500-00000",
                     "", MainActivity.this, true);
             finalString += receiptString("",
                     "", MainActivity.this, true);
@@ -2624,9 +2688,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     "", MainActivity.this, true);
             finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(toList1.getCreatedAt()),
                     "", MainActivity.this, true);
-
             finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(toList1.getCreatedAt())),
                     "", MainActivity.this, true);
+
+            finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+            finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(toList1.getCreatedAt()),
+                    "", MainActivity.this, true);
+            finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(toList1.getCreatedAt())),
+                    "", MainActivity.this, true);
+
 
             finalString += receiptString("",
                     "", MainActivity.this, true);

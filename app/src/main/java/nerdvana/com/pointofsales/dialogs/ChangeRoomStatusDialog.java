@@ -30,7 +30,7 @@ public abstract class ChangeRoomStatusDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_change_room_status, "NEW ROOM STATUS");
+        setDialogLayout(R.layout.dialog_change_room_status, "CHANGE ROOM STATUS");
 
 
         newRoomStatus = new NewRoomStatus() {
@@ -39,7 +39,7 @@ public abstract class ChangeRoomStatusDialog extends BaseDialog {
                 ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getContext()) {
                     @Override
                     public void save(final String remarks) {
-                        PasswordDialog passwordDialog = new PasswordDialog(getContext(), "115") {
+                        PasswordDialog passwordDialog = new PasswordDialog(getContext(),"CONFIRM CHANGE ROOM STATUS", "115") {
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
 

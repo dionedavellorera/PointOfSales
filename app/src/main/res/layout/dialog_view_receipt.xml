@@ -1,52 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
     <include layout="@layout/partial_header" android:id="@+id/header"/>
 
-    <android.support.design.widget.TextInputLayout
+    <TextView
+        android:id="@+id/head1"
         android:layout_below="@id/header"
-        android:id="@+id/tilReceiptNumber"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Receipt Number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <nerdvana.com.pointofsales.custom.HidingEditText
+        android:padding="10dp"
+        android:layout_below="@id/head1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/edittext_round"
+        android:id="@+id/inputReceiptNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Receipt number ex. 0001"/>
+
+
+
+   <android.support.v7.widget.CardView
+       android:layout_marginLeft="20dp"
+       android:layout_marginRight="20dp"
+       android:layout_marginTop="5dp"
+       android:layout_marginBottom="5dp"
+       app:cardElevation="5dp"
+       android:layout_centerHorizontal="true"
+       android:layout_below="@id/inputReceiptNumber"
+       android:id="@+id/cardDateStart"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+       <RelativeLayout
+           android:layout_marginLeft="20dp"
+           android:layout_marginRight="20dp"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+           <ImageView
+               android:layout_margin="10dp"
+               android:layout_centerVertical="true"
+               android:id="@+id/img"
+               android:layout_width="30dp"
+               android:layout_height="30dp"
+               android:src="@drawable/ic_calendar"/>
+           <TextView
+               android:layout_toRightOf="@id/img"
+               android:padding="5dp"
+               android:layout_margin="10dp"
+               android:id="@+id/inputDateStart"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:hint="Start date"/>
+       </RelativeLayout>
+   </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        app:cardElevation="5dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/cardDateStart"
+        android:id="@+id/cardDateEnd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <nerdvana.com.pointofsales.custom.HidingEditText
-            android:id="@+id/inputReceiptNumber"
+        <RelativeLayout
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Receipt number ex. 0001"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_margin="10dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/img1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_calendar"/>
+            <TextView
+                android:layout_toRightOf="@id/img1"
+                android:padding="5dp"
+                android:layout_margin="10dp"
+                android:id="@+id/inputDateEnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="End Date"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 
 
-    <TextView
-        android:padding="5dp"
-        android:layout_below="@id/tilReceiptNumber"
-        android:layout_margin="10dp"
-        android:id="@+id/inputDateStart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Start date"/>
-
-
-
-    <TextView
-        android:padding="5dp"
-        android:layout_margin="10dp"
-        android:layout_below="@id/inputDateStart"
-        android:id="@+id/inputDateEnd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="End Date"/>
 
     <CheckBox
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="25dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/inputDateEnd"
+        android:layout_below="@id/cardDateEnd"
         android:id="@+id/chkTakeOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,7 +118,7 @@
 
     <Spinner
         android:visibility="invisible"
-        android:layout_below="@id/inputDateEnd"
+        android:layout_below="@id/cardDateEnd"
         android:layout_toRightOf="@id/chkTakeOut"
         android:id="@+id/spinrRoomNumber"
         android:layout_margin="5dp"
@@ -62,11 +126,15 @@
         android:layout_height="wrap_content"/>
 
     <Button
-        android:layout_margin="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_below="@id/chkTakeOut"
         android:id="@+id/btnSearch"
         android:text="SEARCH"
-        android:background="@drawable/button_selector"
+        android:textColor="@color/colorWhite"
+        android:background="@drawable/green_button_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </RelativeLayout>

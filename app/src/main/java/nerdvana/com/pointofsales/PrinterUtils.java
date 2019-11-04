@@ -62,6 +62,23 @@ public class PrinterUtils {
 
     }
 
+
+    public static String twoColumnsRightGreaterTrGSales(String partOne, String partTwo, int maxTextCountPerLine, int columns, Context context) {
+        String finalString = "";
+        int filler = 0;
+        int maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)) / 2);
+        if (partOne.length() < maxColumnDivideTwo) {
+            filler += (maxColumnDivideTwo - partOne.length());
+        }
+        if (partTwo.length() < maxColumnDivideTwo) {
+            filler += (maxColumnDivideTwo - partTwo.length());
+        }
+        finalString = (partOne.length() >= maxColumnDivideTwo ? partOne.substring(0, maxColumnDivideTwo + 1) : partOne) + repeat(" ", filler) + (partTwo.length() >= maxColumnDivideTwo ? partTwo.substring(0, maxColumnDivideTwo) : partTwo);
+
+        return finalString;
+    }
+
+
     public static String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns, Context context) {
         String finalString = "";
         int filler = 0;
@@ -229,10 +246,10 @@ public class PrinterUtils {
         addTextToPrinter(printer, "1 ABC ST. DE AVE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer," TEL NO: 8123-4567", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "VAT REG TIN NO: 009-123-456-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "VAT REG TIN NO: 009-123-456-00000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
         addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
         addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-        addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+//        addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
 
 

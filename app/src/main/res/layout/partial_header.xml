@@ -18,14 +18,16 @@
         android:src="@mipmap/sharp_close_white_24"
         android:tint="@color/colorWhite"/>
     <TextView
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/backButton"
         android:id="@+id/displayHeader"
         android:layout_centerVertical="true"
-        android:textSize="21sp"
-        android:padding="10dp"
-        android:layout_width="match_parent"
+        android:textSize="19sp"
+        android:padding="15dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorWhite"
-        android:text="SETTINGS"
+        android:text="SETTING"
         android:textStyle="bold"/>
 
 </RelativeLayout>

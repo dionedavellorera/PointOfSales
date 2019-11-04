@@ -414,7 +414,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
         Dialog dialog = this;
         if (dialog != null) {
             int width = ViewGroup.LayoutParams.MATCH_PARENT;
-            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.WRAP_CONTENT;
             dialog.getWindow().setLayout(width, height);
         }
     }

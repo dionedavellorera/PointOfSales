@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +16,7 @@ import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -203,6 +205,21 @@ public class Utils {
 
 
         return Utils.canConnect;
+    }
+
+    public static String digitsWithComma(Double value) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##0.00");
+        return decimalFormat.format(value);
+    }
+
+    public static boolean isColorDark(String color){
+        int mColor = Color.parseColor(color);
+        double darkness = 1-(0.299* Color.red(mColor) + 0.587*Color.green(mColor) + 0.114*Color.blue(mColor))/255;
+        if(darkness<0.5){
+            return false; // It's a light color
+        }else{
+            return true; // It's a dark color
+        }
     }
 
     public static String birDateTimeFormat(String currentString) {

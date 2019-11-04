@@ -69,7 +69,7 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
         finalString += receiptString("ILOG PASIG CITY 1600", "", context, true);
         finalString += receiptString("671-9782", "", context, true);
         finalString += receiptString("SERIAL NO: ********", "", context, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-000", "", context, true);
+        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", context, true);
         finalString += receiptString("PERMIT NO: ********-***-******", "", context, true);
 
         FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)

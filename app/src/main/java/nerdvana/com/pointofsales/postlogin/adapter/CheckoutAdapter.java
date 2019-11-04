@@ -222,12 +222,12 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
 
             if (cartItem.getType().equalsIgnoreCase("ot")) {
-                ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() / cartItem.getQuantity())));
-                ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
+                ((ProductsViewHolder)holder).price.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() / cartItem.getQuantity())))));
+                ((ProductsViewHolder)holder).totalPrice.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())))));
 
             } else if(cartItem.getType().equalsIgnoreCase("misc")){
-                ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getQuantity())));
-                ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
+                ((ProductsViewHolder)holder).price.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getQuantity())))));
+                ((ProductsViewHolder)holder).totalPrice.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())))));
             } else {
 
                 ((ProductsViewHolder)holder).rootView.setOnClickListener(new View.OnClickListener() {
@@ -239,8 +239,8 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 });
 
 
-                ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
-                ((ProductsViewHolder)holder).totalPrice.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity())));
+                ((ProductsViewHolder)holder).price.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())))));
+                ((ProductsViewHolder)holder).totalPrice.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice() * cartItem.getQuantity())))));
             }
 
 

@@ -10,16 +10,20 @@
     <include layout="@layout/partial_header" />
 
     <TextView
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="10dp"
         android:id="@+id/header"
-        android:layout_margin="5dp"
-        android:textStyle="bold"
-        android:textSize="17sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Provide remarks(optional)"/>
 
     <nerdvana.com.pointofsales.custom.HidingEditText
-        android:layout_margin="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:padding="10dp"
+        android:background="@drawable/edittext_round"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="3"
@@ -28,7 +32,13 @@
         android:id="@+id/remarks"/>
 
     <Button
-        android:layout_margin="10dp"
+        android:textColor="@color/colorWhite"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:padding="5dp"
+        android:background="@drawable/green_button_selector"
         android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

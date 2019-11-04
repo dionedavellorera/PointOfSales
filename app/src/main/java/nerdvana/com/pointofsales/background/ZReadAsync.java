@@ -11,6 +11,9 @@ import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,7 @@ import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.returnWithTwoDecimal;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
+import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTrGSales;
 
 public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
@@ -183,6 +187,14 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ZERO-RATED SALES",
+                        "0.00",
+                        40,
+                        2,
+                        context)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "NON VAT",
 //                        returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt()))
@@ -275,16 +287,16 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-                                if (payment.getPaymentType().equalsIgnoreCase("card")) {
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "DEPOSIT SALES",
-                                            returnWithTwoDecimal(String.valueOf(totalAdvancePayment))
-                                            ,
-                                            40,
-                                            2,
-                                            context),
-                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                }
+//                                if (payment.getPaymentType().equalsIgnoreCase("card")) {
+//                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                            "DEPOSIT SALES",
+//                                            returnWithTwoDecimal(String.valueOf(totalAdvancePayment))
+//                                            ,
+//                                            40,
+//                                            2,
+//                                            context),
+//                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                                }
                             }
 
                         } else {
@@ -535,8 +547,8 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ENDING BALANCE",
+                addTextToPrinter(printer, twoColumnsRightGreaterTrGSales(
+                        "GRAND TOTAL SALES",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal()))
                         ,
                         40,
@@ -565,6 +577,26 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 //                        context),
 //                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 addTextToPrinter(printer, "------ END OF REPORT ------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+                addTextToPrinter(printer, "---------------------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+
+                addTextToPrinter(printer, "POS Provider : NERDVANA CORP.", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "Address : 1 CANLEY ROAD BRGY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "BAGONG ILOG PASIG CITY", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "VAT REG TIN: 009-772-500-00000", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+                String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd hh:mm:ss");
+
+
+                addTextToPrinter(printer, "ACCRED NO:**********************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "Date Issued : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "Valid Until : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+                addTextToPrinter(printer, "Date Issued : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "Valid Until : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+                addTextToPrinter(printer, "---------------------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
                 addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "PRINTED BY " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

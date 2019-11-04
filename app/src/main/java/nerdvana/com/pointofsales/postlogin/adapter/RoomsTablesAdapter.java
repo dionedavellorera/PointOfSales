@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.postlogin.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
@@ -133,25 +135,53 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (productsModel.getOtHours().equalsIgnoreCase("0.0") || TextUtils.isEmpty(productsModel.getOtHours())) {
             ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName());
         } else {
-            ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName() + "\n(OT:" + productsModel.getOtHours()+")");
+            ((RoomsTablesAdapter.ProductsViewHolder)holder).name.setText(productsModel.getName() + "(" + productsModel.getOtHours()+")");
         }
 
 
+        if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.CLEAN)) {
+            ((ProductsViewHolder)holder).price.setVisibility(View.GONE);
+        } else {
+            ((ProductsViewHolder)holder).price.setVisibility(View.VISIBLE);
+        }
 
         if (!productsModel.isTakeOut()) {
-            ((ProductsViewHolder)holder).name.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
+            ((ProductsViewHolder)holder).rel.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
         }
         if (productsModel.isBlink()) {
-            ((ProductsViewHolder)holder).name.startAnimation(animBlink);
+            ((ProductsViewHolder)holder).rel.startAnimation(animBlink);
         } else {
-            ((ProductsViewHolder)holder).name.clearAnimation();
+            ((ProductsViewHolder)holder).rel.clearAnimation();
         }
         ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
-        ((ProductsViewHolder)holder).price.setText(String.valueOf(productsModel.getAmountSelected()));
+
+        if (Utils.isColorDark(productsModel.getHexColor())) {
+            ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
+            ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
+
+            ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
+            ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
+        } else {
+            ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
+            ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+
+            ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
+            ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+        }
+
+
+        ((ProductsViewHolder)holder).price.setText(Utils.digitsWithComma(productsModel.getAmountSelected()));
+
+
 
         if (!systemType.equalsIgnoreCase("franchise")) {
-            ((ProductsViewHolder)holder).badge.setVisibility(View.VISIBLE);
-            ImageLoader.loadImage(String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()), ((ProductsViewHolder) holder).badge);
+            if (productsModel.getStatus().equalsIgnoreCase(RoomConstants.CLEAN)) {
+                ((ProductsViewHolder)holder).badge.setVisibility(View.GONE);
+            } else {
+                ((ProductsViewHolder)holder).badge.setVisibility(View.VISIBLE);
+                ImageLoader.loadImage(String.format("%sstatus_%s.png", SharedPreferenceManager.getString(context, ApplicationConstants.API_IMAGE_URL), productsModel.getStatus()), ((ProductsViewHolder) holder).badge);
+            }
+
         } else {
             ((RoomsTablesAdapter.ProductsViewHolder)holder).badge.setVisibility(View.GONE);
         }

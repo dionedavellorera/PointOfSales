@@ -132,7 +132,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                     "TEL NO: 8123-4567",
 //                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
                     "SERIAL NO:" + "*******",
-                    "VAT REG TIN NO:" + "009-772-500-000",
+                    "VAT REG TIN NO:" + "009-772-500-00000",
 //                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
 //                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
                     "PERMIT NO:" + "*******-***-******-*****",

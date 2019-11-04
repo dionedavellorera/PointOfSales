@@ -181,7 +181,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 if (TextUtils.isEmpty(controlNumber)) {
                     Toast.makeText(getContext(), "Please select transaction to void", Toast.LENGTH_SHORT).show();
                 } else {
-                    PasswordDialog passwordDialog = new PasswordDialog(act, "65") {
+                    PasswordDialog passwordDialog = new PasswordDialog(act,"CONFIRM VOID TRANSACTION", "65") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             postVoidRequest(controlNumber, employeeId);

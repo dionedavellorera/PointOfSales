@@ -22,6 +22,7 @@ import java.util.List;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
 import nerdvana.com.pointofsales.model.ProductsModel;
@@ -133,7 +134,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         ((ProductsViewHolder)holder).price.setText(
                 SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_SYMBOL_LEFT) + " " +
-                String.valueOf(productsModel.getPrice()) + " " +
+                        Utils.digitsWithComma(productsModel.getPrice()) + " " +
                         SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_SYMBOL_RIGHT));
         if (productsModel.getImageUrls().length > 0) {
             ImageLoader.loadImage(productsModel.getImageUrls()[0], ((ProductsViewHolder)holder).imageUrl);

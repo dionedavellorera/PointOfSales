@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -81,7 +82,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_selection, "DISCOUNT SELECTION");
+        setDialogLayout(R.layout.dialog_selection, "DISCOUNT LIST");
 
         listDiscounts = findViewById(R.id.listDiscounts);
         listPostedDiscounts = findViewById(R.id.listPostedDiscounts);
@@ -107,7 +108,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         VoidItemContract voidItemContract = new VoidItemContract() {
             @Override
             public void remove(final String post_id, String name, String amount, final int position) {
-                PasswordDialog passwordDialog = new PasswordDialog(activity, "65") {
+                PasswordDialog passwordDialog = new PasswordDialog(activity,"CONFIRM VOID ITEM", "65") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         VoidDiscountRequest voidDiscountRequest = new VoidDiscountRequest(controlNumber, post_id, employeeId);
@@ -144,8 +145,12 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
             }
         };
 
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+
+
         voidDiscountsAdapter = new VoidDiscountsAdapter(forVoidDiscountModels, voidItemContract);
-        listPostedDiscounts.setLayoutManager(new LinearLayoutManager(getContext()));
+        listPostedDiscounts.setLayoutManager(llm);
         listPostedDiscounts.setAdapter(voidDiscountsAdapter);
 
     }

@@ -424,8 +424,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (selectedRoom != null) {
 
                     if (selectedRoom.isTakeOut()) {
+                        //dione
                         fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
                     } else {
+                        //dione
                         fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
                     }
                 } else {
@@ -1132,7 +1134,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void computeTotal(ProductsModel itemAdded) {
         amountToPay += itemAdded.getPrice();
 
-        total.setText(Utils.returnWithTwoDecimal(String.valueOf(amountToPay)));
+        total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(amountToPay)))));
     }
 
     @Override
@@ -1165,7 +1167,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
                                         if (type.equalsIgnoreCase("qty")) {
-                                            PasswordDialog pwd = new PasswordDialog(getActivity(), "60") {
+                                            PasswordDialog pwd = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "60") {
                                                 @Override
                                                 public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -1240,7 +1242,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                 } else {
 
-                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(), "60") {
+                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "60") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             if (cartItemList.get(position).isPosted()) {
@@ -1296,7 +1298,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                         if (type.equalsIgnoreCase("qty")) {
 
-                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(), "60") {
+                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "60") {
                                                 @Override
                                                 public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -1362,7 +1364,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             quantity));
                                 } else {
 
-                                    PasswordDialog passwordDialog2 = new PasswordDialog(getActivity(), "60") {
+                                    PasswordDialog passwordDialog2 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "60") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             if (cartItemList.get(position).isPosted()) {
@@ -1502,7 +1504,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     @Override
                     public void saveEmployeeToTransaction(final String userId, String wholeName) {
 
-                        PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "78") {
+                        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM FOC",  "78") {
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
                                 if (selectedRoom.isTakeOut()) {
@@ -1788,7 +1790,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 127://REPRINT Z READ
                 if (passwordDialog == null) {
-                    passwordDialog = new PasswordDialog(getActivity(), "74") {
+                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS", "74") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
@@ -1829,7 +1831,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 123: //REPRINT X/Z READING
                 if (passwordDialog == null) {
-                    passwordDialog = new PasswordDialog(getActivity(), "74") {
+                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS" ,"74") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             ReprintXReadingDialog reprintXReadingDialog = new ReprintXReadingDialog(getActivity());
@@ -2995,7 +2997,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     backoutGuestDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                         @Override
                         public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "77") {
                                 @Override
                                 public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -3092,7 +3094,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void save(final String remarks) {
 
-                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "77") {
                                         @Override
                                         public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -3170,7 +3172,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                         @Override
                         public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "77") {
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "77") {
                                 @Override
                                 public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -3457,7 +3459,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 }
                             }
 
-                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "70") {
+                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM SWITCH ROOM", "70") {
 
                                 @Override
                                 public void passwordSuccess(String employeeId, String employeeName) {
@@ -3725,7 +3727,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
-            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "65") {
+            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM VOID ITEM" ,"65") {
                 @Override
                 public void passwordSuccess(final String employeeId, String employeeName) {
                     if (selectedRoom != null) {
@@ -3872,7 +3874,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         temp += currentTransaction.get(0).getAmount();
 
-        total.setText(temp < 1 ? "0.00": Utils.returnWithTwoDecimal(String.valueOf(temp)));
+        total.setText(temp < 1 ? "0.00": Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(temp)))));
     }
 
 
@@ -3977,9 +3979,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 @Override
                 public void noClicked() {
-
+                    checkoutSwipe.setRefreshing(false);
                 }
             };
+
+            alertYesNo.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    checkoutSwipe.setRefreshing(false);
+                }
+            });
+            alertYesNo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    checkoutSwipe.setRefreshing(false);
+                }
+            });
+
             alertYesNo.show();
         } else {
             BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
@@ -4012,9 +4028,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     @Override
                     public void noClicked() {
-
+                        checkoutSwipe.setRefreshing(false);
                     }
                 };
+
+                alertYesNo.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        checkoutSwipe.setRefreshing(false);
+                    }
+                });
+                alertYesNo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        checkoutSwipe.setRefreshing(false);
+                    }
+                });
+
                 alertYesNo.show();
             } else {
                 BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
@@ -4518,12 +4548,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
                     discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
-                    subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)));
+                    subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)))));
 
 
-                    total.setText(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))));
-                    discount.setText(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)));
-                    deposit.setText(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
+                    total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))))));
+                    discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
+                    deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())))));
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
                         List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
                         for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
@@ -5208,13 +5238,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 guestReceiptInfoModel = new GuestReceiptInfoModel(fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getCustomer(), fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress(), fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getTin());
             }
 
-            discount.setText(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
-            subTotal.setText(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal())));
-            deposit.setText(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())));
+            discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))));
+            subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal())))));
+            deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())))));
             total.setText(String.valueOf(
                     (fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())) < 0 ?
                             "0.00" :
-                            Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))
+                            Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))))
             ));
             if (fetchOrderPendingViaControlNoResponse.getResult().getPayments().size() > 0) {
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : fetchOrderPendingViaControlNoResponse.getResult().getPayments()) {
@@ -6107,7 +6137,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void xReadRequest() {
 
-        PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "72") {
+        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X READING", "72") {
             @Override
             public void passwordSuccess(String employeeId, String employeeName) {
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -6191,7 +6221,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void removeOtSuccess(final String oldOtValue, final String remainingOt) {
 
-                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(), "71") {
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CANCEL OT", "71") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);

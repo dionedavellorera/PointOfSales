@@ -238,7 +238,7 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
 
     private void sendDiscount() {
 
-        PasswordDialog passwordDialog = new PasswordDialog(context, "64") {
+        PasswordDialog passwordDialog = new PasswordDialog(context,"CONFIRM DISCOUNTING", "64") {
 
             @Override
             public void passwordSuccess(String employeeId, String employeeName) {

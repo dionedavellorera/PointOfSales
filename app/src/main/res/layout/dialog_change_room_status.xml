@@ -6,6 +6,8 @@
     <include layout="@layout/partial_header" android:id="@+id/header" />
 
     <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_below="@id/header"
         android:id="@+id/listNewStatus"
         android:layout_width="match_parent"

@@ -635,7 +635,7 @@
 
         <TextView
             android:gravity="center"
-            android:text="VAT REG TIN : 009-772-500-000"
+            android:text="VAT REG TIN : 009-772-500-00000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

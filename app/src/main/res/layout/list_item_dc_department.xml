@@ -7,8 +7,6 @@
 
     <CheckBox
         android:checked="true"
-        android:textColor="@color/colorWhite"
-        android:background="@color/colorSecondary"
         android:padding="10dp"
         android:textStyle="bold"
         android:text="test"

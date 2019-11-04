@@ -227,7 +227,7 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void remove(final String post_id, String name, String amount, final int position) {
 
-                PasswordDialog passwordDialog = new PasswordDialog(act, "65") {
+                PasswordDialog passwordDialog = new PasswordDialog(act,"CONFIRM VOID ITEM", "65") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
 
