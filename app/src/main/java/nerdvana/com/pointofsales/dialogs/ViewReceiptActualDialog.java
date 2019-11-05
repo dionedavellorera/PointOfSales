@@ -77,7 +77,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                             String roomNo = "";
                             String roomType = "";
                             if (response.body().getResult().getGuestInfo() != null) {
-                                roomNo = response.body().getResult().getGuestInfo().getRoomNo() == null ? "NA" : response.body().getResult().getGuestInfo().getRoomNo();
+                                roomNo = response.body().getResult().getGuestInfo().getRoom().getRoomNo();
                                 roomType = response.body().getResult().getGuestInfo().getRoomType();
                             } else {
                                 roomNo = "TAKEOUT";

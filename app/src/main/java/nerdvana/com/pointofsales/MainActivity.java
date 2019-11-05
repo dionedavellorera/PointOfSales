@@ -313,7 +313,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                     if (myPrintJobs.get(0).getTaskName().equalsIgnoreCase("soaroom") ||
                             myPrintJobs.get(0).getTaskName().equalsIgnoreCase("checkout") ||
-                            myPrintJobs.get(0).getTaskName().equalsIgnoreCase("soato")) {
+                            myPrintJobs.get(0).getTaskName().equalsIgnoreCase("soato") ||
+                            myPrintJobs.get(0).getTaskName().equalsIgnoreCase("reprint_checkout")) {
                         Handler handler = new Handler(Looper.getMainLooper());
 
                         handler.postDelayed(new Runnable() {
@@ -2167,7 +2168,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
             //region create receipt data
 
-            finalString += receiptString("CASHIER", userModel.getUsername(), MainActivity.this, false);
+            finalString += receiptString("CASHIER", toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCashierOut().getName() : userModel.getUsername(), MainActivity.this, false);
             finalString += receiptString("ROOM BOY", String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA"), MainActivity.this, false);
             finalString += receiptString("CHECK IN", toList1.getGuestInfo() != null ? Utils.birDateTimeFormat(toList1.getGuestInfo().getCheckIn()) : "NA", MainActivity.this, false);
             finalString += receiptString("CHECK OUT", toList1.getGuestInfo() != null ? Utils.birDateTimeFormat(toList1.getGuestInfo().getCheckOut()) : "NA", MainActivity.this, false);

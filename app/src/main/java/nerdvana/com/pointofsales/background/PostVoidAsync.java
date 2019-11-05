@@ -122,7 +122,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "CASHIER",
-                        userModel.getUsername()
+                        toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCashierOut().getName() : userModel.getUsername()
                         ,
                         40,
                         2,

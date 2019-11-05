@@ -1408,8 +1408,24 @@ public class FetchOrderPendingViaControlNoResponse {
             this.roomNo = roomNo;
         }
     }
+    public class CashierOut {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public class GuestInfo {
+        @SerializedName("cashier_out")
+        @Expose
+        private CashierOut cashierOut;
         @SerializedName("room")
         private Room room;
         @SerializedName("room_id")
@@ -1478,6 +1494,15 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("room_boy_in")
         @Expose
         private RoomBoy roomBoy;
+
+
+        public CashierOut getCashierOut() {
+            return cashierOut;
+        }
+
+        public void setCashierOut(CashierOut cashierOut) {
+            this.cashierOut = cashierOut;
+        }
 
         public Room getRoom() {
             return room;
@@ -1750,7 +1775,10 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
+
+
     public class Result {
+
         @SerializedName("special")
         @Expose
         private int special;
