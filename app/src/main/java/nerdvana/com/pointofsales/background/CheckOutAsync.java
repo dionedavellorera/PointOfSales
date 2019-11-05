@@ -897,19 +897,29 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                             context)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 } else {
+
+                    String subTotal = String.valueOf(Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getTotal()))) +
+                            Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getOtAmount()))) +
+                            Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount()))));
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "SUB TOTAL",
-                            returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
+                            returnWithTwoDecimal(subTotal),
                             40,
                             2,
                             context)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+                    String amountDue = String.valueOf((Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getTotal()))) +
+                            Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getOtAmount()))) +
+                            Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount()))))
+                            -
+                            (Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) +
+                                    Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getDiscount()))) +
+                                    Double.valueOf(returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())))));
+
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "AMOUNT DUE",
-                            returnWithTwoDecimal(String.valueOf(
-                                    (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
-                                            - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
+                            returnWithTwoDecimal(amountDue),
                             40,
                             2,
                             context)
