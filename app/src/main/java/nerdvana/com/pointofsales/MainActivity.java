@@ -322,11 +322,27 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                             public void run() {
                                 runTask(myPrintJobs.get(0).getTaskName(), myPrintJobs.get(0).getAsyncTask());
                             }
-                        }, 15000);
+                        }, 10000);
 
-
+                    } else if(myPrintJobs.get(0).getTaskName().equalsIgnoreCase("xread") ||
+                            myPrintJobs.get(0).getTaskName().equalsIgnoreCase("zread")){
+                        Handler hndl2 = new Handler(Looper.getMainLooper());
+                        hndl2.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                runTask(myPrintJobs.get(0).getTaskName(), myPrintJobs.get(0).getAsyncTask());
+                            }
+                        }, 3000);
                     } else {
-                        runTask(myPrintJobs.get(0).getTaskName(), myPrintJobs.get(0).getAsyncTask());
+                        Handler hndl3 = new Handler(Looper.getMainLooper());
+                        hndl3.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                runTask(myPrintJobs.get(0).getTaskName(), myPrintJobs.get(0).getAsyncTask());
+                            }
+                        }, 2000);
+
+
                     }
 
 
@@ -1861,9 +1877,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                                         }
 
 
-                                    } else {
-                                        otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
                                     }
+//                                    else {
+//                                        otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
+//                                    }
                                 }
                             }
 
@@ -1878,6 +1895,19 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
+                    }
+
+                    for (int i = 0; i < discountJsonArray.length(); i++) {
+                        JSONObject temp = discountJsonArray.getJSONObject(i);
+                        if (!temp.getString("is_special").equalsIgnoreCase("1") && !temp.getString("is_special").equalsIgnoreCase("1.0")) {
+
+                            otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
+
+
+                        }
+//                        else {
+//
+//                        }
                     }
 
 

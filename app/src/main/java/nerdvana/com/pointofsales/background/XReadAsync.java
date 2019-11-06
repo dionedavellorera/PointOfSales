@@ -419,11 +419,10 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                                             count = Integer.valueOf(temp.getString("count"));
 
                                         }
-
-
-                                    } else {
-                                        otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
                                     }
+//                                    else {
+//                                        otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
+//                                    }
                                 }
                             }
 
@@ -452,6 +451,16 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                     }
+
+
+                    for (int i = 0; i < discountJsonArray.length(); i++) {
+                        JSONObject temp = discountJsonArray.getJSONObject(i);
+                        if (!temp.getString("is_special").equalsIgnoreCase("1") && !temp.getString("is_special").equalsIgnoreCase("1.0")) {
+                            otherDiscAmount += Double.valueOf(temp.getString("discount_amount"));
+                        }
+
+                    }
+
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "OTHERS",
