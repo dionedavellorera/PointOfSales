@@ -83,12 +83,17 @@ public class PrinterUtils {
         String finalString = "";
         int filler = 0;
         int maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)) / 2);
-        if (partOne.length() < maxColumnDivideTwo) {
-            filler += (maxColumnDivideTwo - partOne.length());
+        if (partOne != null) {
+            if (partOne.length() < maxColumnDivideTwo) {
+                filler += (maxColumnDivideTwo - partOne.length());
+            }
         }
-        if (partTwo.length() < maxColumnDivideTwo) {
-            filler += (maxColumnDivideTwo - partTwo.length());
+        if (partTwo != null) {
+            if (partTwo.length() < maxColumnDivideTwo) {
+                filler += (maxColumnDivideTwo - partTwo.length());
+            }
         }
+
         finalString = (partOne.length() >= maxColumnDivideTwo ? partOne.substring(0, maxColumnDivideTwo) : partOne) + repeat(" ", filler) + (partTwo.length() >= maxColumnDivideTwo ? partTwo.substring(0, maxColumnDivideTwo) : partTwo);
 
         return finalString;
