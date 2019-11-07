@@ -4475,7 +4475,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     }
                     if (r.getTransaction().getCustomerTrans() != null) {
                         if (r.getTransaction().getCustomerTrans() != null) {
-                            guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(), r.getTransaction().getCustomerTrans().getAddress(), r.getTransaction().getCustomerTrans().getTin());
+                            guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(),
+                                    r.getTransaction().getCustomerTrans().getAddress() != null ? r.getTransaction().getCustomerTrans().getAddress() : "",
+                                    r.getTransaction().getCustomerTrans().getTin() != null ? r.getTransaction().getCustomerTrans().getTin() : "");
                         }
                     }
                 }
@@ -5235,7 +5237,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
             if (fetchOrderPendingViaControlNoResponse.getResult().getCustomer() != null) {
-                guestReceiptInfoModel = new GuestReceiptInfoModel(fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getCustomer(), fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress(), fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getTin());
+                guestReceiptInfoModel = new GuestReceiptInfoModel(
+                        fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getCustomer(),
+                        fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress() != null ? fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress() : "",
+                        fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getTin() != null ? fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress() : "");
             }
 
             discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))));

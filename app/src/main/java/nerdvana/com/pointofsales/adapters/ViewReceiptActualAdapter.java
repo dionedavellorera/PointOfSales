@@ -296,7 +296,14 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
                 tvAddress.setLayoutParams(llp);
                 TextView tvAddressValue = new TextView(context);
                 tvAddressValue.setGravity(Gravity.RIGHT);
-                tvAddressValue.setText(disc.getVrInfo() != null ? disc.getVrInfo().getAddress().toUpperCase() : "");
+                if (disc.getVrInfo() != null) {
+                    if (disc.getVrInfo().getAddress() != null) {
+                        tvAddressValue.setText(disc.getVrInfo().getAddress().toUpperCase());
+                    } else {
+                        tvAddressValue.setText("");
+                    }
+                }
+//                tvAddressValue.setText(disc.getVrInfo() != null ? disc.getVrInfo().getAddress().toUpperCase() : "");
                 tvAddressValue.setLayoutParams(llp1);
 
 

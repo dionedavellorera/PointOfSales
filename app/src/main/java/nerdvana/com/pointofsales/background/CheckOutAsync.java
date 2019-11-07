@@ -795,7 +795,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "ADDRESS",
-                                        d.getInfo().getAddress(),
+                                        d.getInfo().getAddress() != null ? d.getInfo().getAddress(): "",
                                         40,
                                         2,
                                         context)

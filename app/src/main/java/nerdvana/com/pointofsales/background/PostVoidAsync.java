@@ -662,7 +662,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "ADDRESS",
-                                        d.getInfo().getAddress().toUpperCase(),
+                                        d.getInfo().getAddress() != null ? d.getInfo().getAddress().toUpperCase() : "",
                                         40,
                                         2,
                                         context)

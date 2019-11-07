@@ -2546,7 +2546,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                             }
 
                             finalString += receiptString("ADDRESS",
-                                    d.getInfo().getAddress(), MainActivity.this, false);
+                                    d.getInfo().getAddress() != null ? d.getInfo().getAddress() : "", MainActivity.this, false);
                             finalString += receiptString("SIGNATURE",
                                     "", MainActivity.this, false);
                             finalString += receiptString("",
@@ -2626,7 +2626,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
                     if (toList1.getCustomer().getAddress() != null) {
 
-                        finalString += receiptString("ADDRESS:"+toList1.getCustomer().getAddress(),
+                        finalString += receiptString("ADDRESS:"+
+                                        toList1.getCustomer().getAddress() != null ? toList1.getCustomer().getAddress() : "",
                                 "", MainActivity.this, true);
 
 
