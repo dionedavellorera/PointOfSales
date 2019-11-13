@@ -243,7 +243,7 @@ public class FranchiseCheckoutAsync extends AsyncTask<Void, Void, Void>
                 addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "   VAT EXEMPT",
+                        "   VAT DISCOUNT",
                         returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
                         40,
                         2,

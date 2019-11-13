@@ -250,7 +250,15 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
                 tvId.setLayoutParams(llp);
                 TextView tvCardNo = new TextView(context);
                 tvCardNo.setGravity(Gravity.RIGHT);
-                tvCardNo.setText(disc.getVrInfo() != null ? disc.getVrInfo().getCardNo().toUpperCase() : "");
+                if (disc.getVrInfo() != null) {
+                    if (disc.getVrInfo().getCardNo() != null) {
+                        tvCardNo.setText(disc.getVrInfo().getCardNo().toUpperCase());
+                    } else {
+                        tvCardNo.setText("");
+                    }
+                } else {
+                    tvCardNo.setText("");
+                }
                 tvCardNo.setLayoutParams(llp1);
 
                 LinearLayout childLayout = new LinearLayout(

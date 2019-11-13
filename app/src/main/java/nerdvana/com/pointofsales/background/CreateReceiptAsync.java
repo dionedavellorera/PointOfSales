@@ -189,10 +189,10 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
             finalString += receiptString("", "", context, true);
 
 
-            finalString += receiptString("LESS", "", context, false);
+//            finalString += receiptString("LESS", "", context, false);
 
 
-            finalString += receiptString("   VAT EXEMPT", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), context, false);
+            finalString += receiptString("   VAT DISCOUNT", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), context, false);
 
 
             finalString += receiptString("   DISCOUNT", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), context, false);

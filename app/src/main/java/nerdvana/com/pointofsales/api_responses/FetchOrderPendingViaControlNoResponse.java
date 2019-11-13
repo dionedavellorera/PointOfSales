@@ -185,8 +185,35 @@ public class FetchOrderPendingViaControlNoResponse {
         }
     }
 
-    public class Payment {
+    public class GiftChecks {
+        @SerializedName("amount")
+        @Expose
+        private String amount;
+        @SerializedName("series_no")
+        @Expose
+        private String seriesNumber;
 
+        public String getAmount() {
+            return amount;
+        }
+
+        public void setAmount(String amount) {
+            this.amount = amount;
+        }
+
+        public String getSeriesNumber() {
+            return seriesNumber;
+        }
+
+        public void setSeriesNumber(String seriesNumber) {
+            this.seriesNumber = seriesNumber;
+        }
+    }
+
+    public class Payment {
+        @SerializedName("gift_checks")
+        @Expose
+        private List<GiftChecks> giftChecks;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -238,6 +265,15 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("card_detail")
         @Expose
         private CardDetail cardDetail;
+
+
+        public List<GiftChecks> getGiftChecks() {
+            return giftChecks;
+        }
+
+        public void setGiftChecks(List<GiftChecks> giftChecks) {
+            this.giftChecks = giftChecks;
+        }
 
         public CardDetail getCardDetail() {
             return cardDetail;
@@ -1290,6 +1326,9 @@ public class FetchOrderPendingViaControlNoResponse {
 
 
     public class Discounts {
+        @SerializedName("ave_discount_percentage")
+        @Expose
+        private String ave_discount_percentage;
         @SerializedName("discount_types")
         @Expose
         private DiscountTypes discountTypes;
@@ -1308,6 +1347,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("discount_amount")
         @Expose
         private Double discountAmount;
+
+        public String getAve_discount_percentage() {
+            return ave_discount_percentage;
+        }
+
+        public void setAve_discount_percentage(String ave_discount_percentage) {
+            this.ave_discount_percentage = ave_discount_percentage;
+        }
 
         public DiscountTypes getDiscountTypes() {
             return discountTypes;

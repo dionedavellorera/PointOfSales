@@ -136,7 +136,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
             } else {
                 buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
                 buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
-                buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
+//                buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
                 buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
                 buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
                 buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));
@@ -149,7 +149,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
         } else {
             buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23));
             buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7));
-            buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
+//            buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
             buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12));
             buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13));
             buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17));

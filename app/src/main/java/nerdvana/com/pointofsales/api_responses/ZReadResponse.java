@@ -285,6 +285,12 @@ public class ZReadResponse {
 
 
     public class Result {
+        @SerializedName("last_void_no")
+        @Expose
+        private String lastVoidNo;
+        @SerializedName("last_or_no")
+        @Expose
+        private String lastOrNo;
         @SerializedName("change")
         @Expose
         private Double change;
@@ -297,6 +303,9 @@ public class ZReadResponse {
         @SerializedName("control_no")
         @Expose
         private List<String> controlNo = null;
+        @SerializedName("void_no")
+        @Expose
+        private List<String> voidNo = null;
         @SerializedName("count")
         @Expose
         private Integer count;
@@ -309,6 +318,30 @@ public class ZReadResponse {
         @SerializedName("discount")
         @Expose
         private List<Discount> discount = null;
+
+        public String getLastVoidNo() {
+            return lastVoidNo;
+        }
+
+        public void setLastVoidNo(String lastVoidNo) {
+            this.lastVoidNo = lastVoidNo;
+        }
+
+        public String getLastOrNo() {
+            return lastOrNo;
+        }
+
+        public void setLastOrNo(String lastOrNo) {
+            this.lastOrNo = lastOrNo;
+        }
+
+        public List<String> getVoidNo() {
+            return voidNo;
+        }
+
+        public void setVoidNo(List<String> voidNo) {
+            this.voidNo = voidNo;
+        }
 
         public Double getChange() {
             return change;

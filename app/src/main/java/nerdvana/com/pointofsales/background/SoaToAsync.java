@@ -206,31 +206,31 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                     List<String> str = new ArrayList<>();
                     for (int i = Integer.valueOf(toList1.getSoaCount()) - 1; i > 0; i--) {
                         if (i == Integer.valueOf(toList1.getSoaCount()) - 1) {
-                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]));
+                            str.add(toList1.getControlNo().split("-")[2]);
                         } else {
-                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +count);
+                            str.add(toList1.getControlNo().split("-")[2] + "-" +count);
                         }
 
-                        if (str.size() % 3 == 0) {
-                            allData.add(str);
-                            str = new ArrayList<>();
-                        }else {
-                            if (i == 1) {
-                                allData.add(str);
-                            }
-                        }
 
+//                        if (str.size() % 3 == 0) {
+//                            allData.add(str);
+//                            str = new ArrayList<>();
+//                        }else {
+//                            if (i == 1) {
+//                                allData.add(str);
+//                            }
+//                        }
                         count++;
                     }
 
 
                     int displayCount = 0;
                     Collections.reverse(allData);
-                    for (List<String> my : allData) {
+                    for (String my : str) {
                         if (displayCount == 0) {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     "CANCELLED SOA",
-                                    TextUtils.join(",", my),
+                                    my,
                                     40,
                                     2,
                                     context)
@@ -238,7 +238,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         } else {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                     "",
-                                    TextUtils.join(",", my),
+                                    my,
                                     40,
                                     2,
                                     context)
@@ -455,51 +455,82 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                 }
 
 
-                addPrinterSpace(1);
+//                addPrinterSpace(1);
 
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF PERSON/S",
-                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
-                        ,
-                        40,
-                        2,context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "NO OF PERSON/S",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
+//                        ,
+//                        40,
+//                        2,context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "NO OF FOOD ITEMS",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
+//                        ,
+//                        40,
+//                        2,context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF FOOD ITEMS",
-                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
-                        ,
-                        40,
-                        2,context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
-                addPrinterSpace(1);
 
 
 //                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "VAT 12%",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+////                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "VAT EXEMPT",
-                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                if (toList1.getVatExempt() > 0 && toList1.getDiscountsList().size() > 0) {
+                    addPrinterSpace(1);
+                    addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
+                if (toList1.getVatExempt() > 0) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "VAT DISCOUNT",
+                            returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
 
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "DISCOUNT",
-                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "DISCOUNT",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+////                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
+                            returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
+                addPrinterSpace(1);
 
 
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -851,6 +882,24 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
 
+                addPrinterSpace(1);
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "NO OF PERSON/S",
+                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
+                        ,
+                        40,
+                        2,context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "NO OF FOOD ITEMS",
+                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
+                        ,
+                        40,
+                        2,context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addPrinterSpace(1);
 
 
                 if (toList1.getCustomer() != null) {

@@ -169,7 +169,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
 
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "VAT EXEMPT",
+                            "VAT DISCOUNT",
                             returnWithTwoDecimal(dataJsonObject.getString("vat_exempt"))
                             ,
                             40,
@@ -488,7 +488,16 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                 } else {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "SENIOR CITIZEN",
+                            "DISCOUNT LIST",
+                            ""
+                            ,
+                            40,
+                            2,
+                            context),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "SENIOR ",
                             "0.00"
                             ,
                             40,
@@ -496,7 +505,7 @@ public class XReadAsync extends AsyncTask<Void, Void, Void> {
                             context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            "SENIOR CITIZEN" + "(COUNT)",
+                            "SENIOR " + "(COUNT)",
                             "0"
                             ,
                             40,

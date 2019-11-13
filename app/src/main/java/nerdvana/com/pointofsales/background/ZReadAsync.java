@@ -169,7 +169,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "VAT EXEMPT",
+                        "VAT DISCOUNT",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt()))
                         ,
                         40,
@@ -357,7 +357,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 //                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "VOID",
+                        "VOID AMOUNT",
                         returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVoidAmount()))
                         ,
                         40,
@@ -520,7 +520,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "BEG. OR NO",
-                        zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA"
+                        zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : zReadResponse.getLastOrNo()
                         ,
                         40,
                         2,
@@ -529,7 +529,43 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "ENDING OR NO",
-                        zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA"
+                        zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : zReadResponse.getLastOrNo()
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "BEG. SOA NO",
+                        zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : zReadResponse.getLastOrNo()
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ENDING SOA NO",
+                        zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : zReadResponse.getLastOrNo()
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "BEG. VOID NO",
+                        zReadResponse.getVoidNo().size() > 0 ? zReadResponse.getVoidNo().get(0) : zReadResponse.getLastVoidNo()
+                        ,
+                        40,
+                        2,
+                        context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ENDING VOID NO",
+                        zReadResponse.getVoidNo().size() > 0 ? zReadResponse.getVoidNo().get(zReadResponse.getVoidNo().size() - 1) : zReadResponse.getLastVoidNo()
                         ,
                         40,
                         2,
@@ -565,7 +601,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                 }
 
 
-                addTextToPrinter(printer, "Z KEEPING COUNTER:" + returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                addTextToPrinter(printer, "Z COUNTER:" + returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
 
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(

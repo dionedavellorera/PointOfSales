@@ -243,7 +243,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="VAT EXEMPT"/>
+                android:text="VAT DISCOUNT"/>
             <TextView
                 android:gravity="right"
                 android:id="@+id/vatExemptValue"
@@ -624,7 +624,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="Z KEEPING COUNTER"/>
+                android:text="Z COUNTER"/>
             <TextView
                 android:id="@+id/zReadNo"
                 android:gravity="right"

@@ -293,6 +293,7 @@
     </LinearLayout>
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/less"
         android:textStyle="bold"
         android:layout_marginLeft="20dp"
@@ -320,7 +321,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:text="         VAT EXEMPT"/>
+                android:text="         VAT DISCOUNT"/>
             <TextView
                 android:gravity="right"
                 android:text="d"

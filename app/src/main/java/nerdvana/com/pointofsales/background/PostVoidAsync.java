@@ -341,47 +341,77 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF PERSON/S",
-                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
-                        ,
-                        40,
-                        2,context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "NO OF PERSON/S",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
+//                        ,
+//                        40,
+//                        2,context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "NO OF ITEMS",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
+//                        ,
+//                        40,
+//                        2,context),
+//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF ITEMS",
-                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
-                        ,
-                        40,
-                        2,context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
-                addPrinterSpace(1);
 
 
 //                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "VAT 12%",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+////                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                if (toList1.getVatExempt() > 0 && toList1.getDiscountsList().size() > 0) {
+                    addPrinterSpace(1);
+                    addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
+                if (toList1.getVatExempt() > 0) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "VAT DISCOUNT",
+                            returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "VAT EXEMPT",
-                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "DISCOUNT",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+////                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+                for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
+                            returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "DISCOUNT",
-                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addPrinterSpace(1);
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -456,6 +486,28 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
                 List<Integer> tmpArr = new ArrayList<>();
                 String pymType = "";
                 List<String> ccardArray = new ArrayList<>();
+
+                for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                    if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                        tmpArr.add(pym.getPaymentTypeId());
+                        pymType = pym.getPaymentDescription();
+                    }
+                }
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "PAYMENT TYPE",
+                        tmpArr.size() > 1 ? "MULTIPLE" : pymType
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+
+
+                addPrinterSpace(1);
+
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
                     if (!tmpArr.contains(pym.getPaymentTypeId())) {
                         tmpArr.add(pym.getPaymentTypeId());
@@ -479,7 +531,7 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "MASTER",
+                                            "MASTERCARD",
                                             ""
                                             ,
                                             40,
@@ -508,14 +560,24 @@ public class PostVoidAsync extends AsyncTask<Void, Void, Void> {
 
 
 
+                addPrinterSpace(1);
+
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "PAYMENT TYPE",
-                        tmpArr.size() > 1 ? "MULTIPLE" : pymType
+                        "NO OF PERSON/S",
+                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
                         ,
                         40,
-                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        2,context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "NO OF ITEMS",
+                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
+                        ,
+                        40,
+                        2,context),
+                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addPrinterSpace(1);

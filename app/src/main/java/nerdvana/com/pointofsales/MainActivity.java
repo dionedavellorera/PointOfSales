@@ -891,6 +891,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 saveDataToLocal(printModel, userModel, currentDateTime);
                 addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "reprint_checkout");
                 break;
+            case "REPRINT_RECEIPT_SPEC":
+                willExecutGlobalPrint = false;
+//                saveDataToLocal(printModel, userModel, currentDateTime);
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "reprint_checkout");
+                break;
             case "DEPOSIT"://done
                 //willExecutGlobalPrint = false;
                 //addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
@@ -1108,7 +1113,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-            finalString += receiptString("   VAT EXEMPT", toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
+            finalString += receiptString("   VAT DISCOUNT", toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
 
             finalString += receiptString("   DISCOUNT", toList1.getDiscount() > 0 ? String.format("-%s",returnWithTwoDecimal(String.valueOf(toList1.getDiscount()))) : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
 
@@ -1440,7 +1445,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
             finalString += receiptString("VATABLE SALES", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatable())), MainActivity.this, false);
             finalString += receiptString("VAT EXEMPT SALES", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExemptSales())), MainActivity.this, false);
-            finalString += receiptString("VAT EXEMPT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt())), MainActivity.this, false);
+            finalString += receiptString("VAT DISCOUNT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVatExempt())), MainActivity.this, false);
             finalString += receiptString("VAT AMOUNT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVat())), MainActivity.this, false);
 
             finalString += receiptString("", "", MainActivity.this, false);
@@ -1526,7 +1531,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 depositAdjustment += Double.valueOf(cutOff.getCashAndReco().get(0).getAdjustmentDeposit());
             }
 
-            finalString += receiptString("VOID", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVoidAmount())), MainActivity.this, false);
+            finalString += receiptString("VOID AMOUNT", returnWithTwoDecimal(String.valueOf(zReadResponse.getData().getVoidAmount())), MainActivity.this, false);
 
 
             finalString += receiptString("", "", MainActivity.this, false);
@@ -1600,8 +1605,13 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("" , "", MainActivity.this, false);
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-") , "", MainActivity.this, true);
 
-            finalString += receiptString("BEG. OR NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : "NA", MainActivity.this, false);
-            finalString += receiptString("ENDING OR NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : "NA", MainActivity.this, false);
+            finalString += receiptString("BEG. OR NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : zReadResponse.getLastOrNo(), MainActivity.this, false);
+            finalString += receiptString("ENDING OR NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : zReadResponse.getLastOrNo(), MainActivity.this, false);
+
+            finalString += receiptString("BEG. SOA NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : zReadResponse.getLastOrNo(), MainActivity.this, false);
+            finalString += receiptString("ENDING SOA NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : zReadResponse.getLastOrNo(), MainActivity.this, false);
+
+
             finalString += receiptString("BEG. BALANCE" , returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal())), MainActivity.this, false);
             finalString += receiptString("GRAND TOTAL SALES" , returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal())), MainActivity.this, false);
 
@@ -1613,7 +1623,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("", "", MainActivity.this, true);
 
 
-            finalString += receiptString("Z KEEPING COUNTER", returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), MainActivity.this, false);
+            finalString += receiptString("Z COUNTER", returnWithTwoDecimal(String.valueOf(zReadResponse.getCount())), MainActivity.this, false);
 
             finalString += receiptString("------ END OF REPORT ------", "", MainActivity.this, true);
             finalString += receiptString("-------------", "", MainActivity.this, true);
@@ -1736,7 +1746,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     finalString += receiptString("", "", MainActivity.this, false);
                     finalString += receiptString("VATable Sales", returnWithTwoDecimal(dataJsonObject.getString("vatable")), MainActivity.this, false);
                     finalString += receiptString("VAT EXEMPT SALES", returnWithTwoDecimal(dataJsonObject.getString("vat_exempt_sales")), MainActivity.this, false);
-                    finalString += receiptString("VAT EXEMPT", returnWithTwoDecimal(dataJsonObject.getString("vat_exempt")), MainActivity.this, false);
+                    finalString += receiptString("VAT DISCOUNT", returnWithTwoDecimal(dataJsonObject.getString("vat_exempt")), MainActivity.this, false);
                     finalString += receiptString("VAT AMOUNT", returnWithTwoDecimal(dataJsonObject.getString("vat")), MainActivity.this, false);
 
 
@@ -2229,34 +2239,71 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     List<String> str = new ArrayList<>();
                     for (int i = Integer.valueOf(toList1.getSoaCount()) - 1; i > 0; i--) {
                         if (i == Integer.valueOf(toList1.getSoaCount()) - 1) {
-                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]));
+                            str.add(toList1.getControlNo().split("-")[2]);
                         } else {
-                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +count);
+                            str.add(toList1.getControlNo().split("-")[2] + "-" +count);
                         }
 
-                        if (str.size() % 3 == 0) {
-                            allData.add(str);
-                            str = new ArrayList<>();
-                        }else {
-                            if (i == 1) {
-                                allData.add(str);
-                            }
-                        }
 
+//                        if (str.size() % 3 == 0) {
+//                            allData.add(str);
+//                            str = new ArrayList<>();
+//                        }else {
+//                            if (i == 1) {
+//                                allData.add(str);
+//                            }
+//                        }
                         count++;
                     }
 
 
                     int displayCount = 0;
                     Collections.reverse(allData);
-                    for (List<String> my : allData) {
+                    for (String my : str) {
                         if (displayCount == 0) {
-                            finalString += receiptString("CANCELLED SOA", TextUtils.join(",", my), MainActivity.this, false);
+                            finalString += receiptString("CANCELLED SOA", my, MainActivity.this, false);
+
                         } else {
-                            finalString += receiptString("", TextUtils.join(",", my), MainActivity.this, false);
+                            finalString += receiptString("", my, MainActivity.this, false);
+
                         }
                         displayCount++;
                     }
+
+
+
+//                    List<List<String>> allData = new ArrayList<>();
+//                    List<String> str = new ArrayList<>();
+//                    for (int i = Integer.valueOf(toList1.getSoaCount()) - 1; i > 0; i--) {
+//                        if (i == Integer.valueOf(toList1.getSoaCount()) - 1) {
+//                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]));
+//                        } else {
+//                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +count);
+//                        }
+//
+//                        if (str.size() % 3 == 0) {
+//                            allData.add(str);
+//                            str = new ArrayList<>();
+//                        }else {
+//                            if (i == 1) {
+//                                allData.add(str);
+//                            }
+//                        }
+//
+//                        count++;
+//                    }
+//
+//
+//                    int displayCount = 0;
+//                    Collections.reverse(allData);
+//                    for (List<String> my : allData) {
+//                        if (displayCount == 0) {
+//                            finalString += receiptString("CANCELLED SOA", TextUtils.join(",", my), MainActivity.this, false);
+//                        } else {
+//                            finalString += receiptString("", TextUtils.join(",", my), MainActivity.this, false);
+//                        }
+//                        displayCount++;
+//                    }
 
 
 
@@ -2375,26 +2422,38 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-            finalString += receiptString("NO OF PERSON/S",
-                    returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
-
-            finalString += receiptString("NO OF FOOD ITEMS",
-                    returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
+//            finalString += receiptString("NO OF PERSON/S",
+//                    returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
+//
+//            finalString += receiptString("NO OF FOOD ITEMS",
+//                    returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
 
 
             finalString += receiptString("",
                     "", MainActivity.this, false);
 
 
-//            finalString += receiptString("LESS",
-//                    "", MainActivity.this, false);
+            if (toList1.getVatExempt() > 0 && toList1.getDiscountsList().size() > 0) {
+                finalString += receiptString("LESS",
+                        "", MainActivity.this, false);
+            }
 
-            finalString += receiptString("VAT EXEMPT",
-                    toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
+            if (toList1.getVatExempt() > 0) {
+                finalString += receiptString("VAT DISCOUNT",
+                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())), MainActivity.this, false);
+            }
 
 
-            finalString += receiptString("DISCOUNT",
-                    toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
+
+
+
+            for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
+                finalString += receiptString(dc.getDiscountType() + " " + dc.getAve_discount_percentage(),
+                        returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())), MainActivity.this, false);
+            }
+
+//            finalString += receiptString("DISCOUNT",
+//                    toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
 
 
 
@@ -2405,43 +2464,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             List<Integer> tmpArr = new ArrayList<>();
             String pymType = "";
             List<String> ccardArray = new ArrayList<>();
+
             for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
                 if (!tmpArr.contains(pym.getPaymentTypeId())) {
                     tmpArr.add(pym.getPaymentTypeId());
                     pymType = pym.getPaymentDescription();
-                }
-
-                if (pym.getPaymentTypeId() == 2) {
-                    if (pym.getCardDetail() != null) {
-                        if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
-                            int starCount = 0;
-                            String finalData = "";
-                            if (pym.getCardDetail().getCardNumber().length() < 3) {
-                                finalData += pym.getCardDetail().getCardNumber();
-                            } else {
-                                starCount = pym.getCardDetail().getCardNumber().length() - 3;
-                                finalData += new String(new char[starCount]).replace("\0", "*");
-                                finalData += pym.getCardDetail().getCardNumber().substring(starCount);
-                            }
-
-                            if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
-
-
-                                finalString += receiptString("MASTER",
-                                        "", MainActivity.this, false);
-
-                            } else {
-
-                                finalString += receiptString("VISA",
-                                        "", MainActivity.this, false);
-                            }
-
-
-                            finalString += receiptString(pym.getPaymentDescription(),
-                                    finalData, MainActivity.this, false);
-
-                        }
-                    }
                 }
             }
 
@@ -2602,7 +2629,61 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("PAYMENT TYPE",
                     tmpArr.size() > 1 ? "MULTIPLE" : pymType, MainActivity.this, false);
 
+            finalString += receiptString("",
+                    "", MainActivity.this, false);
 
+            for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                    tmpArr.add(pym.getPaymentTypeId());
+                    pymType = pym.getPaymentDescription();
+                }
+
+                if (pym.getPaymentTypeId() == 2) {
+                    if (pym.getCardDetail() != null) {
+                        if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
+                            int starCount = 0;
+                            String finalData = "";
+                            if (pym.getCardDetail().getCardNumber().length() < 3) {
+                                finalData += pym.getCardDetail().getCardNumber();
+                            } else {
+                                starCount = pym.getCardDetail().getCardNumber().length() - 3;
+                                finalData += new String(new char[starCount]).replace("\0", "*");
+                                finalData += pym.getCardDetail().getCardNumber().substring(starCount);
+                            }
+
+                            if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+
+
+                                finalString += receiptString("MASTERCARD",
+                                        "", MainActivity.this, false);
+
+                            } else {
+
+                                finalString += receiptString("VISA",
+                                        "", MainActivity.this, false);
+                            }
+
+
+                            finalString += receiptString(pym.getPaymentDescription(),
+                                    finalData, MainActivity.this, false);
+
+                        }
+                    }
+                }
+            }
+
+
+            finalString += receiptString("",
+                    "", MainActivity.this, false);
+
+            finalString += receiptString("NO OF PERSON/S",
+                    returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
+
+            finalString += receiptString("NO OF FOOD ITEMS",
+                    returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
+
+            finalString += receiptString("",
+                    "", MainActivity.this, false);
 
             finalString += receiptString("",
                     "", MainActivity.this, false);
