@@ -48,7 +48,36 @@ public class ZXReadModel {
 
     private String zReadNo;
 
-    public ZXReadModel(String company, String address, String telNumber, String serialNumber, String regTin, String permitNumber, String minNumber, String title, String postingDate, String shiftNumber, String user, String manager, String machineNumber, String grossSales, String netSales, String vatableSales, String vatExemptSales, String twelveVat, String nonVat, String serviceCharge, String cashSales, String cardSales, String depositSales, String online, String depositAdjustment, String voidAmount, String pwdCount, String pwdAmount, String seniorCount, String seniorAmount, String others, String beginningTrans, String endTrans, String oldGrandTotal, String newGrandTotal, String zReadNo, String id) {
+    private String begSoaNo;
+    private String endSoaNo;
+    private String begVoidNo;
+    private String endVoidNo;
+
+    public ZXReadModel(String company, String address,
+                       String telNumber, String serialNumber,
+                       String regTin, String permitNumber,
+                       String minNumber, String title,
+                       String postingDate, String shiftNumber,
+                       String user, String manager,
+                       String machineNumber, String grossSales,
+                       String netSales, String vatableSales,
+                       String vatExemptSales, String twelveVat,
+                       String nonVat, String serviceCharge,
+                       String cashSales, String cardSales,
+                       String depositSales, String online,
+                       String depositAdjustment, String voidAmount,
+                       String pwdCount, String pwdAmount,
+                       String seniorCount, String seniorAmount,
+                       String others, String beginningTrans,
+                       String endTrans, String oldGrandTotal,
+                       String newGrandTotal, String zReadNo,
+                       String id, String begSoaNo,
+                       String endSoaNo, String begVoidNo,
+                       String endVoidNo) {
+        this.begSoaNo = begSoaNo;
+        this.endSoaNo = endSoaNo;
+        this.begVoidNo = begVoidNo;
+        this.endVoidNo = endVoidNo;
         this.company = company;
         this.id = id;
         this.address = address;
@@ -86,6 +115,22 @@ public class ZXReadModel {
         this.oldGrandTotal = oldGrandTotal;
         this.newGrandTotal = newGrandTotal;
         this.zReadNo = zReadNo;
+    }
+
+    public String getBegSoaNo() {
+        return begSoaNo;
+    }
+
+    public String getEndSoaNo() {
+        return endSoaNo;
+    }
+
+    public String getBegVoidNo() {
+        return begVoidNo;
+    }
+
+    public String getEndVoidNo() {
+        return endVoidNo;
     }
 
     public String getId() {

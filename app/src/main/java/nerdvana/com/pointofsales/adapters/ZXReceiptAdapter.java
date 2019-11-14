@@ -76,6 +76,10 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private TextView oldGrandTotal;
         private TextView zReadNo;
         private TextView voidValue;
+        private TextView begSoaNo;
+        private TextView endSoaNo;
+        private TextView begVoidNo;
+        private TextView endVoidNo;
 
         private LinearLayout linZReadOnly;
 
@@ -125,6 +129,11 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             linZReadOnly = itemView.findViewById(R.id.linZReadOnly);
             btnReprint = itemView.findViewById(R.id.btnReprint);
+
+            begSoaNo = itemView.findViewById(R.id.begSoaNo);
+            endSoaNo = itemView.findViewById(R.id.endSoaNo);
+            begVoidNo = itemView.findViewById(R.id.begVoidNo);
+            endVoidNo = itemView.findViewById(R.id.endVoidNo);
 
 
         }
@@ -260,6 +269,19 @@ public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((ViewHolder) holder)
                     .zReadNo
                     .setText(model.getzReadNo());
+
+            ((ViewHolder) holder)
+                    .begSoaNo
+                    .setText(model.getBegSoaNo());
+            ((ViewHolder) holder)
+                    .endSoaNo
+                    .setText(model.getEndSoaNo());
+            ((ViewHolder) holder)
+                    .begVoidNo
+                    .setText(model.getBegVoidNo());
+            ((ViewHolder) holder)
+                    .endVoidNo
+                    .setText(model.getEndVoidNo());
 
             if (from.equalsIgnoreCase("z")) {
                 ((ViewHolder) holder)

@@ -1611,6 +1611,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("BEG. SOA NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(0) : zReadResponse.getLastOrNo(), MainActivity.this, false);
             finalString += receiptString("ENDING SOA NO" , zReadResponse.getControlNo().size() > 0 ? zReadResponse.getControlNo().get(zReadResponse.getControlNo().size() - 1) : zReadResponse.getLastOrNo(), MainActivity.this, false);
 
+            finalString += receiptString("BEG. VOID NO" , zReadResponse.getVoidNo().size() > 0 ? zReadResponse.getVoidNo().get(0) : zReadResponse.getLastVoidNo(), MainActivity.this, false);
+            finalString += receiptString("ENDING VOID NO" , zReadResponse.getVoidNo().size() > 0 ? zReadResponse.getVoidNo().get(zReadResponse.getVoidNo().size() - 1) : zReadResponse.getLastVoidNo(), MainActivity.this, false);
+
+
 
             finalString += receiptString("BEG. BALANCE" , returnWithTwoDecimal(String.valueOf(zReadResponse.getOldGrandTotal())), MainActivity.this, false);
             finalString += receiptString("GRAND TOTAL SALES" , returnWithTwoDecimal(String.valueOf(zReadResponse.getNewGrandTotal())), MainActivity.this, false);

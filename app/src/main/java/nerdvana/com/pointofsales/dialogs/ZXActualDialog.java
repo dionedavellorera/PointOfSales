@@ -183,7 +183,11 @@ public class ZXActualDialog extends Dialog {
                                 "--",
                                 "--",
                                 "--",
-                                String.valueOf(res.getData().getId()));
+                                String.valueOf(res.getData().getId()),
+                                "--",
+                                "--",
+                                "--",
+                                "--");
                         zxReadModelList.add(zxReadModel);
                     }
 
@@ -356,12 +360,17 @@ public class ZXActualDialog extends Dialog {
                                 String.valueOf(seniorCount),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(seniorAmount)),
                                 String.valueOf(othersAmount),
-                                res.getControlNo().size() > 0 ? res.getControlNo().get(0) : "NA",
-                                res.getControlNo().size() > 0 ? res.getControlNo().get(res.getControlNo().size() - 1) : "NA",
+                                res.getControlNo().size() > 0 ? res.getControlNo().get(0) : res.getLastOrNo(),
+                                res.getControlNo().size() > 0 ? res.getControlNo().get(res.getControlNo().size() - 1) : res.getLastOrNo(),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getOldGrandTotal())),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getNewGrandTotal())),
                                 String.valueOf(res.getCount()),
-                                String.valueOf(res.getData().getId()));
+                                String.valueOf(res.getData().getId()),
+                                res.getControlNo().size() > 0 ? res.getControlNo().get(0) : res.getLastOrNo(),
+                                res.getControlNo().size() > 0 ? res.getControlNo().get(res.getControlNo().size() - 1) : res.getLastOrNo(),
+                                res.getVoidNo().size() > 0 ? res.getVoidNo().get(0) : res.getLastVoidNo(),
+                                res.getVoidNo().size() > 0 ? res.getVoidNo().get(res.getVoidNo().size() - 1) : res.getLastVoidNo()
+                        );
                         zxReadModelList.add(zxReadModel);
 
 
