@@ -924,11 +924,16 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         try {
             if (willExecutGlobalPrint) {
-                SPrinter.getPrinter().addCut(Printer.CUT_FEED);
-                if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
-                    SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
-                    SPrinter.getPrinter().clearCommandBuffer();
+                if (SPrinter.getPrinter() != null) {
+                    SPrinter.getPrinter().addCut(Printer.CUT_FEED);
+                    if (SPrinter.getPrinter().getStatus().getConnection() == 1) {
+                        SPrinter.getPrinter().sendData(Printer.PARAM_DEFAULT);
+                        SPrinter.getPrinter().clearCommandBuffer();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Printer not setup", Toast.LENGTH_SHORT).show();
                 }
+
             }
 
 
@@ -3080,7 +3085,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void addPrinterSpace(int count) {
         try {
-            SPrinter.getPrinter().addFeedLine(count);
+            if (SPrinter.getPrinter() != null) {
+                SPrinter.getPrinter().addFeedLine(count);
+            }
+
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }

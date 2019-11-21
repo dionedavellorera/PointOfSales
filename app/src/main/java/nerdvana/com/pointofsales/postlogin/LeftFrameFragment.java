@@ -3700,7 +3700,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 } else {
 
-                    Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the paplication", "Information");
+                    Utils.showDialogMessage(getActivity(), "No payment type found, please re-open the application", "Information");
                 }
             } else {
                 Utils.showDialogMessage(getActivity(), "Room not yet occupied, cant accept payment", "Information");

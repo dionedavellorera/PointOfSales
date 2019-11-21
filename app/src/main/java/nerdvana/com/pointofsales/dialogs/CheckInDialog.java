@@ -254,25 +254,28 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
 
     private void setUserSelection() {
         List<String> userArray = new ArrayList<>();
-        for (FetchUserResponse.Result us : userList) {
-            userArray.add(us.getName());
+        if (userList != null) {
+            for (FetchUserResponse.Result us : userList) {
+                userArray.add(us.getName());
+            }
+            CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                    userArray);
+            steward.setAdapter(rateSpinnerAdapter);
+
+            steward.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    userId = userList.get(position).getUsername();
+
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
         }
-        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
-                userArray);
-        steward.setAdapter(rateSpinnerAdapter);
 
-        steward.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                userId = userList.get(position).getUsername();
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     private void setPriceSelection() {

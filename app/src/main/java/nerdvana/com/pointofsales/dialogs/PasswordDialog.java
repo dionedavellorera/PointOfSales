@@ -122,8 +122,8 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body().getStatus() == 0) {
                     //fail
-                    Utils.showDialogMessage(((MainActivity)context), response.body().getMessage(), "Warning!");
-//                    Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+//                    Utils.showDialogMessage(((MainActivity)context), response.body().getMessage(), "Warning!");
+                    Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()), response.body().getResult().get(0).getName());
                 }

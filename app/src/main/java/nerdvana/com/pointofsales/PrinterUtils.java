@@ -108,10 +108,16 @@ public class PrinterUtils {
 
     public static void addPrinterSpace(int count) {
         try {
-            SPrinter.getPrinter().addFeedLine(count);
+            if (SPrinter.getPrinter() != null) {
+                SPrinter.getPrinter().addFeedLine(count);
+            } else {
+//                Toast.makeText(getApplicationContext(), "Printer not setup", Toast.LENGTH_SHORT).show();
+            }
         } catch (Epos2Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     public static void addFooterToPrinter() {

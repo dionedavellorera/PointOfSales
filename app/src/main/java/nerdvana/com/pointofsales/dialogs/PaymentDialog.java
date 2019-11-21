@@ -213,7 +213,10 @@ public abstract class PaymentDialog extends BaseDialog  {
         this.guestReceiptInfoModel = guestReceiptInfoModel;
         this.controlNumber = controlNumber;
         this.paymentList = new ArrayList<>(paymentList);
-        paymentMethod = paymentList.get(0);
+        if (paymentList.size() > 0) {
+            paymentMethod = paymentList.get(0);
+        }
+
         this.isCheckout = isCheckout;
         this.postedPaymentList = postedPaymentList;
         this.totalBalance = totalBalance;

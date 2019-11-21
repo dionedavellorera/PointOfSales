@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales.background;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -40,7 +41,11 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
         for (FetchProductsResponse.Result r : fetchProductsResponse.getResult()) {
             String[]images = {};
             if (r.getImageFile() != null) {
-                images = new String[]{"http://192.168.1.90/pos/uploads/company/product/" + r.getImageFile()};
+
+
+                images = new String[]{SharedPreferenceManager.getString(null, ApplicationConstants.HOST) + "/uploads/company/product/" + r.getImageFile()};
+
+//                http://192.168.1.46/pos/uploads/company/product/
             }
 //            else {
 //                images = new String[]{"http://autopilot.vcourt.biz/acctmanagementsys/images/vc_logov2.png"};
