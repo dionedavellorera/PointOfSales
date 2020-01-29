@@ -642,7 +642,7 @@
 
         <TextView
             android:gravity="center"
-            android:text="ACCRED NO:**********************"
+            android:text="ACCRED NO:0430097725002019061099"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

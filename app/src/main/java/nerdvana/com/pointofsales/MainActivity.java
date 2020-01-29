@@ -1353,7 +1353,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("Address : 1 CANLEY ROAD BRGY", "", MainActivity.this, true);
             finalString += receiptString("BAGONG ILOG PASIG CITY", "", MainActivity.this, true);
             finalString += receiptString("VAT REG TIN: 009-772-500-00000", "", MainActivity.this, true);
-            finalString += receiptString("ACCRED NO:**********************", "", MainActivity.this, true);
+            finalString += receiptString("ACCRED NO:0430097725002019061099", "", MainActivity.this, true);
             finalString += receiptString("Date Issued : " + toList1.getCreatedAt(), "", MainActivity.this, true);
             finalString += receiptString("Valid Until : " + PrinterUtils.yearPlusFive(toList1.getCreatedAt()), "", MainActivity.this, true);
 
@@ -1653,7 +1653,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd hh:mm:ss");
 
 
-            finalString += receiptString("ACCRED NO:**********************",
+            finalString += receiptString("ACCRED NO:0430097725002019061099",
                     "", MainActivity.this, true);
             finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(folderName),
                     "", MainActivity.this, true);
@@ -1963,7 +1963,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd hh:mm:ss");
 
 
-                finalString += receiptString("ACCRED NO:**********************",
+                finalString += receiptString("ACCRED NO:0430097725002019061099",
                         "", MainActivity.this, true);
                 finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(folderName),
                         "", MainActivity.this, true);
@@ -2806,7 +2806,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     "", MainActivity.this, true);
             finalString += receiptString("",
                     "", MainActivity.this, true);
-            finalString += receiptString("ACCRED NO:**********************",
+            finalString += receiptString("ACCRED NO:0430097725002019061099",
                     "", MainActivity.this, true);
             finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(toList1.getCreatedAt()),
                     "", MainActivity.this, true);

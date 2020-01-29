@@ -13,14 +13,18 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.github.pinball83.maskededittext.MaskedEditText;
+
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.Helper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SetupActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import retrofit2.Call;
@@ -34,7 +38,7 @@ public class SetupDialog extends BaseDialog {
     EditText ipAddress;
     EditText branchName;
     EditText branchCode;
-    EditText serial;
+    MaskedEditText serial;
     EditText nodeUrl;
     Button proceed;
 
@@ -48,7 +52,7 @@ public class SetupDialog extends BaseDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_setup, "SETUP");
-
+        setCancelable(false);
         ipAddress = findViewById(R.id.ipAddress);
         branchName = findViewById(R.id.branchName);
         branchCode = findViewById(R.id.branchCode);
@@ -138,22 +142,29 @@ public class SetupDialog extends BaseDialog {
         verifyMachineRequest.enqueue(new Callback<VerifyMachineResponse>() {
             @Override
             public void onResponse(Call<VerifyMachineResponse> call, Response<VerifyMachineResponse> response) {
-                if (response.body().getStatus() == 1) { //success
-                    SharedPreferenceManager.saveString(context, "40", ApplicationConstants.MAX_COLUMN_COUNT);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getPrinter_path()), ApplicationConstants.SELECTED_PORT);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTax()), ApplicationConstants.TAX_RATE);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getId()), ApplicationConstants.BRANCH_ID);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getBranchCode()), ApplicationConstants.BRANCH_CODE);
-                    SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getSafe_keeping_amount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
-                    SharedPreferenceManager.saveString(context, GsonHelper.getGson().toJson(String.valueOf(response.body().getBranch().getShift())), ApplicationConstants.SHIFT_DETAILS);
-                    dismiss();
+                if (response.body() != null) {
+                    if (response.body().getStatus() == 1) { //success
+                        SharedPreferenceManager.saveString(context, "40", ApplicationConstants.MAX_COLUMN_COUNT);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getPrinter_path()), ApplicationConstants.SELECTED_PORT);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getAddress()), ApplicationConstants.BRANCH_ADDRESS);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getRemarks()), ApplicationConstants.OR_INFO_DISPLAY);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTax()), ApplicationConstants.TAX_RATE);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getId()), ApplicationConstants.BRANCH_ID);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getBranchCode()), ApplicationConstants.BRANCH_CODE);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getSafe_keeping_amount()), ApplicationConstants.SAFEKEEPING_AMOUNT);
+                        SharedPreferenceManager.saveString(context, GsonHelper.getGson().toJson(String.valueOf(response.body().getBranch().getShift())), ApplicationConstants.SHIFT_DETAILS);
+                        dismiss();
+                    } else {
+                        Utils.showDialogMessage(getContext(), response.body().getMesage(), "Error");
+                    }
+                } else {
+                    Utils.showDialogMessage(getContext(), "Can't connect to server", "Error");
                 }
+
             }
 
             @Override

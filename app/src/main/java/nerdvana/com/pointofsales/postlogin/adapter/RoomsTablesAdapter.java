@@ -155,19 +155,22 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         ((ProductsViewHolder)holder).timer.setText(productsModel.getExpectedCheckout());
 
-        if (Utils.isColorDark(productsModel.getHexColor())) {
-            ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
-            ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
+        if (!TextUtils.isEmpty(productsModel.getHexColor())) {
+            if (Utils.isColorDark(productsModel.getHexColor())) {
+                ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
+                ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
 
-            ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
-            ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
-        } else {
-            ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
-            ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+                ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
+                ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
+            } else {
+                ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
+                ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
 
-            ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
-            ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+                ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
+                ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);
+            }
         }
+
 
 
         ((ProductsViewHolder)holder).price.setText(Utils.digitsWithComma(productsModel.getAmountSelected()));
