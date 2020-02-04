@@ -133,7 +133,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             }
         });
-
     }
 
     @Override
@@ -334,6 +333,9 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                Log.d("REFRESHROOM", "Y");
+
                 sendRoomListRequest();
             }
         });

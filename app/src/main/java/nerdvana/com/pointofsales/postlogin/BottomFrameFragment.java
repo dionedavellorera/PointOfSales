@@ -10,9 +10,12 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import com.squareup.otto.Subscribe;
 
@@ -44,14 +47,15 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     private RecyclerView listButtons;
     private ButtonsAdapter buttonsAdapter;
     private ConstraintLayout mainContainer;
+    LayoutAnimationController anim;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.postlogin_bottom_frame, container, false);
-
+        anim = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation);
         initializeViews();
 
-        setButtonsAdapter();
+//        setButtonsAdapter();
 
         return view;
     }
@@ -65,7 +69,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
         buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>(), this, getContext());
         listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
         listButtons.setAdapter(buttonsAdapter);
-
+        listButtons.setLayoutAnimation(anim);
         FetchBranchInfoRequest fetchBranchInfoRequest = new FetchBranchInfoRequest();
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchBranchInfoResponse> request = iUsers.fetchBranchInfo(fetchBranchInfoRequest.getMapValue());
@@ -95,9 +99,12 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
 
     @Override
     public void doneLoading(List list, String isFor) {
+        Log.d("WEKWEK", "ISDONEBOTTOM");
         switch (isFor) {
             case "buttons":
                 buttonsAdapter.addItems(list);
+                buttonsAdapter.notifyDataSetChanged();
+                listButtons.scheduleLayoutAnimation();
                 break;
         }
     }

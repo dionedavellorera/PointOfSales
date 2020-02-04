@@ -2,9 +2,15 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+
     defaultConfig {
         applicationId "nerdvana.com.pointofsales"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -48,4 +54,8 @@ dependencies {
     implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 
     implementation 'com.github.pinball83:masked-edittext:1.0.4'
+
+    implementation 'com.github.mazenrashed:Printooth:1.2.1'
+
+//    implementation 'com.google.firebase:firebase-analytics:17.2.2'
 }

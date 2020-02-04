@@ -46,7 +46,7 @@ public class SocketManager {
         IO.Options opts = new IO.Options();
         try {
 //            mSocket = IO.socket("http://192.168.1.23:6965", opts);
-
+            Log.d("SUCKET", SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL));
             if (android.util.Patterns.WEB_URL.matcher(SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL)).matches()) {
                 mSocket = IO.socket(SharedPreferenceManager.getString(SocketManager.context, ApplicationConstants.NODE_URL), opts);
 
@@ -54,10 +54,10 @@ public class SocketManager {
 
                     @Override
                     public void call(Object... args) {
+                        Log.d("REFRESHROOM", "Y-0");
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-
                                 isConnected = true;
 //                            BusProvider.getInstance().post(new SocketConnectionModel("T"));
                             }
@@ -69,41 +69,23 @@ public class SocketManager {
                     @Override
                     public void call(Object... args) {
                         isConnected = false;
-
+                        Log.d("REFRESHROOM", "Y-ERR");
 //                    BusProvider.getInstance().post(new SocketConnectionModel("T"));
                     }
 
-                }).on("reminder", new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) { //to be used in future
-
-//                    SocketManager.showNotification("New Priority Inspection");
-
-                    }
                 }).on("online_users", new Emitter.Listener() {
                     @Override
                     public void call(Object... args) {
-//                    SocketManager.showNotification("New Priority Inspection");
 
-                        JSONObject data = (JSONObject) args[0];
+                        BusProvider.getInstance().post(new UpdateDataModel("y"));
 
+                    }
+                }).on("loadroom", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        Log.d("REFRESHROOM", "Y-1");
+                        BusProvider.getInstance().post(new UpdateDataModel("y"));
 
-                        try {
-
-
-                            BusProvider.getInstance().post(new UpdateDataModel("y"));
-
-                            if (data.getString("locale_id").equalsIgnoreCase("8")) {
-
-                            }
-                        } catch (JSONException e) {
-//                            try {
-//                                Log.d("TEKTEK", data.getString("locale_id"));
-//                            } catch (JSONException e1) {
-//                                e1.printStackTrace();
-//                            }
-                            e.printStackTrace();
-                        }
                     }
                 });
                 if (!mSocket.connected()) {

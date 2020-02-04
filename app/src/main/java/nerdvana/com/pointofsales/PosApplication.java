@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales;
 
 import com.facebook.stetho.Stetho;
+import com.mazenrashed.printooth.Printooth;
 import com.orm.SugarApp;
 import com.squareup.otto.Bus;
 
@@ -10,7 +11,7 @@ public class PosApplication extends SugarApp {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        Printooth.INSTANCE.init(this);
 //        new SocketManager(this);
 //        new SocketManagerTwo(this);
         Bus mBus = BusProvider.getInstance();

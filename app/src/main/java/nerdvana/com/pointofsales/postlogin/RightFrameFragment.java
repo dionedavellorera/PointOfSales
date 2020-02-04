@@ -25,6 +25,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -99,6 +101,9 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     private RelativeLayout cardSearchRelContainer;
     private ImageView srchImage;
 
+
+    LayoutAnimationController anim;
+
     public static RightFrameFragment newInstance() {
 
         RightFrameFragment rightFrameFragment = new RightFrameFragment();
@@ -110,7 +115,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.postlogin_right_frame, container, false);
-
+        anim = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation);
         initializeArrays();
 
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.userSettings), UserModel.class);
@@ -337,6 +342,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         productsAdapter = new ProductsAdapter(productsList, this, getContext());
         listProducts.setLayoutManager(new GridLayoutManager(getContext(), 4));
         listProducts.setAdapter(productsAdapter);
+        listProducts.setLayoutAnimation(anim);
         productsAdapter.notifyDataSetChanged();
 
 
@@ -352,6 +358,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                 productsList = list;
                 originalProductsList =  new ArrayList<>(list);
                 productsAdapter.addItems(list);
+                productsAdapter.notifyDataSetChanged();
+                listProducts.scheduleLayoutAnimation();
                 break;
             case "roomstables":
                 roomsTablesAdapter.addItems(list);
@@ -369,6 +377,7 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                 Utils.getSystemType(getContext()));
         listTableRoomSelection.setLayoutManager(new GridLayoutManager(getContext(), 5));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
+
     }
 
     @Override

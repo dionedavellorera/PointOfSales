@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,8 +53,15 @@ import com.epson.eposprint.Print;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.mazenrashed.printooth.Printooth;
+import com.mazenrashed.printooth.data.printable.Printable;
+import com.mazenrashed.printooth.data.printable.TextPrintable;
+import com.mazenrashed.printooth.data.printer.DefaultPrinter;
+import com.mazenrashed.printooth.ui.ScanningActivity;
+import com.mazenrashed.printooth.utilities.PrintingCallback;
 import com.squareup.otto.Subscribe;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Period;
@@ -254,6 +262,41 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        PrintingCallback printingCallback = new PrintingCallback() {
+//            @Override
+//            public void connectingWithPrinter() {
+//                Log.d("PRINTOOTH-connect", "CONNECTING");
+//            }
+//
+//            @Override
+//            public void printingOrderSentSuccessfully() {
+//                Log.d("PRINTOOTH-ordersucc", "ORDER SUCCESSS");
+//            }
+//
+//            @Override
+//            public void connectionFailed(@NotNull String s) {
+//                Log.d("PRINTOOTH-connectionfai", s.toLowerCase());
+//            }
+//
+//            @Override
+//            public void onError(@NotNull String s) {
+//                Log.d("PRINTOOTH-onerror", s.toLowerCase());
+//            }
+//
+//            @Override
+//            public void onMessage(@NotNull String s) {
+//                Log.d("PRINTOOTH-onmesage", s.toLowerCase());
+//            }
+//        };
+//
+//
+//        if (!Printooth.INSTANCE.hasPairedPrinter()) {
+//            startActivityForResult(new Intent(MainActivity.this, ScanningActivity.class), ScanningActivity.SCANNING_FOR_PRINTER);
+//            Printooth.INSTANCE.printer().setPrintingCallback(printingCallback);
+//
+//        }
+
 
         branchAndCode = SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.BRANCH) + "_"  +
                 SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CODE) + "_";
@@ -635,6 +678,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == ScanningActivity.SCANNING_FOR_PRINTER && resultCode == Activity.RESULT_OK) {
+
+
+
+
+            Log.d("ADSASDAS","DIONE");
+
+
+        }
         if (resultCode == RESULT_OK) {
             if (requestCode == 10) {
                 selected = GsonHelper.getGson().fromJson(data.getStringExtra("selected"), RoomTableModel.class);
@@ -699,7 +751,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        }
 
         loadPrinter();
-
         changeTheme();
         changeMachine();
 
@@ -2830,7 +2881,24 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("THE PERMIT TO USE",
                     "", MainActivity.this, true);
 
+            //dione
+
+//            ArrayList<Printable> printables = new ArrayList<Printable>();
+//            Printable printable = new TextPrintable.Builder()
+//                    .setAlignment(DefaultPrinter.Companion.getALIGNMENT_CENTER())
+//                    .setEmphasizedMode(DefaultPrinter.Companion.getEMPHASIZED_MODE_BOLD()) //Bold or normal
+//                    .setFontSize(DefaultPrinter.Companion.getFONT_SIZE_NORMAL())
+//                    .setUnderlined(DefaultPrinter.Companion.getUNDERLINED_MODE_OFF()) // Underline on/off
+//                    .setCharacterCode(DefaultPrinter.Companion.getCHARCODE_PC437()) // Character code to support languages
+//                    .setLineSpacing(DefaultPrinter.Companion.getLINE_SPACING_60())
+//                    .setNewLinesAfter(5) // To provide n lines after sentence
+//                    .setText(finalString).build();
+//            printables.add(printable);
+//            Printooth.INSTANCE.printer().print(printables);
+
+
             DateTimeFormatter dtf = DateTimeFormat.forPattern("EEEE, MMMM d, yyyy hh:mm:ss a");
+
             String folderName = dtf.parseDateTime(currentDateTime).toString("yyyy-MM-dd");
 
             try {
@@ -2945,6 +3013,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         (i+1) * (int)column2) + "\n";
             }
         }
+
+
+
+
+
         return finalString;
     }
 
@@ -3761,6 +3834,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void changeMachine() {
+
         if (ApplicationConstants.IS_MACHINE_CHANGED.equalsIgnoreCase("T")) {
             BusProvider.getInstance().post(new MachineChangeRefresh(""));
             ApplicationConstants.IS_MACHINE_CHANGED = "F";
@@ -3769,22 +3843,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void changeTheme() {
 
-        BusProvider.getInstance().post(new ChangeThemeModel(""));
-        if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).isEmpty()) {
-            lightTheme();
-        } else {
-            if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+        if (ApplicationConstants.IS_THEME_CHANGED.equalsIgnoreCase("t")) {
+            BusProvider.getInstance().post(new ChangeThemeModel(""));
+            if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).isEmpty()) {
                 lightTheme();
             } else {
-                darkTheme();
+                if (SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                    lightTheme();
+                } else {
+                    darkTheme();
+                }
             }
         }
-
-
-        if (ApplicationConstants.IS_THEME_CHANGED.equalsIgnoreCase("T")) {
-
-        }
-
     }
 
     private void lightTheme() {
@@ -3792,7 +3862,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         cardRole.setCardBackgroundColor(getResources().getColor(R.color.lightColorAccent));
         role.setBackgroundColor(getResources().getColor(R.color.lightColorAccent));
         role.setTextColor(getResources().getColor(R.color.lightColorAccentFont));
-
         mainContainerBg.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
         toolbar.setBackgroundColor(getResources().getColor(R.color.lightHeaderBg));
 
@@ -3803,7 +3872,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void darkTheme() {
-        ApplicationConstants.IS_THEME_CHANGED = "T";
+        ApplicationConstants.IS_THEME_CHANGED = "F";
         cardRole.setCardBackgroundColor(getResources().getColor(R.color.darkColorAccent));
         role.setBackgroundColor(getResources().getColor(R.color.darkColorAccent));
         role.setTextColor(getResources().getColor(R.color.darkColorAccentFont));

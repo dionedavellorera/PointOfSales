@@ -76,7 +76,7 @@ public class ApplicationConstants {
 
     public static String IS_ACTIVE = "F";
     public static String IS_THEME_CHANGED = "T";
-    public static String IS_MACHINE_CHANGED = "T";
+    public static String IS_MACHINE_CHANGED = "F";
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
 
 }

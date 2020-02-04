@@ -25,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -33,6 +35,9 @@ import android.widget.Toast;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.google.gson.reflect.TypeToken;
+import com.mazenrashed.printooth.Printooth;
+import com.mazenrashed.printooth.data.printable.Printable;
+import com.mazenrashed.printooth.data.printable.TextPrintable;
 import com.squareup.otto.Subscribe;
 
 import org.joda.time.DateTime;
@@ -57,6 +62,7 @@ import nerdvana.com.pointofsales.RoomConstants;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SettingsActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.SocketManager;
 import nerdvana.com.pointofsales.SqlQueries;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
@@ -238,6 +244,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private FetchRoomPendingResponse.Result fetchRoomPendingResult = null;
     private FetchOrderPendingViaControlNoResponse.Result fetchOrderPendingRresult = null;
 
+    private LayoutAnimationController anim;
 
     GuestReceiptInfoModel guestReceiptInfoModel;
 
@@ -362,6 +369,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.postlogin_left_frame, container, false);
 
+        anim = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation);
+
         data = new Data() {
             @Override
             public void refresh() {
@@ -453,7 +462,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //        linearLayoutManager.setReverseLayout(true);
 //        linearLayoutManager.setStackFromEnd(true);
         listCheckoutItems.setLayoutManager(linearLayoutManager);
+        listCheckoutItems.setLayoutAnimation(anim);
         listCheckoutItems.setAdapter(checkoutAdapter);
+        listCheckoutItems.scheduleLayoutAnimation();
         enableSwipeToDeleteAndUndo();
 
 //        new CheckoutItemsAsync(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -577,6 +588,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //            linearLayoutManager.setReverseLayout(true);
 //            linearLayoutManager.setStackFromEnd(true);
             listCheckoutItems.setLayoutManager(linearLayoutManager);
+            listCheckoutItems.setLayoutAnimation(anim);
             listCheckoutItems.setAdapter(checkoutAdapter);
 
             total.setText("0.00");
@@ -721,6 +733,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             if (checkoutAdapter != null) {
                                 checkoutAdapter.notifyDataSetChanged();
+                                listCheckoutItems.scheduleLayoutAnimation();
                             }
 
                         }
@@ -783,6 +796,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (checkoutAdapter != null) {
                     checkoutAdapter.notifyDataSetChanged();
+                    listCheckoutItems.scheduleLayoutAnimation();
                 }
 
 
@@ -4172,6 +4186,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                                 if (paymentsToPost.size() > 0) {
                                                                     postCheckoutPayment(paymentsToPost, "", selectedRoom.getControlNo(), "");
                                                                 } else {
+
                                                                     checkoutRoom("",
                                                                             selectedRoom.getControlNo(),
                                                                             "");
@@ -4803,6 +4818,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         checkoutAdapter = new CheckoutAdapter(this.cartItemList, this, getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         listCheckoutItems.setLayoutManager(linearLayoutManager);
+        listCheckoutItems.setLayoutAnimation(anim);
         listCheckoutItems.setAdapter(checkoutAdapter);
         checkoutAdapter.notifyDataSetChanged();
 
@@ -4847,6 +4863,27 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void sendOffGoingNegoRequest(String roomId) {
+
+        if (selectedRoom != null) {
+            try {
+                JSONObject roomObject = new JSONObject();
+                roomObject.put("roomno", selectedRoom.getName());
+                roomObject.put("roomid", selectedRoom.getRoomId());
+                roomObject.put("status", "1");
+
+                SocketManager.getInstance().emit("reloadpos", roomObject);
+
+                Log.d("EMIT_CHECKIN", " OK");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("EMIT_CHECKIN", e.getMessage());
+            }
+        } else {
+            Log.d("EMIT", "EMPTY ROOM SELECTED");
+        }
+
+
+
         BusProvider.getInstance().post(new OffGoingNegoRequest(roomId));
         defaultView();
         clearCartItems();
@@ -4863,6 +4900,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
                 BusProvider.getInstance().post(welcomeGuestRequest);
+
+                Log.d("EMIT", "TRY CHECK IN");
+                try {
+                    JSONObject roomObject = new JSONObject();
+                    roomObject.put("roomno", selectedRoom.getName());
+                    roomObject.put("roomid", selectedRoom.getRoomId());
+                    roomObject.put("status", "2");
+
+                    SocketManager.getInstance().emit("reloadpos", roomObject);
+
+                    Log.d("EMIT_CHECKIN", " OK");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("EMIT_CHECKIN", e.getMessage());
+                }
+
 
                 if (!status.equalsIgnoreCase("19") &&
                         !status.equalsIgnoreCase("3") &&
@@ -4901,13 +4954,31 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             dismiss();
             }
         };
-        if (!checkInDialog.isShowing()) checkInDialog.show();
+        if (!checkInDialog.isShowing()) {
+            try {
+                JSONObject roomObject = new JSONObject();
+                roomObject.put("roomno", selectedRoom.getName());
+                roomObject.put("roomid", selectedRoom.getRoomId());
+                roomObject.put("status", "20");
+
+                SocketManager.getInstance().emit("reloadpos", roomObject);
+
+                Log.d("EMIT_CHECKIN", " OK");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.d("EMIT_CHECKIN", e.getMessage());
+            }
+
+            checkInDialog.show();
+        }
 
 
         checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
+
+
             }
         });
 
@@ -4925,6 +4996,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         BusProvider.getInstance().post(new CheckInRequest(String.valueOf(selectedRoom.getRoomId()),
                                 welcomeGuestRequest.getRoomRatePriceId(),
                                 ""));
+
+                        Log.d("EMIT", "TRY CHECK IN");
+                        try {
+                            JSONObject roomObject = new JSONObject();
+                            roomObject.put("roomno", selectedRoom.getName());
+                            roomObject.put("roomid", selectedRoom.getRoomId());
+                            roomObject.put("status", "2");
+
+                            SocketManager.getInstance().emit("reloadpos", roomObject);
+
+                            Log.d("EMIT_CHECKIN", " OK");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d("EMIT_CHECKIN", e.getMessage());
+                        }
+
                     }
                 };
                 if (!checkInDialog.isShowing()) checkInDialog.show();
@@ -5435,6 +5522,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //            linearLayoutManager.setReverseLayout(true);
 //            linearLayoutManager.setStackFromEnd(true);
             listCheckoutItems.setLayoutManager(linearLayoutManager);
+            listCheckoutItems.setLayoutAnimation(anim);
             listCheckoutItems.setAdapter(checkoutAdapter);
             checkoutAdapter.notifyDataSetChanged();
         }
@@ -5458,6 +5546,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void checkoutRoom(String roomId, String controlNumber, String roomBoyId) {
+
+
+        try {
+            JSONObject roomObject = new JSONObject();
+            roomObject.put("roomno", selectedRoom.getName());
+            roomObject.put("roomid", selectedRoom.getRoomId());
+            roomObject.put("status", "31");
+
+            SocketManager.getInstance().emit("reloadpos", roomObject);
+
+            Log.d("EMIT", " OK");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d("EMIT", e.getMessage());
+        }
+
+
+
 
 
         BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
@@ -5612,6 +5718,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
             selectedRoom.setControlNo(checkInResponse.getResult().getBooked().get(0).getTransaction().getControlNo());
+
+
+
+
 
         }
     }
@@ -5911,6 +6021,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             ""));
                 }
                 else {
+
+
+
 
                     //comment this later on after tesint
 //                    BusProvider.getInstance().post(new PrintModel(
@@ -6298,6 +6411,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         if (selectedRoom.isTakeOut()) {
             printSoaRequest("", selectedRoom.getControlNo());
+
         } else {
             if (currentRoomStatus.equalsIgnoreCase("2") || currentRoomStatus.equalsIgnoreCase("17")) {
                 boolean isValid = false;
@@ -6309,6 +6423,22 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
                 if (isValid) {
                     printSoaRequest(String.valueOf(selectedRoom.getRoomId()), "");
+
+                    try {
+                        JSONObject roomObject = new JSONObject();
+                        roomObject.put("roomno", selectedRoom.getName());
+                        roomObject.put("roomid", selectedRoom.getRoomId());
+                        roomObject.put("status", "17");
+
+                        SocketManager.getInstance().emit("reloadpos", roomObject);
+
+                        Log.d("EMIT_SOA", " OK");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.d("EMIT_SOA", e.getMessage());
+                    }
+
+
                 } else {
                     Utils.showDialogMessage(getActivity(), "Cannot SOA a room without a room rate, add one first", "Information");
                 }
