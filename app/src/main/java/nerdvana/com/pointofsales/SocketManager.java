@@ -12,6 +12,9 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 
 public class SocketManager {
@@ -119,4 +122,25 @@ public class SocketManager {
 //            notificationManager.notify(101, mBuilder.build());
 //        }
 //    }
+
+    public static void reloadPos(String roomNumber, String roomId,
+                                 String nextStatus, String currentStatus,
+                                 String userId, String action) {
+
+        try {
+            JSONObject roomObject = new JSONObject();
+            roomObject.put("roomno", roomNumber);
+            roomObject.put("roomid", roomId);
+            roomObject.put("status", nextStatus);
+            roomObject.put("oldstatus", currentStatus);
+            roomObject.put("userid", userId);
+            roomObject.put("action", action);
+            SocketManager.getInstance().emit("reloadpos", roomObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

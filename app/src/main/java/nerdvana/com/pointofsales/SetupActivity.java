@@ -240,6 +240,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
                     String.valueOf(loginResponse.getResult().get(0).getRols().getId()));
             SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
             SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
+            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUsername()), ApplicationConstants.USERNAME);
 
             startActivity(new Intent(this, MainActivity.class));
             finish();

@@ -4855,19 +4855,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void sendOffGoingNegoRequest(String roomId) {
 
         if (selectedRoom != null) {
-            try {
-                JSONObject roomObject = new JSONObject();
-                roomObject.put("roomno", selectedRoom.getName());
-                roomObject.put("roomid", selectedRoom.getRoomId());
-                roomObject.put("status", "1");
-
-                SocketManager.getInstance().emit("reloadpos", roomObject);
-
-                Log.d("EMIT_CHECKIN", " OK");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.d("EMIT_CHECKIN", e.getMessage());
-            }
+            SocketManager.reloadPos(
+                    selectedRoom.getName(),
+                    String.valueOf(selectedRoom.getRoomId()),
+                    "1",
+                    "1",
+                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                    "cancel");
         } else {
             Log.d("EMIT", "EMPTY ROOM SELECTED");
         }
@@ -4891,20 +4885,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
                 BusProvider.getInstance().post(welcomeGuestRequest);
 
-                Log.d("EMIT", "TRY CHECK IN");
-                try {
-                    JSONObject roomObject = new JSONObject();
-                    roomObject.put("roomno", selectedRoom.getName());
-                    roomObject.put("roomid", selectedRoom.getRoomId());
-                    roomObject.put("status", "2");
+                SocketManager.reloadPos(
+                        selectedRoom.getName(),
+                        String.valueOf(selectedRoom.getRoomId()),
+                        "2",
+                        "2",
+                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                        "end");
 
-                    SocketManager.getInstance().emit("reloadpos", roomObject);
-
-                    Log.d("EMIT_CHECKIN", " OK");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d("EMIT_CHECKIN", e.getMessage());
-                }
 
 
                 if (!status.equalsIgnoreCase("19") &&
@@ -4945,19 +4933,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
         };
         if (!checkInDialog.isShowing()) {
-            try {
-                JSONObject roomObject = new JSONObject();
-                roomObject.put("roomno", selectedRoom.getName());
-                roomObject.put("roomid", selectedRoom.getRoomId());
-                roomObject.put("status", "20");
 
-                SocketManager.getInstance().emit("reloadpos", roomObject);
+            SocketManager.reloadPos(
+                    selectedRoom.getName(),
+                    String.valueOf(selectedRoom.getRoomId()),
+                    "20",
+                    "20",
+                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                    "start");
 
-                Log.d("EMIT_CHECKIN", " OK");
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.d("EMIT_CHECKIN", e.getMessage());
-            }
+
 
             checkInDialog.show();
         }
@@ -4987,20 +4972,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 welcomeGuestRequest.getRoomRatePriceId(),
                                 ""));
 
-                        Log.d("EMIT", "TRY CHECK IN");
-                        try {
-                            JSONObject roomObject = new JSONObject();
-                            roomObject.put("roomno", selectedRoom.getName());
-                            roomObject.put("roomid", selectedRoom.getRoomId());
-                            roomObject.put("status", "2");
+                        SocketManager.reloadPos(
+                                selectedRoom.getName(),
+                                String.valueOf(selectedRoom.getRoomId()),
+                                "2",
+                                "2",
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                "end");
 
-                            SocketManager.getInstance().emit("reloadpos", roomObject);
 
-                            Log.d("EMIT_CHECKIN", " OK");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.d("EMIT_CHECKIN", e.getMessage());
-                        }
 
                     }
                 };
@@ -5538,25 +5518,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void checkoutRoom(String roomId, String controlNumber, String roomBoyId) {
 
 
-        try {
-            JSONObject roomObject = new JSONObject();
-            roomObject.put("roomno", selectedRoom.getName());
-            roomObject.put("roomid", selectedRoom.getRoomId());
-            roomObject.put("status", "31");
-
-            SocketManager.getInstance().emit("reloadpos", roomObject);
-
-            Log.d("EMIT", " OK");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.d("EMIT", e.getMessage());
-        }
-
-
 
 
 
         BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
+
+        SocketManager.reloadPos(
+                selectedRoom.getName(),
+                String.valueOf(selectedRoom.getRoomId()),
+                "31",
+                "31",
+                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                "end");
+
+
     }
 
     @Subscribe
@@ -6414,19 +6389,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (isValid) {
                     printSoaRequest(String.valueOf(selectedRoom.getRoomId()), "");
 
-                    try {
-                        JSONObject roomObject = new JSONObject();
-                        roomObject.put("roomno", selectedRoom.getName());
-                        roomObject.put("roomid", selectedRoom.getRoomId());
-                        roomObject.put("status", "17");
-
-                        SocketManager.getInstance().emit("reloadpos", roomObject);
-
-                        Log.d("EMIT_SOA", " OK");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.d("EMIT_SOA", e.getMessage());
-                    }
+                    SocketManager.reloadPos(
+                            selectedRoom.getName(),
+                            String.valueOf(selectedRoom.getRoomId()),
+                            "17",
+                            "17",
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                            "end");
 
 
                 } else {

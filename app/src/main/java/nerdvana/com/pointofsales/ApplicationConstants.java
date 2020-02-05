@@ -22,6 +22,7 @@ public class ApplicationConstants {
 
     public static final String MACHINE_ID = "machine_id";
     public static final String USER_ID = "user_id";
+    public static final String USERNAME = "username";
     public static final String BUSINESS_NAME = "business_name";
     public static final String TAXPAYERS_NAME = "taxpayers_name";
     public static final String TIN_NUMBER = "tin_number";
