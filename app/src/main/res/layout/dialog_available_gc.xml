@@ -5,7 +5,7 @@
 
     <include layout="@layout/partial_header" android:id="@+id/header"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/header"
         android:id="@+id/listAvailableGc"
         android:layout_width="match_parent"

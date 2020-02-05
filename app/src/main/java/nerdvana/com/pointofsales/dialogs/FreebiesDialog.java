@@ -1,22 +1,18 @@
 package nerdvana.com.pointofsales.dialogs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.FreebiesListAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRatePriceIdRequest;
-import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomRatePriceIdResponse;
 import nerdvana.com.pointofsales.model.RoomTableModel;

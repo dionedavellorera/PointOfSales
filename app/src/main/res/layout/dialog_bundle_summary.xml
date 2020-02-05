@@ -5,7 +5,7 @@
 
     <include android:id="@+id/header" layout="@layout/partial_header" />
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listSummary"
         android:layout_below="@id/header"
         android:layout_above="@id/confirm"

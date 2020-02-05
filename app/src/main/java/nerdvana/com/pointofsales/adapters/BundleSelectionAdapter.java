@@ -1,23 +1,19 @@
 package nerdvana.com.pointofsales.adapters;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomRatePriceIdResponse;
-import nerdvana.com.pointofsales.dialogs.AvailableGcDialog;
 import nerdvana.com.pointofsales.dialogs.RoomBundleSelectionDialog;
-import nerdvana.com.pointofsales.model.AvailableGcModel;
 
 public class BundleSelectionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<FetchRoomRatePriceIdResponse.ProductBundle> result;

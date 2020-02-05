@@ -3,7 +3,7 @@ package nerdvana.com.pointofsales.dialogs;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import nerdvana.com.pointofsales.Helper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;

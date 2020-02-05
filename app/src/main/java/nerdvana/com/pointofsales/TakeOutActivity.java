@@ -2,14 +2,14 @@ package nerdvana.com.pointofsales;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,7 +25,6 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.background.FetchOrderPendingAsync;
-import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.SpacesItemDecoration;
 import nerdvana.com.pointofsales.dialogs.TakeOutCreateCustomerDialog;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;

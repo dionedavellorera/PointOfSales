@@ -4,13 +4,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
-import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;

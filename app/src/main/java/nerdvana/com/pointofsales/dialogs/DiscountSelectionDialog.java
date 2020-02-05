@@ -4,32 +4,22 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
-import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.VoidDiscountsAdapter;
-import nerdvana.com.pointofsales.api_requests.AutoDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDiscountRequest;
 import nerdvana.com.pointofsales.api_requests.VoidDiscountRequest;
-import nerdvana.com.pointofsales.api_responses.AutoDiscountResponse;
-import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
@@ -98,7 +88,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
 //        buttonsModelList.add(new ButtonsModel(1002,"CARD", "",3));
 
         buttonsAdapter = new ButtonsAdapter(buttonsModelList, this, getContext());
-        listDiscounts.setLayoutManager(new GridLayoutManager(getContext(),4,  GridLayoutManager.VERTICAL, false));
+        listDiscounts.setLayoutManager(new GridLayoutManager(getContext(),4,  RecyclerView.VERTICAL, false));
         listDiscounts.setAdapter(buttonsAdapter);
 
 

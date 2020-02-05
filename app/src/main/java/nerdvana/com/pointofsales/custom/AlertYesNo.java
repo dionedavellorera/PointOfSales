@@ -2,9 +2,8 @@ package nerdvana.com.pointofsales.custom;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
 public abstract class AlertYesNo extends AlertDialog.Builder {
 

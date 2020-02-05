@@ -1,49 +1,30 @@
 package nerdvana.com.pointofsales;
 
-import android.app.ActionBar;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
-import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
-import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
 import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.dialogs.SetupDialog;
-import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.model.UserModel;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SetupActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -160,6 +141,8 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
                     sendLoginRequest(username.getText().toString(),
                                     password.getText().toString());
+
+//                    throw new RuntimeException("Test Crash"); // Force a crash
                 }
                 break;
             case R.id.setup:

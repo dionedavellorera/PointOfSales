@@ -1,13 +1,10 @@
 package nerdvana.com.pointofsales.dialogs;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -21,17 +18,13 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.RoomConstants;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
-import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.BundleSelectionAdapter;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
 import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
-import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomRatePriceIdResponse;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
-import nerdvana.com.pointofsales.model.CartItemsModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;

@@ -1,13 +1,12 @@
 package nerdvana.com.pointofsales.adapters;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,8 +18,6 @@ import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
-import nerdvana.com.pointofsales.dialogs.AvailableGcDialog;
-import nerdvana.com.pointofsales.model.AvailableGcModel;
 
 public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<FetchRoomResponse.Result> roomDataList;

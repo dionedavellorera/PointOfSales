@@ -1,20 +1,17 @@
 package nerdvana.com.pointofsales.dialogs;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
-import okhttp3.internal.Util;
 
 public abstract class RemoveOtDialog extends BaseDialog {
 

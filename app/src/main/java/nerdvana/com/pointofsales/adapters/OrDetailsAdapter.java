@@ -1,14 +1,6 @@
 package nerdvana.com.pointofsales.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.util.List;
-
-import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
+import androidx.annotation.NonNull;
 
 public class OrDetailsAdapter {
 //        extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

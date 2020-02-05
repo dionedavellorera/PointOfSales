@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "257519690733",
+    "firebase_url": "https://pointofsales-8d609.firebaseio.com",
+    "project_id": "pointofsales-8d609",
+    "storage_bucket": "pointofsales-8d609.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:257519690733:android:ff213daae5b1e651ba3de4",
+        "android_client_info": {
+          "package_name": "nerdvana.com.pointofsales"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "257519690733-nj6qq1qa69hmuahnudbg8dkol8mnhun2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "nerdvana.com.pointofsales",
+            "certificate_hash": "fe4a6ee71528b3de80d727e70024219d8f28c72d"
+          }
+        },
+        {
+          "client_id": "257519690733-d0013eovlcvfbnpg66g3cr0hi6gpo16f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR66DXYWKDXeZzMXpjXemVLGUQS5fOqm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "257519690733-d0013eovlcvfbnpg66g3cr0hi6gpo16f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

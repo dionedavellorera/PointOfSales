@@ -1,13 +1,9 @@
 package nerdvana.com.pointofsales.custom;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-public class CircularTextView extends android.support.v7.widget.AppCompatTextView {
+public class CircularTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public CircularTextView(Context context) {
         super(context);

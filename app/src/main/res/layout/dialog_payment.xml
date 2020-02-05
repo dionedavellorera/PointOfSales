@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listPayments"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"/>
@@ -108,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -119,10 +119,10 @@
                         android:id="@+id/guestNameInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -134,9 +134,9 @@
                         android:id="@+id/guestAddressinput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -148,9 +148,9 @@
                         android:id="@+id/guestTinInput"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -162,7 +162,7 @@
                         android:id="@+id/guestBusinessStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
 
@@ -193,7 +193,7 @@
                     android:background="@color/colorLtGrey"/>
 
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilAmount"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
@@ -210,7 +210,7 @@
                         android:id="@+id/amount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -288,7 +288,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
@@ -301,9 +301,9 @@
                                 android:id="@+id/cardNumber"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
@@ -316,9 +316,9 @@
                                 android:id="@+id/cardHoldersName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
@@ -331,9 +331,9 @@
                                 android:id="@+id/expiration"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
@@ -346,9 +346,9 @@
                                 android:id="@+id/authorization"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
@@ -361,9 +361,9 @@
                                 android:id="@+id/creditCardAmount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                        <android.support.design.widget.TextInputLayout
+                        <com.google.android.material.textfield.TextInputLayout
                             android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
@@ -376,7 +376,7 @@
                                 android:id="@+id/remarks"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
-                        </android.support.design.widget.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </ScrollView>
             </LinearLayout>
@@ -443,7 +443,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/colorLtGrey"/>
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_margin="10dp"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
@@ -456,10 +456,10 @@
                         android:id="@+id/voucherCode"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_margin="10dp"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
@@ -472,7 +472,7 @@
                         android:id="@+id/voucherAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
@@ -518,7 +518,7 @@
                     android:layout_height="1dp"
                     android:background="@color/colorLtGrey"/>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_margin="10dp"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
@@ -531,9 +531,9 @@
                         android:id="@+id/voucherNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_margin="10dp"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
@@ -547,7 +547,7 @@
                         android:id="@+id/voucherQuantity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:layout_margin="10dp"
@@ -576,7 +576,7 @@
                     android:background="@color/colorLtGrey"/>
 
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/listAvailedGcs"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -653,7 +653,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/colorLtGrey"/>
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_margin="10dp"
                     android:layout_gravity="center"
                     android:layout_width="match_parent"
@@ -667,7 +667,7 @@
                         android:id="@+id/forexAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
             <Button
@@ -715,7 +715,7 @@
                 android:background="@color/colorLtGrey"/>
 
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_below="@id/sp3"
                 android:layout_above="@id/relGuestInfo"
                 android:id="@+id/listPostedPayments"

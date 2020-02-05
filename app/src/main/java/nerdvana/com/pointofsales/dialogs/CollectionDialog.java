@@ -1,27 +1,19 @@
 package nerdvana.com.pointofsales.dialogs;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,18 +33,12 @@ import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
-import nerdvana.com.pointofsales.api_requests.XReadRequest;
-import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
-import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
-import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
 import nerdvana.com.pointofsales.model.SpotAuditModel;
-import okhttp3.ResponseBody;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

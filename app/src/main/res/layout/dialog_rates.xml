@@ -46,7 +46,7 @@
 
 
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"

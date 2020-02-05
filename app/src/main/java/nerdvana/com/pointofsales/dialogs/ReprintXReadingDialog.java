@@ -2,20 +2,15 @@ package nerdvana.com.pointofsales.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.Button;
-
-import com.squareup.otto.Subscribe;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.ReprintXReadingAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchXReadListRequest;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;

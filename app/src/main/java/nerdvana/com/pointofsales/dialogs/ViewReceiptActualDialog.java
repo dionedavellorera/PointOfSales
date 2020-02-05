@@ -3,18 +3,16 @@ package nerdvana.com.pointofsales.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.Printer;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
@@ -22,7 +20,6 @@ import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Reprint;
-import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.ViewReceiptActualAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;

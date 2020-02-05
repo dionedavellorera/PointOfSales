@@ -1,35 +1,30 @@
 package nerdvana.com.pointofsales.dialogs;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.RoomRatesAdapter;
 import nerdvana.com.pointofsales.api_responses.RoomRateMain;
 import nerdvana.com.pointofsales.custom.HidingEditText;
-import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public abstract class RateDialog extends BaseDialog implements View.OnClickListener {
     private Timer timer;

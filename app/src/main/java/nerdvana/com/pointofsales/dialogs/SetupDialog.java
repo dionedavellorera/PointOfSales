@@ -3,14 +3,12 @@ package nerdvana.com.pointofsales.dialogs;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.github.pinball83.maskededittext.MaskedEditText;
@@ -18,11 +16,9 @@ import com.github.pinball83.maskededittext.MaskedEditText;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
-import nerdvana.com.pointofsales.Helper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.SetupActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.VerifyMachineRequest;
@@ -38,7 +34,7 @@ public class SetupDialog extends BaseDialog {
     EditText ipAddress;
     EditText branchName;
     EditText branchCode;
-    MaskedEditText serial;
+    EditText serial;
     EditText nodeUrl;
     Button proceed;
 

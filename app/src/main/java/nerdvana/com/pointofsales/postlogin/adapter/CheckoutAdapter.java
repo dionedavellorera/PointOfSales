@@ -3,11 +3,11 @@ package nerdvana.com.pointofsales.postlogin.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
-import nerdvana.com.pointofsales.ProductConstants;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
@@ -26,7 +25,6 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.CartItemsModel;
-import nerdvana.com.pointofsales.model.ProductsModel;
 
 public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<CartItemsModel> cartItemsList;

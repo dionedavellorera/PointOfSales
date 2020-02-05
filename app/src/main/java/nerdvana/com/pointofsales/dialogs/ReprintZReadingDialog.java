@@ -2,23 +2,18 @@ package nerdvana.com.pointofsales.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.adapters.ReprintXReadingAdapter;
 import nerdvana.com.pointofsales.adapters.ReprintZReadingAdapter;
-import nerdvana.com.pointofsales.api_requests.FetchXReadListRequest;
-import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
 import nerdvana.com.pointofsales.api_requests.FetchZReadListRequest;
 import nerdvana.com.pointofsales.api_requests.FetchZReadViaIdRequest;
-import nerdvana.com.pointofsales.api_responses.FetchXReadListResponse;
-import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
 import nerdvana.com.pointofsales.api_responses.FetchZReadListResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.model.PrintModel;

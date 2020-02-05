@@ -3,8 +3,8 @@ package nerdvana.com.pointofsales.dialogs;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -12,18 +12,8 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
-import nerdvana.com.pointofsales.IUsers;
-import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
-import nerdvana.com.pointofsales.api_requests.FetchXReadListRequest;
-import nerdvana.com.pointofsales.api_requests.FetchXReadListRequestViaDate;
-import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
-import nerdvana.com.pointofsales.api_responses.FetchXReadListResponse;
-import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ReprintActualXReadReceiptDialog extends BaseDialog {
 

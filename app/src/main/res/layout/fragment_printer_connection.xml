@@ -51,7 +51,7 @@
             android:layout_height="1dp"
             android:background="@color/colorLtGrey" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_below="@id/secondSeparator"
             android:id="@+id/listOtherPrinter"
             android:layout_width="match_parent"

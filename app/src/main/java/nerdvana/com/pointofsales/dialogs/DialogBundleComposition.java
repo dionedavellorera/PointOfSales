@@ -1,46 +1,30 @@
 package nerdvana.com.pointofsales.dialogs;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import nerdvana.com.pointofsales.ApplicationConstants;
-import nerdvana.com.pointofsales.GsonHelper;
-import nerdvana.com.pointofsales.IUsers;
-import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
-import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.ListMenuAdapter;
 import nerdvana.com.pointofsales.adapters.ListProductsAdapter;
 import nerdvana.com.pointofsales.adapters.SelectedProductsAdapter;
-import nerdvana.com.pointofsales.api_requests.TestSend;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
-import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.SelectedProductsInBundleModel;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public abstract class DialogBundleComposition extends BaseDialog {
     private boolean onBind = false;

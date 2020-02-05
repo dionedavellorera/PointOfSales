@@ -1,13 +1,9 @@
 package nerdvana.com.pointofsales.custom;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.text.InputType;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.EditText;
 
-public class HidingEditText extends android.support.v7.widget.AppCompatEditText {
+public class HidingEditText extends androidx.appcompat.widget.AppCompatEditText {
 
 
     public HidingEditText(Context context) {

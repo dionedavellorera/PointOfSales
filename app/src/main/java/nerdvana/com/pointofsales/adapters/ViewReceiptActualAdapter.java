@@ -2,9 +2,9 @@ package nerdvana.com.pointofsales.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +15,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Reprint;
-import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.ViewReceiptViaDateResponse;
 import nerdvana.com.pointofsales.model.ViewReceiptActualModel;

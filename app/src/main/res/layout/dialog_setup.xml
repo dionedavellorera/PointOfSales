@@ -26,7 +26,7 @@
                    android:entries="@array/https"
                    android:layout_width="wrap_content"
                    android:layout_height="match_parent"></Spinner>
-               <android.support.design.widget.TextInputLayout
+               <com.google.android.material.textfield.TextInputLayout
                    android:padding="10dp"
                    android:layout_weight="1"
                    android:layout_width="0dp"
@@ -40,10 +40,10 @@
                        android:layout_width="match_parent"
                        android:layout_height="match_parent"
                        android:hint="Host name"/>
-               </android.support.design.widget.TextInputLayout>
+               </com.google.android.material.textfield.TextInputLayout>
            </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -56,9 +56,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Company"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -71,27 +71,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Code"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.github.pinball83.maskededittext.MaskedEditText
+                <EditText
                     android:id="@+id/serialNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    app:mask="*****-*****-*****-*****-*****"
-                    app:notMaskedSymbol="*"
-                    app:maskIconColor="@color/colorPrimary"
                     />
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <!--app:maskIcon="@drawable/abc_ic_clear_mtrl_alpha"-->
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:padding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -104,7 +101,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:hint="Node url"/>
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:layout_margin="10dp"

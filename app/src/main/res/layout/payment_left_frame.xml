@@ -72,7 +72,7 @@
         android:id="@+id/formCash"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <nerdvana.com.pointofsales.custom.HidingEditText
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Amount"/>
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -93,7 +93,7 @@
         android:id="@+id/formCreditCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <nerdvana.com.pointofsales.custom.HidingEditText
@@ -101,9 +101,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Card Number"/>
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <nerdvana.com.pointofsales.custom.HidingEditText
@@ -111,9 +111,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Expiration Date"/>
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <nerdvana.com.pointofsales.custom.HidingEditText
@@ -121,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Amount"/>
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <Button

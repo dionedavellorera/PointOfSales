@@ -1,21 +1,17 @@
 package nerdvana.com.pointofsales.dialogs;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 
 public abstract class OpenPriceDialog extends BaseDialog {

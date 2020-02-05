@@ -2,8 +2,8 @@ package nerdvana.com.pointofsales.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,6 @@ import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.dialogs.ZXActualDialog;
 import nerdvana.com.pointofsales.dialogs.ZXReadModel;
-import nerdvana.com.pointofsales.model.ViewReceiptActualModel;
 
 public class ZXReceiptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

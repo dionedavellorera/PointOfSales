@@ -7,8 +7,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import androidx.appcompat.app.AlertDialog;
+
 import android.view.Display;
 
 import org.joda.time.DateTime;
@@ -21,9 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_requests.TestConnectionRequest;
-import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import retrofit2.Call;
 import retrofit2.Callback;

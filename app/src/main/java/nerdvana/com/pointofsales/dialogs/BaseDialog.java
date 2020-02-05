@@ -4,21 +4,16 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import nerdvana.com.pointofsales.ApplicationConstants;
-import nerdvana.com.pointofsales.BusProvider;
-import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.R;
-import nerdvana.com.pointofsales.SharedPreferenceManager;
-import nerdvana.com.pointofsales.model.ChangeThemeModel;
 
 public abstract class BaseDialog extends Dialog {
 

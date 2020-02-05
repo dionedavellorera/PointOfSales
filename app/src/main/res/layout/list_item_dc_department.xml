@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:textSize="17sp"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_below="@id/header"
         android:id="@+id/discountProductsList"
         android:layout_width="match_parent"

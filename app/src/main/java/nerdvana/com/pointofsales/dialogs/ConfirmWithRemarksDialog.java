@@ -5,9 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,8 +16,6 @@ import android.widget.TextView;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public abstract class ConfirmWithRemarksDialog extends BaseDialog {
 

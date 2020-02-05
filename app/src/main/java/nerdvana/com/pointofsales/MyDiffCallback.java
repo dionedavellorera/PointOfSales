@@ -1,12 +1,10 @@
 package nerdvana.com.pointofsales;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 
 import java.util.List;
 
-import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
 public class MyDiffCallback extends DiffUtil.Callback{

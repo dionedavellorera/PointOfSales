@@ -2,9 +2,9 @@ package nerdvana.com.pointofsales.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,7 +17,6 @@ import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.adapters.WakeUpCallAdapter;
-import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.model.WakeUpCallModel;
 
 public class DialogWakeUpCall extends BaseDialog {

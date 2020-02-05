@@ -1,17 +1,15 @@
 package nerdvana.com.pointofsales.adapters;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -20,9 +18,6 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.dialogs.PaymentDialog;
-import nerdvana.com.pointofsales.interfaces.CheckoutItemsContract;
-import nerdvana.com.pointofsales.model.CartItemsModel;
-import nerdvana.com.pointofsales.postlogin.adapter.CheckoutAdapter;
 
 public class PaymentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<FetchPaymentResponse.Result> paymentList;

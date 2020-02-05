@@ -1,23 +1,16 @@
 package nerdvana.com.pointofsales;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.media.MediaCodec;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PatternMatcher;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 

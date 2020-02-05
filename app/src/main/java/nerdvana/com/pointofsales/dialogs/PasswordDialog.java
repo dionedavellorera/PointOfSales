@@ -4,7 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.epson.epos2.cashchanger.DirectIOListener;
-
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Utils;
-import nerdvana.com.pointofsales.api_requests.CheckPermissionRequest;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
-import nerdvana.com.pointofsales.api_responses.CheckPermissionResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

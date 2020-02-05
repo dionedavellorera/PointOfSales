@@ -2,12 +2,11 @@ package nerdvana.com.pointofsales.postlogin.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
-import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 
 public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {

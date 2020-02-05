@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
@@ -10,7 +10,7 @@
     android:visibility="gone"
 
     android:fillViewport="false"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
         android:orientation="vertical"
@@ -30,18 +30,18 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <android.support.v7.widget.SearchView
+        <androidx.appcompat.widget.SearchView
             android:background="#ffffff"
             app:queryHint="Search here"
             app:iconifiedByDefault="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:background="#84c0c8"
             android:id="@+id/listTableRoomSelection"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>
 
-</android.support.v4.widget.NestedScrollView>
+</androidx.core.widget.NestedScrollView>

@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/rootView1">
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/rootView"
         android:background="@drawable/checkoutitems_selector">
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideOne"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.4"
@@ -34,7 +34,7 @@
             app:layout_constraintLeft_toRightOf="@id/iconStatus"
             app:layout_constraintRight_toLeftOf="@id/guideOne"
             app:layout_constraintTop_toTopOf="parent" />
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideThree"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -82,7 +82,7 @@
             app:layout_constraintRight_toLeftOf="@id/guideThree"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -131,7 +131,7 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:src="@drawable/check_all"/>
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/linearBundle"

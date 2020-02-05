@@ -2,22 +2,18 @@ package nerdvana.com.pointofsales;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
 import nerdvana.com.pointofsales.adapters.SettingListAdapter;
 import nerdvana.com.pointofsales.fragment.MachineSetupFragment;
 import nerdvana.com.pointofsales.fragment.PrinterConnectionFragment;

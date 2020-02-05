@@ -1,12 +1,11 @@
 package nerdvana.com.pointofsales.postlogin.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,7 +24,6 @@ import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.custom.ImageLoader;
 import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
-import nerdvana.com.pointofsales.model.ProductsModel;
 
 public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ButtonsModel> buttonsModelList;

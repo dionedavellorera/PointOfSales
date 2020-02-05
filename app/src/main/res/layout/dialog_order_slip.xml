@@ -21,13 +21,13 @@
                 android:textStyle="bold"
                 android:text="ORDER LIST"
                 android:padding="10dp"/>
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_below="@id/orderListLabel"
                 android:id="@+id/listOrders"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
         </RelativeLayout>
         <View
             android:layout_width="1dp"
@@ -38,7 +38,7 @@
             android:layout_weight="0.6"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_above="@id/reprintFoodOrderSlip"
                 android:id="@+id/orderSlipProductsList"
                 android:layout_width="match_parent"

@@ -4,35 +4,30 @@ package nerdvana.com.pointofsales;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.TooltipCompat;
+import androidx.cardview.widget.CardView;
+import androidx.appcompat.widget.TooltipCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -40,7 +35,6 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListPopupWindow;
 import android.widget.SimpleAdapter;
-import android.widget.Space;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,78 +42,46 @@ import android.widget.Toast;
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
-import com.epson.epos2.printer.ReceiveListener;
-import com.epson.eposprint.Print;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.mazenrashed.printooth.Printooth;
-import com.mazenrashed.printooth.data.printable.Printable;
-import com.mazenrashed.printooth.data.printable.TextPrintable;
-import com.mazenrashed.printooth.data.printer.DefaultPrinter;
 import com.mazenrashed.printooth.ui.ScanningActivity;
-import com.mazenrashed.printooth.utilities.PrintingCallback;
 import com.squareup.otto.Subscribe;
 
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
-import nerdvana.com.pointofsales.api_requests.BackOutGuestRequest;
 import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
-import nerdvana.com.pointofsales.api_requests.FetchArOnlineRequest;
 import nerdvana.com.pointofsales.api_requests.FetchBranchInfoRequest;
 import nerdvana.com.pointofsales.api_requests.FetchCompanyUserRequest;
-import nerdvana.com.pointofsales.api_requests.FetchCreditCardRequest;
-import nerdvana.com.pointofsales.api_requests.FetchCurrencyExceptDefaultRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDefaultCurrencyRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDiscountSpecialRequest;
-import nerdvana.com.pointofsales.api_requests.FetchOrderPendingRequest;
 import nerdvana.com.pointofsales.api_requests.FetchPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
-import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
-import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
-import nerdvana.com.pointofsales.api_responses.CashNReconcileResponse;
-import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
-import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
-import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
-import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
-import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
-import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
@@ -129,9 +91,6 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
-import nerdvana.com.pointofsales.api_responses.FetchXReadingViaIdResponse;
-import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
-import nerdvana.com.pointofsales.api_responses.ViewReceiptResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.background.BackOutAsync;
 import nerdvana.com.pointofsales.background.CashNReconcileAsync;
@@ -139,15 +98,12 @@ import nerdvana.com.pointofsales.background.ChangeQtyAsync;
 import nerdvana.com.pointofsales.background.ChangeWakeUpCallAsync;
 import nerdvana.com.pointofsales.background.CheckInAsync;
 import nerdvana.com.pointofsales.background.CheckOutAsync;
-import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.CreateReceiptAsync;
 import nerdvana.com.pointofsales.background.DepositAsync;
-import nerdvana.com.pointofsales.background.FetchOrderPendingAsync;
 import nerdvana.com.pointofsales.background.FoAsync;
 import nerdvana.com.pointofsales.background.FranchiseCheckoutAsync;
 import nerdvana.com.pointofsales.background.IntransitAsync;
 import nerdvana.com.pointofsales.background.PostVoidAsync;
-import nerdvana.com.pointofsales.background.RoomStatusAsync;
 import nerdvana.com.pointofsales.background.SafeKeepingAsync;
 import nerdvana.com.pointofsales.background.ShortOverAsync;
 import nerdvana.com.pointofsales.background.SoaRoomAsync;
@@ -162,29 +118,22 @@ import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.dialogs.DialogWakeUpCall;
 import nerdvana.com.pointofsales.dialogs.RoomListViewDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
-import nerdvana.com.pointofsales.entities.RoomStatusEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
-import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
-import nerdvana.com.pointofsales.model.ChangeWakeUpCallPrintModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
-import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.MachineChangeRefresh;
 import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
-import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import nerdvana.com.pointofsales.model.PrintJobModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
 import nerdvana.com.pointofsales.model.ServerConnectionModel;
-import nerdvana.com.pointofsales.model.SwitchRoomPrintModel;
 import nerdvana.com.pointofsales.model.TimerModel;
 import nerdvana.com.pointofsales.model.UserModel;
-import nerdvana.com.pointofsales.model.VoidProductModel;
 import nerdvana.com.pointofsales.postlogin.BottomFrameFragment;
 import nerdvana.com.pointofsales.prelogin.LeftFrameFragment;
 import nerdvana.com.pointofsales.prelogin.RightFrameFragment;
@@ -194,11 +143,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
-import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
-import static nerdvana.com.pointofsales.PrinterUtils.returnWithTwoDecimal;
-import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
     private CollectionDialog collectionDialog;
@@ -224,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private ConstraintLayout mainContainerBg;
 
 
-    android.support.v7.widget.Toolbar toolbar;
+    androidx.appcompat.widget.Toolbar toolbar;
 
     private DialogWakeUpCall dialogWakeUpCall;
 
@@ -262,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 //        PrintingCallback printingCallback = new PrintingCallback() {
 //            @Override
 //            public void connectingWithPrinter() {
@@ -461,6 +404,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 return false;
             }
         });
+
+
     }
 
 
