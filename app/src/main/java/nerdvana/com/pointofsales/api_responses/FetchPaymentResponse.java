@@ -41,7 +41,7 @@ public class FetchPaymentResponse {
     }
 
     public static class Result {
-
+        private boolean is_selected = false;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -69,6 +69,14 @@ public class FetchPaymentResponse {
         @SerializedName("image_file")
         @Expose
         private String image;
+
+        public boolean isIs_selected() {
+            return is_selected;
+        }
+
+        public void setIs_selected(boolean is_selected) {
+            this.is_selected = is_selected;
+        }
 
         public String getImage() {
             return image;

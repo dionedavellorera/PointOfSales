@@ -109,7 +109,7 @@ public abstract class AddGuestDialog extends BaseDialog {
                 ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(context) {
                     @Override
                     public void save(final String remarks) {
-                        PasswordDialog passwordDialog = new PasswordDialog(context,"CONFIRM ADD GUEST", "99") {
+                        PasswordDialog passwordDialog = new PasswordDialog(context,"CONFIRM ADD GUEST", "") {
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
                                 int personCount = 0;

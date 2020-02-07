@@ -973,12 +973,14 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
         try {
-            printer.addCut(Printer.CUT_FEED);
-
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
+            if (printer != null) {
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.addCut(Printer.CUT_FEED);
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
+                }
             }
+
 
 
 //            printer.endTransaction();

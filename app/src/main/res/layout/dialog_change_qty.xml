@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/partial_header"/>
+
+    <androidx.cardview.widget.CardView
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_margin="10dp"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="10dp"
+        android:id="@+id/cardSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp">
+
+        <RelativeLayout
+            android:id="@+id/cardSearchRelContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <nerdvana.com.pointofsales.custom.HidingEditText
+                android:text="1"
+                android:maxLength="3"
+                android:inputType="number"
+                android:background="@null"
+                android:textColor="@color/colorBlack"
+                android:maxLines="1"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:paddingLeft="10dp"
+                android:id="@+id/qty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_toLeftOf="@id/setQty"
+                android:hint="1"/>
+
+            <ImageView
+                android:layout_alignParentRight="true"
+                android:id="@+id/setQty"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/baseline_check_white_24"
+                android:tint="@color/colorGreen"
+                android:layout_margin="5dp"/>
+        </RelativeLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalculator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

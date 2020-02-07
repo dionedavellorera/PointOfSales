@@ -83,8 +83,8 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         buttonsModelList.add(new ButtonsModel(1000,
                 "MANUAL",
                 "",
-                1));
-        buttonsModelList.add(new ButtonsModel(1001,"CUSTOM", "",2));
+                1, 0));
+        buttonsModelList.add(new ButtonsModel(1001,"CUSTOM", "",2, 0));
 //        buttonsModelList.add(new ButtonsModel(1002,"CARD", "",3));
 
         buttonsAdapter = new ButtonsAdapter(buttonsModelList, this, getContext());
@@ -98,7 +98,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         VoidItemContract voidItemContract = new VoidItemContract() {
             @Override
             public void remove(final String post_id, String name, String amount, final int position) {
-                PasswordDialog passwordDialog = new PasswordDialog(activity,"CONFIRM VOID ITEM", "65") {
+                PasswordDialog passwordDialog = new PasswordDialog(activity,"CONFIRM VOID ITEM", "") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         VoidDiscountRequest voidDiscountRequest = new VoidDiscountRequest(controlNumber, post_id, employeeId);

@@ -6,10 +6,11 @@ import java.util.Map;
 public class ChangeRoomStatusRequest extends BaseRequest {
 
     private Map<String, String> mapValue;
-
+    private String newValue;
     public ChangeRoomStatusRequest(String newValue,
                                  String roomId, String empId,
                                  String remarks) {
+        this.newValue = newValue ;
         mapValue = new HashMap<>();
         mapValue.put("user_id", userId);
         mapValue.put("pos_id", machineNumber);
@@ -34,4 +35,7 @@ public class ChangeRoomStatusRequest extends BaseRequest {
                 '}';
     }
 
+    public String getNewValue() {
+        return newValue;
+    }
 }

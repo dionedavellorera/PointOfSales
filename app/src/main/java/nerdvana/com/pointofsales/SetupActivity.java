@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.squareup.otto.Subscribe;
 
 
@@ -241,6 +243,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
             SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
             SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
             SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUsername()), ApplicationConstants.USERNAME);
+            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getRols().getGroup().getAccess()), ApplicationConstants.ACCESS_RIGHTS);
 
             startActivity(new Intent(this, MainActivity.class));
             finish();

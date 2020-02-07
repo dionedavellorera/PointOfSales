@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +46,7 @@ import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.AvailableGcAdapter;
+import nerdvana.com.pointofsales.adapters.CreditCardAdapter;
 import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
 import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
@@ -60,15 +62,19 @@ import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
 import nerdvana.com.pointofsales.api_responses.VoidPaymentResponse;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
+import nerdvana.com.pointofsales.interfaces.CreditCardContract;
 import nerdvana.com.pointofsales.interfaces.VoidItemContract;
 import nerdvana.com.pointofsales.model.AvailableGcModel;
+import nerdvana.com.pointofsales.model.CreditCardListModel;
 import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
+import nerdvana.com.pointofsales.model.PaymentTypeModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public abstract class PaymentDialog extends BaseDialog  {
 
@@ -99,13 +105,21 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private LinearLayout formCash;
     private LinearLayout formCard;
+    private LinearLayout formCard2;
     private LinearLayout formOnline;
+    private LinearLayout formOnline2;
     private LinearLayout formVoucher;
+    private LinearLayout formVoucher2;
     private LinearLayout formForex;
+
+    private RelativeLayout rl1;
+    private RelativeLayout rl2;
+    private RelativeLayout rl3;
 
     private Spinner spinnerForex;
     private TextView forexRate;
 
+    private CreditCardAdapter creditCardAdapter;
     private AvailableGcAdapter availableGcAdapter;
     private PaymentsAdapter paymentsAdapter;
     private List<FetchPaymentResponse.Result> paymentList;
@@ -114,10 +128,18 @@ public abstract class PaymentDialog extends BaseDialog  {
     private RecyclerView listPayments;
     private RecyclerView listPostedPayments;
     private Button add;
+
+    private Button addCash;
+    private Button addCard;
+    private Button addOnline;
+    private Button addGc;
+    private Button addForex;
+    private Button addGuest;
+
     private Button pay;
     private EditText amountToPay;
     private TextView displayTotalChange;
-    private FetchPaymentResponse.Result paymentMethod = null;
+    private PaymentTypeModel paymentMethod = null;
     private PaymentMethod paymentMethodImpl;
     List<PostedPaymentsModel> postedPaymentList = new ArrayList<>();
     PostedPaymentsAdapter postedPaymentsAdapter;
@@ -125,7 +147,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private Double totalBalance;
     private TextView displayTotalBalance;
     private TextView displayTotalPayment;
-    private Spinner spinnerRoomBoy;
+    private SearchableSpinner spinnerRoomBoy;
 
     private CheckBox checkEmployee;
     private Spinner spinnerEmplyeeSelection;
@@ -137,7 +159,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     //online
     private EditText voucherCode;
     private EditText voucherAmount;
-    private Spinner spinnerOnline;
+    private SearchableSpinner spinnerOnline;
     private String onlineId;
 
     FetchPaymentResponse.Result f;
@@ -152,7 +174,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private RecyclerView listAvailedGcs;
 
     //credit card
-    private Spinner spinnerCreditCard;
+    private RecyclerView rvCreditCard;
     private EditText cardNumber;
     private EditText cardExpiration;
     private EditText authorization;
@@ -161,6 +183,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private EditText creditCardAmount;
     private String cardTypeId;
     private Activity act;
+    private List<PaymentTypeModel> paymentTypeList = new ArrayList<>();
 
     private LinearLayout linRoomBoy;
 
@@ -195,8 +218,30 @@ public abstract class PaymentDialog extends BaseDialog  {
         this.guestReceiptInfoModel = guestReceiptInfoModel;
         this.controlNumber = controlNumber;
         this.paymentList = new ArrayList<>(paymentList);
-        if (paymentList.size() > 0) {
-            paymentMethod = paymentList.get(0);
+
+        for (FetchPaymentResponse.Result res : paymentList) {
+            if (res.getCoreId().equalsIgnoreCase("1")) {
+                paymentTypeList.add(new PaymentTypeModel(res.getCoreId(), res.getPaymentType(),
+                        true, res.getImage(),
+                        false));
+            }  else if (res.getCoreId().equalsIgnoreCase("999")) {
+                paymentTypeList.add(new PaymentTypeModel(res.getCoreId(), res.getPaymentType(),
+                        false, res.getImage(),
+                        false));
+            }  else if (res.getCoreId().equalsIgnoreCase("6")) {
+                paymentTypeList.add(new PaymentTypeModel(res.getCoreId(), res.getPaymentType(),
+                        false, res.getImage(),
+                        false));
+            }  else {
+                paymentTypeList.add(new PaymentTypeModel(res.getCoreId(), res.getPaymentType(),
+                        false, res.getImage(),
+                        true));
+            }
+
+        }
+
+        if (paymentTypeList.size() > 0) {
+            paymentMethod = paymentTypeList.get(0);
         }
 
         this.isCheckout = isCheckout;
@@ -212,7 +257,7 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void remove(final String post_id, String name, String amount, final int position) {
 
-                PasswordDialog passwordDialog = new PasswordDialog(act,"CONFIRM VOID ITEM", "65") {
+                PasswordDialog passwordDialog = new PasswordDialog(act,"CONFIRM VOID ITEM", "") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -271,7 +316,9 @@ public abstract class PaymentDialog extends BaseDialog  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
-
+        rl1 = findViewById(R.id.rl1);
+        rl2 = findViewById(R.id.rl2);
+        rl3 = findViewById(R.id.rl3);
         rootView = findViewById(R.id.rootView);
         rootView.requestFocus();
         relGuestInfo = findViewById(R.id.relGuestInfo);
@@ -292,8 +339,11 @@ public abstract class PaymentDialog extends BaseDialog  {
         guestTinInput = findViewById(R.id.guestTinInput);
         formCash = findViewById(R.id.formCash);
         formCard = findViewById(R.id.formCard);
+        formCard2 = findViewById(R.id.formCard2);
         formOnline = findViewById(R.id.formOnline);
+        formOnline2 = findViewById(R.id.formOnline2);
         formVoucher = findViewById(R.id.formGiftCheck);
+        formVoucher2 = findViewById(R.id.formGiftCheck2);
         formForex = findViewById(R.id.formForex);
         forexAmount = findViewById(R.id.forexAmount);
         spinnerRoomBoy = findViewById(R.id.spinnerRoomBoy);
@@ -303,13 +353,21 @@ public abstract class PaymentDialog extends BaseDialog  {
         listPayments = findViewById(R.id.listPayments);
         listPostedPayments = findViewById(R.id.listPostedPayments);
         add = findViewById(R.id.add);
+
+        addCash = findViewById(R.id.addCash);
+        addCard = findViewById(R.id.addCard);
+        addOnline = findViewById(R.id.addOnline);
+        addGc = findViewById(R.id.addGc);
+        addForex = findViewById(R.id.addForex);
+        addGuest = findViewById(R.id.addGuest);
+
         pay = findViewById(R.id.pay);
         displayTotalChange = findViewById(R.id.totalChange);
         amountToPay = (EditText) findViewById(R.id.amount);
 
         voucherCode = (EditText) findViewById(R.id.voucherCode);
         voucherAmount = (EditText) findViewById(R.id.voucherAmount);
-        spinnerOnline = (Spinner) findViewById(R.id.spinnerOnline);
+        spinnerOnline = (SearchableSpinner) findViewById(R.id.spinnerOnline);
 
         listAvailedGcs = (RecyclerView) findViewById(R.id.listAvailedGcs);
         voucherNumber = (EditText) findViewById(R.id.voucherNumber);
@@ -323,7 +381,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         });
 
 
-        spinnerCreditCard = (Spinner) findViewById(R.id.spinnerCreditCard);
+        rvCreditCard = (RecyclerView) findViewById(R.id.rvCreditCard);
         cardNumber = (EditText) findViewById(R.id.cardNumber);
         cardHoldersName = (EditText) findViewById(R.id.cardHoldersName);
         creditCardAmount = (EditText) findViewById(R.id.creditCardAmount);
@@ -347,8 +405,9 @@ public abstract class PaymentDialog extends BaseDialog  {
         paymentMethodImpl = new PaymentMethod() {
             @Override
             public void clicked(int position) {
-                showForm(paymentList.get(position).getCoreId());
-                paymentMethod = paymentList.get(position);
+
+                showForm(paymentTypeList.get(position).getCore_id(), paymentTypeList.get(position));
+                paymentMethod = paymentTypeList.get(position);
             }
         };
 
@@ -364,10 +423,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 
         }
 
-        f = new FetchPaymentResponse.Result();
-        f.setCoreId("999");
-        f.setPaymentType("GUEST");
-        paymentList.add(f);
+        paymentTypeList.add(new PaymentTypeModel("999", "GUEST", false, "", false));
 
 
 
@@ -390,19 +446,315 @@ public abstract class PaymentDialog extends BaseDialog  {
             }
         });
 
+
+        addCash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
+                    if (Double.valueOf(amountToPay.getText().toString()) >= 0) {
+                        postedPaymentList.add(new PostedPaymentsModel(
+                                paymentMethod.getCore_id(),
+                                amountToPay.getText().toString(),
+                                paymentMethod.getPayment_type(),
+                                false,
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                new JSONObject(),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                                isCheckout ? false : true,
+                                "cash", ""));
+                    } else {
+                        Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
+                    }
+                } else {
+                    Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
+            }
+        });
+        addCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isValid = true;
+                String errorMessage = "";
+                if (TextUtils.isEmpty(cardTypeId)) {
+                    isValid = false;
+                    errorMessage += "Empty card type \n";
+                }
+
+                if (TextUtils.isEmpty(cardNumber.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Empty card number \n";
+                }
+
+                if (TextUtils.isEmpty(cardHoldersName.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Empty card holders name \n";
+                }
+
+                if (TextUtils.isEmpty(cardExpiration.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Empty expiration date \n";
+                }
+
+                if (TextUtils.isEmpty(authorization.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Empty authorization \n";
+                }
+
+                if (TextUtils.isEmpty(creditCardAmount.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Invalid amount \n";
+                } else {
+                    if (Double.valueOf(creditCardAmount.getText().toString()) < 1) {
+                        isValid = false;
+                        errorMessage += "Invalid amount \n";
+                    }
+                }
+
+
+
+                if (paymentMethod == null) {
+                    isValid = false;
+                    errorMessage += "Invalid payment method \n";
+                }
+
+                if (isValid) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("card_type_id", cardTypeId);
+                        jsonObject.put("card_number", cardNumber.getText().toString());
+                        jsonObject.put("account_name", cardHoldersName.getText().toString());
+                        jsonObject.put("card_expiration", cardExpiration.getText().toString());
+                        jsonObject.put("authorization", authorization.getText().toString());
+                        jsonObject.put("remarks", remarks.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    postedPaymentList.add(new PostedPaymentsModel(
+                            paymentMethod.getCore_id(),
+                            creditCardAmount.getText().toString(),
+                            paymentMethod.getPayment_type(),
+                            false,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                            jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                            isCheckout ? false : true,
+                            "card", ""));
+
+
+                } else {
+                    Utils.showDialogMessage(act, errorMessage, "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
+            }
+        });
+        addOnline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isValid = true;
+                String errorMessage = "";
+
+                if (paymentMethod == null) {
+                    isValid = false;
+                    errorMessage += "Invalid payment method \n";
+                }
+
+                if (TextUtils.isEmpty(onlineId.trim())) {
+                    isValid = false;
+                    errorMessage += "Please select ar type \n" ;
+                }
+
+                if (TextUtils.isEmpty(voucherCode.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Empty voucher code \n";
+                }
+
+                if (isValid) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("online_payment_id", onlineId);
+                        jsonObject.put("voucher_code", voucherCode.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    postedPaymentList.add(new PostedPaymentsModel(
+                            paymentMethod.getCore_id(),
+                            voucherAmount.getText().toString(),
+                            paymentMethod.getPayment_type(),
+                            false,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                            jsonObject,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                            isCheckout ? false : true,
+                            "online", ""));
+                } else {
+                    Utils.showDialogMessage(act, errorMessage, "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
+            }
+        });
+        addGc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (gcList.size() > 0) {
+                    Double amount = 0.00;
+                    String gcCode = "";
+                    int index = 0;
+                    for (AvailableGcModel availableGcModel : gcList) {
+                        amount += Double.valueOf(availableGcModel.getAmount());
+                        if (index == gcList.size() - 1) {
+                            gcCode += availableGcModel.getId();
+                        } else {
+                            gcCode += availableGcModel.getId() + ",";
+                        }
+                        index++;
+                    }
+
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("gc_code", gcCode);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    postedPaymentList.add(new PostedPaymentsModel(
+                            paymentMethod.getCore_id(),
+                            String.valueOf(amount),
+                            paymentMethod.getPayment_type(),
+                            false,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                            jsonObject,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                            isCheckout ? false : true,
+                            "voucher",""));
+                } else {
+                    Utils.showDialogMessage(act, "No gc added", "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
+            }
+        });
+        addForex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isValid = true;
+                String errorMessage = "";
+
+                if (paymentMethod == null) {
+                    isValid = false;
+                    errorMessage += "Invalid payment method";
+                }
+
+                if (TextUtils.isEmpty(currencyId.toString().trim()) || TextUtils.isEmpty(currencyId.toString().trim())) {
+                    isValid = false;
+                    errorMessage += "invalid currency";
+                }
+
+                if (!TextUtils.isEmpty(forexAmount.getText().toString().trim())) {
+                    if (Double.valueOf(forexAmount.getText().toString()) < 1) {
+                        isValid = false;
+                        errorMessage = "Invalid amount \n";
+                    }
+                } else {
+                    isValid = false;
+                    errorMessage = "Invalid amount \n";
+                }
+
+
+                if (isValid) {
+                    postedPaymentList.add(new PostedPaymentsModel(
+                            paymentMethod.getCore_id(),
+                            forexAmount.getText().toString(),
+                            paymentMethod.getPayment_type(),
+                            false,
+                            currencyId,
+                            currencyValue,
+                            new JSONObject(),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                            isCheckout ? false : true,
+                            "forex",""));
+                } else {
+                    Utils.showDialogMessage(act, errorMessage, "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
+            }
+        });
+        addGuest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isValid = true;
+                String errorMessage = "";
+
+                if (paymentMethod == null) {
+                    isValid = false;
+                    errorMessage += "Invalid payment method";
+                }
+
+                if (!isEmployee) {
+                    if (TextUtils.isEmpty(guestNameInput.getText().toString().trim())) {
+                        isValid = false;
+                        errorMessage += "Invalid name";
+                    }
+                }
+
+                if (isValid) {
+                    submitGuestInfoData(isEmployee ? guestInfoEmployeeId : "",
+                            !isEmployee ?guestNameInput.getText().toString() : guestInfoEmployeeName,
+                            !isEmployee ? guestAddressInput.getText().toString() : "",
+                            !isEmployee ? guestTinInput.getText().toString() : "",
+                            controlNumber,
+                            !isEmployee ? guestBusinessStyle.getText().toString() : "");
+                } else {
+                    Utils.showDialogMessage(act, errorMessage, "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
+            }
+        });
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (paymentMethod == null) {
                     Toast.makeText(getContext(), "Please select payment method", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (paymentMethod.getCoreId().equalsIgnoreCase("1")) { //cash
+                    if (paymentMethod.getCore_id().equalsIgnoreCase("1")) { //cash
                         if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
                             if (Double.valueOf(amountToPay.getText().toString()) >= 0) {
                                 postedPaymentList.add(new PostedPaymentsModel(
-                                        paymentMethod.getCoreId(),
+                                        paymentMethod.getCore_id(),
                                         amountToPay.getText().toString(),
-                                        paymentMethod.getPaymentType(),
+                                        paymentMethod.getPayment_type(),
                                         false,
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
@@ -418,7 +770,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
                         }
 
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("2")) { //card
+                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("2")) { //card
                         boolean isValid = true;
                         String errorMessage = "";
                         if (TextUtils.isEmpty(cardTypeId)) {
@@ -476,9 +828,9 @@ public abstract class PaymentDialog extends BaseDialog  {
                                 e.printStackTrace();
                             }
                             postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCoreId(),
+                                    paymentMethod.getCore_id(),
                                     creditCardAmount.getText().toString(),
-                                    paymentMethod.getPaymentType(),
+                                    paymentMethod.getPayment_type(),
                                     false,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
@@ -493,7 +845,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                         }
 
 
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("3")) { //online
+                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("3")) { //online
 
                         boolean isValid = true;
                         String errorMessage = "";
@@ -522,9 +874,9 @@ public abstract class PaymentDialog extends BaseDialog  {
                                 e.printStackTrace();
                             }
                             postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCoreId(),
+                                    paymentMethod.getCore_id(),
                                     voucherAmount.getText().toString(),
-                                    paymentMethod.getPaymentType(),
+                                    paymentMethod.getPayment_type(),
                                     false,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
@@ -537,7 +889,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             Utils.showDialogMessage(act, errorMessage, "Information");
                         }
 
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("5")) { //voucher
+                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("5")) { //voucher
                         if (gcList.size() > 0) {
                             Double amount = 0.00;
                             String gcCode = "";
@@ -561,9 +913,9 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
                             postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCoreId(),
+                                    paymentMethod.getCore_id(),
                                     String.valueOf(amount),
-                                    paymentMethod.getPaymentType(),
+                                    paymentMethod.getPayment_type(),
                                     false,
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
                                     SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
@@ -575,7 +927,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                         } else {
                             Utils.showDialogMessage(act, "No gc added", "Information");
                         }
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("6")) { //forex
+                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("6")) { //forex
 
                         boolean isValid = true;
                         String errorMessage = "";
@@ -603,9 +955,9 @@ public abstract class PaymentDialog extends BaseDialog  {
 
                         if (isValid) {
                             postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCoreId(),
+                                    paymentMethod.getCore_id(),
                                     forexAmount.getText().toString(),
-                                    paymentMethod.getPaymentType(),
+                                    paymentMethod.getPayment_type(),
                                     false,
                                     currencyId,
                                     currencyValue,
@@ -619,7 +971,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                         }
 
 
-                    } else if (paymentMethod.getCoreId().equalsIgnoreCase("999")) { //add guest
+                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("999")) { //add guest
                         boolean isValid = true;
                         String errorMessage = "";
 
@@ -685,7 +1037,7 @@ public abstract class PaymentDialog extends BaseDialog  {
 
         computeTotal();
 
-        paymentsAdapter = new PaymentsAdapter(paymentList, paymentMethodImpl);
+        paymentsAdapter = new PaymentsAdapter(paymentTypeList, paymentMethodImpl);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -710,7 +1062,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         listAvailedGcs.setLayoutManager(llm);
         listAvailedGcs.setAdapter(availableGcAdapter);
         availableGcAdapter.notifyDataSetChanged();
-        showForm("1");
+        showForm("1", paymentTypeList.get(0));
 
         setPostedPaymentSwipe();
 
@@ -805,48 +1157,92 @@ public abstract class PaymentDialog extends BaseDialog  {
         }
     }
 
-    private void showForm(String coreId) {
+    private void enableCheckedForm(String core_id) {
+        for (PaymentTypeModel ptm : paymentTypeList) {
+            if (ptm.getCore_id().equalsIgnoreCase(core_id)) {
+                ptm.setIs_selected(true);
+            } else {
+                ptm.setIs_selected(false);
+            }
+
+            if (paymentsAdapter != null) {
+                paymentsAdapter.notifyDataSetChanged();
+            }
+
+        }
+    }
+    private void showForm(String coreId, PaymentTypeModel ptm) {
+        if (ptm.isIs_two_form()) {
+            LinearLayout.LayoutParams rl1Params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.3f);
+            LinearLayout.LayoutParams rl2Params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.4f);
+            rl1.setLayoutParams(rl1Params);
+            rl2.setLayoutParams(rl2Params);
+        } else {
+            LinearLayout.LayoutParams rl1Params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.6f);
+            LinearLayout.LayoutParams rl2Params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 0.0f);
+            rl1.setLayoutParams(rl1Params);
+            rl2.setLayoutParams(rl2Params);
+        }
+        enableCheckedForm(coreId);
         if (coreId.equalsIgnoreCase("1")) { //cash
             formCash.setVisibility(View.VISIBLE);
             formCard.setVisibility(GONE);
+            formCard2.setVisibility(GONE);
             formVoucher.setVisibility(GONE);
+            formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
+            formOnline2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("2")) { //card
             formCash.setVisibility(GONE);
             formCard.setVisibility(View.VISIBLE);
+            formCard2.setVisibility(View.VISIBLE);
             formVoucher.setVisibility(GONE);
+            formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
+            formOnline2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("3")) { //online
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
+            formCard2.setVisibility(GONE);
             formVoucher.setVisibility(GONE);
+            formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(View.VISIBLE);
+            formOnline2.setVisibility(View.VISIBLE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("5")) { //voucher
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
+            formCard2.setVisibility(GONE);
             formVoucher.setVisibility(View.VISIBLE);
+            formVoucher2.setVisibility(VISIBLE);
             formOnline.setVisibility(GONE);
+            formOnline2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("6")) { //forex
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
+            formCard2.setVisibility(GONE);
             formVoucher.setVisibility(GONE);
+            formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
+            formOnline2.setVisibility(GONE);
             formForex.setVisibility(View.VISIBLE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("999")) {
             formGuestInfo.setVisibility(View.VISIBLE);
             formCash.setVisibility(View.GONE);
             formCard.setVisibility(GONE);
+            formCard2.setVisibility(GONE);
             formVoucher.setVisibility(GONE);
+            formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
+            formOnline2.setVisibility(GONE);
             formForex.setVisibility(View.GONE);
         }
     }
@@ -938,14 +1334,18 @@ public abstract class PaymentDialog extends BaseDialog  {
     }
 
     private void setupCreditCardSpinner() {
-        final List<String> ccArray = new ArrayList<>();
+        final List<CreditCardListModel> ccArray = new ArrayList<>();
         if (creditCardList != null) {
-
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     for (FetchCreditCardResponse.Result cc : creditCardList) {
-                        ccArray.add(cc.getCreditCard());
+                        if (cc.getCoreId() == 1) {
+                            ccArray.add(new CreditCardListModel(cc.getCoreId(), cc.getCreditCard(), false, R.drawable.mastercard));
+                        } else if (cc.getCoreId()== 2) {
+                            ccArray.add(new CreditCardListModel(cc.getCoreId(), cc.getCreditCard(), false, R.drawable.mastercard));
+                        }
+
 
                     }
                     return null;
@@ -954,22 +1354,32 @@ public abstract class PaymentDialog extends BaseDialog  {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     super.onPostExecute(aVoid);
-                    CustomSpinnerAdapter cardSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
-                            ccArray);
-                    spinnerCreditCard.setAdapter(cardSpinnerAdapter);
 
-                    spinnerCreditCard.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
+                    CreditCardContract creditCardContract = new CreditCardContract() {
                         @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            //fix this when api call ready
-                            cardTypeId = String.valueOf(creditCardList.get(position).getCoreId());
-                        }
+                        public void clicked(CreditCardListModel creditCardListModel, int position) {
+                            for (CreditCardListModel ccm : ccArray) {
 
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
+                                if (ccm.getCore_id() == ccArray.get(position).getCore_id()) {
+                                    ccm.setIs_selected(true);
+                                    cardTypeId = String.valueOf(creditCardList.get(position).getCoreId());
+                                } else {
+                                    ccm.setIs_selected(false);
+                                }
+                                if (creditCardAdapter != null) {
+                                    creditCardAdapter.notifyDataSetChanged();
+                                }
+                            }
 
                         }
-                    });
+                    };
+                    creditCardAdapter = new CreditCardAdapter(ccArray, creditCardContract);
+                    rvCreditCard.setAdapter(creditCardAdapter);
+                    rvCreditCard.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+                    creditCardAdapter.notifyDataSetChanged();
+
                 }
             }.execute();
 

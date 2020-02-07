@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.dialogs;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import android.text.Editable;
@@ -48,6 +49,8 @@ public abstract class CollectionDialog extends BaseDialog {
     private LinearLayout relContainer;
     private LinearLayout linear;
     private Button save;
+
+    private PasswordDialog passwordDialog;
 
     private List<SafeKeepDataModel> safeKeepDataModelList;
 //    private List<SafeKeepDataModel> safeKeepDataModelListDisplay;
@@ -107,54 +110,39 @@ public abstract class CollectionDialog extends BaseDialog {
 
 
                 if (willCashReco) {
-                    PasswordDialog passwordDialog = new PasswordDialog(act, "X READING PROCESS \n", "75") {
-                        @Override
-                        public void passwordSuccess(String employeeId, String employeeName) {
-                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                            CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
+                    if (Utils.isPasswordProtected(getContext(), "72")) {
+                        if (passwordDialog == null) {
+                            passwordDialog = new PasswordDialog(act, "X READING PROCESS", "") {
 
-
-
-
-                            Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-                            request.enqueue(new Callback<Object>() {
                                 @Override
-                                public void onResponse(Call<Object> call, Response<Object> response) {
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-                                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
-                                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
-
-                                            BusProvider.getInstance().post(new PrintModel("",
-                                                    "",
-                                                    "CASHRECONCILE",
-                                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                                    ""));
-
-                                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
-                                        } else {
-                                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                public void passwordSuccess(String employeeId, String employeeName) {
+                                    doCashAndRecoFunction(employeeId);
                                 }
 
                                 @Override
-                                public void onFailure(Call<Object> call, Throwable t) {
+                                public void passwordFailed() {
 
+                                }
+                            };
+
+                            passwordDialog.setOnCancelListener(new OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    passwordDialog = null;
                                 }
                             });
 
+                            passwordDialog.setOnDismissListener(new OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    passwordDialog = null;
+                                }
+                            });
+                            passwordDialog.show();
                         }
 
-                        @Override
-                        public void passwordFailed() {
+                    }
 
-                        }
-                    };
-
-                    if (!passwordDialog.isShowing()) passwordDialog.show();
 
                 } else {
                     if (collectionFinalPostModels.size() > 0) {
@@ -230,6 +218,40 @@ public abstract class CollectionDialog extends BaseDialog {
             }
         });
         requestDenomination();
+    }
+
+    private void doCashAndRecoFunction(String employeeId) {
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
+        Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+        request.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+                    if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
+                        printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+
+                        BusProvider.getInstance().post(new PrintModel("",
+                                "",
+                                "CASHRECONCILE",
+                                GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                ""));
+
+                        Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+                    } else {
+                        Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

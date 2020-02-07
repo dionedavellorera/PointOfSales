@@ -46,22 +46,22 @@ public class ShiftCutOffMenuDialog extends BaseDialog implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnXread:
-                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19, 0));
                 break;
             case R.id.btnZread:
-                BusProvider.getInstance().post(new ButtonsModel(120,"ZREAD", "",21));
+                BusProvider.getInstance().post(new ButtonsModel(120,"ZREAD", "",21, 0));
                 break;
             case R.id.btnReprintXRead:
-                BusProvider.getInstance().post(new ButtonsModel(123,"REPRINT X READING", "",22));
+                BusProvider.getInstance().post(new ButtonsModel(123,"REPRINT X READING", "",22, 75));
                 break;
             case R.id.btnReprintZread:
-                BusProvider.getInstance().post(new ButtonsModel(127,"REPRINT Z READING", "",22));
+                BusProvider.getInstance().post(new ButtonsModel(127,"REPRINT Z READING", "",22, 76));
                 break;
             case R.id.btnReprintXReadV2:
-                BusProvider.getInstance().post(new ButtonsModel(500,"REPRINT X READING V2", "",22));
+                BusProvider.getInstance().post(new ButtonsModel(500,"REPRINT X READING V2", "",22, 75));
                 break;
             case R.id.btnReprintZReadV2:
-                BusProvider.getInstance().post(new ButtonsModel(501,"REPRINT Z READING V2", "",22));
+                BusProvider.getInstance().post(new ButtonsModel(501,"REPRINT Z READING V2", "",22, 76));
                 break;
         }
     }

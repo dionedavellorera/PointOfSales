@@ -11,6 +11,8 @@ public class RoomConstants {
     public static final String ONGOING_RC_WAITING_GUEST = "4";
     public static final String ONGOING_DIRTY_WAITING_GUEST = "32";
     public static final String WELCOME = "59";
+    public static final String HOTELIFIED = "27";
+    public static final String INSPECTED_CLEAN = "28";
     public static final String ON_GOING_NEGO = "20";
     public static final String DIRTY_WITH_LINEN = "31";
 }

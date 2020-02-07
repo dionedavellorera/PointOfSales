@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.facebook.stetho.common.Util;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
@@ -67,6 +69,8 @@ public abstract class GuestInfoDialog extends BaseDialog {
     private Activity act;
 
     private Button changeCheckInTime;
+
+    private PasswordDialog passwordDialog;
 
     private String dateSet = "";
     private String timeSet = "";
@@ -254,6 +258,40 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
     private void updateGuestInfo(String finalTime) {
 
+        if (Utils.isPasswordProtected(getContext(), "61")) {
+            passwordDialog = new PasswordDialog(getContext(),"ACTION(PASSWORD PROTECTED)", "") {
+                @Override
+                public void passwordSuccess(String employeeId, String employeeName) {
+                    doUpdateWakeUpCall(finalTime);
+                }
+
+                @Override
+                public void passwordFailed() {
+
+                }
+            };
+            passwordDialog.setOnCancelListener(new OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    passwordDialog = null;
+                }
+            });
+
+            passwordDialog.setOnDismissListener(new OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    passwordDialog = null;
+                }
+            });
+
+            passwordDialog.show();
+        } else {
+            doUpdateWakeUpCall(finalTime);
+        }
+
+    }
+
+    private void doUpdateWakeUpCall(String finalTime) {
         final ChangeWakeUpCallPrintModel changeWakeUpCallPrintModel = new ChangeWakeUpCallPrintModel(fetchRoomPendingResult.getBooked().get(0).getRoomNo(), finalTime);
 
         WakeUpCallUpdateRequest wakeUpCallUpdateRequest = new WakeUpCallUpdateRequest(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalTime);
@@ -311,18 +349,39 @@ public abstract class GuestInfoDialog extends BaseDialog {
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 finalCheckInTime = String.format("%s:%s:00", String.valueOf((hourOfDay < 10 ? "0" + hourOfDay : hourOfDay)), String.valueOf((minute < 10 ? "0" + minute  : minute)));
                                 finalCheckInDateTime = finalCheckInDate + " " + finalCheckInTime;
-                                PasswordDialog passwordDialog = new PasswordDialog(act,"UPDATE CHECK-IN TIME", "60") {
-                                    @Override
-                                    public void passwordSuccess(String employeeId, String employeeName) {
-                                        updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, employeeId);
-                                    }
 
-                                    @Override
-                                    public void passwordFailed() {
+                                if (Utils.isPasswordProtected(getContext(), "80")) {
+                                    passwordDialog = new PasswordDialog(getContext(), "ACTION(PASSWORD PROTECTED)", "") {
+                                        @Override
+                                        public void passwordSuccess(String employeeId, String employeeName) {
+                                            updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, employeeId);
+                                        }
 
-                                    }
-                                };
-                                passwordDialog.show();
+                                        @Override
+                                        public void passwordFailed() {
+
+                                        }
+                                    };
+
+                                    passwordDialog.setOnCancelListener(new OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialog) {
+                                            passwordDialog = null;
+                                        }
+                                    });
+
+                                    passwordDialog.setOnDismissListener(new OnDismissListener() {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialog) {
+                                            passwordDialog = null;
+                                        }
+                                    });
+
+                                    passwordDialog.show();
+                                } else {
+                                    updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, "656");
+                                }
+
 
                             }
                         }, jodatime.hourOfDay().get(), jodatime.minuteOfHour().get(), true);

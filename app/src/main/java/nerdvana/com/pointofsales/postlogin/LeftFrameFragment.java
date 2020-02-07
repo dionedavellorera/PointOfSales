@@ -214,6 +214,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     EmployeeSelectionDialog employeeSelectionDialog;
     CollectionDialog safeKeepingDialog;
     CollectionDialog spotAuditDialog;
+
     //endregion
 
     private boolean hasExistingRequest = false;
@@ -1154,6 +1155,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Override
     public void itemLongClicked(final CartItemsModel itemSelected, final int position, View view, String type) {
+
+
         PopupMenu popupMenu = new PopupMenu(getActivity(), view);
         popupMenu.getMenuInflater().inflate(R.menu.menu_checkout_item, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -1171,7 +1174,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
                                         if (type.equalsIgnoreCase("qty")) {
-                                            PasswordDialog pwd = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "60") {
+                                            PasswordDialog pwd = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "") {
                                                 @Override
                                                 public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -1246,7 +1249,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                 } else {
 
-                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "60") {
+                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             if (cartItemList.get(position).isPosted()) {
@@ -1302,7 +1305,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                         if (type.equalsIgnoreCase("qty")) {
 
-                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "60") {
+                                            PasswordDialog pwd1 = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "") {
                                                 @Override
                                                 public void passwordSuccess(String employeeId, String employeeName) {
 
@@ -1346,7 +1349,39 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         dismiss();
                                     }
                                 };
-                        changeRoomPriceDialog.show();
+
+                        if (Utils.isPasswordProtected(getActivity(), "60")) {
+                            passwordDialog = new PasswordDialog(getActivity(), "UPDATE(PASSWORD PROTECTED)", "") {
+                                @Override
+                                public void passwordSuccess(String employeeId, String employeeName) {
+                                    changeRoomPriceDialog.show();
+                                }
+
+                                @Override
+                                public void passwordFailed() {
+
+                                }
+                            };
+
+                            passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    passwordDialog = null;
+                                }
+                            });
+
+                            passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    passwordDialog = null;
+                                }
+                            });
+
+                            passwordDialog.show();
+                        } else {
+                            changeRoomPriceDialog.show();
+                        }
+
                         break;
                     case R.id.changeRoomPrice:
                         final OpenPriceDialog changeRoomPriceDialog1 =
@@ -1368,41 +1403,58 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                             quantity));
                                 } else {
 
-                                    PasswordDialog passwordDialog2 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "60") {
-                                        @Override
-                                        public void passwordSuccess(String employeeId, String employeeName) {
-                                            if (cartItemList.get(position).isPosted()) {
-                                                cartItemList.get(position).setPosted(false);
-                                                cartItemList.get(position).setUpdated(true);
-                                                cartItemList.get(position).setForVoid(false);
-                                            }
-                                            cartItemList.get(position).setUnitPrice(newPrice);
-                                            if (quantity != 0) {
-                                                cartItemList.get(position).setQuantity(quantity);
-                                            }
-                                            cartItemList.get(position).setIsPriceChanged(1);
-                                            if (checkoutAdapter != null) {
-                                                checkoutAdapter.notifyItemChanged(position);
-                                            }
-                                            dismiss();
-                                        }
+                                    if (cartItemList.get(position).isPosted()) {
+                                        cartItemList.get(position).setPosted(false);
+                                        cartItemList.get(position).setUpdated(true);
+                                        cartItemList.get(position).setForVoid(false);
+                                    }
+                                    cartItemList.get(position).setUnitPrice(newPrice);
+                                    if (quantity != 0) {
+                                        cartItemList.get(position).setQuantity(quantity);
+                                    }
+                                    cartItemList.get(position).setIsPriceChanged(1);
+                                    if (checkoutAdapter != null) {
+                                        checkoutAdapter.notifyItemChanged(position);
+                                    }
 
-                                        @Override
-                                        public void passwordFailed() {
-
-                                        }
-                                    };
-
-                                    passwordDialog2.show();
                                 }
-
-
-
                                 dismiss();
                             }
                         };
-                        changeRoomPriceDialog1.show();
 
+
+                        if (Utils.isPasswordProtected(getActivity(), "60")) {
+                            if (passwordDialog == null) {
+                                passwordDialog = new PasswordDialog(getActivity(), "UPDATE(PASSWORD PROTECTED)", "") {
+                                    @Override
+                                    public void passwordSuccess(String employeeId, String employeeName) {
+                                        changeRoomPriceDialog1.show();
+                                    }
+
+                                    @Override
+                                    public void passwordFailed() {
+
+                                    }
+                                };
+                                passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        passwordDialog = null;
+                                    }
+                                });
+
+                                passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialog) {
+                                        passwordDialog = null;
+                                    }
+                                });
+
+                                passwordDialog.show();
+                            }
+                        } else {
+                            changeRoomPriceDialog1.show();
+                        }
 
                         break;
                 }
@@ -1508,7 +1560,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     @Override
                     public void saveEmployeeToTransaction(final String userId, String wholeName) {
 
-                        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM FOC",  "78") {
+                        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM FOC", "") {
                             @Override
                             public void passwordSuccess(String employeeId, String employeeName) {
                                 if (selectedRoom.isTakeOut()) {
@@ -1604,7 +1656,43 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
+        if (Utils.isPasswordProtected(getContext(), String.valueOf(clickedItem.getCore_id()))) {
+            if (passwordDialog == null) {
+                passwordDialog = new PasswordDialog(getActivity(),clickedItem.getName()+"(PASSWORD PROTECTED)", "") {
 
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+                        doSwitchCaseFunction(clickedItem);
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+
+                    }
+                };
+                passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        passwordDialog = null;
+                    }
+                });
+
+                passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        passwordDialog = null;
+                    }
+                });
+
+                passwordDialog.show();
+            }
+        } else {
+            doSwitchCaseFunction(clickedItem);
+        }
+
+    }
+
+    private void doSwitchCaseFunction(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
             case 500://REPRINT X READ V2
                 ReprintActualXReadReceiptDialog reprintActualXReadReceiptDialog = new ReprintActualXReadReceiptDialog(getActivity());
@@ -1794,7 +1882,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 127://REPRINT Z READ
                 if (passwordDialog == null) {
-                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS", "74") {
+                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS", "") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
@@ -1835,7 +1923,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 123: //REPRINT X/Z READING
                 if (passwordDialog == null) {
-                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS" ,"74") {
+                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS", "") {
                         @Override
                         public void passwordSuccess(String employeeId, String employeeName) {
                             ReprintXReadingDialog reprintXReadingDialog = new ReprintXReadingDialog(getActivity());
@@ -1873,7 +1961,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
-                            BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1));
+                            BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1, 0));
                         }
 
                         @Override
@@ -1883,7 +1971,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     alertYesNo.show();
                 } else {
-                    BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1));
+                    BusProvider.getInstance().post(new ButtonsModel(999,"ROOMS", "",1, 0));
                 }
                 break;
             case 9988: //take order
@@ -1891,7 +1979,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
-                            BusProvider.getInstance().post(new ButtonsModel(998,"TAKE ORDER", "",2));
+                            BusProvider.getInstance().post(new ButtonsModel(998,"TAKE ORDER", "",2, 0));
                         }
 
                         @Override
@@ -1901,7 +1989,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     alertYesNo.show();
                 } else {
-                    BusProvider.getInstance().post(new ButtonsModel(998,"TAKE ORDER", "",2));
+                    BusProvider.getInstance().post(new ButtonsModel(998,"TAKE ORDER", "",2, 0));
                 }
                 break;
             case 122: //CANCEL OVERTIME
@@ -2411,37 +2499,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 105: //CHECKOUT
 
-                if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
-                    doCheckoutFunction();
+                if (hasUnpostedItems()) {
+                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                        @Override
+                        public void yesClicked() {
+                            doCheckoutFunction();
+                        }
+
+                        @Override
+                        public void noClicked() {
+
+                        }
+                    };
+
+                    alertYesNo.show();
                 } else {
-                    if (hasUnpostedItems()) {
-                        AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                            @Override
-                            public void yesClicked() {
-                                doCheckoutFunction();
-                            }
-
-                            @Override
-                            public void noClicked() {
-
-                            }
-                        };
-
-                        alertYesNo.show();
-                    } else {
-                        doCheckoutFunction();
-                    }
+                    doCheckoutFunction();
                 }
-
-
-                if (canTransact()) {
-
-
-
-
-                }
-
-
 
                 break;
             case 103: //ADD RATE TO EXISTING TRANSACTION
@@ -3001,7 +3075,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     backoutGuestDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                         @Override
                         public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "77") {
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "") {
                                 @Override
                                 public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -3098,7 +3172,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void save(final String remarks) {
 
-                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "77") {
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "") {
                                         @Override
                                         public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -3176,7 +3250,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
                         @Override
                         public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "77") {
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST" , "") {
                                 @Override
                                 public void passwordSuccess(String employeeId, final String employeeName) {
 
@@ -3463,7 +3537,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 }
                             }
 
-                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM SWITCH ROOM", "70") {
+                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM SWITCH ROOM", "") {
 
                                 @Override
                                 public void passwordSuccess(String employeeId, String employeeName) {
@@ -3731,7 +3805,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
-            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM VOID ITEM" ,"65") {
+            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM VOID ITEM", "" ) {
                 @Override
                 public void passwordSuccess(final String employeeId, String employeeName) {
                     if (selectedRoom != null) {
@@ -6126,101 +6200,89 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void zReadRequest() {
 
-        if (passwordDialog == null) {
-            passwordDialog = new PasswordDialog(getActivity(), "END OF DAY PROCESS \n", "76") {
-                @Override
-                public void passwordSuccess(String employeeId, String employeeName) {
-                    ZReadRequest zReadRequest = new ZReadRequest(employeeId);
-                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                    Call<ResponseBody> request = iUsers.zReading(zReadRequest.getMapValue());
-                    request.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            try {
-                                String result = response.body().string();
-                                JSONObject zReadObject = new JSONObject(result);
-                                if (zReadObject.getString("status").equalsIgnoreCase("0")) {
-                                    Utils.showDialogMessage(getActivity(), zReadObject.getString("message"), "Information");
-                                } else {
-                                    JSONObject zReadResultObject = zReadObject.getJSONObject("result");
-                                    JSONObject ZReadResultDataObject = zReadResultObject.getJSONObject("data");
-                                    fetchZReadViaIdRequest(ZReadResultDataObject.getString("id"));
-                                    Utils.showDialogMessage(getActivity(), "ZREAD SUCCESS", "Information");
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+        if (Utils.isPasswordProtected(getActivity(), "73")) {
 
-                            BackupDatabaseRequest backupDatabaseRequest = new BackupDatabaseRequest();
-                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                            Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
-                            request.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            if (passwordDialog == null) {
+                passwordDialog = new PasswordDialog(getActivity(), "END OF DAY PROCESS \n", "") {
+                    @Override
+                    public void passwordSuccess(String empId, String employeeName) {
+                        doZReadFunction(employeeId);
+                    }
 
-                                }
+                    @Override
+                    public void passwordFailed() {
 
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                        }
-                    });
-//                request.enqueue(new Callback<ZReadResponse>() {
-//                    @Override
-//                    public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
-//
-//                        fetchZReadViaIdRequest(String.valueOf(response.body().getResult().getData().getId()));
-//                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
-//
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<ZReadResponse> call, Throwable t) {
-//
-//                    }
-//                });
-                }
-
-                @Override
-                public void passwordFailed() {
-
-                }
-            };
-
-            passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    passwordDialog = null;
-                }
-            });
-
-            passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    passwordDialog = null;
-                }
-            });
+                    }
+                };
+                passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        passwordDialog = null;
+                    }
+                });
+                passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        passwordDialog = null;
+                    }
+                });
+                passwordDialog.show();
+            }
+        } else {
+            doZReadFunction("656");
         }
+    }
 
+    private void doZReadFunction(String employeeId) {
+        ZReadRequest zReadRequest = new ZReadRequest(employeeId);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ResponseBody> request = iUsers.zReading(zReadRequest.getMapValue());
+        request.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    String result = response.body().string();
+                    JSONObject zReadObject = new JSONObject(result);
+                    if (zReadObject.getString("status").equalsIgnoreCase("0")) {
+                        Utils.showDialogMessage(getActivity(), zReadObject.getString("message"), "Information");
+                    } else {
+                        JSONObject zReadResultObject = zReadObject.getJSONObject("result");
+                        JSONObject ZReadResultDataObject = zReadResultObject.getJSONObject("data");
+                        fetchZReadViaIdRequest(ZReadResultDataObject.getString("id"));
+                        Utils.showDialogMessage(getActivity(), "ZREAD SUCCESS", "Information");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-        if (!passwordDialog.isShowing()) passwordDialog.show();
+                BackupDatabaseRequest backupDatabaseRequest = new BackupDatabaseRequest();
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
+                request.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
+                    }
 
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
 
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     private void xReadRequest() {
 
-        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X READING", "72") {
+        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X READING", "") {
             @Override
             public void passwordSuccess(String employeeId, String employeeName) {
                 IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -6304,7 +6366,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void removeOtSuccess(final String oldOtValue, final String remainingOt) {
 
-                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CANCEL OT", "71") {
+                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CANCEL OT", "") {
                                         @Override
                                         public void passwordSuccess(String employeeId, String employeeName) {
                                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -6476,7 +6538,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
                                     if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
-                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19));
+                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19, 0));
                                     }
                                     blockerDialog = null;
                                     break;

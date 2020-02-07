@@ -115,7 +115,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
                     }
                 }
 
-                PasswordDialog passwordDialog = new PasswordDialog(context,"CONFIRM DISCOUNTING", "63") {
+                PasswordDialog passwordDialog = new PasswordDialog(context,"CONFIRM DISCOUNTING", "") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         dismiss();

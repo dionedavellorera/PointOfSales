@@ -5,27 +5,41 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="10dp"
     android:layout_margin="5dp">
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:id="@+id/rootView"
-         android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <ImageView
-            android:padding="5dp"
-            android:layout_margin="3dp"
-            android:src="@mipmap/outline_group_add_white_24"
-            android:id="@+id/name"
-            android:layout_width="60dp"
-            android:layout_height="60dp" />
-        <TextView
-            android:gravity="center"
-            android:id="@+id/description"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content" />
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/l1"
+            android:id="@+id/ivCheck"
+            android:src="@mipmap/baseline_keyboard_arrow_right_black_24"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+        <LinearLayout
+            android:id="@+id/l1"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:padding="5dp"
+                android:layout_margin="3dp"
+                android:src="@mipmap/outline_group_add_white_24"
+                android:id="@+id/name"
+                android:layout_width="60dp"
+                android:layout_height="60dp" />
+            <TextView
+                android:visibility="gone"
+                android:gravity="center"
+                android:id="@+id/description"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content" />
 
-        <View
-            android:layout_width="60dp"
-            android:layout_height="1dp"
-            android:background="@color/colorLtGrey"/>
-    </LinearLayout>
+            <View
+                android:layout_width="60dp"
+                android:layout_height="1dp"
+                android:background="@color/colorLtGrey"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

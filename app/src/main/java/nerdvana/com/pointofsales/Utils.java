@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import androidx.appcompat.app.AlertDialog;
 
+import android.text.TextUtils;
 import android.view.Display;
 
 import org.joda.time.DateTime;
@@ -18,8 +19,12 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import nerdvana.com.pointofsales.api_requests.TestConnectionRequest;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
@@ -30,6 +35,25 @@ import retrofit2.Response;
 public class Utils {
 
     static boolean canConnect;
+
+    public static boolean isPasswordProtected(Context context, String moduleId) {
+        boolean isProtected = true;
+        List<String> accessList = new ArrayList<>();
+        accessList = Arrays.asList(SharedPreferenceManager.getString(context, ApplicationConstants.ACCESS_RIGHTS).split(","));
+
+        if (moduleId.equalsIgnoreCase("0")) {
+            isProtected = false;
+        } else {
+            if (accessList.size() > 0) {
+                if (accessList.contains(moduleId)) {
+                    isProtected = false;
+                }
+            }
+        }
+
+        return isProtected;
+    }
+
 
 
     public static boolean checkConnection(Context context) {

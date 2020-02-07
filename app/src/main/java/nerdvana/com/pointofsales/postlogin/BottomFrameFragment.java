@@ -97,7 +97,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
 
     @Override
     public void doneLoading(List list, String isFor) {
-        Log.d("WEKWEK", "ISDONEBOTTOM");
+//        Log.d("WEKWEK", "ISDONEBOTTOM");
         switch (isFor) {
             case "buttons":
                 buttonsAdapter.addItems(list);

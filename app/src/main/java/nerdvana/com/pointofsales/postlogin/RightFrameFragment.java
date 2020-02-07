@@ -2,6 +2,7 @@ package nerdvana.com.pointofsales.postlogin;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -50,6 +52,7 @@ import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
+import nerdvana.com.pointofsales.dialogs.ChangeQtyDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
@@ -65,7 +68,9 @@ import nerdvana.com.pointofsales.postlogin.adapter.DepartmentsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.ProductsAdapter;
 import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
 
-public class RightFrameFragment extends Fragment implements AsyncContract, SelectionContract, ProductsContract{
+public class RightFrameFragment extends Fragment implements
+        AsyncContract, SelectionContract,
+        ProductsContract, View.OnClickListener{
     private View view;
     private TextView labelQty;
     private RoomTableModel selectedRoom;
@@ -100,6 +105,10 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
 
     LayoutAnimationController anim;
+
+    private Button btnChangeQty;
+
+    private ChangeQtyDialog changeQtyDialog;
 
     public static RightFrameFragment newInstance() {
 
@@ -190,6 +199,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
 
     @SuppressLint("ClickableViewAccessibility")
     private void initializeViews(View view) {
+        btnChangeQty = view.findViewById(R.id.btnChangeQty);
+        btnChangeQty.setOnClickListener(this);
         search = view.findViewById(R.id.search);
         cardSearch = view.findViewById(R.id.cardSearch);
         cardSearchRelContainer = view.findViewById(R.id.cardSearchRelContainer);
@@ -424,7 +435,8 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
                 BusProvider.getInstance().post(productsModel);
             }
         }
-        qtySpinner.setSelection(0, true);
+//        qtySpinner.setSelection(0, true);
+        btnChangeQty.setText("QTY : 1");
     }
 
     private void repopulateList(List<ProductsModel> tempProduct) {
@@ -580,4 +592,36 @@ public class RightFrameFragment extends Fragment implements AsyncContract, Selec
         search.setText("");
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnChangeQty:
+                if (changeQtyDialog == null) {
+
+                    changeQtyDialog = new ChangeQtyDialog(getActivity()) {
+                        @Override
+                        public void quantityChangeSuccess(String qty) {
+                            qtySelected = qty;
+                            btnChangeQty.setText("QTY : " + qty);
+                        }
+                    };
+
+                    changeQtyDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            changeQtyDialog = null;
+                        }
+                    });
+
+                    changeQtyDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            changeQtyDialog = null;
+                        }
+                    });
+                    changeQtyDialog.show();
+                }
+                break;
+        }
+    }
 }

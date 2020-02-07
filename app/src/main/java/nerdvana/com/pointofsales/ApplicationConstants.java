@@ -73,6 +73,7 @@ public class ApplicationConstants {
     public static final String MACHINE_SETUP = "machine_setup";
 
     public static final String ROOM_JSON = "room_json";
+    public static final String ACCESS_RIGHTS = "access_rights";
 
 
     public static String IS_ACTIVE = "F";

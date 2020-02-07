@@ -73,12 +73,14 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
 
         allowedRoomStatusList.add(RoomConstants.CLEAN);
+        allowedRoomStatusList.add(RoomConstants.HOTELIFIED);
+        allowedRoomStatusList.add(RoomConstants.INSPECTED_CLEAN);
         allowedRoomStatusList.add(RoomConstants.DIRTY);
         allowedRoomStatusList.add(RoomConstants.OCCUPIED);
         allowedRoomStatusList.add(RoomConstants.SOA);
-        allowedRoomStatusList.add(RoomConstants.ONGOING_RC);
-        allowedRoomStatusList.add(RoomConstants.ONGOING_RC_WAITING_GUEST);
-        allowedRoomStatusList.add(RoomConstants.ONGOING_DIRTY_WAITING_GUEST);
+//        allowedRoomStatusList.add(RoomConstants.ONGOING_RC);
+//        allowedRoomStatusList.add(RoomConstants.ONGOING_RC_WAITING_GUEST);
+//        allowedRoomStatusList.add(RoomConstants.ONGOING_DIRTY_WAITING_GUEST);
         allowedRoomStatusList.add(RoomConstants.WELCOME);
 //        allowedRoomStatusList.add(RoomConstants.ON_GOING_NEGO);
 
@@ -187,7 +189,13 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                                 setRoomsTableAdapter();
                                 sendRoomListRequest();
                                 setRoomFilter();
-
+                                SocketManager.reloadPos(
+                                        selectedItem.getName(),
+                                        String.valueOf(selectedItem.getRoomId()),
+                                        changeRoomStatusRequest.getNewValue(),
+                                        changeRoomStatusRequest.getNewValue(),
+                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                        "end");
                                 if (!TextUtils.isEmpty(searchView.getText().toString())) {
                                     roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
                                 }
@@ -326,7 +334,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
             @Override
             public void run() {
 
-                Log.d("REFRESHROOM", "Y");
+//                Log.d("REFRESHROOM", "Y");
 
                 sendRoomListRequest();
             }
@@ -335,14 +343,14 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
     @Override
     public void finished() {
-        Log.d("FINISHASYNC","TRUE");
+//        Log.d("FINISHASYNC","TRUE");
         isLoadingData = false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("FINISHASYNC","TRUE DESTROY");
+//        Log.d("FINISHASYNC","TRUE DESTROY");
         isLoadingData = false;
     }
 

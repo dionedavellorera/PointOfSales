@@ -39,7 +39,7 @@ public class MachineSetupFragment extends Fragment {
         toSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CHANGE MACHINE TYPE", "60") {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CHANGE MACHINE TYPE", "") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         ApplicationConstants.IS_MACHINE_CHANGED = "T";

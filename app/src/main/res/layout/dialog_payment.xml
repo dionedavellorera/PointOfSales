@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rootView">
@@ -10,678 +11,691 @@
         android:focusableInTouchMode="true"
         android:baselineAligned="false"
         android:layout_below="@id/header"
-        android:background="@color/colorWhite"
+
         android:orientation="horizontal"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <RelativeLayout
-            android:layout_weight="0.5"
+            android:layout_weight="0.6"
+            android:layout_above="@id/add"
             android:layout_width="0dp"
-            android:layout_height="match_parent">
-            <RelativeLayout
-                android:background="@color/colorLtGrey"
-                android:id="@+id/cardPayments"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listPayments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"/>
-            </RelativeLayout>
-
-
+            android:layout_height="wrap_content">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/formGuestInfo"
-                android:layout_above="@id/add"
-                android:layout_toRightOf="@id/cardPayments"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <RelativeLayout
+                    android:id="@+id/rl1"
+                    android:layout_weight="0.30"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+                    <RelativeLayout
+                        android:layout_above="@id/add"
+                        android:id="@+id/cardPayments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
 
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Receipt assignment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Is customer an employee?"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-                <CheckBox
-                    android:text="Employee"
-                    android:textColor="@color/colorBlack"
-                    android:id="@+id/checkEmployee"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Guest details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-
-
-                <Spinner
-                    android:visibility="gone"
-                    android:id="@+id/spinnerEmplyeeSelection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:imeOptions="actionNext"
-                        android:gravity="center"
-                        android:hint="Guest Name"
-                        android:id="@+id/guestNameInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:gravity="center"
-                        android:hint="Guest Address"
-                        android:id="@+id/guestAddressinput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
-                        android:gravity="center"
-                        android:hint="Guest tin"
-                        android:id="@+id/guestTinInput"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
-                        android:gravity="center"
-                        android:hint="Business style"
-                        android:id="@+id/guestBusinessStyle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/formCash"
-                android:layout_above="@id/add"
-                android:layout_toRightOf="@id/cardPayments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Cash payment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilAmount"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:textSize="22sp"
-                        android:selectAllOnFocus="true"
-                        android:maxLines="1"
-                        android:imeOptions="actionDone"
-                        android:inputType="numberDecimal"
-                        android:gravity="center"
-                        android:hint="amount"
-                        android:layout_toLeftOf="@id/add"
-                        android:id="@+id/amount"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/formCard"
-                android:layout_above="@id/add"
-                android:layout_toRightOf="@id/cardPayments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Card payment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="What type of card?"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-                <Spinner
-                    android:layout_margin="10dp"
-                    android:id="@+id/spinnerCreditCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Card details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/listPayments"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"/>
+                    </RelativeLayout>
                     <LinearLayout
+                        android:layout_margin="5dp"
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formGuestInfo"
+                        android:layout_toRightOf="@id/cardPayments"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_height="match_parent">
+
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Receipt assignment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+
+                        <CheckBox
+                            android:text="Employee"
+                            android:textColor="@color/colorBlack"
+                            android:id="@+id/checkEmployee"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Guest details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+                        <Spinner
+                            android:visibility="gone"
+                            android:id="@+id/spinnerEmplyeeSelection"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <nerdvana.com.pointofsales.custom.HidingEditText
-                                android:inputType="text"
+                                android:imeOptions="actionDone"
+                                android:singleLine="true"
                                 android:maxLines="1"
-                                android:imeOptions="actionNext"
-                                android:hint="Card number"
-                                android:id="@+id/cardNumber"
+                                android:gravity="center"
+                                android:hint="Guest Name"
+                                android:id="@+id/guestNameInput"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:imeOptions="actionDone"
+                                android:singleLine="true"
+                                android:maxLines="1"
+                                android:inputType="text"
+                                android:gravity="center"
+                                android:hint="Guest Address"
+                                android:id="@+id/guestAddressinput"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <nerdvana.com.pointofsales.custom.HidingEditText
-                                android:inputType="text"
+                                android:imeOptions="actionDone"
+                                android:singleLine="true"
                                 android:maxLines="1"
-                                android:imeOptions="actionNext"
-                                android:hint="Cardholder's name"
-                                android:id="@+id/cardHoldersName"
+                                android:inputType="text"
+                                android:gravity="center"
+                                android:hint="Guest tin"
+                                android:id="@+id/guestTinInput"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_margin="5dp"
                             android:layout_gravity="center"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <nerdvana.com.pointofsales.custom.HidingEditText
-                                android:inputType="text"
+                                android:imeOptions="actionDone"
+                                android:singleLine="true"
                                 android:maxLines="1"
-                                android:imeOptions="actionNext"
-                                android:hint="01/19"
-                                android:id="@+id/expiration"
+                                android:inputType="text"
+                                android:gravity="center"
+                                android:hint="Business style"
+                                android:id="@+id/guestBusinessStyle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_margin="5dp"
-                            android:layout_gravity="center"
+                        <Button
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/button_selector"
+                            android:layout_alignParentBottom="true"
+                            android:id="@+id/addGuest"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <nerdvana.com.pointofsales.custom.HidingEditText
-                                android:inputType="text"
-                                android:maxLines="1"
-                                android:imeOptions="actionNext"
-                                android:hint="Authorization"
-                                android:id="@+id/authorization"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="wrap_content"
+                            android:text="ADD"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_margin="5dp"
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="visible"
+                        android:id="@+id/formCash"
+                        android:layout_toRightOf="@id/cardPayments"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Cash payment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:layout_margin="5dp"
-                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:id="@+id/tilAmount"
+                            android:gravity="center"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="0dp">
                             <nerdvana.com.pointofsales.custom.HidingEditText
-                                android:maxLines="1"
-                                android:imeOptions="actionNext"
-                                android:inputType="numberDecimal"
-                                android:hint="Amount"
-                                android:id="@+id/creditCardAmount"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_margin="5dp"
-                            android:layout_gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <nerdvana.com.pointofsales.custom.HidingEditText
-                                android:inputType="text"
+                                android:textSize="22sp"
+                                android:selectAllOnFocus="true"
                                 android:maxLines="1"
                                 android:imeOptions="actionDone"
-                                android:hint="Remarks"
-                                android:id="@+id/remarks"
+                                android:inputType="numberDecimal"
+                                android:gravity="center"
+                                android:hint="amount"
+                                android:layout_toLeftOf="@id/add"
+                                android:id="@+id/amount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/button_selector"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_alignParentBottom="true"
+                            android:id="@+id/addCash"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ADD"/>
+
                     </LinearLayout>
-                </ScrollView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/formOnline"
-                android:layout_above="@id/add"
-                android:layout_toRightOf="@id/cardPayments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Online transaction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="OTA selection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-                <Spinner
-                    android:layout_margin="10dp"
-                    android:id="@+id/spinnerOnline"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Voucher details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:imeOptions="actionNext"
-                        android:hint="Voucher code"
-                        android:id="@+id/voucherCode"
+                    <LinearLayout
+                        android:layout_margin="5dp"
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formCard"
+                        android:layout_toRightOf="@id/cardPayments"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="match_parent">
 
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Card payment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:maxLines="1"
-                        android:imeOptions="actionDone"
-                        android:inputType="numberDecimal"
-                        android:hint="Voucher amount"
-                        android:id="@+id/voucherAmount"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvCreditCard"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formOnline"
+                        android:layout_toRightOf="@id/cardPayments"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/formGiftCheck"
-                android:layout_above="@id/add"
-                android:layout_toRightOf="@id/cardPayments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                        android:layout_height="match_parent">
 
 
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Gift check"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Online transaction"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            android:id="@+id/spinnerOnline"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_margin="5dp"
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formGiftCheck"
+                        android:layout_toRightOf="@id/cardPayments"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Gift check"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:imeOptions="actionNext"
+                                android:hint="Starting series - ex. 0001"
+                                android:id="@+id/voucherNumber"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:maxLines="1"
+                                android:imeOptions="actionDone"
+                                android:inputType="number"
+                                android:text="1"
+                                android:hint="Quantity"
+                                android:id="@+id/voucherQuantity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:background="@drawable/button_selector"
+                            android:id="@+id/checkGc"
+                            android:text="Check available gift check"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_margin="5dp"
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formForex"
+                        android:layout_toRightOf="@id/cardPayments"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Other currency"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+
+                        <!--<TextView-->
+                        <!--android:layout_margin="10dp"-->
+                        <!--android:textSize="16sp"-->
+                        <!--android:textColor="@color/colorBlack"-->
+                        <!--android:text="What type of currency?"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content" />-->
+
+                        <!--<View-->
+                        <!--android:layout_marginLeft="10dp"-->
+                        <!--android:layout_marginTop="5dp"-->
+                        <!--android:layout_marginBottom="5dp"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="1dp"-->
+                        <!--android:background="@color/colorLtGrey"/>-->
+
+                        <Spinner
+                            android:id="@+id/spinnerForex"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:gravity="center"
+                            android:id="@+id/forexRate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="How much to pay?"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:imeOptions="actionDone"
+                                android:inputType="number"
+                                android:hint="forex amount"
+                                android:id="@+id/forexAmount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/button_selector"
+                            android:layout_alignParentBottom="true"
+                            android:id="@+id/addForex"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ADD"/>
+                    </LinearLayout>
+
+
+                    <Button
+                        android:visibility="gone"
+                        android:background="@drawable/button_selector"
+                        android:layout_alignParentBottom="true"
+                        android:id="@+id/add"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ADD"/>
+                </RelativeLayout>
 
                 <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Gift check details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:imeOptions="actionNext"
-                        android:hint="Starting series - ex. 0001"
-                        android:id="@+id/voucherNumber"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:maxLines="1"
-                        android:imeOptions="actionDone"
-                        android:inputType="number"
-                        android:text="1"
-                        android:hint="Quantity"
-                        android:id="@+id/voucherQuantity"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Button
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_selector"
-                    android:id="@+id/checkGc"
-                    android:text="Check available gift check"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Gift check/s to avail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/listAvailedGcs"
-                    android:layout_width="match_parent"
+                    android:background="@color/colorLtGrey"
+                    android:layout_width="1dp"
                     android:layout_height="match_parent"/>
 
-            </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/rl2"
+                    android:background="@color/colorExp1"
+                    android:layout_weight="0.4"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:id="@+id/formForex"
-                android:layout_above="@id/add"
-                android:layout_toRightOf="@id/cardPayments"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="Other currency"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="What type of currency?"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-
-                <Spinner
-                    android:layout_margin="10dp"
-                    android:id="@+id/spinnerForex"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:gravity="center"
-                    android:layout_margin="10dp"
-                    android:id="@+id/forexRate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/colorBlack"
-                    android:text="How much to pay?"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLtGrey"/>
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <nerdvana.com.pointofsales.custom.HidingEditText
-                        android:gravity="center"
-                        android:maxLines="1"
-                        android:imeOptions="actionDone"
-                        android:inputType="number"
-                        android:hint="forex amount"
-                        android:id="@+id/forexAmount"
+                    <LinearLayout
+                        android:layout_margin="5dp"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formGiftCheck2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="match_parent">
+
+
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Gift check/s to avail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/listAvailedGcs"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                        <Button
+                            android:layout_weight="1"
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/button_selector"
+                            android:id="@+id/addGc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ADD"/>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formOnline2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Voucher details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:imeOptions="actionNext"
+                                android:hint="Voucher code"
+                                android:id="@+id/voucherCode"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_gravity="center"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:maxLines="1"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal"
+                                android:hint="Voucher amount"
+                                android:id="@+id/voucherAmount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/button_selector"
+                            android:layout_alignParentBottom="true"
+                            android:id="@+id/addOnline"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ADD"/>
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_margin="5dp"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formCard2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Card details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_gravity="center"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <nerdvana.com.pointofsales.custom.HidingEditText
+                                        android:inputType="text"
+                                        android:maxLines="1"
+                                        android:imeOptions="actionDone"
+                                        android:hint="Card number"
+                                        android:id="@+id/cardNumber"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_gravity="center"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <nerdvana.com.pointofsales.custom.HidingEditText
+                                        android:inputType="text"
+                                        android:maxLines="1"
+                                        android:imeOptions="actionDone"
+                                        android:hint="Cardholder's name"
+                                        android:id="@+id/cardHoldersName"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_gravity="center"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <nerdvana.com.pointofsales.custom.HidingEditText
+                                        android:inputType="text"
+                                        android:maxLines="1"
+                                        android:imeOptions="actionDone"
+                                        android:hint="01/19"
+                                        android:id="@+id/expiration"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_gravity="center"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <nerdvana.com.pointofsales.custom.HidingEditText
+                                        android:inputType="text"
+                                        android:maxLines="1"
+                                        android:imeOptions="actionDone"
+                                        android:hint="Authorization"
+                                        android:id="@+id/authorization"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_gravity="center"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <nerdvana.com.pointofsales.custom.HidingEditText
+                                        android:maxLines="1"
+                                        android:imeOptions="actionDone"
+                                        android:inputType="numberDecimal"
+                                        android:hint="Amount"
+                                        android:id="@+id/creditCardAmount"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_gravity="center"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+                                    <nerdvana.com.pointofsales.custom.HidingEditText
+                                        android:inputType="text"
+                                        android:maxLines="1"
+                                        android:imeOptions="actionDone"
+                                        android:hint="Remarks"
+                                        android:id="@+id/remarks"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <Button
+                                    android:textColor="@color/colorWhite"
+                                    android:background="@drawable/button_selector"
+                                    android:id="@+id/addCard"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="ADD"/>
+                            </LinearLayout>
+                        </ScrollView>
+                    </LinearLayout>
+                </RelativeLayout>
+
+
             </LinearLayout>
 
-            <Button
-                android:layout_toRightOf="@id/cardPayments"
-                android:background="@drawable/button_selector"
-                android:layout_margin="10dp"
-                android:layout_alignParentBottom="true"
-                android:id="@+id/add"
-                android:layout_alignParentRight="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="ADD"/>
+
+
+
+
 
         </RelativeLayout>
+
+
 
         <View
             android:background="@color/colorLtGrey"
@@ -689,30 +703,40 @@
             android:layout_height="match_parent"/>
 
         <RelativeLayout
-            android:layout_margin="10dp"
-            android:layout_weight="0.5"
+            android:id="@+id/rl3"
+            android:background="@color/colorExp1"
+            android:padding="10dp"
+            android:layout_weight="0.30"
             android:layout_width="0dp"
             android:layout_height="match_parent">
 
 
-            <TextView
-                android:id="@+id/plist"
-                android:layout_margin="10dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorBlack"
-                android:text="Payment list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <View
+            <LinearLayout
+                android:background="@color/colorExp1"
                 android:id="@+id/sp3"
-                android:layout_below="@id/plist"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorLtGrey"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:padding="5dp"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="left"
+                    android:layout_weight="0.4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="TYPE"/>
+
+                <TextView
+                    android:padding="5dp"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:gravity="right"
+                    android:layout_weight="0.6"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="AMOUNT"/>
+            </LinearLayout>
 
 
             <androidx.recyclerview.widget.RecyclerView
@@ -735,14 +759,12 @@
                     android:layout_height="1dp" />
                 <TextView
                     android:layout_below="@id/h1"
-                    android:paddingLeft="5dp"
                     android:id="@+id/guestName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Receipient name"/>
 
                 <TextView
-                    android:paddingLeft="5dp"
                     android:layout_below="@id/guestName"
                     android:id="@+id/guestAddress"
                     android:layout_width="match_parent"
@@ -750,7 +772,6 @@
                     android:text="Address"/>
 
                 <TextView
-                    android:paddingLeft="5dp"
                     android:layout_below="@id/guestAddress"
                     android:id="@+id/guestTin"
                     android:layout_width="match_parent"
@@ -766,15 +787,12 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayTotal"
-                    android:padding="5dp"
-                    android:textSize="18sp"
                     android:layout_above="@id/pay"
                     android:text="Sub total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:padding="5dp"
                     android:text="total"
                     android:id="@+id/totalBalance"
                     android:layout_width="wrap_content"
@@ -790,14 +808,11 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayDeposit"
-                    android:padding="5dp"
-                    android:textSize="18sp"
                     android:text="Deposit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:padding="5dp"
                     android:text="payemtn"
                     android:layout_alignParentBottom="true"
                     android:layout_toLeftOf="@id/totalBalance"
@@ -815,15 +830,12 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayAmountTendered"
-                    android:padding="5dp"
-                    android:textSize="18sp"
                     android:layout_above="@id/pay"
                     android:text="Tendered"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:padding="5dp"
                     android:text="payemtn"
                     android:layout_alignParentBottom="true"
                     android:layout_toLeftOf="@id/totalBalance"
@@ -841,14 +853,11 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayAmountDue"
-                    android:padding="5dp"
-                    android:textSize="18sp"
                     android:text="Amount due"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:padding="5dp"
                     android:text="payemtn"
                     android:layout_alignParentBottom="true"
                     android:layout_toLeftOf="@id/totalBalance"
@@ -866,15 +875,12 @@
                 <TextView
                     android:layout_weight="0.5"
                     android:id="@+id/displayChange"
-                    android:padding="5dp"
-                    android:textSize="18sp"
                     android:layout_above="@id/pay"
                     android:text="Change"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:padding="5dp"
                     android:text="change"
                     android:layout_alignParentBottom="true"
                     android:layout_toLeftOf="@id/totalBalance"
@@ -891,16 +897,17 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_weight="0.5"
+                    android:visibility="gone"
                     android:id="@+id/displayRoomBoy"
                     android:padding="10dp"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:text="Steward"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content" />
 
-                <Spinner
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                     android:id="@+id/spinnerRoomBoy"
-                    android:layout_weight="0.5"
+                    android:layout_weight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"/>
 
