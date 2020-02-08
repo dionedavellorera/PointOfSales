@@ -9,29 +9,40 @@
     <include layout="@layout/partial_header"
         android:id="@+id/header"/>
 
-    <nerdvana.com.pointofsales.custom.HidingEditText
-        android:maxLines="1"
-        android:singleLine="true"
-        android:imeOptions="actionDone"
-        android:layout_toLeftOf="@id/labelQty"
-        android:layout_marginRight="55dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSearch"
+        android:layout_alignParentLeft="true"
         android:layout_below="@id/header"
-        android:id="@+id/searchRate"
-        app:iconifiedByDefault="false"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content">
+        <nerdvana.com.pointofsales.custom.HidingEditText
+            android:hint="Search rate"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:id="@+id/searchRate"
+            app:iconifiedByDefault="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
 
 
     <TextView
-
         android:id="@+id/labelQty"
-        android:layout_width="wrap_content"
-        android:layout_height="46dp"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
         android:textColor="@color/colorBlack"
         android:text="QTY:"
         android:padding="5dp"
         android:gravity="center_vertical"
         android:layout_below="@id/header"
+        android:layout_above="@id/listRates"
         android:layout_toLeftOf="@id/qty"/>
 
 
@@ -39,10 +50,11 @@
         android:layout_alignParentRight="true"
         android:spinnerMode="dialog"
         android:layout_below="@id/header"
+        android:layout_above="@id/listRates"
         android:gravity="center"
         android:id="@+id/qty"
         android:layout_width="wrap_content"
-        android:layout_height="46dp"/>
+        android:layout_height="match_parent"/>
 
 
 
@@ -50,7 +62,7 @@
         android:clickable="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:layout_below="@id/searchRate"
+        android:layout_below="@id/tilSearch"
         android:id="@+id/listRates"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

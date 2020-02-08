@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <include layout="@layout/partial_header" android:id="@+id/header" />
 
@@ -10,12 +11,37 @@
         android:layout_below="@id/header"
         android:id="@+id/listDiscounts"
         android:layout_width="match_parent"
-        android:layout_height="120dp"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_below="@id/listDiscounts"
-        android:id="@+id/listPostedDiscounts"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+
+
+    <androidx.cardview.widget.CardView
+        app:cardElevation="10dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        android:layout_below="@id/listDiscounts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_below="@id/listDiscounts"
+            android:id="@+id/listPostedDiscounts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:visibility="gone"
+            android:layout_below="@id/listDiscounts"
+            android:id="@+id/tvNoData"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="No data"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+
 
 
 </RelativeLayout>

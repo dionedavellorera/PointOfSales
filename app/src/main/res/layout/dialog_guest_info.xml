@@ -1,190 +1,334 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
+    android:layout_height="match_parent">
     <include layout="@layout/partial_header" android:id="@+id/header" />
-
     <LinearLayout
         android:layout_below="@id/header"
         android:orientation="horizontal"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RelativeLayout
             android:layout_weight="0.5"
             android:layout_width="0dp"
             android:layout_height="match_parent">
-            <TextView
-                android:layout_margin="10dp"
-                android:id="@+id/guestInfoTitle"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GUEST INFORMATION"/>
-
             <ScrollView
-                android:layout_below="@id/guestInfoTitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
                 <LinearLayout
                     android:orientation="vertical"
-                    android:layout_margin="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelRoomNumber"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Room number"/>
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/roomNumberValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="ROOM NUMBER"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelRoomType"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Room type"/>
+
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/roomTypeValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="ROOM TYPE VALUE"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelRateTypeDesc"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Rate description"/>
+
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/rateDescriptionValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="RATE DESCRIPTION VALUE"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelRateAmount"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Rate amount"/>
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:layout_toRightOf="@id/labelRateAmount"
+                            android:id="@+id/rateAmountValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="RATE AMOUNT VALUE"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelVehicleType"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Vehicle type"/>
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:layout_toRightOf="@id/labelVehicleType"
+                            android:id="@+id/vehicleValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="VEHICLE VALUE"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelCarMake"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Car make"/>
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/carMakeValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="CAR MAKE VALUE"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/labelPlateNumber"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Plate number"/>
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/plateNumberValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="PLATE NUMBE VALUE"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+
+                    <LinearLayout
+                        android:padding="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ROOM NUMBER"/>
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/roomNumberValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Room boy"/>
+
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/roomBoyValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="ROOM BOY VALUE"/>
+
+                    </LinearLayout>
+
+
+
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="ROOM NUMBER"/>
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
 
 
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="ROOM TYPE"/>
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Remarks"/>
 
-                    <TextView
-                        android:id="@+id/roomTypeValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:id="@+id/remarksValue"
+                            android:layout_margin="5dp"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="REMARKS VALUE"/>
+                    </LinearLayout>
+
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="ROOM TYPE VALUE"/>
-
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
+                    <LinearLayout
+                        android:padding="5dp"
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="RATE DESCRIPTION"/>
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Total no of guest"/>
+                        <TextView
+                            android:layout_weight="0.5"
+                            android:textStyle="bold"
+                            android:id="@+id/guestCountValue"
+                            android:layout_margin="5dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="1"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/rateDescriptionValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="RATE DESCRIPTION VALUE"/>
-
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="RATE AMOUNT"/>
-
-                    <TextView
-                        android:id="@+id/rateAmountValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="RATE AMOUNT VALUE"/>
+                        android:layout_height="1dp"
+                        android:background="@color/colorLtGrey"/>
 
 
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="VEHICLE TYPE"/>
-
-                    <TextView
-                        android:id="@+id/vehicleValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="VEHICLE VALUE"/>
-
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="CAR MAKE"/>
-
-                    <TextView
-                        android:id="@+id/carMakeValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="CAR MAKE VALUE"/>
-
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="PLATE NUMBER"/>
-
-                    <TextView
-                        android:id="@+id/plateNumberValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="PLATE NUMBE VALUE"/>
-
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="ROOM BOY"/>
-
-                    <TextView
-                        android:id="@+id/roomBoyValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="ROOM BOY VALUE"/>
-
-                    <TextView
-                        android:layout_margin="5dp"
-                        android:textSize="14sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="REMARKS"/>
-
-                    <TextView
-                        android:id="@+id/remarksValue"
-                        android:layout_margin="5dp"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="REMARKS VALUE"/>
                 </LinearLayout>
 
             </ScrollView>
         </RelativeLayout>
-
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorLtGrey"/>
         <RelativeLayout
             android:layout_weight="0.5"
             android:layout_width="0dp"
@@ -193,67 +337,119 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <TextView
-                    android:id="@+id/checkinTimeLabel"
-                    android:layout_margin="10dp"
-                    android:textSize="14sp"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CHECK IN TIME"/>
-                <TextView
-                    android:textStyle="bold"
-                    android:id="@+id/checkInTimeValue"
-                    android:layout_margin="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="03:00 PM"/>
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:id="@+id/linCheckInTime"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="14sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="WAKE UP CALL"/>
-                <TextView
-                    android:textStyle="bold"
-                    android:id="@+id/wakeUpCallValue"
-                    android:layout_margin="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="08:00 PM"/>
+                        <TextView
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="5dp"
+                            android:layout_weight="0.5"
+                            android:id="@+id/checkinTimeLabel"
+                            android:layout_margin="10dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Check-in time"/>
+                        <TextView
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
+                            android:layout_weight="0.5"
+                            android:textStyle="bold"
+                            android:id="@+id/checkInTimeValue"
+                            android:layout_margin="10dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="03:00 PM"/>
 
-                <TextView
-                    android:layout_margin="10dp"
-                    android:textSize="14sp"
+                    </LinearLayout>
+
+                    <Button
+                        android:layout_below="@id/linCheckInTime"
+                        android:padding="5dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_selector"
+                        android:id="@+id/changeCheckInTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Update Check in time"/>
+
+                </RelativeLayout>
+
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="TOTAL NO OF GUEST"/>
-                <TextView
-                    android:textStyle="bold"
-                    android:id="@+id/guestCountValue"
-                    android:layout_margin="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="1"/>
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@color/colorLtGrey"/>
 
 
-                <Button
-                    android:padding="5dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_selector"
-                    android:id="@+id/changeCheckInTime"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Update Check in time"/>
+                    android:layout_height="wrap_content">
 
-                <Button
-                    android:padding="5dp"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_selector"
-                    android:id="@+id/updateGuestInfo"
+                    <LinearLayout
+                        android:id="@+id/linWakeUpCall"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="5dp"
+                            android:layout_weight="0.5"
+                            android:layout_margin="5dp"
+                            android:textSize="14sp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Wake-up call"/>
+                        <TextView
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="5dp"
+                            android:layout_weight="0.5"
+                            android:textStyle="bold"
+                            android:id="@+id/wakeUpCallValue"
+                            android:layout_margin="5dp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="08:00 PM"/>
+                    </LinearLayout>
+                    <Button
+                        android:layout_below="@id/linWakeUpCall"
+                        android:padding="5dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button_selector"
+                        android:id="@+id/updateGuestInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CHANGE WAKE UP CALL"/>
+
+                </RelativeLayout>
+
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="CHANGE WAKE UP CALL"/>
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@color/colorLtGrey"/>
+
+
+
+
+
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

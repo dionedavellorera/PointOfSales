@@ -36,7 +36,7 @@ public abstract class ChangeQtyDialog extends BaseDialog implements CalcuContrac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_change_qty, "SET QTY");
+        setDialogLayout(R.layout.dialog_change_qty, "Set Quantity");
         setQty = findViewById(R.id.setQty);
         setQty.setOnClickListener(this);
         rvCalculator = findViewById(R.id.rvCalculator);

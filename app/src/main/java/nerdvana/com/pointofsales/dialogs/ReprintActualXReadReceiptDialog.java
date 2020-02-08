@@ -27,7 +27,7 @@ public class ReprintActualXReadReceiptDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_reprint_x_read , "REPRINT X READ");
+        setDialogLayout(R.layout.dialog_reprint_x_read , "Reprint X Reading");
 
 
         startDate = findViewById(R.id.startDate);

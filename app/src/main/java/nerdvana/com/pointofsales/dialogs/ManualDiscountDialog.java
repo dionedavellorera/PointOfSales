@@ -70,7 +70,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_discount, "MANUAL DISCOUNTING");
+        setDialogLayout(R.layout.dialog_discount, "Manual Discounting");
         fabSave = findViewById(R.id.fabSave);
         inputReason = findViewById(R.id.inputReason);
         inputAmount = findViewById(R.id.inputAmount);

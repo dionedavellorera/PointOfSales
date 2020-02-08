@@ -24,6 +24,8 @@
         android:layout_height="wrap_content" />
 
     <Button
+        android:textColor="@color/colorBlack"
+        android:background="@drawable/button_selector"
         android:layout_margin="10dp"
         android:layout_below="@id/endDate"
         android:text="SEARCH"

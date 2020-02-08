@@ -46,7 +46,7 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.dialog_confirm);
-        setDialogLayout(R.layout.dialog_confirm, "CONFIRM");
+        setDialogLayout(R.layout.dialog_confirm, "Confirmation Dialog");
         remarks = findViewById(R.id.remarks);
         save = findViewById(R.id.save);
         header = findViewById(R.id.header);

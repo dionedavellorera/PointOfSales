@@ -135,19 +135,29 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
 
     private void setSelectedFields() {
         if (fetchRoomPendingResult != null) {
+            roomArea.setEnabled(false);
+            spinnerNationalirt.setEnabled(false);
+            carSpinner.setEnabled(false);
+            guestTypeSpinner.setEnabled(false);
+            steward.setEnabled(false);
+            vehicleSpinner.setEnabled(false);
+
             List<String> nationalityArray = new ArrayList<>();
+
             nationalityArray.add(fetchRoomPendingResult.getBooked().get(0).getBranchNationality().getNationality());
             CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                     nationalityArray);
             spinnerNationalirt.setAdapter(rateSpinnerAdapter);
 
             List<String> carArray = new ArrayList<>();
+
             carArray.add(fetchRoomPendingResult.getBooked().get(0).getCar().getCarMake());
             CustomSpinnerAdapter carSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                     carArray);
             carSpinner.setAdapter(carSpinnerAdapter);
 
             List<String> guestTypeArray = new ArrayList<>();
+
             guestTypeArray.add(fetchRoomPendingResult.getBooked().get(0).getGuestType().getGuestType());
             CustomSpinnerAdapter guestTypeAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                     guestTypeArray);
@@ -278,6 +288,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
 
     private void setPriceSelection() {
         List<String> priceArray = new ArrayList<>();
+
         for (RoomRateMain rrm : priceList) {
             priceArray.add(String.format("%s - %s", Utils.returnWithTwoDecimal(String.valueOf(rrm.getRatePrice().getAmount())), rrm.getRatePrice().getRoomRate().getRoomRate()));
         }

@@ -3337,7 +3337,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
                     if (collectionDialog == null) {
                         ApplicationConstants.IS_ACTIVE = "T";
-                        collectionDialog = new CollectionDialog(MainActivity.this, "SAFEKEEPING", false) {
+                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false) {
                             @Override
                             public void printCashRecoData(String cashNRecoData) {
 
@@ -3807,14 +3807,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         ApplicationConstants.IS_THEME_CHANGED = "F";
         cardRole.setCardBackgroundColor(getResources().getColor(R.color.lightColorAccent));
         role.setBackgroundColor(getResources().getColor(R.color.lightColorAccent));
-        role.setTextColor(getResources().getColor(R.color.lightColorAccentFont));
+        role.setTextColor(getResources().getColor(R.color.colorBlack));
         mainContainerBg.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
-        toolbar.setBackgroundColor(getResources().getColor(R.color.lightHeaderBg));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorYellow));
 
         separator.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
         separator2.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
-        user.setTextColor(getResources().getColor(R.color.darkFont));
-        timer.setTextColor(getResources().getColor(R.color.darkFont));
+        user.setTextColor(getResources().getColor(R.color.colorBlack));
+        timer.setTextColor(getResources().getColor(R.color.colorBlack));
     }
 
     private void darkTheme() {

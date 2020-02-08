@@ -45,9 +45,15 @@
                 android:background="@color/colorWhite"
                 android:alpha="0.9"/>
 
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilUsername"
                 android:layout_below="@id/logo"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -55,11 +61,8 @@
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginRight="15dp"
                     android:gravity="left"
-                    android:hint="USERNAME"
+                    android:hint="Username"
                     android:inputType="textAutoComplete"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -79,8 +82,14 @@
                 android:id="@+id/tilPassword"
                 android:layout_below="@id/tilUsername"
                 app:passwordToggleEnabled="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <nerdvana.com.pointofsales.custom.HidingEditText
                     android:maxLines="1"
                     android:singleLine="true"
@@ -89,10 +98,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="15dp"
-                    android:hint="PASSWORD"
+                    android:hint="Password"
                     android:inputType="textPassword"
                     android:textColor="@color/colorBlack"
                     android:textColorHint="@color/colorBlack"
@@ -110,9 +116,9 @@
                 android:id="@+id/proceed"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="15dp"
                 android:background="@drawable/button_selector"
                 android:text="PROCEED"
                 android:textSize="19sp" />

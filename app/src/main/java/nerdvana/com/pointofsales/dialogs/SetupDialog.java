@@ -47,7 +47,7 @@ public class SetupDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_setup, "SETUP");
+        setDialogLayout(R.layout.dialog_setup, "Machine Setup");
         setCancelable(false);
         ipAddress = findViewById(R.id.ipAddress);
         branchName = findViewById(R.id.branchName);

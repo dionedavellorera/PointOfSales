@@ -8,7 +8,7 @@
 
     <Button
         android:textColor="@color/colorWhite"
-        android:background="@drawable/green_button_selector"
+        android:background="@drawable/red_button_selector"
         android:visibility="visible"
         android:id="@+id/voidPayment"
         android:layout_width="wrap_content"

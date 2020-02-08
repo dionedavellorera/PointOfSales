@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.facebook.stetho.common.Util;
 import com.google.gson.reflect.TypeToken;
@@ -75,6 +76,12 @@ public abstract class GuestInfoDialog extends BaseDialog {
     private String dateSet = "";
     private String timeSet = "";
     private String finalTime = "";
+
+    private DateTime finalDate;
+    private DateTime finalChDate;
+    private DateTime jodatime;
+    private DateTime checkOutJodaTime;
+    private DateTime checkInJodaTime;
     private FetchRoomPendingResponse.Result fetchRoomPendingResult;
     public GuestInfoDialog(@NonNull Context context,
                            FetchRoomPendingResponse.Result fetchRoomPendingResult,
@@ -95,27 +102,33 @@ public abstract class GuestInfoDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_guest_info, "GUEST INFO");
-
+        setDialogLayout(R.layout.dialog_guest_info, "Guest Info");
 
         final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        final DateTime jodatime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getWakeUpCall()));
-        final DateTime checkOutJodaTime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getExpectedCheckOut().toString()));
-        final DateTime checkInJodaTime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString()));
-        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        DateTime finalDate = dtf.parseDateTime(dtfOut.print(jodatime));
-        DateTime finalChDate = dtf.parseDateTime(dtfOut.print(checkInJodaTime));
+        if (fetchRoomPendingResult.getBooked() != null) {
+            jodatime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getWakeUpCall()));
+            checkOutJodaTime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getExpectedCheckOut().toString()));
+            checkInJodaTime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString()));
+            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            finalDate = dtf.parseDateTime(dtfOut.print(jodatime));
+            finalChDate = dtf.parseDateTime(dtfOut.print(checkInJodaTime));
+
+            dateSet = String.format("%s-%s-%s", String.valueOf(finalDate.getYear()),
+                    String.valueOf(finalDate.getMonthOfYear() < 10 ? "0" + finalDate.getMonthOfYear() : finalDate.getMonthOfYear()),
+                    String.valueOf(finalDate.getDayOfMonth() < 10 ? "0" + finalDate.getDayOfMonth() : finalDate.getDayOfMonth()));
+            timeSet = String.format("%s:%s:00", String.valueOf(finalDate.getHourOfDay()), String.valueOf(finalDate.getMinuteOfHour()));
+
+            finalCheckInDateTime = String.format("%s-%s-%s", String.valueOf(finalChDate.getYear()),
+                    String.valueOf(finalChDate.getMonthOfYear() < 10 ? "0" + finalChDate.getMonthOfYear() : finalChDate.getMonthOfYear()),
+                    String.valueOf(finalChDate.getDayOfMonth() < 10 ? "0" + finalChDate.getDayOfMonth() : finalChDate.getDayOfMonth())) + " " +
+                    String.format("%s:%s:00", String.valueOf(finalChDate.getHourOfDay()), String.valueOf(finalChDate.getMinuteOfHour()));
+        } else {
+            Toast.makeText(getContext(), "Get booked is null, please repear", Toast.LENGTH_SHORT).show();
+        }
 
 
-        dateSet = String.format("%s-%s-%s", String.valueOf(finalDate.getYear()),
-                String.valueOf(finalDate.getMonthOfYear() < 10 ? "0" + finalDate.getMonthOfYear() : finalDate.getMonthOfYear()),
-                String.valueOf(finalDate.getDayOfMonth() < 10 ? "0" + finalDate.getDayOfMonth() : finalDate.getDayOfMonth()));
-        timeSet = String.format("%s:%s:00", String.valueOf(finalDate.getHourOfDay()), String.valueOf(finalDate.getMinuteOfHour()));
 
-        finalCheckInDateTime = String.format("%s-%s-%s", String.valueOf(finalChDate.getYear()),
-                String.valueOf(finalChDate.getMonthOfYear() < 10 ? "0" + finalChDate.getMonthOfYear() : finalChDate.getMonthOfYear()),
-                String.valueOf(finalChDate.getDayOfMonth() < 10 ? "0" + finalChDate.getDayOfMonth() : finalChDate.getDayOfMonth())) + " " +
-                String.format("%s:%s:00", String.valueOf(finalChDate.getHourOfDay()), String.valueOf(finalChDate.getMinuteOfHour()));
+
 
 
         wakeUpCall = findViewById(R.id.wakeUpCallValue);
@@ -171,7 +184,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
 
         roomNumber = findViewById(R.id.roomNumberValue);
-        roomNumber.setText(fetchRoomPendingResult.getBooked().get(0).getRoomNo());
+        roomNumber.setText(fetchRoomPendingResult.getBooked().get(0).getRoom().getRoomNo());
 
 
         roomType = findViewById(R.id.roomTypeValue);

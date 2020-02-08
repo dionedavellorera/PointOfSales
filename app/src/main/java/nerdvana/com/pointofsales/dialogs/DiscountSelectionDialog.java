@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,8 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
     List<ButtonsModel> buttonsModelList;
     ButtonsAdapter buttonsAdapter;
 
+    private TextView tvNoData;
+
     private RecyclerView listPostedDiscounts;
     private LeftFrameFragment.Data data;
     VoidDiscountsAdapter voidDiscountsAdapter;
@@ -72,8 +76,9 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_selection, "DISCOUNT LIST");
-
+        setCancelable(false);
+        setDialogLayout(R.layout.dialog_selection, "Discount List");
+        tvNoData = findViewById(R.id.tvNoData);
         listDiscounts = findViewById(R.id.listDiscounts);
         listPostedDiscounts = findViewById(R.id.listPostedDiscounts);
 
@@ -98,7 +103,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         VoidItemContract voidItemContract = new VoidItemContract() {
             @Override
             public void remove(final String post_id, String name, String amount, final int position) {
-                PasswordDialog passwordDialog = new PasswordDialog(activity,"CONFIRM VOID ITEM", "") {
+                PasswordDialog passwordDialog = new PasswordDialog(activity,"Confirm Void Item", "") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         VoidDiscountRequest voidDiscountRequest = new VoidDiscountRequest(controlNumber, post_id, employeeId);
@@ -142,6 +147,12 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
         voidDiscountsAdapter = new VoidDiscountsAdapter(forVoidDiscountModels, voidItemContract);
         listPostedDiscounts.setLayoutManager(llm);
         listPostedDiscounts.setAdapter(voidDiscountsAdapter);
+
+        if (forVoidDiscountModels.size() > 0) {
+            tvNoData.setVisibility(View.GONE);
+        } else {
+            tvNoData.setVisibility(View.VISIBLE);
+        }
 
     }
 

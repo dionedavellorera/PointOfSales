@@ -33,11 +33,11 @@ public abstract class RemoveOtDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_remove_overtime, "CANCEL OVERTIME");
+        setDialogLayout(R.layout.dialog_remove_overtime, "Cancel OT");
         oldOtValue = findViewById(R.id.oldOtValue);
         newOtValue = findViewById(R.id.newOtValue);
         updateOverTime = findViewById(R.id.updateOverTime);
-        oldOtValue.setText(overTimeValue);
+        oldOtValue.setText(overTimeValue + " Hrs.");
 
         updateOverTime.setOnClickListener(new View.OnClickListener() {
             @Override

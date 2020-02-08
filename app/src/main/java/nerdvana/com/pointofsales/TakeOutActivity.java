@@ -50,7 +50,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_out);
 
-        setTitle("TAKE OUT");
+        setTitle("Take Out");
         Toolbar toolbar = findViewById(R.id.toolbar);
         refreshRoom = findViewById(R.id.refreshRoom);
         listFilters = findViewById(R.id.listFilters);

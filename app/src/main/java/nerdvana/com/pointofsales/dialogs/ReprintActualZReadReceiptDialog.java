@@ -26,7 +26,7 @@ public class ReprintActualZReadReceiptDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_reprint_z_read, "REPRINT Z READ");
+        setDialogLayout(R.layout.dialog_reprint_z_read, "Reprint Z Reading");
 
         startDate = findViewById(R.id.startDate);
         startDate.setOnClickListener(new View.OnClickListener() {

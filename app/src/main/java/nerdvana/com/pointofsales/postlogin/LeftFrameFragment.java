@@ -1735,7 +1735,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                 if (spotAuditDialog == null) {
-                    spotAuditDialog = new CollectionDialog(getActivity(), "SPOT AUDIT", false) {
+                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false) {
                         @Override
                         public void printCashRecoData(String cashNRecoData) {
 
@@ -2341,49 +2341,53 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 break;
             case 111://GUEST INFO
-                if (canTransact()) {
-                    if (guestInfoDialog == null) {
-                        guestInfoDialog = new GuestInfoDialog(getActivity(), fetchRoomPendingResult, getActivity()) {
-                            @Override
-                            public void refresh() {
-                                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                            }
+                if (fetchRoomPendingResult != null) {
+                    if (canTransact()) {
+                        if (guestInfoDialog == null) {
 
-                            @Override
-                            public void refresh(String jsonString) {
-                                fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHANGE_WAKE_UP_CALL", jsonString));
+                            guestInfoDialog = new GuestInfoDialog(getActivity(), fetchRoomPendingResult, getActivity()) {
+                                @Override
+                                public void refresh() {
+                                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                }
 
-                            }
-                        };
+                                @Override
+                                public void refresh(String jsonString) {
+                                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                    BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHANGE_WAKE_UP_CALL", jsonString));
 
-                        guestInfoDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                            @Override
-                            public void onCancel(DialogInterface dialog) {
-                                guestInfoDialog = null;
-                            }
-                        });
+                                }
+                            };
 
-                        guestInfoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                guestInfoDialog = null;
-                            }
-                        });
-                    }
+                            guestInfoDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    guestInfoDialog = null;
+                                }
+                            });
 
-
-                    if (selectedRoom != null) {
-                        if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                                currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
-                            guestInfoDialog.show();
-                        } else {
-                            Utils.showDialogMessage(getActivity(), "No guest info yet", "Information");
+                            guestInfoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    guestInfoDialog = null;
+                                }
+                            });
                         }
-                    } else {
-                        Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+
+
+                        if (selectedRoom != null) {
+                            if (currentRoomStatus.equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                                    currentRoomStatus.equalsIgnoreCase(RoomConstants.SOA)) {
+                                guestInfoDialog.show();
+                            } else {
+                                Utils.showDialogMessage(getActivity(), "No guest info yet", "Information");
+                            }
+                        } else {
+                            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
+                        }
                     }
                 }
+
 
                 break;
             case 110:// SETUP PRINTER
@@ -3805,7 +3809,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
-            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM VOID ITEM", "" ) {
+            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"Confirm Void Item", "" ) {
                 @Override
                 public void passwordSuccess(final String employeeId, String employeeName) {
                     if (selectedRoom != null) {
@@ -6130,7 +6134,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             if (cutOffDialog == null) {
                 ApplicationConstants.IS_ACTIVE = "T";
 
-                cutOffDialog = new CollectionDialog(getActivity(), "CASH AND RECONCILE", true) {
+                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
                         try {

@@ -35,7 +35,7 @@ public abstract class RoomListViewDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_room_list_view, "ROOM LIST VIEW");
+        setDialogLayout(R.layout.dialog_room_list_view, "Room List View");
         listRoomData = findViewById(R.id.listRoomData);
         fab = findViewById(R.id.fab);
 

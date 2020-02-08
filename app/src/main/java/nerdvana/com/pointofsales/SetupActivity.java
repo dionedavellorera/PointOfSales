@@ -72,32 +72,34 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         }
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
         if (userModel != null) {
-            progressBar.setVisibility(View.GONE);
+//            progressBar.setVisibility(View.GONE);
             if (userModel.isLoggedIn()) { //post login
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
-            } else {
-                progressBar.setVisibility(View.VISIBLE);
-                disableViews();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        enableViews();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, 3000);
             }
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            disableViews();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    enableViews();
-                    progressBar.setVisibility(View.GONE);
-                }
-            }, 3000);
+//            else {
+//                progressBar.setVisibility(View.VISIBLE);
+//                disableViews();
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        enableViews();
+//                        progressBar.setVisibility(View.GONE);
+//                    }
+//                }, 3000);
+//            }
         }
+//        else {
+//            progressBar.setVisibility(View.VISIBLE);
+//            disableViews();
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    enableViews();
+//                    progressBar.setVisibility(View.GONE);
+//                }
+//            }, 3000);
+//        }
 
 
 

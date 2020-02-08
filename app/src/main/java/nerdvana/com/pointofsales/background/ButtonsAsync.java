@@ -59,14 +59,14 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                 buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6, 129));
                 buttonsModelList.add(new ButtonsModel(106,"SOA", "",5, 123));
                 buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14, 69));
-                buttonsModelList.add(new ButtonsModel(122,"CANCEL OVERTIME", "",18, 71));
+                buttonsModelList.add(new ButtonsModel(122,"CANCEL OT", "",18, 71));
                 buttonsModelList.add(new ButtonsModel(103,"ADD RATE", "",11, 0));
                 buttonsModelList.add(new ButtonsModel(9988,"TAKE ORDER", "",2, 0));
                 buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3, 0));
                 buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1, 0));
                 buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4, 0));
                 buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
-                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));
+//                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));
                 buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8, 0));
                 buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3, 0));
                 buttonsModelList.add(new ButtonsModel(126,"FOC", "",24, 0)); //return later

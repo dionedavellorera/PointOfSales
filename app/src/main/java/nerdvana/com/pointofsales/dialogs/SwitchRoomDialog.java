@@ -70,7 +70,7 @@ public abstract class SwitchRoomDialog extends BaseDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.dialog_switch_room);
-        setDialogLayout(R.layout.dialog_switch_room, "SWITCH ROOM");
+        setDialogLayout(R.layout.dialog_switch_room, "Switch Room");
         selectedRoomRateLists = new ArrayList<>();
 
         ownRoomModelList = new ArrayList<>();
@@ -222,7 +222,11 @@ public abstract class SwitchRoomDialog extends BaseDialog {
         stringArray.add("9");
         stringArray.add("10");
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, stringArray);
-        spinnerQuantity.setAdapter(arrayAdapter);
+
+        CustomSpinnerAdapter qtyAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
+                stringArray);
+        spinnerQuantity.setAdapter(qtyAdapter);
+
     }
 
 

@@ -43,7 +43,7 @@ public abstract class AddGuestDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_add_guest,"EDIT GUEST");
+        setDialogLayout(R.layout.dialog_add_guest,"Edit Guest");
 
         setCancelable(false);
 

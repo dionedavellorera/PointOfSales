@@ -8,46 +8,42 @@
 
     <include layout="@layout/partial_header" android:id="@+id/header"/>
 
-    <TextView
-        android:id="@+id/head1"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_below="@id/header"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:id="@+id/tilReceiptNumber"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Receipt Number"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <nerdvana.com.pointofsales.custom.HidingEditText
-        android:padding="10dp"
-        android:layout_below="@id/head1"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/edittext_round"
-        android:id="@+id/inputReceiptNumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Receipt number ex. 0001"/>
-
+        android:layout_height="wrap_content">
+        <nerdvana.com.pointofsales.custom.HidingEditText
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:imeOptions="actionDone"
+            android:background="@drawable/edittext_round"
+            android:id="@+id/inputReceiptNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Receipt number ex. 0001"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
    <androidx.cardview.widget.CardView
-       android:layout_marginLeft="20dp"
-       android:layout_marginRight="20dp"
+       android:layout_marginLeft="10dp"
+       android:layout_marginRight="10dp"
        android:layout_marginTop="5dp"
        android:layout_marginBottom="5dp"
        app:cardElevation="5dp"
+       app:cardCornerRadius="5dp"
        android:layout_centerHorizontal="true"
-       android:layout_below="@id/inputReceiptNumber"
+       android:layout_below="@id/tilReceiptNumber"
        android:id="@+id/cardDateStart"
        android:layout_width="match_parent"
        android:layout_height="wrap_content">
        <RelativeLayout
-           android:layout_marginLeft="20dp"
-           android:layout_marginRight="20dp"
            android:layout_width="match_parent"
            android:layout_height="wrap_content">
            <ImageView
@@ -70,8 +66,9 @@
 
 
     <androidx.cardview.widget.CardView
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        app:cardCornerRadius="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         app:cardElevation="5dp"
@@ -81,8 +78,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <RelativeLayout
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
@@ -107,7 +102,6 @@
 
     <CheckBox
         android:layout_marginLeft="25dp"
-        android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="20dp"
         android:layout_below="@id/cardDateEnd"
@@ -117,13 +111,16 @@
         android:text="Take Out"/>
 
     <Spinner
-        android:visibility="invisible"
+        android:visibility="visible"
         android:layout_below="@id/cardDateEnd"
         android:layout_toRightOf="@id/chkTakeOut"
         android:id="@+id/spinrRoomNumber"
-        android:layout_margin="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="31dp"/>
 
     <Button
         android:layout_marginLeft="20dp"
@@ -134,7 +131,7 @@
         android:id="@+id/btnSearch"
         android:text="SEARCH"
         android:textColor="@color/colorWhite"
-        android:background="@drawable/green_button_selector"
+        android:background="@drawable/button_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </RelativeLayout>

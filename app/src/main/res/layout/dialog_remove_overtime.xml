@@ -11,51 +11,63 @@
         android:textStyle="bold"
         android:textSize="18sp"
         android:id="@+id/oldOtLabel"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OLD OT HOURS"/>
+        android:text="Current overtime"/>
 
     <TextView
+        android:layout_below="@id/header"
         android:id="@+id/oldOtValue"
-        android:padding="5dp"
-        android:textSize="17sp"
-        android:layout_below="@id/oldOtLabel"
-        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_toRightOf="@id/oldOtLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="10"/>
 
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilNewOt"
+        android:layout_below="@id/oldOtValue"
+        android:layout_toLeftOf="@id/labelNewHrs"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <nerdvana.com.pointofsales.custom.HidingEditText
+            android:inputType="number"
+            android:id="@+id/newOtValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="New OT hours"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:layout_below="@id/oldOtValue"
-        android:padding="10dp"
+        android:id="@+id/labelNewHrs"
+        android:layout_alignParentRight="true"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="5dp"
         android:textStyle="bold"
+        android:gravity="center_vertical"
         android:textSize="18sp"
-        android:id="@+id/newOtLabel"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="NEW OT HOURS"/>
-
-
-    <nerdvana.com.pointofsales.custom.HidingEditText
-        android:inputType="number"
-        android:id="@+id/newOtValue"
-        android:padding="5dp"
-        android:textSize="17sp"
-        android:layout_below="@id/newOtLabel"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="NEW OT HOURS"/>
+        android:layout_height="65dp"
+        android:text="Hrs"/>
 
     <Button
-        android:layout_margin="5dp"
+        android:background="@drawable/button_selector"
+        android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/newOtValue"
+        android:layout_below="@id/tilNewOt"
         android:id="@+id/updateOverTime"
         android:text="UPDATE OVERTIME"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 </RelativeLayout>

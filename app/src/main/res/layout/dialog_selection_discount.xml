@@ -22,7 +22,7 @@
                 android:layout_below="@id/header"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:paddingLeft="20dp"
+                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                 android:layout_below="@id/spinnerDiscountType"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:paddingLeft="20dp"
+                android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,84 +109,117 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:padding="10dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:background="@drawable/edittext_round"
-                    android:imeOptions="actionDone"
-                    android:singleLine="true"
-                    android:id="@+id/seniorPwdName"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Name"/>
+                    android:id="@+id/tilName"
+                    android:layout_height="wrap_content">
+                    <nerdvana.com.pointofsales.custom.HidingEditText
+                        android:maxLines="1"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        android:id="@+id/seniorPwdName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Name"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-
-                <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:padding="10dp"
-                    android:background="@drawable/edittext_round"
-                    android:layout_below="@id/seniorPwdName"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:imeOptions="actionDone"
-                    android:singleLine="true"
-                    android:id="@+id/seniorPwdAddress"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Address"/>
+                    android:layout_below="@id/tilName"
+                    android:id="@+id/tilAddress"
+                    android:layout_height="wrap_content">
+                    <nerdvana.com.pointofsales.custom.HidingEditText
+                        android:background="@drawable/edittext_round"
+                        android:layout_below="@id/seniorPwdName"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        android:id="@+id/seniorPwdAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Address"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
 
-                <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:padding="10dp"
-                    android:background="@drawable/edittext_round"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_below="@id/tilAddress"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_below="@id/seniorPwdAddress"
-                    android:imeOptions="actionDone"
-                    android:singleLine="true"
-                    android:id="@+id/seniorPwdCardNumber"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Card Number"/>
+                    android:id="@+id/tilCardNumber"
+                    android:layout_height="wrap_content">
+                    <nerdvana.com.pointofsales.custom.HidingEditText
+                        android:maxLines="1"
+                        android:inputType="text"
+                        android:layout_below="@id/seniorPwdAddress"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        android:id="@+id/seniorPwdCardNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Card Number"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-
-
-                <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:padding="10dp"
-                    android:background="@drawable/edittext_round"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:visibility="gone"
+                    android:layout_below="@id/tilCardNumber"
+                    android:id="@+id/tilTin"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_below="@+id/seniorPwdCardNumber"
-                    android:imeOptions="actionDone"
-                    android:singleLine="true"
-                    android:id="@+id/seniorTin"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Tin #"/>
+                    android:layout_height="wrap_content">
+                    <nerdvana.com.pointofsales.custom.HidingEditText
+                        android:maxLines="1"
+                        android:layout_below="@+id/seniorPwdCardNumber"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        android:id="@+id/seniorTin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Tin #"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
 
 
-                <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:padding="10dp"
-                    android:background="@drawable/edittext_round"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:visibility="gone"
+                    android:id="@+id/tilBusStyle"
+                    android:layout_below="@id/tilTin"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_below="@id/seniorTin"
-                    android:imeOptions="actionDone"
-                    android:singleLine="true"
-                    android:id="@+id/seniorBusinessStyle"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Business style"/>
+                    android:layout_height="wrap_content">
+
+                    <nerdvana.com.pointofsales.custom.HidingEditText
+                        android:layout_below="@id/seniorTin"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"
+                        android:id="@+id/seniorBusinessStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Business style"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
 
             </RelativeLayout>
 
@@ -197,17 +230,17 @@
         </RelativeLayout>
 
         <Button
-            android:textColor="@color/colorWhite"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:textColor="@color/colorBlack"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_below="@id/rel1"
             android:id="@+id/submit"
-            android:background="@drawable/green_button_selector"
+            android:background="@drawable/button_selector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="APPLY"/>
+            android:text="APPLY DISCOUNT"/>
     </RelativeLayout>
 
 

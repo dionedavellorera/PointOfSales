@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.reflect.TypeToken;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
@@ -32,6 +33,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 
 public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
     private EditText name;
+    private TextInputLayout tilName;
     private Button create;
     private SearchableSpinner roomAreaSpinner;
     private List<FetchRoomAreaResponse.Result> roomAreaList;
@@ -59,8 +61,9 @@ public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.dialog_take_out_create_customer);
-        setDialogLayout(R.layout.dialog_take_out_create_customer, "CUSTOMER INFO");
+        setDialogLayout(R.layout.dialog_take_out_create_customer, "Customer Info");
         roomAreaSpinner = findViewById(R.id.roomArea);
+        tilName = findViewById(R.id.tilName);
         isEmployeeChkBox = findViewById(R.id.isEmployeeChkBox);
         employeeSpinner = findViewById(R.id.employeeSpinner);
         name = findViewById(R.id.name);
@@ -103,9 +106,11 @@ public abstract class TakeOutCreateCustomerDialog extends BaseDialog {
 
     private void toggleView(boolean isEmployee) {
         if (isEmployee) {
+            tilName.setVisibility(View.GONE);
             name.setVisibility(View.GONE);
             employeeSpinner.setVisibility(View.VISIBLE);
         } else {
+            tilName.setVisibility(View.VISIBLE);
             name.setVisibility(View.VISIBLE);
             employeeSpinner.setVisibility(View.GONE);
         }

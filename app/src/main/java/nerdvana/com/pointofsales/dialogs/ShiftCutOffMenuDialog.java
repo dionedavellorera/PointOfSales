@@ -25,7 +25,7 @@ public class ShiftCutOffMenuDialog extends BaseDialog implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_shift_cut_off_menu, "SHIFT CUTOFF");
+        setDialogLayout(R.layout.dialog_shift_cut_off_menu, "Shift Cutoff");
         xRead = findViewById(R.id.btnXread);
         xRead.setOnClickListener(this);
         zRead = findViewById(R.id.btnZread);

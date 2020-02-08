@@ -88,15 +88,18 @@
         app:layout_constraintTop_toBottomOf="@id/cardSearch" />
 
     <Button
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginBottom="3dp"
         android:text="QTY : 1"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/colorBlack"
         android:background="@drawable/button_selector"
         app:layout_constraintTop_toBottomOf="@id/cardSearch"
         app:layout_constraintLeft_toRightOf="@id/guideEightyy"
         app:layout_constraintRight_toRightOf="parent"
         android:id="@+id/btnChangeQty"
         android:layout_width="0dp"
-        android:layout_height="39dp"/>
+        android:layout_height="35dp"/>
 
     <Spinner
         android:visibility="gone"

@@ -4,9 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/toptoptop"
-    android:background="@color/colorSecondary">
+    android:layout_marginBottom="5dp"
+    android:background="@color/colorYellow">
 
     <ImageView
+        android:layout_marginRight="5dp"
         android:clickable="true"
         android:focusable="true"
         android:layout_alignParentRight="true"
@@ -16,8 +18,9 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:src="@mipmap/sharp_close_white_24"
-        android:tint="@color/colorWhite"/>
+        android:tint="@color/colorBlack"/>
     <TextView
+        android:textColor="@color/colorBlack"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@id/backButton"
         android:id="@+id/displayHeader"
@@ -26,8 +29,12 @@
         android:padding="15dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorWhite"
-        android:text="SETTING"
-        android:textStyle="bold"/>
+        android:text="SETTING"/>
+
+    <View
+        android:layout_below="@id/displayHeader"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorBlack"/>
 
 </RelativeLayout>

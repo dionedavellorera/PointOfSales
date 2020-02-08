@@ -77,7 +77,8 @@ public abstract class SelectionDiscountDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_selection_discount, "DISCOUNT SELECTION");
+
+        setDialogLayout(R.layout.dialog_selection_discount, TextUtils.isEmpty(specialDiscountId) ? "Custom Discounting" : "Senior/PWD Discounting");
         spinnerDiscountType = findViewById(R.id.spinnerDiscountType);
         spinnerDiscountType.setTitle("Select Item");
         spinnerDiscountType.setPositiveButton("OK");

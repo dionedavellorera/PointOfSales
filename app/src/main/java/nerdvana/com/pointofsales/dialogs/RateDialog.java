@@ -65,7 +65,7 @@ public abstract class RateDialog extends BaseDialog implements View.OnClickListe
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 //        setContentView(R.layout.dialog_rates);
-        setDialogLayout(R.layout.dialog_rates, "ADD RATE");
+        setDialogLayout(R.layout.dialog_rates, "Add Rate");
 
         listRates = findViewById(R.id.listRates);
         searchRate = findViewById(R.id.searchRate);
