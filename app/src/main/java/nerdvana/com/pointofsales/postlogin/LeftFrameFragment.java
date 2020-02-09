@@ -6233,7 +6233,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 passwordDialog.show();
             }
         } else {
-            doZReadFunction("656");
+            doZReadFunction(SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
         }
     }
 

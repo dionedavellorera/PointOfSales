@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -107,8 +108,6 @@ public abstract class CollectionDialog extends BaseDialog {
                     }
                 }
 
-
-
                 if (willCashReco) {
                     if (Utils.isPasswordProtected(getContext(), "72")) {
                         if (passwordDialog == null) {
@@ -141,6 +140,8 @@ public abstract class CollectionDialog extends BaseDialog {
                             passwordDialog.show();
                         }
 
+                    } else {
+                        doCashAndRecoFunction(SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
                     }
 
 

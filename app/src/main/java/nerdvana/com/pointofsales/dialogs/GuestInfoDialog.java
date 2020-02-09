@@ -392,7 +392,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
                                     passwordDialog.show();
                                 } else {
-                                    updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, "656");
+                                    updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
                                 }
 
 

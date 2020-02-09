@@ -10,6 +10,7 @@ import android.net.NetworkInfo;
 import androidx.appcompat.app.AlertDialog;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 
 import org.joda.time.DateTime;
