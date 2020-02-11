@@ -363,6 +363,7 @@ public class RightFrameFragment extends Fragment implements
         //notifier that an async job is done
         switch (isFor) {
             case "products":
+                refreshProducts.setRefreshing(false);
                 productsList = list;
                 originalProductsList =  new ArrayList<>(list);
                 productsAdapter.addItems(list);
@@ -489,6 +490,7 @@ public class RightFrameFragment extends Fragment implements
     }
 
     private void sendFetchProductsRequest() {
+        refreshProducts.setRefreshing(true);
         BusProvider.getInstance().post(new FetchProductsRequest());
     }
 

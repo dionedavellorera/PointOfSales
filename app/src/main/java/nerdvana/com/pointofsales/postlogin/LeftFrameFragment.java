@@ -4895,17 +4895,54 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             fetchRoomPendingResult = fetchRoomPendingResponse.getResult();
             switch (fetchRoomPendingResponse.getResult().getStatus()) {
                 case 1://clean
-                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                        } else {
+                            showCheckInNotAllowed();
+                        }
+                    } else {
+                        showCheckInNotAllowed();
+                    }
+
                     break;
                 case 3: //dirty
-                    showGuestInfoDialog(
-                            String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+
+                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                            showGuestInfoDialog(
+                                    String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                        } else {
+                            showCheckInNotAllowed();
+                        }
+                    } else {
+                        showCheckInNotAllowed();
+                    }
+
+
                     break;
                 case 19:
-                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                        } else {
+                            showCheckInNotAllowed();
+                        }
+                    } else {
+                        showCheckInNotAllowed();
+                    }
                     break;// ongoing nego
                 case 20: //onnego show check in form
-                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                        } else {
+                            showCheckInNotAllowed();
+                        }
+                    } else {
+                        showCheckInNotAllowed();
+                    }
+
                     break;
                 case 32:
 //                    showCheckInDialog(fetchRoomPendingResponse.getResult());
@@ -4914,11 +4951,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 //                    showCheckInDialog(fetchRoomPendingResponse.getResult());
                     break;
                 case 59: //check in guest
-                    showCheckInDialog();
+                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                            showCheckInDialog();
+                        } else {
+                            showCheckInNotAllowed();
+                        }
+                    } else {
+                        showCheckInNotAllowed();
+                    }
                     break;
 
                 case 2: //already checked in, can now order
-                    Toast.makeText(getContext(), "Please order", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "Please order", Toast.LENGTH_SHORT).show();
                     break;
                 default:
 //                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
@@ -4928,6 +4973,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             Toast.makeText(getContext(), "Call fetch room pending", Toast.LENGTH_SHORT).show();
         }
         endLoading();
+    }
+
+    private void showCheckInNotAllowed() {
+        sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
+        Utils.showDialogMessage(getActivity(), "Not allowed to check in, please check settings", "Information");
     }
 
     private void sendOffGoingNegoRequest(String roomId) {
@@ -5604,8 +5654,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         SocketManager.reloadPos(
                 selectedRoom.getName(),
                 String.valueOf(selectedRoom.getRoomId()),
-                "31",
-                "31",
+                "3",
+                "3",
                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
                 "end");
 

@@ -334,8 +334,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
             @Override
             public void run() {
 
-//                Log.d("REFRESHROOM", "Y");
-
                 sendRoomListRequest();
             }
         });

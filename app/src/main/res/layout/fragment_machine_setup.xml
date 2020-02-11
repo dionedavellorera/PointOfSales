@@ -27,4 +27,12 @@
         android:layout_height="wrap_content"
         android:text="Telephone Operator"/>
 
+    <Switch
+        android:id="@+id/allowedToCheckInSwitch"
+        android:layout_margin="10dp"
+        android:layout_below="@id/machineSwitchTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Check-in allowed?"/>
+
 </RelativeLayout>

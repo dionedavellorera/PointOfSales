@@ -11,60 +11,72 @@
 
 
     <TextView
+        android:textSize="16sp"
         android:padding="10dp"
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:padding="10dp"
-        android:text="Old price"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <TextView
+        android:textSize="16sp"
         android:padding="10dp"
         android:id="@+id/oldPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="100.00"/>
 
-    <TextView
-        android:padding="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="New price"/>
 
-    <nerdvana.com.pointofsales.custom.HidingEditText
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        android:inputType="numberDecimal"
-        android:layout_margin="10dp"
-        android:id="@+id/newPrice"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilNewPrice"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="New price"/>
+        android:layout_height="wrap_content">
+        <nerdvana.com.pointofsales.custom.HidingEditText
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:inputType="numberDecimal"
+            android:id="@+id/newPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="New price"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:padding="10dp"
-        android:id="@+id/qtyLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Quantity"/>
 
-    <nerdvana.com.pointofsales.custom.HidingEditText
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        android:inputType="number"
-        android:layout_margin="10dp"
-        android:id="@+id/newQty"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilNewQty"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="New quantity"/>
+        android:layout_height="wrap_content">
+        <nerdvana.com.pointofsales.custom.HidingEditText
+            android:maxLength="3"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:inputType="number"
+            android:id="@+id/newQty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="New quantity"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
 
     <Button
-        android:layout_margin="10dp"
+        android:textColor="@color/colorBlack"
+        android:background="@drawable/button_selector"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:id="@+id/submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

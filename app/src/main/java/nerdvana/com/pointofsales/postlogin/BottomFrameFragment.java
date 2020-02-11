@@ -1,6 +1,7 @@
 package nerdvana.com.pointofsales.postlogin;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.ProgressBar;
 
 import com.squareup.otto.Subscribe;
 
@@ -46,6 +48,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     private ButtonsAdapter buttonsAdapter;
     private ConstraintLayout mainContainer;
     LayoutAnimationController anim;
+    private ProgressBar progressBar;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,11 +62,16 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     }
 
     private void initializeViews() {
+        progressBar = view.findViewById(R.id.progressBar);
+//        Drawable draw= getContext().getResources().getDrawable(R.drawable.customprogressbar);
+//        progressBar.setProgressDrawable(draw);
+
         listButtons = view.findViewById(R.id.listButtons);
         mainContainer = view.findViewById(R.id.mainContainer);
     }
 
     private void setButtonsAdapter() {
+        progressBar.setVisibility(View.VISIBLE);
         buttonsAdapter = new ButtonsAdapter(new ArrayList<ButtonsModel>(), this, getContext());
         listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
         listButtons.setAdapter(buttonsAdapter);
@@ -100,6 +108,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
 //        Log.d("WEKWEK", "ISDONEBOTTOM");
         switch (isFor) {
             case "buttons":
+                progressBar.setVisibility(View.GONE);
                 buttonsAdapter.addItems(list);
                 buttonsAdapter.notifyDataSetChanged();
                 listButtons.scheduleLayoutAnimation();

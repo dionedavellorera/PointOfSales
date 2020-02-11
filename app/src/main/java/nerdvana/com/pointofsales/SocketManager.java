@@ -50,7 +50,7 @@ public class SocketManager {
 
                     @Override
                     public void call(Object... args) {
-                        Log.d("REFRESHROOM", "Y-0");
+
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -65,7 +65,7 @@ public class SocketManager {
                     @Override
                     public void call(Object... args) {
                         isConnected = false;
-                        Log.d("REFRESHROOM", "Y-ERR");
+
 //                    BusProvider.getInstance().post(new SocketConnectionModel("T"));
                     }
 
@@ -79,7 +79,7 @@ public class SocketManager {
                 }).on("loadroom", new Emitter.Listener() {
                     @Override
                     public void call(Object... args) {
-                        Log.d("REFRESHROOM", "Y-1");
+
                         BusProvider.getInstance().post(new UpdateDataModel("y"));
 
                     }

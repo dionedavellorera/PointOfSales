@@ -48,12 +48,12 @@ public abstract class OpenPriceDialog extends BaseDialog {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setDialogLayout(R.layout.dialog_openprice, "OPEN PRICE");
+        setDialogLayout(R.layout.dialog_openprice, "Open Price");
         name = findViewById(R.id.name);
         oldPrice = findViewById(R.id.oldPrice);
         newPrice = findViewById(R.id.newPrice);
         newQty = findViewById(R.id.newQty);
-        qtyLabel = findViewById(R.id.qtyLabel);
+//        qtyLabel = findViewById(R.id.qtyLabel);
         submit = findViewById(R.id.submit);
         name.setText(cartItemsModel.getName());
         oldPrice.setText(String.valueOf(cartItemsModel.getUnitPrice()));

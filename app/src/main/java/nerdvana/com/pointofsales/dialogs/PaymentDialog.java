@@ -22,19 +22,23 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.reflect.TypeToken;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+import com.whiteelephant.monthpicker.MonthPickerDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
@@ -118,6 +122,10 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private Spinner spinnerForex;
     private TextView forexRate;
+
+    private TextInputLayout tilGuestName;
+    private TextInputLayout tilGuestAddress;
+    private TextInputLayout tilTin;
 
     private CreditCardAdapter creditCardAdapter;
     private AvailableGcAdapter availableGcAdapter;
@@ -316,6 +324,10 @@ public abstract class PaymentDialog extends BaseDialog  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_payment, "PAYMENTS");
+        tilGuestName = findViewById(R.id.tilGuestName);
+        tilGuestAddress = findViewById(R.id.tilGuestAddress);
+        tilTin = findViewById(R.id.tilTin);
+
         rl1 = findViewById(R.id.rl1);
         rl2 = findViewById(R.id.rl2);
         rl3 = findViewById(R.id.rl3);
@@ -386,6 +398,37 @@ public abstract class PaymentDialog extends BaseDialog  {
         cardHoldersName = (EditText) findViewById(R.id.cardHoldersName);
         creditCardAmount = (EditText) findViewById(R.id.creditCardAmount);
         cardExpiration = (EditText) findViewById(R.id.expiration);
+        ImageView ivSetExpiration = (ImageView) findViewById(R.id.ivSetExpiration);
+        ivSetExpiration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MonthPickerDialog.Builder builder = new MonthPickerDialog.Builder(getContext(), new MonthPickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(int selectedMonth, int selectedYear) {
+                        cardExpiration.setText(String.format("%s/%s", String.valueOf((selectedMonth + 1 < 10 ? "0" + (selectedMonth + 1) : (selectedMonth + 1))), String.valueOf(selectedYear)));
+                    }
+                }, 2020, 01);
+
+                builder.setActivatedMonth(Calendar.JULY)
+                        .setMinYear(1990)
+                        .setActivatedYear(2020)
+                        .setMaxYear(2040)
+                        .setTitle("CARD EXPIRATION")
+                        .setOnMonthChangedListener(new MonthPickerDialog.OnMonthChangedListener() {
+                            @Override
+                            public void onMonthChanged(int selectedMonth) {
+
+                            }
+                        })
+                        .setOnYearChangedListener(new MonthPickerDialog.OnYearChangedListener() {
+                            @Override
+                            public void onYearChanged(int year) {
+
+                            }
+                        })
+                        .build().show();
+            }
+        });
         authorization = (EditText) findViewById(R.id.authorization);
         remarks = (EditText) findViewById(R.id.remarks);
 
@@ -432,12 +475,18 @@ public abstract class PaymentDialog extends BaseDialog  {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     isEmployee = true;
+                    tilGuestName.setVisibility(GONE);
+                    tilGuestAddress.setVisibility(GONE);
+                    tilTin.setVisibility(GONE);
                     guestAddressInput.setVisibility(View.GONE);
                     guestNameInput.setVisibility(View.GONE);
                     guestTinInput.setVisibility(View.GONE);
                     spinnerEmplyeeSelection.setVisibility(View.VISIBLE);
                 } else {
                     isEmployee = false;
+                    tilGuestName.setVisibility(VISIBLE);
+                    tilGuestAddress.setVisibility(VISIBLE);
+                    tilTin.setVisibility(VISIBLE);
                     guestAddressInput.setVisibility(View.VISIBLE);
                     guestNameInput.setVisibility(View.VISIBLE);
                     guestTinInput.setVisibility(View.VISIBLE);
@@ -451,7 +500,7 @@ public abstract class PaymentDialog extends BaseDialog  {
             @Override
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
-                    if (Double.valueOf(amountToPay.getText().toString()) >= 0) {
+                    if (Double.valueOf(amountToPay.getText().toString()) > 0) {
                         postedPaymentList.add(new PostedPaymentsModel(
                                 paymentMethod.getCore_id(),
                                 amountToPay.getText().toString(),
