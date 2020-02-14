@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
 //        PrintingCallback printingCallback = new PrintingCallback() {
 //            @Override
 //            public void connectingWithPrinter() {

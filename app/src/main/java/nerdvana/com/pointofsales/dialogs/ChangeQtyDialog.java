@@ -39,8 +39,10 @@ public abstract class ChangeQtyDialog extends BaseDialog implements CalcuContrac
         setDialogLayout(R.layout.dialog_change_qty, "Set Quantity");
         setQty = findViewById(R.id.setQty);
         setQty.setOnClickListener(this);
+
         rvCalculator = findViewById(R.id.rvCalculator);
         qty = findViewById(R.id.qty);
+        qty.requestFocus();
 
         anim = AnimationUtils.loadLayoutAnimation(getContext(), R.anim.layout_animation);
 

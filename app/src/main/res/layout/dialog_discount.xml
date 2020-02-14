@@ -140,22 +140,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-
+            <Button
+                android:text="APPLY"
+                android:background="@drawable/button_selector"
+                android:layout_below="@id/listPosts"
+                android:id="@+id/fabSave"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </RelativeLayout>
 
     </ScrollView>
 
 
-    <Button
-        android:text="APPLY"
-        android:background="@drawable/button_selector"
-        android:layout_below="@id/s1"
-        android:id="@+id/fabSave"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/colorBlack"
-        android:layout_marginBottom="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+
 </RelativeLayout>

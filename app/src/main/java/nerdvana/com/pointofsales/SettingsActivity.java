@@ -47,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         listMainItems = findViewById(R.id.listMainItems);
 
-        setTitle("SETTINGS");
+        setTitle("Settings");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -56,11 +56,11 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         settingMenuList = new ArrayList<>();
-        settingMenuList.add(new ListSettingMenu(0, R.mipmap.baseline_print_black_24, "Printer Model"));
-        settingMenuList.add(new ListSettingMenu(1, R.mipmap.baseline_print_black_24, "Printer Connection"));
-        settingMenuList.add(new ListSettingMenu(2, R.mipmap.baseline_print_black_24, "Theme"));
-        settingMenuList.add(new ListSettingMenu(3, R.mipmap.baseline_print_black_24, "Receipt Setup"));
-        settingMenuList.add(new ListSettingMenu(4, R.mipmap.baseline_print_black_24, "Machine Setup"));
+        settingMenuList.add(new ListSettingMenu(0, R.mipmap.baseline_print_black_24, "Printer Model", true));
+        settingMenuList.add(new ListSettingMenu(1, R.mipmap.baseline_print_black_24, "Printer Connection", false));
+        settingMenuList.add(new ListSettingMenu(2, R.mipmap.baseline_print_black_24, "Theme", false));
+        settingMenuList.add(new ListSettingMenu(3, R.mipmap.baseline_print_black_24, "Receipt Setup", false));
+        settingMenuList.add(new ListSettingMenu(4, R.mipmap.baseline_print_black_24, "Machine Setup", false));
 
 
         Setting setting = new Setting() {
@@ -68,19 +68,20 @@ public class SettingsActivity extends AppCompatActivity {
             public void clicked(int position) {
                 switch (settingMenuList.get(position).getId()) {
                     case 0: //PRINTER DEVICE
-                        openFragment(printerFragment);
+                        openFragment(printerFragment, settingMenuList.get(position));
+//                        settingMenuList.get(position).setClicked(true);
                         break;
                     case 1: //PRINTER CONNECTION
-                        openFragment(printerConnectionFragment);
+                        openFragment(printerConnectionFragment, settingMenuList.get(position));
                         break;
                     case 2: //THEME
-                        openFragment(themeFragment);
+                        openFragment(themeFragment, settingMenuList.get(position));
                         break;
                     case 3: //RECEIPT SETUP
-                        openFragment(receiptSetupFragment);
+                        openFragment(receiptSetupFragment, settingMenuList.get(position));
                         break;
                     case 4: //MACHINE SETUP
-                        openFragment(machineSetupFragment);
+                        openFragment(machineSetupFragment, settingMenuList.get(position));
                         break;
                 }
             }
@@ -94,15 +95,28 @@ public class SettingsActivity extends AppCompatActivity {
         settingListAdapter.notifyDataSetChanged();
 
 
-        openFragment(printerFragment);
+        openFragment(printerFragment, settingMenuList.get(0));
+    }
+
+    private void refreshSelected(int id) {
+        for (ListSettingMenu sml : settingMenuList) {
+            if (id == sml.getId()) {
+                sml.setClicked(true);
+            } else {
+                sml.setClicked(false);
+            }
+        }
+
+        if (settingListAdapter != null) settingListAdapter.notifyDataSetChanged();
     }
 
     public interface Setting {
         void clicked(int position);
     }
 
-    private void openFragment(Fragment fragment) {
+    private void openFragment(Fragment fragment, ListSettingMenu listSettingMenu) {
         if (!fragment.isVisible()) {
+            refreshSelected(listSettingMenu.getId());
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.settingFrame, fragment);

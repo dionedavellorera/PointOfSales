@@ -437,7 +437,8 @@ public class RightFrameFragment extends Fragment implements
             }
         }
 //        qtySpinner.setSelection(0, true);
-        btnChangeQty.setText("QTY : 1");
+        qtySelected = "1";
+        btnChangeQty.setText("QTY : " + qtySelected);
     }
 
     private void repopulateList(List<ProductsModel> tempProduct) {

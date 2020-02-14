@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -117,21 +120,22 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body().getStatus() == 0) {
                     //fail
-//                    Utils.showDialogMessage(((MainActivity)context), response.body().getMessage(), "Warning!");
                     Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    cancel();
                 } else {
                     passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()), response.body().getResult().get(0).getName());
+                    dismiss();
                 }
-                dismiss();
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-
+                cancel();
             }
         });
 
     }
+
 
     @Override
     protected void onStart() {

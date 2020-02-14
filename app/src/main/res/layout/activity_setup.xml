@@ -91,7 +91,6 @@
                 android:layout_height="wrap_content">
 
                 <nerdvana.com.pointofsales.custom.HidingEditText
-                    android:maxLines="1"
                     android:singleLine="true"
                     android:imeOptions="actionDone"
                     android:gravity="left"

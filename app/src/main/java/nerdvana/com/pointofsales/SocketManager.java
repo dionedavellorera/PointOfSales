@@ -50,7 +50,7 @@ public class SocketManager {
 
                     @Override
                     public void call(Object... args) {
-
+                        Log.d("SUCKET", "CONNECTED");
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -65,6 +65,7 @@ public class SocketManager {
                     @Override
                     public void call(Object... args) {
                         isConnected = false;
+                        Log.d("SUCKET", "ERROR");
 
 //                    BusProvider.getInstance().post(new SocketConnectionModel("T"));
                     }
@@ -79,7 +80,7 @@ public class SocketManager {
                 }).on("loadroom", new Emitter.Listener() {
                     @Override
                     public void call(Object... args) {
-
+                        Log.d("SUCKET", "LOAD ROOM");
                         BusProvider.getInstance().post(new UpdateDataModel("y"));
 
                     }
@@ -130,12 +131,12 @@ public class SocketManager {
         try {
             JSONObject roomObject = new JSONObject();
             roomObject.put("roomno", roomNumber);
-            roomObject.put("roomid", roomId);
+//            roomObject.put("roomid", roomId);
             roomObject.put("status", nextStatus);
             roomObject.put("oldstatus", currentStatus);
             roomObject.put("userid", userId);
             roomObject.put("action", action);
-            SocketManager.getInstance().emit("reloadpos", roomObject);
+            SocketManager.getInstance().emit("reloadposnerdvana", roomObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }

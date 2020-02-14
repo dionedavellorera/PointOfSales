@@ -1174,43 +1174,62 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     public void openPriceChangeSuccess(final int quantity, final Double newPrice, final int position, String type) {
 
                                         if (type.equalsIgnoreCase("qty")) {
-                                            PasswordDialog pwd = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "") {
-                                                @Override
-                                                public void passwordSuccess(String employeeId, String employeeName) {
+                                            if (itemSelected.isPosted()) {
+                                                PasswordDialog pwd = new PasswordDialog(getActivity(),"CONFIRM CHANGE QTY", "") {
+                                                    @Override
+                                                    public void passwordSuccess(String employeeId, String employeeName) {
 
-                                                    BusProvider.getInstance().post(new PrintModel(
-                                                            "",
-                                                            selectedRoom.getName(),
-                                                            "CHANGE_QTY",
-                                                            GsonHelper.getGson().toJson(cartItemList.get(position)),
-                                                            quantity));
+                                                        BusProvider.getInstance().post(new PrintModel(
+                                                                "",
+                                                                selectedRoom.getName(),
+                                                                "CHANGE_QTY",
+                                                                GsonHelper.getGson().toJson(cartItemList.get(position)),
+                                                                quantity));
 
 
-                                                    if (cartItemList.get(position).isPosted()) {
-                                                        cartItemList.get(position).setPosted(false);
-                                                        cartItemList.get(position).setUpdated(true);
-                                                        cartItemList.get(position).setForVoid(false);
+                                                        if (cartItemList.get(position).isPosted()) {
+                                                            cartItemList.get(position).setPosted(false);
+                                                            cartItemList.get(position).setUpdated(true);
+                                                            cartItemList.get(position).setForVoid(false);
+                                                        }
+                                                        cartItemList.get(position).setUnitPrice(newPrice);
+                                                        if (quantity != 0) {
+                                                            cartItemList.get(position).setQuantity(quantity);
+                                                        }
+                                                        cartItemList.get(position).setIsPriceChanged(1);
+                                                        if (checkoutAdapter != null) {
+                                                            checkoutAdapter.notifyItemChanged(position);
+                                                        }
+                                                        doSaveFunction();
+
+
+                                                        dismiss();
                                                     }
-                                                    cartItemList.get(position).setUnitPrice(newPrice);
-                                                    if (quantity != 0) {
-                                                        cartItemList.get(position).setQuantity(quantity);
-                                                    }
-                                                    cartItemList.get(position).setIsPriceChanged(1);
-                                                    if (checkoutAdapter != null) {
-                                                        checkoutAdapter.notifyItemChanged(position);
-                                                    }
-                                                    doSaveFunction();
 
+                                                    @Override
+                                                    public void passwordFailed() {
 
-                                                    dismiss();
+                                                    }
+                                                };
+                                                pwd.show();
+                                            } else {
+                                                if (cartItemList.get(position).isPosted()) {
+                                                    cartItemList.get(position).setPosted(false);
+                                                    cartItemList.get(position).setUpdated(true);
+                                                    cartItemList.get(position).setForVoid(false);
                                                 }
-
-                                                @Override
-                                                public void passwordFailed() {
-
+                                                cartItemList.get(position).setUnitPrice(newPrice);
+                                                if (quantity != 0) {
+                                                    cartItemList.get(position).setQuantity(quantity);
                                                 }
-                                            };
-                                            pwd.show();
+                                                cartItemList.get(position).setIsPriceChanged(1);
+                                                if (checkoutAdapter != null) {
+                                                    checkoutAdapter.notifyItemChanged(position);
+                                                }
+                                                dismiss();
+                                            }
+
+
                                         }
                                         dismiss();
                                     }
@@ -1249,31 +1268,49 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                 } else {
 
-                                    PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "") {
-                                        @Override
-                                        public void passwordSuccess(String employeeId, String employeeName) {
-                                            if (cartItemList.get(position).isPosted()) {
-                                                cartItemList.get(position).setPosted(false);
-                                                cartItemList.get(position).setUpdated(true);
-                                                cartItemList.get(position).setForVoid(false);
+                                    if (cartItemList.get(position).isPosted()) {
+                                        PasswordDialog passwordDialog3 = new PasswordDialog(getActivity(),"CONFIRM CHANGE PRICE", "") {
+                                            @Override
+                                            public void passwordSuccess(String employeeId, String employeeName) {
+                                                if (cartItemList.get(position).isPosted()) {
+                                                    cartItemList.get(position).setPosted(false);
+                                                    cartItemList.get(position).setUpdated(true);
+                                                    cartItemList.get(position).setForVoid(false);
+                                                }
+                                                cartItemList.get(position).setUnitPrice(newPrice);
+                                                if (quantity != 0) {
+                                                    cartItemList.get(position).setQuantity(quantity);
+                                                }
+                                                cartItemList.get(position).setIsPriceChanged(1);
+                                                if (checkoutAdapter != null) {
+                                                    checkoutAdapter.notifyItemChanged(position);
+                                                }
+                                                dismiss();
                                             }
-                                            cartItemList.get(position).setUnitPrice(newPrice);
-                                            if (quantity != 0) {
-                                                cartItemList.get(position).setQuantity(quantity);
-                                            }
-                                            cartItemList.get(position).setIsPriceChanged(1);
-                                            if (checkoutAdapter != null) {
-                                                checkoutAdapter.notifyItemChanged(position);
-                                            }
-                                          dismiss();
-                                        }
 
-                                        @Override
-                                        public void passwordFailed() {
+                                            @Override
+                                            public void passwordFailed() {
 
+                                            }
+                                        };
+                                        passwordDialog3.show();
+                                    } else {
+                                        if (cartItemList.get(position).isPosted()) {
+                                            cartItemList.get(position).setPosted(false);
+                                            cartItemList.get(position).setUpdated(true);
+                                            cartItemList.get(position).setForVoid(false);
                                         }
-                                    };
-                                    passwordDialog3.show();
+                                        cartItemList.get(position).setUnitPrice(newPrice);
+                                        if (quantity != 0) {
+                                            cartItemList.get(position).setQuantity(quantity);
+                                        }
+                                        cartItemList.get(position).setIsPriceChanged(1);
+                                        if (checkoutAdapter != null) {
+                                            checkoutAdapter.notifyItemChanged(position);
+                                        }
+                                        dismiss();
+                                    }
+
 
                                 }
                                 dismiss();
@@ -2574,8 +2611,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
-                } else {
 
+
+                } else {
+                    Log.d("QWEQWE", "NO ROOM SELECTED");
                     Utils.showDialogMessage(getActivity(), "No room selected", "Information");
                 }
 
@@ -3798,8 +3837,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
             final ArrayList<VoidProductModel> model = new ArrayList<>();
 
+            boolean hasRemainingRate = true;
+            int totalRoomCounter = 0;
+            int roomCounterToVoid = 0;
             for (CartItemsModel cim : cartItemList) {
+                Log.d("ITEM", cim.getName() + " - " + cim.isProduct());
+                if (!cim.isProduct()) totalRoomCounter +=1;
                 if (cim.isSelected()) {
+                    if (!cim.isProduct()) roomCounterToVoid +=1;
                     model.add(new VoidProductModel(
                             cim.getPostId(),
                             cim.getName(),
@@ -3809,18 +3854,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
-            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"Confirm Void Item", "" ) {
-                @Override
-                public void passwordSuccess(final String employeeId, String employeeName) {
-                    if (selectedRoom != null) {
+            if (totalRoomCounter == roomCounterToVoid) {
+                hasRemainingRate = false;
+            }
 
+            Log.d("PEKPEK", String.valueOf(totalRoomCounter));
+            Log.d("PEKPEK", String.valueOf(roomCounterToVoid));
+            Log.d("PEKPEK", String.valueOf(hasRemainingRate));
+
+            if (hasRemainingRate == false) {
+                Utils.showDialogMessage(getActivity(), "Cannot void the remaining room rate", "Information");
+            } else {
+                if (model.size() > 0) {
+                    if (selectedRoom != null) {
+                        Log.d("QWEQWE", String.valueOf(selectedRoom.isTakeOut()));
                         if (selectedRoom.isTakeOut()) {
                             ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity()) {
                                 @Override
                                 public void save(String remarks) {
                                     BusProvider.getInstance().post(new PrintModel("", "TAKEOUT "+ selectedRoom.getName(), "VOID", GsonHelper.getGson().toJson(model)));
-
-
 
                                     BusProvider.getInstance().post(new AddProductToRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             String.valueOf(selectedRoom.getAreaId()),
@@ -3845,29 +3897,24 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                                     BusProvider.getInstance().post(new AddRoomPriceRequest(new ArrayList<AddRateProductModel>(), String.valueOf(selectedRoom.getRoomId()),
                                             model, remarks,
-                                            employeeId,
+                                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.USER_ID),
                                             "0", "0",
                                             new ArrayList<UpdateProductModel>()));
                                     showLoading();
                                     fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
                                 }
                             };
+
                             confirmWithRemarksDialog.show();
+
+
                         }
                     }
+                } else {
+                    Utils.showDialogMessage(getActivity(), "Please select item/s to void", "Information");
                 }
-
-                @Override
-                public void passwordFailed() {
-
-                }
-            };
-
-            if (model.size() > 0) {
-                if(!passwordDialog.isShowing()) passwordDialog.show();
-            } else {
-                Utils.showDialogMessage(getActivity(), "Please select item/s to void", "Information");
             }
+
 
 
 
@@ -4824,7 +4871,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             0,
                             0,
                             "OT HOURS",
-                            false,
+                            true,
                             r.getTransaction().getOtAmount(),
                             0,
                             r.getTransaction().getOtHours(),
@@ -4852,7 +4899,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             0,
                             0,
                             "EXTRA PERSON",
-                            false,
+                            true,
                             r.getTransaction().getXPersonAmount(),
                             0,
                             Integer.valueOf(r.getTransaction().getPersonCount()) - 2,

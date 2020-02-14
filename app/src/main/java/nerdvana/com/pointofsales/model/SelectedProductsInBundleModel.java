@@ -6,14 +6,14 @@ public class SelectedProductsInBundleModel {
     private int groupId;
     private String groupName;
     private int position;
-    private int maxQty;
+    private Double maxQty;
     private int totalQtySelected;
     private double bundleAmount;
     private List<BundleProductModel> bundleProductModelList;
 
     public SelectedProductsInBundleModel(int groupId, String groupName,
                                          int position, List<BundleProductModel> bundleProductModelList,
-                                         int maxQty, int totalQtySelected,
+                                         Double maxQty, int totalQtySelected,
                                          double bundleAmount) {
         this.groupId = groupId;
         this.groupName = groupName;
@@ -36,7 +36,7 @@ public class SelectedProductsInBundleModel {
         return totalQtySelected;
     }
 
-    public int getMaxQty() {
+    public Double getMaxQty() {
         return maxQty;
     }
 

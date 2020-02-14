@@ -5,12 +5,13 @@
     android:id="@+id/rootView">
 
     <Button
+        android:background="@drawable/button_selector"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:id="@+id/name"
         android:layout_width="match_parent"
-        android:layout_height="60dp" />
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

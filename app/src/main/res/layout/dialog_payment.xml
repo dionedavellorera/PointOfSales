@@ -234,7 +234,6 @@
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_weight="1"
                             android:id="@+id/tilAmount"
-                            android:layout_below="@id/logo"
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="10dp"
                             android:layout_marginTop="5dp"
@@ -689,7 +688,7 @@
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content">
                                         <nerdvana.com.pointofsales.custom.HidingEditText
-                                            android:inputType="text"
+                                            android:inputType="number"
                                             android:maxLines="1"
                                             android:imeOptions="actionDone"
                                             android:hint="Card number"

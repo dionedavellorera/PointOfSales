@@ -19,7 +19,8 @@
         android:layout_height="1dp"
         android:background="@color/colorLtGrey" />
 
-    <Switch
+    <CheckBox
+        android:visibility="gone"
         android:id="@+id/machineSwitchTo"
         android:layout_margin="10dp"
         android:layout_below="@id/topSeparator"
@@ -27,7 +28,7 @@
         android:layout_height="wrap_content"
         android:text="Telephone Operator"/>
 
-    <Switch
+    <CheckBox
         android:id="@+id/allowedToCheckInSwitch"
         android:layout_margin="10dp"
         android:layout_below="@id/machineSwitchTo"

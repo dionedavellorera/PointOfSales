@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +66,12 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     private TextView discount;
     private TextView deposit;
 
+    private TextView depositLabel;
+    private TextView discountLabel;
+    private TextView subTotalLabel;
+    private TextView totalLabel;
+    private CardView cardHeader;
+    private RelativeLayout cardHeaderRoot;
 
     private OrList orList;
     String receiptNo = "";
@@ -90,6 +99,14 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setDialogLayout(R.layout.dialog_transactions, "TRANSACTIONS");
+
+
+        depositLabel = findViewById(R.id.depositLabel);
+        discountLabel = findViewById(R.id.discountLabel);
+        subTotalLabel = findViewById(R.id.subTotalLabel);
+        totalLabel = findViewById(R.id.totalLabel);
+        cardHeader = findViewById(R.id.cardHeader);
+        cardHeaderRoot = findViewById(R.id.cardHeaderRoot);
 
         search = findViewById(R.id.buttonSearch);
         isTo = findViewById(R.id.checkBoxIsTo);
@@ -213,6 +230,8 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
             isTo.setEnabled(false);
             roomSpinner.setVisibility(View.GONE);
         }
+
+        lightTheme();
 
     }
 
@@ -444,5 +463,34 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
     }
 
     public abstract void postVoidPrint(String jsonData);
+
+    private void lightTheme() {
+
+        listTransactionDetails.setBackgroundColor(getContext().getResources().getColor(R.color.lightListBg)); //get id
+        header.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lightTextHeader));
+        cardHeader.setCardBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg)); //get id
+        cardHeaderRoot.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg)); // get id
+        subTotal.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg));
+        deposit.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg));
+        discount.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg));
+        depositLabel.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg)); //get id
+        discountLabel.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg)); //get id
+        subTotalLabel.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightListBg)); //get id
+        totalLabel.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightTextHeader)); //get id
+        total.setBackgroundColor(ContextCompat.getColor(getContext(),R.color.lightTextHeader));
+
+
+
+        header.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont));
+        subTotal.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont));
+        discount.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont));
+        deposit.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont));
+        total.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont));
+        depositLabel.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont)); //get id
+        discountLabel.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont)); //get id
+        subTotalLabel.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont)); //get id
+        totalLabel.setTextColor(ContextCompat.getColor(getContext(),R.color.lightPrimaryFont)); //get id
+    }
+
 
 }

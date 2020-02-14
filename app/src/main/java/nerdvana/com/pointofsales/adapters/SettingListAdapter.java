@@ -46,7 +46,12 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         if(holder instanceof SettingListAdapter.SettingViewHolder){
-
+            ListSettingMenu model = settingMenuList.get(i);
+            if (model.isClicked()) {
+                ((SettingViewHolder)holder).row.setBackgroundResource(R.color.colorLtGrey);
+            } else {
+                ((SettingViewHolder)holder).row.setBackgroundResource(R.color.colorWhite);
+            }
             ((SettingViewHolder)holder).row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -55,7 +60,7 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             });
 
             ImageLoader.loadImage(R.mipmap.baseline_add_circle_outline_black_24, ((SettingViewHolder)holder).icon);
-            ((SettingViewHolder)holder).name.setText(settingMenuList.get(i).getName());
+            ((SettingViewHolder)holder).name.setText(model.getName());
         }
     }
 
