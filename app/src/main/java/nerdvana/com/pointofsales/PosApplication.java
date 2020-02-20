@@ -12,17 +12,13 @@ public class PosApplication extends SugarApp {
     @Override
     public void onCreate() {
         super.onCreate();
+
         Printooth.INSTANCE.init(this);
         FirebaseAnalytics.getInstance(this);
-//        new SocketManager(this);
-//        new SocketManagerTwo(this);
         Bus mBus = BusProvider.getInstance();
         PosManager autopilotManager = new PosManager(this, mBus);
         mBus.register(autopilotManager);
-//        mBus.register(BusProvider.getInstance());
         new UserServices(this);
-
-//        new BusProvider();
         new GsonHelper();
 
         new DbInit().execute();

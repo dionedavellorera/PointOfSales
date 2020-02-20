@@ -79,7 +79,9 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
             case R.id.proceed:
                 if (TextUtils.isEmpty(username.getText().toString()) ||
                         TextUtils.isEmpty(password.getText().toString())) {
-                    Utils.showDialogMessage(((MainActivity)context), "Please provide username and password", "Missing information!");
+                    if (getContext() != null) {
+                        Utils.showDialogMessage(getContext(), "Please provide username and password", "Missing information!");
+                    }
                 } else {
                     sendLoginRequest(username.getText().toString(), password.getText().toString());
                 }

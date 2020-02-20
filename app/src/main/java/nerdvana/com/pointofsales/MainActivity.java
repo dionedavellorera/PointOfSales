@@ -118,6 +118,7 @@ import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.dialogs.DialogWakeUpCall;
 import nerdvana.com.pointofsales.dialogs.RoomListViewDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
+import nerdvana.com.pointofsales.entities.RoomEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
@@ -143,6 +144,9 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
+import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
     private CollectionDialog collectionDialog;
@@ -206,6 +210,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        List<RoomEntity> books = RoomEntity.listAll(RoomEntity.class);
+
         SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
 //        PrintingCallback printingCallback = new PrintingCallback() {
 //            @Override
@@ -575,6 +582,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                         userModel.setLoggedIn(false);
 
                         SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+                        SharedPreferenceManager.saveString(MainActivity.this, "", ApplicationConstants.CASH_DENO_JSON);
 
 
 //                        SharedPreferenceManager.clearPreference(getApplicationContext());
@@ -814,7 +822,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         switch (printModel.getType()) {
             case "SPOT_AUDIT_PRINT":
                 //willExecutGlobalPrint = false;
-                //addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
+                addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
                 break;
             case "CHANGE_QTY":
                 //willExecutGlobalPrint = false;
@@ -826,7 +834,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "IN_TRANSIT": //ignore header
                 //willExecutGlobalPrint = false;
-                //addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
+                addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
                 break;
             case "POST_VOID": //ignore header
                 willExecutGlobalPrint = false;
@@ -839,21 +847,21 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "BACKOUT": //done
                 //willExecutGlobalPrint = false;
-                //addAsync(new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "backout");
+                addAsync(new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "backout");
                 break;
             case "SHORTOVER"://ignore
                 //willExecutGlobalPrint = false;
-                //addAsync(new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "shortover");
+                addAsync(new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "shortover");
                 break;
             case "CASHRECONCILE"://ignore
                 //willExecutGlobalPrint = false;
                 saveCashierReconcileToLocal(printModel, userModel, currentDateTime);
-                //addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
+                addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
                 break;
             case "SAFEKEEPING"://ignore
                 //willExecutGlobalPrint = false;
                 saveSafeKeepToLocal(printModel, userModel, currentDateTime);
-                //addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
+                addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
                 break;//REPRINTZREAD
             case "REPRINTZREAD"://ignore
                 willExecutGlobalPrint = false;
@@ -876,7 +884,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SWITCH_ROOM"://done
                 //willExecutGlobalPrint = false;
-                //addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
+                addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
                 break;
             case "PRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
@@ -895,15 +903,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "DEPOSIT"://done
                 //willExecutGlobalPrint = false;
-                //addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
+                addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
                 break;
-            case "SOA-TO"://done
+            case "SOA-TO"://done"
                 willExecutGlobalPrint = false;
                 addAsync(new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soato");
                 break;
             case "CHECKIN"://done
                 //willExecutGlobalPrint = false;
-                //addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
+                addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
                 break;
             case "VOID"://done
                 willExecutGlobalPrint = false;
@@ -3400,22 +3408,20 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void saveDenominationPref() {
 
-        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.CASH_DENO_JSON))) {
-            FetchDenominationRequest fetchDenominationRequest = new FetchDenominationRequest();
-            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-            Call<FetchDenominationResponse> request = iUsers.fetchDenomination(fetchDenominationRequest.getMapValue());
-            request.enqueue(new Callback<FetchDenominationResponse>() {
-                @Override
-                public void onResponse(Call<FetchDenominationResponse> call, Response<FetchDenominationResponse> response) {
-                    SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult()), ApplicationConstants.CASH_DENO_JSON);
-                }
+        FetchDenominationRequest fetchDenominationRequest = new FetchDenominationRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchDenominationResponse> request = iUsers.fetchDenomination(fetchDenominationRequest.getMapValue());
+        request.enqueue(new Callback<FetchDenominationResponse>() {
+            @Override
+            public void onResponse(Call<FetchDenominationResponse> call, Response<FetchDenominationResponse> response) {
+                SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult()), ApplicationConstants.CASH_DENO_JSON);
+            }
 
-                @Override
-                public void onFailure(Call<FetchDenominationResponse> call, Throwable t) {
+            @Override
+            public void onFailure(Call<FetchDenominationResponse> call, Throwable t) {
 
-                }
-            });
-        }
+            }
+        });
     }
 
 //    private void fixDenoPrint(List<CollectionFinalPostModel> myList) {
@@ -3838,7 +3844,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public void openWakeUpCallDialog(OpenWakeUpCallDialog openWakeUpCallDialog) {
 
         if (dialogWakeUpCall == null) {
-            dialogWakeUpCall = new DialogWakeUpCall(MainActivity.this, openWakeUpCallDialog.getWakeUpCallModels());
+            dialogWakeUpCall = new DialogWakeUpCall(MainActivity.this, openWakeUpCallDialog.getRoomEntityList());
 
             dialogWakeUpCall.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override

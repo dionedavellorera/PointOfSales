@@ -112,10 +112,6 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
 //            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
 //        }
 
-
-
-
-
         return null;
     }
 

@@ -92,6 +92,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         private TextView name;
         private TextView timer;
         private TextView price;
+        private TextView rmType;
         private ImageView imageUrl;
         private ImageView badge;
         private CardView rootView;
@@ -101,6 +102,7 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             super(itemView);
             name = itemView.findViewById(R.id.name);
             timer = itemView.findViewById(R.id.timer);
+            rmType = itemView.findViewById(R.id.rmType);
             price = itemView.findViewById(R.id.roomPrice);
             imageUrl = itemView.findViewById(R.id.image);
             badge = itemView.findViewById(R.id.badge);
@@ -143,6 +145,8 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((ProductsViewHolder)holder).price.setVisibility(View.VISIBLE);
         }
 
+        ((ProductsViewHolder)holder).rmType.setText(productsModel.getRoomType());
+
         if (!productsModel.isTakeOut()) {
             ((ProductsViewHolder)holder).rel.setBackgroundColor(Color.parseColor(productsModel.getHexColor()));
         }
@@ -158,11 +162,17 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
                 ((ProductsViewHolder)holder).name.setTextColor(Color.WHITE);
 
+                ((ProductsViewHolder)holder).rmType.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
+                ((ProductsViewHolder)holder).rmType.setTextColor(Color.WHITE);
+
                 ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_light));
                 ((ProductsViewHolder)holder).price.setTextColor(Color.WHITE);
             } else {
                 ((ProductsViewHolder)holder).name.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
                 ((ProductsViewHolder)holder).name.setTextColor(Color.BLACK);
+
+                ((ProductsViewHolder)holder).rmType.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
+                ((ProductsViewHolder)holder).rmType.setTextColor(Color.BLACK);
 
                 ((ProductsViewHolder)holder).price.setBackground(ContextCompat.getDrawable(context, R.drawable.text_scrim_dark));
                 ((ProductsViewHolder)holder).price.setTextColor(Color.BLACK);

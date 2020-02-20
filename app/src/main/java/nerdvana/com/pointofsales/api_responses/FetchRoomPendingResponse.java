@@ -807,10 +807,10 @@ public class FetchRoomPendingResponse {
         private Object paymentTypeId;
         @SerializedName("rc")
         @Expose
-        private Integer rc;
+        private Double rc;
         @SerializedName("fnb")
         @Expose
-        private Integer fnb;
+        private Double fnb;
         @SerializedName("oth")
         @Expose
         private Integer oth;
@@ -1008,19 +1008,19 @@ public class FetchRoomPendingResponse {
             this.paymentTypeId = paymentTypeId;
         }
 
-        public Integer getRc() {
+        public Double getRc() {
             return rc;
         }
 
-        public void setRc(Integer rc) {
+        public void setRc(Double rc) {
             this.rc = rc;
         }
 
-        public Integer getFnb() {
+        public Double getFnb() {
             return fnb;
         }
 
-        public void setFnb(Integer fnb) {
+        public void setFnb(Double fnb) {
             this.fnb = fnb;
         }
 

@@ -16,6 +16,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.epson.epos2.printer.Printer;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,6 +47,9 @@ import nerdvana.com.pointofsales.model.SpotAuditModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
+import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public abstract class CollectionDialog extends BaseDialog {
     private String type;
@@ -182,6 +188,35 @@ public abstract class CollectionDialog extends BaseDialog {
                                                 if (response.body().getStatus() == 0) {
                                                     Utils.showDialogMessage(act, response.body().getMessage(), "Information");
                                                 } else {
+
+
+
+                                                    for (CollectionFinalPostModel cfpm : collectionFinalPostModels) {
+                                                        Log.d("SAFEKEEPVALUE", cfpm.getAmount() +" - " + cfpm.getCash_valued());
+                                                    }
+
+                                                    TypeToken<List<FetchDenominationResponse.Result>> collectionToken = new TypeToken<List<FetchDenominationResponse.Result>>() {};
+                                                    List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.CASH_DENO_JSON), collectionToken.getType());
+                                                    Double finalAmount = 0.00;
+                                                    for (FetchDenominationResponse.Result cfm : denoDetails) {
+                                                        String valueCount = "0";
+                                                        String valueAmount = "0.00";
+                                                        for (CollectionFinalPostModel c : collectionFinalPostModels) {
+
+                                                            Log.d("QWEQWE", String.valueOf(cfm.getCoreId()) + " -- " +c.getCash_denomination_id());
+
+                                                            if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
+                                                                valueCount = c.getAmount();
+                                                                valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
+                                                                break;
+                                                            }
+                                                        }
+
+                                                        Log.d("SAFEKEEPVALUE", String.valueOf(valueAmount) + " - " + String.valueOf(valueCount));
+
+
+                                                    }
+
 
                                                     BusProvider.getInstance().post(new PrintModel("",
                                                             "",

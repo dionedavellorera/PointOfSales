@@ -123,7 +123,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
 
         buttonsModelList.add(new ButtonsModel(124,"BACKOUT", "",23, 77));
         buttonsModelList.add(new ButtonsModel(115,"DISCOUNT", "",7, 62));
-//            buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9));
+            buttonsModelList.add(new ButtonsModel(102,"DEPOSIT", "",9, 81));
         buttonsModelList.add(new ButtonsModel(113,"POST VOID", "",12, 67));
         buttonsModelList.add(new ButtonsModel(101,"ITEM VOID", "",13, 68));
         buttonsModelList.add(new ButtonsModel(118,"SAFEKEEPING", "",17, 0));

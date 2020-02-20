@@ -2,14 +2,16 @@ package nerdvana.com.pointofsales.model;
 
 import java.util.List;
 
+import nerdvana.com.pointofsales.entities.RoomEntity;
+
 public class OpenWakeUpCallDialog {
-    private List<WakeUpCallModel> wakeUpCallModels;
-
-    public OpenWakeUpCallDialog(List<WakeUpCallModel> wakeUpCallModelList) {
-        this.wakeUpCallModels = wakeUpCallModelList;
+    private List<RoomEntity> roomEntityList;
+    public OpenWakeUpCallDialog(List<RoomEntity> roomEntityList) {
+        this.roomEntityList = roomEntityList;
     }
 
-    public List<WakeUpCallModel> getWakeUpCallModels() {
-        return wakeUpCallModels;
+    public List<RoomEntity> getRoomEntityList() {
+        return roomEntityList;
     }
+
 }

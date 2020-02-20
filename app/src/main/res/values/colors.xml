@@ -8,11 +8,14 @@
     <!-- main theme -->
     <color name="colorPrimary">#00796B</color>
     <color name="colorSecondary">#009688</color>
-    <color name="colorList">#B2DFDB</color>
+    <color name="colorList">#00796B</color>
     <!-- end main theme -->
 
 
+    <!--<color name="colorYellow">#009688</color>-->
     <color name="colorYellow">#ffb733</color>
+
+
     <color name="colorLtBlue">#00007f</color>
     <color name="colorPrimaryDark">#282f35</color>
     <!--<color name="colorAccent">#6B6E70</color>-->

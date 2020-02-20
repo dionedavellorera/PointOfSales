@@ -136,12 +136,42 @@ public class SocketManager {
             roomObject.put("oldstatus", currentStatus);
             roomObject.put("userid", userId);
             roomObject.put("action", action);
+            roomObject.put("from", "pos");
             SocketManager.getInstance().emit("reloadposnerdvana", roomObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    public static void reloadPosSwitchRoom(String oldRoomNumber, String newRoomNumber,
+                                 String userId) {
+
+        try {
+            JSONObject roomObject = new JSONObject();
+            roomObject.put("old_room_no", oldRoomNumber);
+            roomObject.put("new_room_no", newRoomNumber);
+            roomObject.put("userid", userId);
+            roomObject.put("from", "pos");
+            SocketManager.getInstance().emit("reloadposswitchnerdvana", roomObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void reloadPosBackoutRoom(String roomNumber,
+                                           String userId) {
+        Log.d("SUCKETDATA", roomNumber);
+        Log.d("SUCKETDATA", userId);
+        try {
+            JSONObject roomObject = new JSONObject();
+            roomObject.put("roomno", roomNumber);
+            roomObject.put("userid", userId);
+            roomObject.put("from", "pos");
+            SocketManager.getInstance().emit("reloadposbackoutnerdvana", roomObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

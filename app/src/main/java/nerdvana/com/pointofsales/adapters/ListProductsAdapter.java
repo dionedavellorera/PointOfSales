@@ -53,22 +53,31 @@ public class ListProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int i) {
         if (holder instanceof ListProductsAdapter.ListViewHolder) {
 
-            if (branchLists.get(i).getPrice() != 0) {
-                ((ListProductsAdapter.ListViewHolder) holder).name.setText(String.format("%s (ADD %s) ", branchLists.get(i).getBranchProduct().getProduct(), String.valueOf(branchLists.get(i).getPrice())));
-            } else {
-                ((ListProductsAdapter.ListViewHolder) holder).name.setText(branchLists.get(i).getBranchProduct().getProduct());
+            if (branchLists.get(i).getBranchProduct() != null) {
+                if (branchLists.get(i).getPrice() != 0) {
+                    ((ListProductsAdapter.ListViewHolder) holder).name.setText(String.format("%s (ADD %s) ", branchLists.get(i).getBranchProduct().getProduct(), String.valueOf(branchLists.get(i).getPrice())));
+                } else {
+                    ((ListProductsAdapter.ListViewHolder) holder).name.setText(branchLists.get(i).getBranchProduct().getProduct());
+                }
             }
+
 
 
             ((ListProductsAdapter.ListViewHolder) holder).name.setTextColor(R.color.lightPrimaryFont);
 
 
 
-            ImageLoader.loadImage(SharedPreferenceManager.getString(null, ApplicationConstants.HOST) + "/uploads/company/product/" + branchLists.get(i).getBranchProduct().getImageFile(), ((ListViewHolder) holder).imageView);
+            if (branchLists.get(i).getBranchProduct() != null) {
+                ImageLoader.loadImage(SharedPreferenceManager.getString(null, ApplicationConstants.HOST) + "/uploads/company/product/" + branchLists.get(i).getBranchProduct().getImageFile(), ((ListViewHolder) holder).imageView);
+            }
+
             ((ListProductsAdapter.ListViewHolder) holder).row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    product.clicked(i);
+                    if (branchLists.get(i).getBranchProduct() != null) {
+                        product.clicked(i);
+                    }
+
                 }
             });
 

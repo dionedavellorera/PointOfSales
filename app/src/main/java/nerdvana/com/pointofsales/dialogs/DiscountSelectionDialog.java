@@ -117,6 +117,8 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                 if (voidDiscountsAdapter != null) {
                                     voidDiscountsAdapter.notifyDataSetChanged();
                                 }
+                                //dismiss here
+                                DiscountSelectionDialog.this.dismiss();
                             }
 
                             @Override
@@ -168,6 +170,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                             } else {
                                 fetchPending("room");
                             }
+                            this.dismiss();
                             DiscountSelectionDialog.this.dismiss();
                         }
                     };
@@ -186,6 +189,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     } else {
                                         fetchPending("room");
                                     }
+                                    this.dismiss();
                                     DiscountSelectionDialog.this.dismiss();
                                 }
                             };
@@ -203,6 +207,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     } else {
                                         fetchPending("room");
                                     }
+                                    this.dismiss();
                                     DiscountSelectionDialog.this.dismiss();
                                 }
                             };
@@ -223,7 +228,7 @@ public abstract class DiscountSelectionDialog extends BaseDialog implements Butt
                                     } else {
                                         fetchPending("room");
                                     }
-
+                                    this.dismiss();
                                     DiscountSelectionDialog.this.dismiss();
                                 }
                             };

@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +48,7 @@ public abstract class ManualDiscountDialog extends BaseDialog {
     private RadioGroup discountOptionGroup;
     private EditText inputReason;
     private EditText inputAmount;
-    private Spinner spinnerDiscountReason;
+    private SearchableSpinner spinnerDiscountReason;
     private String discountReasonId = "";
     private Activity context;
     private String controlNumber = "";

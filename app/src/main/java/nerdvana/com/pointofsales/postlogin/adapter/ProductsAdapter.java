@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Build;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,6 +131,13 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 productsContract.productClicked(productsModel);
             }
         });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ((ProductsViewHolder)holder).name.setText(Html.fromHtml(productsModel.getName(), Html.FROM_HTML_MODE_LEGACY));
+        } else {
+            ((ProductsViewHolder)holder).name.setText(Html.fromHtml(productsModel.getName()));
+        }
+
         ((ProductsViewHolder)holder).name.setText(productsModel.getName());
 
         ((ProductsViewHolder)holder).price.setText(

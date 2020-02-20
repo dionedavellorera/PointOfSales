@@ -61,7 +61,8 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                 if (r.getBranchDepartments().get(0).getBranchDepartment() != null) {
                     if (r.getBranchDepartments().get(0).getDepartmentId() == 3 ||
                             r.getBranchDepartments().get(0).getDepartmentId() == 4 ||
-                            r.getBranchDepartments().get(0).getDepartmentId() == 5) {
+                            r.getBranchDepartments().get(0).getDepartmentId() == 5 ||
+                            r.getBranchDepartments().get(0).getDepartmentId() == 6) {
                         shouldDisplay = true;
                     }
                     branchDepartment = r.getBranchDepartments().get(0).getBranchDepartment().getDepartment();

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -513,6 +514,13 @@ public abstract class PaymentDialog extends BaseDialog  {
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
                                 isCheckout ? false : true,
                                 "cash", ""));
+
+
+
+                        if (postedPaymentsAdapter != null) {
+                            postedPaymentsAdapter.notifyDataSetChanged();
+                        }
+                        computeTotal();
                     } else {
                         Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
                     }
@@ -520,10 +528,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                     Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
                 }
 
-                if (postedPaymentsAdapter != null) {
-                    postedPaymentsAdapter.notifyDataSetChanged();
-                }
-                computeTotal();
+
             }
         });
         addCard.setOnClickListener(new View.OnClickListener() {
@@ -794,267 +799,267 @@ public abstract class PaymentDialog extends BaseDialog  {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (paymentMethod == null) {
-                    Toast.makeText(getContext(), "Please select payment method", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (paymentMethod.getCore_id().equalsIgnoreCase("1")) { //cash
-                        if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
-                            if (Double.valueOf(amountToPay.getText().toString()) >= 0) {
-                                postedPaymentList.add(new PostedPaymentsModel(
-                                        paymentMethod.getCore_id(),
-                                        amountToPay.getText().toString(),
-                                        paymentMethod.getPayment_type(),
-                                        false,
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                        new JSONObject(),
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                        isCheckout ? false : true,
-                                        "cash", ""));
-                            } else {
-                                Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
-                            }
-                        } else {
-                            Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
-                        }
-
-                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("2")) { //card
-                        boolean isValid = true;
-                        String errorMessage = "";
-                        if (TextUtils.isEmpty(cardTypeId)) {
-                            isValid = false;
-                            errorMessage += "Empty card type \n";
-                        }
-
-                        if (TextUtils.isEmpty(cardNumber.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Empty card number \n";
-                        }
-
-                        if (TextUtils.isEmpty(cardHoldersName.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Empty card holders name \n";
-                        }
-
-                        if (TextUtils.isEmpty(cardExpiration.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Empty expiration date \n";
-                        }
-
-                        if (TextUtils.isEmpty(authorization.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Empty authorization \n";
-                        }
-
-                        if (TextUtils.isEmpty(creditCardAmount.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Invalid amount \n";
-                        } else {
-                            if (Double.valueOf(creditCardAmount.getText().toString()) < 1) {
-                                isValid = false;
-                                errorMessage += "Invalid amount \n";
-                            }
-                        }
-
-
-
-                        if (paymentMethod == null) {
-                            isValid = false;
-                            errorMessage += "Invalid payment method \n";
-                        }
-
-                        if (isValid) {
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("card_type_id", cardTypeId);
-                                jsonObject.put("card_number", cardNumber.getText().toString());
-                                jsonObject.put("account_name", cardHoldersName.getText().toString());
-                                jsonObject.put("card_expiration", cardExpiration.getText().toString());
-                                jsonObject.put("authorization", authorization.getText().toString());
-                                jsonObject.put("remarks", remarks.getText().toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCore_id(),
-                                    creditCardAmount.getText().toString(),
-                                    paymentMethod.getPayment_type(),
-                                    false,
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                    jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    isCheckout ? false : true,
-                                    "card", ""));
-
-
-                        } else {
-                            Utils.showDialogMessage(act, errorMessage, "Information");
-                        }
-
-
-                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("3")) { //online
-
-                        boolean isValid = true;
-                        String errorMessage = "";
-
-                        if (paymentMethod == null) {
-                            isValid = false;
-                            errorMessage += "Invalid payment method \n";
-                        }
-
-                        if (TextUtils.isEmpty(onlineId.trim())) {
-                            isValid = false;
-                            errorMessage += "Please select ar type \n" ;
-                        }
-
-                        if (TextUtils.isEmpty(voucherCode.getText().toString().trim())) {
-                            isValid = false;
-                            errorMessage += "Empty voucher code \n";
-                        }
-
-                        if (isValid) {
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("online_payment_id", onlineId);
-                                jsonObject.put("voucher_code", voucherCode.getText().toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCore_id(),
-                                    voucherAmount.getText().toString(),
-                                    paymentMethod.getPayment_type(),
-                                    false,
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                    jsonObject,
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    isCheckout ? false : true,
-                                    "online", ""));
-                        } else {
-                            Utils.showDialogMessage(act, errorMessage, "Information");
-                        }
-
-                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("5")) { //voucher
-                        if (gcList.size() > 0) {
-                            Double amount = 0.00;
-                            String gcCode = "";
-                            int index = 0;
-                            for (AvailableGcModel availableGcModel : gcList) {
-                                amount += Double.valueOf(availableGcModel.getAmount());
-                                if (index == gcList.size() - 1) {
-                                    gcCode += availableGcModel.getId();
-                                } else {
-                                    gcCode += availableGcModel.getId() + ",";
-                                }
-                                index++;
-                            }
-
-                            JSONObject jsonObject = new JSONObject();
-                            try {
-                                jsonObject.put("gc_code", gcCode);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-                            postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCore_id(),
-                                    String.valueOf(amount),
-                                    paymentMethod.getPayment_type(),
-                                    false,
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                    jsonObject,
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    isCheckout ? false : true,
-                                    "voucher",""));
-                        } else {
-                            Utils.showDialogMessage(act, "No gc added", "Information");
-                        }
-                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("6")) { //forex
-
-                        boolean isValid = true;
-                        String errorMessage = "";
-
-                        if (paymentMethod == null) {
-                            isValid = false;
-                            errorMessage += "Invalid payment method";
-                        }
-
-                        if (TextUtils.isEmpty(currencyId.toString().trim()) || TextUtils.isEmpty(currencyId.toString().trim())) {
-                            isValid = false;
-                            errorMessage += "invalid currency";
-                        }
-
-                        if (!TextUtils.isEmpty(forexAmount.getText().toString().trim())) {
-                            if (Double.valueOf(forexAmount.getText().toString()) < 1) {
-                                isValid = false;
-                                errorMessage = "Invalid amount \n";
-                            }
-                        } else {
-                            isValid = false;
-                            errorMessage = "Invalid amount \n";
-                        }
-
-
-                        if (isValid) {
-                            postedPaymentList.add(new PostedPaymentsModel(
-                                    paymentMethod.getCore_id(),
-                                    forexAmount.getText().toString(),
-                                    paymentMethod.getPayment_type(),
-                                    false,
-                                    currencyId,
-                                    currencyValue,
-                                    new JSONObject(),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
-                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
-                                    isCheckout ? false : true,
-                                    "forex",""));
-                        } else {
-                            Utils.showDialogMessage(act, errorMessage, "Information");
-                        }
-
-
-                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("999")) { //add guest
-                        boolean isValid = true;
-                        String errorMessage = "";
-
-                        if (paymentMethod == null) {
-                            isValid = false;
-                            errorMessage += "Invalid payment method";
-                        }
-
-                        if (!isEmployee) {
-                            if (TextUtils.isEmpty(guestNameInput.getText().toString().trim())) {
-                                isValid = false;
-                                errorMessage += "Invalid name";
-                            }
-                        }
-
-                        if (isValid) {
-                            submitGuestInfoData(isEmployee ? guestInfoEmployeeId : "",
-                                    !isEmployee ?guestNameInput.getText().toString() : guestInfoEmployeeName,
-                                    !isEmployee ? guestAddressInput.getText().toString() : "",
-                                    !isEmployee ? guestTinInput.getText().toString() : "",
-                                    controlNumber,
-                                    !isEmployee ? guestBusinessStyle.getText().toString() : "");
-                        } else {
-                            Utils.showDialogMessage(act, errorMessage, "Information");
-                        }
-                    }
-
-                    if (postedPaymentsAdapter != null) {
-                        postedPaymentsAdapter.notifyDataSetChanged();
-                    }
-//                    paymentMethod = null;
-                }
-
-                computeTotal();
+//                if (paymentMethod == null) {
+//                    Toast.makeText(getContext(), "Please select payment method", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    if (paymentMethod.getCore_id().equalsIgnoreCase("1")) { //cash
+//                        if (!TextUtils.isEmpty(amountToPay.getText().toString())) {
+//                            if (Double.valueOf(amountToPay.getText().toString()) >= 0) {
+//                                postedPaymentList.add(new PostedPaymentsModel(
+//                                        paymentMethod.getCore_id(),
+//                                        amountToPay.getText().toString(),
+//                                        paymentMethod.getPayment_type(),
+//                                        false,
+//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+//                                        new JSONObject(),
+//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+//                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+//                                        isCheckout ? false : true,
+//                                        "cash", ""));
+//                            } else {
+//                                Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
+//                            }
+//                        } else {
+//                            Utils.showDialogMessage(act, "Please enter valid amount for cash payment", "Information");
+//                        }
+//
+//                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("2")) { //card
+//                        boolean isValid = true;
+//                        String errorMessage = "";
+//                        if (TextUtils.isEmpty(cardTypeId)) {
+//                            isValid = false;
+//                            errorMessage += "Empty card type \n";
+//                        }
+//
+//                        if (TextUtils.isEmpty(cardNumber.getText().toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "Empty card number \n";
+//                        }
+//
+//                        if (TextUtils.isEmpty(cardHoldersName.getText().toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "Empty card holders name \n";
+//                        }
+//
+//                        if (TextUtils.isEmpty(cardExpiration.getText().toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "Empty expiration date \n";
+//                        }
+//
+//                        if (TextUtils.isEmpty(authorization.getText().toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "Empty authorization \n";
+//                        }
+//
+//                        if (TextUtils.isEmpty(creditCardAmount.getText().toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "Invalid amount \n";
+//                        } else {
+//                            if (Double.valueOf(creditCardAmount.getText().toString()) < 1) {
+//                                isValid = false;
+//                                errorMessage += "Invalid amount \n";
+//                            }
+//                        }
+//
+//
+//
+//                        if (paymentMethod == null) {
+//                            isValid = false;
+//                            errorMessage += "Invalid payment method \n";
+//                        }
+//
+//                        if (isValid) {
+//                            JSONObject jsonObject = new JSONObject();
+//                            try {
+//                                jsonObject.put("card_type_id", cardTypeId);
+//                                jsonObject.put("card_number", cardNumber.getText().toString());
+//                                jsonObject.put("account_name", cardHoldersName.getText().toString());
+//                                jsonObject.put("card_expiration", cardExpiration.getText().toString());
+//                                jsonObject.put("authorization", authorization.getText().toString());
+//                                jsonObject.put("remarks", remarks.getText().toString());
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                            postedPaymentList.add(new PostedPaymentsModel(
+//                                    paymentMethod.getCore_id(),
+//                                    creditCardAmount.getText().toString(),
+//                                    paymentMethod.getPayment_type(),
+//                                    false,
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+//                                    jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+//                                    isCheckout ? false : true,
+//                                    "card", ""));
+//
+//
+//                        } else {
+//                            Utils.showDialogMessage(act, errorMessage, "Information");
+//                        }
+//
+//
+//                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("3")) { //online
+//
+//                        boolean isValid = true;
+//                        String errorMessage = "";
+//
+//                        if (paymentMethod == null) {
+//                            isValid = false;
+//                            errorMessage += "Invalid payment method \n";
+//                        }
+//
+//                        if (TextUtils.isEmpty(onlineId.trim())) {
+//                            isValid = false;
+//                            errorMessage += "Please select ar type \n" ;
+//                        }
+//
+//                        if (TextUtils.isEmpty(voucherCode.getText().toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "Empty voucher code \n";
+//                        }
+//
+//                        if (isValid) {
+//                            JSONObject jsonObject = new JSONObject();
+//                            try {
+//                                jsonObject.put("online_payment_id", onlineId);
+//                                jsonObject.put("voucher_code", voucherCode.getText().toString());
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                            postedPaymentList.add(new PostedPaymentsModel(
+//                                    paymentMethod.getCore_id(),
+//                                    voucherAmount.getText().toString(),
+//                                    paymentMethod.getPayment_type(),
+//                                    false,
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+//                                    jsonObject,
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+//                                    isCheckout ? false : true,
+//                                    "online", ""));
+//                        } else {
+//                            Utils.showDialogMessage(act, errorMessage, "Information");
+//                        }
+//
+//                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("5")) { //voucher
+//                        if (gcList.size() > 0) {
+//                            Double amount = 0.00;
+//                            String gcCode = "";
+//                            int index = 0;
+//                            for (AvailableGcModel availableGcModel : gcList) {
+//                                amount += Double.valueOf(availableGcModel.getAmount());
+//                                if (index == gcList.size() - 1) {
+//                                    gcCode += availableGcModel.getId();
+//                                } else {
+//                                    gcCode += availableGcModel.getId() + ",";
+//                                }
+//                                index++;
+//                            }
+//
+//                            JSONObject jsonObject = new JSONObject();
+//                            try {
+//                                jsonObject.put("gc_code", gcCode);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//
+//
+//                            postedPaymentList.add(new PostedPaymentsModel(
+//                                    paymentMethod.getCore_id(),
+//                                    String.valueOf(amount),
+//                                    paymentMethod.getPayment_type(),
+//                                    false,
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+//                                    jsonObject,
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+//                                    isCheckout ? false : true,
+//                                    "voucher",""));
+//                        } else {
+//                            Utils.showDialogMessage(act, "No gc added", "Information");
+//                        }
+//                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("6")) { //forex
+//
+//                        boolean isValid = true;
+//                        String errorMessage = "";
+//
+//                        if (paymentMethod == null) {
+//                            isValid = false;
+//                            errorMessage += "Invalid payment method";
+//                        }
+//
+//                        if (TextUtils.isEmpty(currencyId.toString().trim()) || TextUtils.isEmpty(currencyId.toString().trim())) {
+//                            isValid = false;
+//                            errorMessage += "invalid currency";
+//                        }
+//
+//                        if (!TextUtils.isEmpty(forexAmount.getText().toString().trim())) {
+//                            if (Double.valueOf(forexAmount.getText().toString()) < 1) {
+//                                isValid = false;
+//                                errorMessage = "Invalid amount \n";
+//                            }
+//                        } else {
+//                            isValid = false;
+//                            errorMessage = "Invalid amount \n";
+//                        }
+//
+//
+//                        if (isValid) {
+//                            postedPaymentList.add(new PostedPaymentsModel(
+//                                    paymentMethod.getCore_id(),
+//                                    forexAmount.getText().toString(),
+//                                    paymentMethod.getPayment_type(),
+//                                    false,
+//                                    currencyId,
+//                                    currencyValue,
+//                                    new JSONObject(),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+//                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+//                                    isCheckout ? false : true,
+//                                    "forex",""));
+//                        } else {
+//                            Utils.showDialogMessage(act, errorMessage, "Information");
+//                        }
+//
+//
+//                    } else if (paymentMethod.getCore_id().equalsIgnoreCase("999")) { //add guest
+//                        boolean isValid = true;
+//                        String errorMessage = "";
+//
+//                        if (paymentMethod == null) {
+//                            isValid = false;
+//                            errorMessage += "Invalid payment method";
+//                        }
+//
+//                        if (!isEmployee) {
+//                            if (TextUtils.isEmpty(guestNameInput.getText().toString().trim())) {
+//                                isValid = false;
+//                                errorMessage += "Invalid name";
+//                            }
+//                        }
+//
+//                        if (isValid) {
+//                            submitGuestInfoData(isEmployee ? guestInfoEmployeeId : "",
+//                                    !isEmployee ?guestNameInput.getText().toString() : guestInfoEmployeeName,
+//                                    !isEmployee ? guestAddressInput.getText().toString() : "",
+//                                    !isEmployee ? guestTinInput.getText().toString() : "",
+//                                    controlNumber,
+//                                    !isEmployee ? guestBusinessStyle.getText().toString() : "");
+//                        } else {
+//                            Utils.showDialogMessage(act, errorMessage, "Information");
+//                        }
+//                    }
+//
+//                    if (postedPaymentsAdapter != null) {
+//                        postedPaymentsAdapter.notifyDataSetChanged();
+//                    }
+////                    paymentMethod = null;
+//                }
+//
+//                computeTotal();
             }
         });
 
@@ -1151,24 +1156,25 @@ public abstract class PaymentDialog extends BaseDialog  {
         totalPayment = 0.00;
         amountDue = 0.00;
         totalChange = 0.00;
-
-
         for (PostedPaymentsModel ppm : postedPaymentList) {
+            Log.d("PAYMNt",String.valueOf(Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value())));
+
             if (ppm.isAdvance()) {
                 advancePayment += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
             } else {
                 normalPayment += Double.valueOf(ppm.getAmount()) / Double.valueOf(ppm.getCurrency_value());
             }
         }
-
-
         totalPayment = normalPayment;
-        amountDue = (totalBalance - (advancePayment + discountPayment + normalPayment)) <= 0 ? 0.00 : Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment + normalPayment)))));
+
+        Double deductibles = Double.valueOf(String.format("%.2f", advancePayment + discountPayment + normalPayment));
+
+        amountDue = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (deductibles))))) <= 0 ? 0.00 : Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (deductibles)))));
         totalAmountDue.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 
         amountToPay.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 //        amountToPay.requestFocus();
-        totalChange = (totalPayment + advancePayment + discountPayment) - totalBalance;
+        totalChange = (deductibles) - totalBalance;
 
         displayTotalChange.setText(String.valueOf(totalChange));
 //        totalChange = (totalPayment + advancePayment) - (totalBalance - discountPayment);
@@ -1188,10 +1194,6 @@ public abstract class PaymentDialog extends BaseDialog  {
         }
 
         totalDeposit.setText(Utils.returnWithTwoDecimal(String.valueOf(advancePayment)));
-
-
-
-
     }
 
     @Override

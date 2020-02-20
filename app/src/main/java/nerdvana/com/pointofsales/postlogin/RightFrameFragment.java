@@ -39,6 +39,8 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import nerdvana.com.pointofsales.ApiError;
 import nerdvana.com.pointofsales.ApplicationConstants;
@@ -71,6 +73,9 @@ import nerdvana.com.pointofsales.postlogin.adapter.RoomsTablesAdapter;
 public class RightFrameFragment extends Fragment implements
         AsyncContract, SelectionContract,
         ProductsContract, View.OnClickListener{
+
+    private Timer timer;
+
     private View view;
     private TextView labelQty;
     private RoomTableModel selectedRoom;
@@ -161,14 +166,42 @@ public class RightFrameFragment extends Fragment implements
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if (timer != null) {
+                    timer.cancel();
+                    timer.purge();
+                    timer = null;
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (productsList.size() > 0) {
-                    productsAdapter.getFilter().filter(s);
-                }
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (productsAdapter != null) {
+                            if (getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        if (productsList.size() > 0) {
+                                            productsAdapter.getFilter().filter(s);
+                                        }
+
+                                    }
+                                });
+                            }
+
+
+                        }
+
+                    }
+                }, 500);
+
+
+
+
             }
         });
 //        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -419,6 +452,7 @@ public class RightFrameFragment extends Fragment implements
     @Override
     public void productClicked(ProductsModel productsModel) {
         productsModel.setQty(Integer.valueOf(qtySelected));
+        search.setText("");
         if (categoryClickedArray.size() > 0) {
             if (productsModel.getProductsList().size() != 0) {
                 repopulateList(productsModel.getProductsList());

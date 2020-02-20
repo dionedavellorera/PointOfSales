@@ -43,6 +43,7 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.UpdateCheckInTimeResponse;
 import nerdvana.com.pointofsales.api_responses.WakeUpCallUpdateResponse;
+import nerdvana.com.pointofsales.entities.RoomEntity;
 import nerdvana.com.pointofsales.model.ChangeWakeUpCallPrintModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -322,9 +323,14 @@ public abstract class GuestInfoDialog extends BaseDialog {
                 }
             });
 
+
             passwordDialog.show();
+
         } else {
+
             doUpdateWakeUpCall(finalTime);
+
+
         }
 
     }
@@ -343,6 +349,15 @@ public abstract class GuestInfoDialog extends BaseDialog {
                     dismiss();
                     refresh(GsonHelper.getGson().toJson(changeWakeUpCallPrintModel));
                     Utils.showDialogMessage(act, "Wake up call successfully changed", "Information");
+                    List<RoomEntity> selectedRoom = RoomEntity
+                            .findWithQuery(RoomEntity.class,
+                                    "SELECT * FROM Room_Entity WHERE roomnumber = ?", String.valueOf(roomNumber.getText().toString()));
+                    if (selectedRoom.size() > 0) {
+                        selectedRoom.get(0).setWake_up_call(finalTime);
+                        selectedRoom.get(0).setIs_done(0);
+                        selectedRoom.get(0).save();
+                    }
+
                 }
 
                 @Override
@@ -420,9 +435,27 @@ public abstract class GuestInfoDialog extends BaseDialog {
                                         }
                                     });
 
-                                    passwordDialog.show();
+                                    final DateTime checkIntime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn()));
+                                    final DateTime setCheckIntime = dtf.parseDateTime(finalCheckInDateTime);
+                                    if (setCheckIntime.isBefore(checkIntime)) {
+                                        passwordDialog.show();
+                                    } else {
+                                        Utils.showDialogMessage(getContext(), "Please set time before the check in time only", "Info");
+                                    }
+
                                 } else {
-                                    updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
+
+                                    final DateTime checkIntime = dtf.parseDateTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn()));
+                                    final DateTime setCheckIntime = dtf.parseDateTime(finalCheckInDateTime);
+
+                                    if (setCheckIntime.isBefore(checkIntime)) {
+                                        updateCheckInTime(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getRoomId()), finalCheckInDateTime, SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
+                                    } else {
+                                        Utils.showDialogMessage(getContext(), "Please set time before the check in time only", "Info");
+                                    }
+
+
+
                                 }
 
 

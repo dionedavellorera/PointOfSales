@@ -35,6 +35,8 @@ public class RoomTableModel implements Comparable<RoomTableModel>{
     private String checkInTime;
     private int listPosition;
 
+    private String depositInfo = "";
+
     public RoomTableModel(String controlNumber, boolean isTakeOut) {
         this.controlNo = controlNumber;
         this.isTakeOut = isTakeOut;
@@ -199,5 +201,13 @@ public class RoomTableModel implements Comparable<RoomTableModel>{
             return -1;
         }
         return 0;
+    }
+
+    public String getDepositInfo() {
+        return depositInfo;
+    }
+
+    public void setDepositInfo(String depositInfo) {
+        this.depositInfo = depositInfo;
     }
 }

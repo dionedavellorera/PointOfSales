@@ -62,6 +62,9 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     private SwipeRefreshLayout refreshRoom;
     private HidingEditText searchView;
     private List<String> allowedRoomStatusList;
+    private RoomFilterAdapter roomFilterAdapter;
+
+    private List<FilterOptionModel> filterOptionsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +146,76 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         switch (isFor) {
             case "roomstables":
                 originalRoomList = list;
+
+                int cleanCount = 0;
+                int dirtyCount = 0;
+                int occupiedCount = 0;
+                int soaCount = 0;
+                int welcomeCount = 0;
+                for (RoomTableModel rtm : originalRoomList) {
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.CLEAN)) {
+                        cleanCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.INSPECTED_CLEAN)) {
+                        cleanCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.HOTELIFIED)) {
+                        cleanCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.DIRTY)) {
+                        dirtyCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.DIRTY_WITH_LINEN)) {
+                        dirtyCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.OCCUPIED)) {
+                        occupiedCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.SOA)) {
+                        soaCount+=1;
+                    }
+
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.WELCOME)) {
+                        welcomeCount+=1;
+                    }
+                }
+                for (FilterOptionModel model : filterOptionsList) {
+                    if (model.getStatusId() == 0) {
+                        model.setStatusCount(cleanCount +dirtyCount + occupiedCount + soaCount + welcomeCount);
+                    }
+
+                    if (model.getStatusId() == Integer.valueOf(RoomConstants.CLEAN)) {
+                        model.setStatusCount(cleanCount);
+                    }
+                    if (model.getStatusId() == Integer.valueOf(RoomConstants.DIRTY)) {
+                        model.setStatusCount(dirtyCount);
+                    }
+
+                    if (model.getStatusId() == Integer.valueOf(RoomConstants.OCCUPIED)) {
+                        model.setStatusCount(occupiedCount);
+                    }
+
+                    if (model.getStatusId() == Integer.valueOf(RoomConstants.SOA)) {
+                        model.setStatusCount(soaCount);
+                    }
+
+                    if (model.getStatusId() == Integer.valueOf(RoomConstants.WELCOME)) {
+                        model.setStatusCount(welcomeCount);
+                    }
+
+
+                }
+
+                if (roomFilterAdapter != null) {
+                    roomFilterAdapter.notifyDataSetChanged();
+                }
+
                 roomsTablesAdapter.addItems(list);
                 break;
         }
@@ -216,7 +289,11 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
             if (selectedItem.getStatus().equalsIgnoreCase("2") || selectedItem.getStatus().equalsIgnoreCase("17")) {
                 Utils.showDialogMessage(RoomsActivity.this, "Room is occupied, please checkout properly", "Information");
             } else {
-                changeRoomStatusDialog.show();
+                if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.USERNAME).equalsIgnoreCase("10862") ||
+                        SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.USERNAME).equalsIgnoreCase("10655")) {
+                    changeRoomStatusDialog.show();
+                }
+
             }
 
         } else {
@@ -237,11 +314,11 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
         refreshRoom.setRefreshing(false);
         if (fetchRoomResponse.getResult().size() > 0) {
-            SharedPreferenceManager
-                    .saveString(
-                            RoomsActivity.this,
-                            GsonHelper.getGson().toJson(fetchRoomResponse.getResult()),
-                            ApplicationConstants.ROOM_JSON);
+//            SharedPreferenceManager
+//                    .saveString(
+//                            RoomsActivity.this,
+//                            GsonHelper.getGson().toJson(fetchRoomResponse.getResult()),
+//                            ApplicationConstants.ROOM_JSON);
             new RoomsTablesAsync(this, fetchRoomResponse.getResult(), this).execute();
             setRoomFilter();
 //            isLoadingData = false;
@@ -272,23 +349,27 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         allowedPosStatus.add("occupied");
         allowedPosStatus.add("soa");
         allowedPosStatus.add("clean");
+        allowedPosStatus.add("dirty");
 //        allowedPosStatus.add("on-going rc with waiting guest");
 //        allowedPosStatus.add("dirty with waiting guest");
-        List<FilterOptionModel> filterOptionsList = new ArrayList<>();
+        filterOptionsList = new ArrayList<>();
 //        List<RoomStatusEntity> rse = RoomStatusEntity.listAll(RoomStatusEntity.class);
 
         TypeToken<List<FetchRoomStatusResponse.Result>> bookedToken = new TypeToken<List<FetchRoomStatusResponse.Result>>() {};
         List<FetchRoomStatusResponse.Result> rse = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.ROOM_STATUS_JSON), bookedToken.getType());
 
 
-        filterOptionsList.add(new FilterOptionModel("ALL", true, 0));
+        filterOptionsList.add(new FilterOptionModel("ALL", true, 0, null));
+
         for (FetchRoomStatusResponse.Result r : rse) {
             if (allowedPosStatus.contains(r.getRoomStatus().toLowerCase())) {
-                filterOptionsList.add(new FilterOptionModel(r.getRoomStatus().toUpperCase(), false, r.getCoreId()));
+                filterOptionsList.add(new FilterOptionModel(r.getRoomStatus().toUpperCase(),
+                        false, r.getCoreId(),
+                        r.getColor()));
             }
         }
 
-        RoomFilterAdapter roomFilterAdapter = new RoomFilterAdapter(filterOptionsList, this);
+        roomFilterAdapter = new RoomFilterAdapter(filterOptionsList, this);
         listFilters.setLayoutManager(new LinearLayoutManager(RoomsActivity.this, LinearLayout.HORIZONTAL, false));
 
         listFilters.setAdapter(roomFilterAdapter);
@@ -315,10 +396,22 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         } else {
             //SHOW SELECTED STATUS
             filteredRoomList = new ArrayList<>();
+
+            Log.d("DIONEDATA", String.valueOf(statusId));
+
             for (RoomTableModel rtm : originalRoomList) {
-                if (rtm.getStatus().equalsIgnoreCase(String.valueOf(statusId))) {
-                    filteredRoomList.add(rtm);
+                if (statusId == 3) {
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.DIRTY) ||
+                            rtm.getStatus().equalsIgnoreCase(RoomConstants.DIRTY_WITH_LINEN)) {
+                        filteredRoomList.add(rtm);
+                    }
+                } else {
+                    if (rtm.getStatus().equalsIgnoreCase(String.valueOf(statusId))) {
+                        filteredRoomList.add(rtm);
+                    }
                 }
+
+
             }
             roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
             listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));

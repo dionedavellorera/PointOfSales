@@ -18,6 +18,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.ItemTouchHelper;
+
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,6 +56,7 @@ import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.RoomConstants;
+import nerdvana.com.pointofsales.RoomsActivity;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SettingsActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
@@ -66,6 +69,7 @@ import nerdvana.com.pointofsales.api_requests.AddRoomPriceRequest;
 import nerdvana.com.pointofsales.api_requests.BackOutGuestRequest;
 import nerdvana.com.pointofsales.api_requests.BackupDatabaseRequest;
 import nerdvana.com.pointofsales.api_requests.CancelOverTimeRequest;
+import nerdvana.com.pointofsales.api_requests.ChangeRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.CheckInRequest;
 import nerdvana.com.pointofsales.api_requests.CheckOutRequest;
 import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
@@ -98,6 +102,7 @@ import nerdvana.com.pointofsales.api_responses.AddProductToResponse;
 import nerdvana.com.pointofsales.api_responses.AddRoomPriceResponse;
 import nerdvana.com.pointofsales.api_responses.BackOutGuestResponse;
 import nerdvana.com.pointofsales.api_responses.CancelOverTimeResponse;
+import nerdvana.com.pointofsales.api_responses.ChangeRoomStatusResponse;
 import nerdvana.com.pointofsales.api_responses.CheckInResponse;
 import nerdvana.com.pointofsales.api_responses.CheckOutResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
@@ -216,6 +221,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     CollectionDialog spotAuditDialog;
 
     //endregion
+
+    private String depositInfoData = "0.00";
 
     private boolean hasExistingRequest = false;
 
@@ -1059,31 +1066,34 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             } else {
                                 ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
                                 if (productsModel.getBranchAlaCartList().size() > 0) {
+
                                     for (FetchProductsResponse.BranchAlaCart balac : productsModel.getBranchAlaCartList()) {
-                                        DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                                        DateTime companyUpdatedAt = new DateTime(df.parseDateTime(balac.getBranchProduct().getUpdatedAt()));
-                                        Double amount = balac.getBranchProduct().getAmount();
-                                        if (balac.getBranchProduct().getBranchPrice() != null) {
-
-
-                                            DateTime branchUpdatedAt = new DateTime(df.parseDateTime(balac.getBranchProduct().getBranchPrice().getUpdatedAt()));
-                                            if (branchUpdatedAt.isAfter(companyUpdatedAt)) {
-                                                amount = balac.getBranchProduct().getBranchPrice().getAmount();
-                                                amount = ((amount * (balac.getBranchProduct().getBranchPrice().getMarkUp() + 1))) * Double.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE));
+                                        if (balac.getBranchProduct() != null) {
+                                            DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                                            DateTime companyUpdatedAt = new DateTime(df.parseDateTime(balac.getBranchProduct().getUpdatedAt()));
+                                            Double amount = balac.getBranchProduct().getAmount();
+                                            if (balac.getBranchProduct().getBranchPrice() != null) {
+                                                DateTime branchUpdatedAt = new DateTime(df.parseDateTime(balac.getBranchProduct().getBranchPrice().getUpdatedAt()));
+                                                if (branchUpdatedAt.isAfter(companyUpdatedAt)) {
+                                                    amount = balac.getBranchProduct().getBranchPrice().getAmount();
+                                                    amount = ((amount * (balac.getBranchProduct().getBranchPrice().getMarkUp() + 1))) * Double.valueOf(SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE));
+                                                }
                                             }
+
+
+
+                                            alaCartes.add(new AddRateProductModel.AlaCarte(
+                                                    String.valueOf(balac.getBranchProduct().getCoreId()),
+                                                    "0",
+                                                    String.valueOf(balac.getQty()),
+                                                    SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                    String.valueOf(amount),
+                                                    0,
+                                                    balac.getBranchProduct().getProductInitial()
+
+                                            ));
                                         }
 
-
-                                        alaCartes.add(new AddRateProductModel.AlaCarte(
-                                                String.valueOf(balac.getBranchProduct().getCoreId()),
-                                                "0",
-                                                String.valueOf(balac.getQty()),
-                                                SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
-                                                String.valueOf(amount),
-                                                0,
-                                                balac.getBranchProduct().getProductInitial()
-
-                                        ));
                                     }
                                 }
 
@@ -1591,77 +1601,82 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         String errorMessage = "";
 
 
-        if (TextUtils.isEmpty(employeeId)) {
-            if (employeeSelectionDialog == null) {
-                employeeSelectionDialog = new EmployeeSelectionDialog(getActivity(), selectedRoom.getControlNo()) {
-                    @Override
-                    public void saveEmployeeToTransaction(final String userId, String wholeName) {
+        if (selectedRoom != null) {
+            if (TextUtils.isEmpty(employeeId)) {
+                if (employeeSelectionDialog == null) {
+                    employeeSelectionDialog = new EmployeeSelectionDialog(getActivity(), selectedRoom.getControlNo()) {
+                        @Override
+                        public void saveEmployeeToTransaction(final String userId, String wholeName) {
 
-                        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM FOC", "") {
-                            @Override
-                            public void passwordSuccess(String employeeId, String employeeName) {
-                                if (selectedRoom.isTakeOut()) {
-                                    BusProvider.getInstance().post(new FocTransactionRequest(
-                                            "",
-                                            selectedRoom.getControlNo(),
-                                            userId
-                                    ));
-                                } else {
-                                    BusProvider.getInstance().post(new FocTransactionRequest(
-                                            String.valueOf(selectedRoom.getRoomId()),
-                                            "",
-                                            userId
-                                    ));
+                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM FOC", "") {
+                                @Override
+                                public void passwordSuccess(String employeeId, String employeeName) {
+                                    if (selectedRoom.isTakeOut()) {
+                                        BusProvider.getInstance().post(new FocTransactionRequest(
+                                                "",
+                                                selectedRoom.getControlNo(),
+                                                userId
+                                        ));
+                                    } else {
+                                        BusProvider.getInstance().post(new FocTransactionRequest(
+                                                String.valueOf(selectedRoom.getRoomId()),
+                                                "",
+                                                userId
+                                        ));
+                                    }
+
                                 }
 
-                            }
+                                @Override
+                                public void passwordFailed() {
 
-                            @Override
-                            public void passwordFailed() {
+                                }
+                            };
 
-                            }
-                        };
-
-                        if (!passwordDialog.isShowing()) passwordDialog.show();
+                            if (!passwordDialog.isShowing()) passwordDialog.show();
 
 
-                    }
-                };
+                        }
+                    };
 
-                employeeSelectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        employeeSelectionDialog = null;
-                    }
-                });
+                    employeeSelectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            employeeSelectionDialog = null;
+                        }
+                    });
 
-                employeeSelectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        employeeSelectionDialog = null;
-                    }
-                });
+                    employeeSelectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            employeeSelectionDialog = null;
+                        }
+                    });
 
-                employeeSelectionDialog.show();
-            }
+                    employeeSelectionDialog.show();
+                }
 
-        } else {
-
-            if (selectedRoom.isTakeOut()) {
-                BusProvider.getInstance().post(new FocTransactionRequest(
-                        "",
-                        selectedRoom.getControlNo(),
-                        employeeId
-                ));
             } else {
-                BusProvider.getInstance().post(new FocTransactionRequest(
-                        String.valueOf(selectedRoom.getRoomId()),
-                        "",
-                        employeeId
-                ));
-            }
 
+                if (selectedRoom.isTakeOut()) {
+                    BusProvider.getInstance().post(new FocTransactionRequest(
+                            "",
+                            selectedRoom.getControlNo(),
+                            employeeId
+                    ));
+                } else {
+                    BusProvider.getInstance().post(new FocTransactionRequest(
+                            String.valueOf(selectedRoom.getRoomId()),
+                            "",
+                            employeeId
+                    ));
+                }
+
+            }
+        } else {
+            Utils.showDialogMessage(getActivity(), "Please select a room", "Information");
         }
+
 
 
 
@@ -3129,6 +3144,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         request.enqueue(new Callback<BackOutGuestResponse>() {
                                             @Override
                                             public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+
+                                                selectedRoom.setDepositInfo(depositInfoData);
+
+                                                SocketManager.reloadPosBackoutRoom(
+                                                        selectedRoom.getName(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                                        );
+
                                                 BusProvider.getInstance().post(new PrintModel("",
                                                         selectedRoom.getName(),
                                                         "BACKOUT",
@@ -3152,6 +3175,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         request.enqueue(new Callback<BackOutGuestResponse>() {
                                             @Override
                                             public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+
+
+                                                selectedRoom.setDepositInfo(depositInfoData);
+
+                                                SocketManager.reloadPosBackoutRoom(
+                                                        selectedRoom.getName(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                                );
+
+
                                                 BusProvider.getInstance().post(new PrintModel("",
                                                         selectedRoom.getName(),
                                                         "BACKOUT",
@@ -3215,66 +3248,74 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void save(final String remarks) {
 
-                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "") {
-                                        @Override
-                                        public void passwordSuccess(String employeeId, final String employeeName) {
 
-                                            if (!selectedRoom.isTakeOut()) {
-                                                BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
-                                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                                Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                                request.enqueue(new Callback<BackOutGuestResponse>() {
-                                                    @Override
-                                                    public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-                                                        BusProvider.getInstance().post(new PrintModel("",
-                                                                selectedRoom.getName(),
-                                                                "BACKOUT",
-                                                                GsonHelper.getGson().toJson(selectedRoom),
-                                                                selectedRoom.getRoomType(),
-                                                                employeeName,
-                                                                remarks));
-                                                        defaultView();
-                                                        clearCartItems();
-                                                        endLoading();
-                                                    }
+                                    if (!selectedRoom.isTakeOut()) {
+                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                        request.enqueue(new Callback<BackOutGuestResponse>() {
+                                            @Override
+                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
 
-                                                    @Override
-                                                    public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                        endLoading();
-                                                    }
-                                                });
-                                            } else {
-                                                BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
-                                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                                Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                                request.enqueue(new Callback<BackOutGuestResponse>() {
-                                                    @Override
-                                                    public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-                                                        BusProvider.getInstance().post(new PrintModel("",
-                                                                selectedRoom.getName(),
-                                                                "BACKOUT",
-                                                                GsonHelper.getGson().toJson(selectedRoom),
-                                                                selectedRoom.getRoomType(),employeeName,
-                                                                remarks));
-                                                        defaultView();
-                                                        clearCartItems();
-                                                        endLoading();
-                                                    }
 
-                                                    @Override
-                                                    public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                        endLoading();
-                                                    }
-                                                });
+                                                selectedRoom.setDepositInfo(depositInfoData);
+
+                                                SocketManager.reloadPosBackoutRoom(
+                                                        selectedRoom.getName(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                                );
+                                                BusProvider.getInstance().post(new PrintModel("",
+                                                        selectedRoom.getName(),
+                                                        "BACKOUT",
+                                                        GsonHelper.getGson().toJson(selectedRoom),
+                                                        selectedRoom.getRoomType(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                                        remarks));
+                                                defaultView();
+                                                clearCartItems();
+                                                endLoading();
                                             }
-                                        }
 
-                                        @Override
-                                        public void passwordFailed() {
+                                            @Override
+                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                endLoading();
+                                            }
+                                        });
+                                    } else {
+                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                        request.enqueue(new Callback<BackOutGuestResponse>() {
+                                            @Override
+                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
 
-                                        }
-                                    };
-                                    if (!passwordDialog.isShowing()) passwordDialog.show();
+
+                                                selectedRoom.setDepositInfo(depositInfoData);
+
+                                                SocketManager.reloadPosBackoutRoom(
+                                                        selectedRoom.getName(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                                );
+                                                BusProvider.getInstance().post(new PrintModel("",
+                                                        selectedRoom.getName(),
+                                                        "BACKOUT",
+                                                        GsonHelper.getGson().toJson(selectedRoom),
+                                                        selectedRoom.getRoomType(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                                        remarks));
+                                                defaultView();
+                                                clearCartItems();
+                                                endLoading();
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                                endLoading();
+                                            }
+                                        });
+                                    }
+
+
 
 
                                 }
@@ -3304,6 +3345,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         request.enqueue(new Callback<BackOutGuestResponse>() {
                                             @Override
                                             public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+
+
+                                                selectedRoom.setDepositInfo(depositInfoData);
+
+                                                SocketManager.reloadPosBackoutRoom(
+                                                        selectedRoom.getName(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                                );
+
+
                                                 BusProvider.getInstance().post(new PrintModel("",
                                                         selectedRoom.getName(),
                                                         "BACKOUT",
@@ -3327,6 +3378,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         request.enqueue(new Callback<BackOutGuestResponse>() {
                                             @Override
                                             public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+
+
+                                                selectedRoom.setDepositInfo(depositInfoData);
+
+                                                SocketManager.reloadPosBackoutRoom(
+                                                        selectedRoom.getName(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                                );
+
+
                                                 BusProvider.getInstance().post(new PrintModel("",
                                                         selectedRoom.getName(),
                                                         "BACKOUT",
@@ -3580,74 +3641,84 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 }
                             }
 
-                            final PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM SWITCH ROOM", "") {
+                            SwitchRoomRequest switchRoomRequest = new SwitchRoomRequest(
+                                    String.valueOf(selectedRoom.getRoomId()),
+                                    roomRatePriceId,
+                                    remarks,
+                                    roomId,
+                                    employeeId,
+                                    voidModel
+                            );
 
+                            Log.d("SWITCHROOMDATA", switchRoomRequest.getMapValue().toString());
+                            //uncomment fuckin switch room
+                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                            Call<SwitchRoomResponse> request = iUsers.switchRoom(switchRoomRequest.getMapValue());
+
+
+
+                            request.enqueue(new Callback<SwitchRoomResponse>() {
                                 @Override
-                                public void passwordSuccess(String employeeId, String employeeName) {
-                                    SwitchRoomRequest switchRoomRequest = new SwitchRoomRequest(
-                                            String.valueOf(selectedRoom.getRoomId()),
-                                            roomRatePriceId,
-                                            remarks,
-                                            roomId,
-                                            employeeId,
-                                            voidModel
-                                    );
-                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                    Call<SwitchRoomResponse> request = iUsers.switchRoom(switchRoomRequest.getMapValue());
+                                public void onResponse(Call<SwitchRoomResponse> call, Response<SwitchRoomResponse> response) {
+                                    if (response.body().getStatus() == 0) {
+                                        Utils.showDialogMessage(getActivity(), response.body().getMesage(), "Warning");
+                                    } else {
+                                        if (response.body().getResults() != null) {
 
 
-                                    request.enqueue(new Callback<SwitchRoomResponse>() {
-                                        @Override
-                                        public void onResponse(Call<SwitchRoomResponse> call, Response<SwitchRoomResponse> response) {
-                                            if (response.body().getStatus() == 0) {
-                                                Utils.showDialogMessage(getActivity(), response.body().getMesage(), "Warning");
-                                            } else {
-                                                if (response.body().getResults() != null) {
-                                                    if (response.body().getResults().getBooked().size() > 0) {
 
 
-                                                        SwitchRoomPrintModel switchRoomPrintModel =
-                                                                new SwitchRoomPrintModel(
-                                                                        selectedRoom.getName(),
-                                                                        selectedRoom.getRoomType(),
-                                                                        response.body().getResults().getBooked().get(0).getRoomNumber(),
-                                                                        response.body().getResults().getBooked().get(0).getRoomType(),
-                                                                        response.body().getResults().getBooked().get(0).getCheckInTime(),
-                                                                        response.body().getResults().getBooked().get(0).getUser_id());
+                                            if (response.body().getResults().getBooked().size() > 0) {
 
-                                                        BusProvider.getInstance().post(
-                                                                new PrintModel(
-                                                                        "",
-                                                                        response.body().getResults().getBooked().get(0).getRoomNumber(),
-                                                                        "SWITCH_ROOM" ,
-                                                                        GsonHelper.getGson().toJson(switchRoomPrintModel),
-                                                                        "",
-                                                                        "",
-                                                                        remarks));
+                                                SocketManager.reloadPosSwitchRoom(
+                                                        selectedRoom.getName(),
+                                                        response.body().getResults().getBooked().get(0).getRoomNumber(),
+                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME));
 
+
+                                                SwitchRoomPrintModel switchRoomPrintModel =
+                                                        new SwitchRoomPrintModel(
+                                                                selectedRoom.getName(),
+                                                                selectedRoom.getRoomType(),
+                                                                response.body().getResults().getBooked().get(0).getRoomNumber(),
+                                                                response.body().getResults().getBooked().get(0).getRoomType(),
+                                                                response.body().getResults().getBooked().get(0).getCheckInTime(),
+                                                                response.body().getResults().getBooked().get(0).getUser_id());
+
+                                                BusProvider.getInstance().post(
+                                                        new PrintModel(
+                                                                "",
+                                                                response.body().getResults().getBooked().get(0).getRoomNumber(),
+                                                                "SWITCH_ROOM" ,
+                                                                GsonHelper.getGson().toJson(switchRoomPrintModel),
+                                                                "",
+                                                                "",
+                                                                remarks));
+
+                                                //dione
+                                                Handler hndl2 = new Handler(Looper.getMainLooper());
+                                                hndl2.postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
                                                         fetchRoomViaIdRequest(String.valueOf(response.body().getResults().getBooked().get(0).getRoomId()));
-                                                        Utils.showDialogMessage(getActivity(), "Switch room succeeded", "Success");
                                                     }
+                                                }, 500);
 
-                                                }
+                                                Utils.showDialogMessage(getActivity(), "Switch room succeeded", "Success");
                                             }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<SwitchRoomResponse> call, Throwable t) {
 
                                         }
-                                    });
-
-
+                                    }
                                 }
 
                                 @Override
-                                public void passwordFailed() {
+                                public void onFailure(Call<SwitchRoomResponse> call, Throwable t) {
 
                                 }
-                            };
-                            passwordDialog.show();
+                            });
+
+
+
                         }
                     };
 
@@ -4679,6 +4750,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             + Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt())))))));
 
                     advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
+                    depositInfoData = String.valueOf(advancePayment);
                     discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
                     subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)))));
 
@@ -4686,6 +4758,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))))));
                     discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
                     deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())))));
+                    depositInfoData = String.valueOf(r.getTransaction().getAdvance());
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
                         List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
                         for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
@@ -5030,18 +5103,28 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void sendOffGoingNegoRequest(String roomId) {
 
         if (selectedRoom != null) {
-            SocketManager.reloadPos(
-                    selectedRoom.getName(),
-                    String.valueOf(selectedRoom.getRoomId()),
-                    "1",
-                    "1",
-                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                    "cancel");
+
+            if (selectedRoom.getStatus().equalsIgnoreCase("59")) {
+                SocketManager.reloadPos(
+                        selectedRoom.getName(),
+                        String.valueOf(selectedRoom.getRoomId()),
+                        "59",
+                        "1",
+                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                        "end");
+            } else {
+                SocketManager.reloadPos(
+                        selectedRoom.getName(),
+                        String.valueOf(selectedRoom.getRoomId()),
+                        "1",
+                        "1",
+                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                        "cancel");
+            }
+
         } else {
             Log.d("EMIT", "EMPTY ROOM SELECTED");
         }
-
-
 
         BusProvider.getInstance().post(new OffGoingNegoRequest(roomId));
         defaultView();
@@ -5439,7 +5522,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())));
         discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())));
-
+        depositInfoData = String.valueOf(advancePayment);
 
         cartItemList = new ArrayList<>();
         postedPaymentsList = new ArrayList<>();
@@ -5478,6 +5561,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))));
             subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal())))));
             deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())))));
+            depositInfoData = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance());
             total.setText(String.valueOf(
                     (fetchOrderPendingViaControlNoResponse.getResult().getTotal() -(fetchOrderPendingViaControlNoResponse.getResult().getAdvance() + fetchOrderPendingViaControlNoResponse.getResult().getDiscount())) < 0 ?
                             "0.00" :
@@ -5745,6 +5829,36 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         GsonHelper.getGson().toJson(wul),
                         "room_no_list");
             }
+
+
+            ChangeRoomStatusRequest cr =
+                    new ChangeRoomStatusRequest("3",
+                            String.valueOf(selectedRoom.getRoomId()),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.USER_ID),
+                            "");
+
+            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+            Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(cr.getMapValue());
+            request.enqueue(new Callback<ChangeRoomStatusResponse>() {
+                @Override
+                public void onResponse(Call<ChangeRoomStatusResponse> call, Response<ChangeRoomStatusResponse> response) {
+
+                    SocketManager.reloadPos(
+                            selectedRoom.getName(),
+                            String.valueOf(selectedRoom.getRoomId()),
+                            "3",
+                            "3",
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                            "end");
+
+
+                }
+
+                @Override
+                public void onFailure(Call<ChangeRoomStatusResponse> call, Throwable t) {
+
+                }
+            });
 
 
 
@@ -6241,6 +6355,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                             JSONObject dutyManager = jsonObject.getJSONObject("nameValuePairs").getJSONObject("data").getJSONObject("nameValuePairs").getJSONObject("duty_manager");
                             if (dataJsonObject != null) {
+
                                 fetchXReadViaIdRequest(dataJsonObject.getString("id"));
 
                             }
@@ -6573,13 +6688,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void fetchXReadViaIdRequest(String xReadingId) {
         BusProvider.getInstance().post(new FetchXReadingViaIdRequest(xReadingId));
+        Log.d("REQ", "REQXREAD");
     }
 
     @Subscribe
     public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
-
+        Log.d("REQ", "REQ X READ RESPONSE");
         BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
-        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+//        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }
 
     private void fetchZReadViaIdRequest(String zReadId) {

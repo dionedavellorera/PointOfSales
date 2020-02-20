@@ -29,6 +29,7 @@ public abstract class ChangeQtyDialog extends BaseDialog implements CalcuContrac
 
     LayoutAnimationController anim;
 
+    private boolean isFirstUse = true;
     public ChangeQtyDialog(@NonNull Context context) {
         super(context);
     }
@@ -67,10 +68,18 @@ public abstract class ChangeQtyDialog extends BaseDialog implements CalcuContrac
 
     @Override
     public void clicked(String value) {
-        if (qty.getText().toString().equalsIgnoreCase("0")) {
-            qty.setText("");
+        if (!isFirstUse) {
+            if (qty.getText().toString().equalsIgnoreCase("0")) {
+                qty.setText("");
+            }
+            qty.setText(qty.getText().toString() + String.valueOf(value));
+        } else {
+            qty.setText(String.valueOf(value));
         }
-        qty.setText(qty.getText().toString() + String.valueOf(value));
+
+
+        isFirstUse = false;
+
     }
 
     @Override
@@ -81,10 +90,13 @@ public abstract class ChangeQtyDialog extends BaseDialog implements CalcuContrac
         } else {
 
         }
+        isFirstUse = false;
+
     }
 
     @Override
     public void clear() {
+        isFirstUse = false;
         qty.setText("0");
     }
 

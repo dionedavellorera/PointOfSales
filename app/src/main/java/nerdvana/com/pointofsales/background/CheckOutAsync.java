@@ -561,13 +561,13 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "   ADVANCED DEPOSIT",
-//                        toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
-//                        40,
-//                        2,
-//                        context)
-//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "   ADVANCED DEPOSIT",
+                        toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
+                        40,
+                        2,
+                        context)
+                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addPrinterSpace(1);
