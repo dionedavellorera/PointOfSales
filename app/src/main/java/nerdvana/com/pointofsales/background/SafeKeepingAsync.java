@@ -73,6 +73,11 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
                                 }
                             }
@@ -81,6 +86,11 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
             PrinterUtils.addHeader(printModel, printer);
@@ -102,6 +112,11 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
                     printer.clearCommandBuffer();
                 }
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 

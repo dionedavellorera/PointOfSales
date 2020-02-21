@@ -89,7 +89,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 try {
                     printer.addPulse(Printer.DRAWER_HIGH, Printer.PULSE_100);
                 } catch (Epos2Exception e) {
-
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
                     e.printStackTrace();
 //                asyncFinishCallBack.doneProcessing();
                 }
@@ -107,7 +111,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
-
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
 //                                asyncFinishCallBack.doneProcessing();
                                 }
@@ -117,7 +125,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
-
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
             }
@@ -985,6 +997,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 //            printer.endTransaction();
         } catch (Epos2Exception e) {
+            try {
+                printer.disconnect();
+            } catch (Epos2Exception e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
         }
@@ -1053,6 +1070,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 textData.delete(0, textData.length());
                 printer.addFeedLine(feedLine);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
 //                asyncFinishCallBack.doneProcessing();
             }
@@ -1082,6 +1104,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
             printer.addFeedLine(count);
         } catch (Epos2Exception e) {
             e.printStackTrace();
+            try {
+                printer.disconnect();
+            } catch (Epos2Exception e1) {
+                e1.printStackTrace();
+            }
 //            asyncFinishCallBack.doneProcessing();
         }
     }

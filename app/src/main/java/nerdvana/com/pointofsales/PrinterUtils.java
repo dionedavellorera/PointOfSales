@@ -222,7 +222,11 @@ public class PrinterUtils {
                     isConnected = true;
                 }
             } catch (Epos2Exception e) {
-
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
         } else {
@@ -236,7 +240,11 @@ public class PrinterUtils {
                         isConnected = true;
                     }
                 } catch (Epos2Exception e) {
-
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
                     e.printStackTrace();
                 }
             }

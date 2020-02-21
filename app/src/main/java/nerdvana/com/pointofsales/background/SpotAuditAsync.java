@@ -78,6 +78,11 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
                                 }
                             }
@@ -86,6 +91,11 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
             PrinterUtils.addHeader(printModel, printer);
@@ -108,6 +118,11 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
                     printer.clearCommandBuffer();
                 }
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 
@@ -152,6 +167,11 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
                 textData.delete(0, textData.length());
                 printer.addFeedLine(feedLine);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
         }
@@ -178,6 +198,11 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
         try {
             printer.addFeedLine(count);
         } catch (Epos2Exception e) {
+            try {
+                printer.disconnect();
+            } catch (Epos2Exception e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
     }

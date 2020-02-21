@@ -78,6 +78,11 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
                                 }
                             }
@@ -86,6 +91,11 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 
@@ -186,6 +196,11 @@ public class IntransitAsync extends AsyncTask<Void, Void, Void> {
                 }
 
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 

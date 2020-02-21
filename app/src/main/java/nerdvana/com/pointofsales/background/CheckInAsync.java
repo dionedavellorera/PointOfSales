@@ -77,6 +77,11 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
 //                                asyncFinishCallBack.doneProcessing();
                                 }
@@ -86,6 +91,11 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
             }
@@ -188,6 +198,11 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
 //            printer.endTransaction();
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
             }

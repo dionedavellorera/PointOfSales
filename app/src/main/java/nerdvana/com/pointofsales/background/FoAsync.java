@@ -78,6 +78,11 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
 //                                asyncFinishCallBack.doneProcessing();
                                 }
@@ -89,6 +94,11 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
 //            asyncFinishCallBack.doneProcessing();
             }
 
@@ -96,6 +106,11 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 hasConnected = false;
 //            asyncFinishCallBack.doneProcessing();
             }
@@ -106,6 +121,11 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
             } catch (Epos2Exception e) {
                 e.printStackTrace();
                 hasConnected = false;
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
 //            asyncFinishCallBack.doneProcessing();
             }
 
@@ -181,6 +201,11 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 }
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
 //            asyncFinishCallBack.doneProcessing();
             }
 

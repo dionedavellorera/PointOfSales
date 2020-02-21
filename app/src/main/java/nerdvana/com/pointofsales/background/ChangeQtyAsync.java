@@ -86,6 +86,11 @@ public class ChangeQtyAsync extends AsyncTask<Void, Void, Void> {
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
                 e.printStackTrace();
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
             }
 
             if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
@@ -115,6 +120,11 @@ public class ChangeQtyAsync extends AsyncTask<Void, Void, Void> {
                     printer.clearCommandBuffer();
                 }
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 
@@ -153,6 +163,11 @@ public class ChangeQtyAsync extends AsyncTask<Void, Void, Void> {
                 textData.delete(0, textData.length());
                 printer.addFeedLine(feedLine);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
         }
@@ -179,6 +194,11 @@ public class ChangeQtyAsync extends AsyncTask<Void, Void, Void> {
         try {
             printer.addFeedLine(count);
         } catch (Epos2Exception e) {
+            try {
+                printer.disconnect();
+            } catch (Epos2Exception e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
     }

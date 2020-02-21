@@ -63,6 +63,11 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
                     printer.addPulse(Printer.DRAWER_HIGH, Printer.PULSE_100);
                 } catch (Epos2Exception e) {
                     e.printStackTrace();
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
                 printer.setReceiveEventListener(new ReceiveListener() {
                     @Override
@@ -74,6 +79,11 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
                                 }
                             }
@@ -82,6 +92,11 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
                 });
                 PrinterUtils.connect(context, printer);
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 
@@ -150,6 +165,11 @@ public class DepositAsync extends AsyncTask<Void, Void, Void> {
 
 //            printer.endTransaction();
             } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
                 e.printStackTrace();
             }
 

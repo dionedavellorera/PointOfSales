@@ -69,6 +69,11 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
+                                    try {
+                                        printer.disconnect();
+                                    } catch (Epos2Exception e1) {
+                                        e1.printStackTrace();
+                                    }
                                     e.printStackTrace();
                                 }
                             }
@@ -183,6 +188,11 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
                     }
 
                 } catch (Epos2Exception e) {
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
                     e.printStackTrace();
                 }
 
@@ -193,6 +203,11 @@ public class BackOutAsync extends AsyncTask<Void, Void, Void> {
 //            }
 
         } catch (Epos2Exception e) {
+            try {
+                printer.disconnect();
+            } catch (Epos2Exception e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         }
 
