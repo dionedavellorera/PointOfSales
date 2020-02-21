@@ -72,8 +72,7 @@ public class PaymentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
 
-            if (paymentList.get(holder.getAdapterPosition()).getCore_id().equalsIgnoreCase("8") ||
-                    paymentList.get(holder.getAdapterPosition()).getCore_id().equalsIgnoreCase("7") ||
+            if (paymentList.get(holder.getAdapterPosition()).getCore_id().equalsIgnoreCase("7") ||
             paymentList.get(holder.getAdapterPosition()).getCore_id().equalsIgnoreCase("4")) {
 
 

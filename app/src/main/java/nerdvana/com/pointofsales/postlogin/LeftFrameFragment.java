@@ -6710,7 +6710,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING).equalsIgnoreCase("y")) {
             BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
         } else {
-            BusProvider.getInstance().post(new PrintModel("X READ SUCCESS", "ACK_SLIP", "ACK_SLIP", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+            BusProvider.getInstance().post(new PrintModel("X READ SUCCESS", "xread", "ACK_SLIP", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
         }
 
 //        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
@@ -6725,9 +6725,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
 
                 if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_ZREADING).equalsIgnoreCase("y")) {
-                    BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+                    BusProvider.getInstance().post(new PrintModel("", "Z READING", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
                 } else {
-                    BusProvider.getInstance().post(new PrintModel("Z READ SUCCESS", "ACK_SLIP", "ACK_SLIP", GsonHelper.getGson().toJson(response.body().getResult())));
+                    BusProvider.getInstance().post(new PrintModel("Z READ SUCCESS", "zread", "ACK_SLIP", GsonHelper.getGson().toJson(response.body().getResult())));
                 }
 
 

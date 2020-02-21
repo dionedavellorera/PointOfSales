@@ -116,6 +116,8 @@ public abstract class PaymentDialog extends BaseDialog  {
     private LinearLayout formVoucher;
     private LinearLayout formVoucher2;
     private LinearLayout formForex;
+    private LinearLayout formTakas;
+    private LinearLayout formTakas2;
 
     private RelativeLayout rl1;
     private RelativeLayout rl2;
@@ -144,6 +146,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private Button addGc;
     private Button addForex;
     private Button addGuest;
+    private Button addTakas;
 
     private Button pay;
     private EditText amountToPay;
@@ -169,6 +172,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private EditText voucherCode;
     private EditText voucherAmount;
     private SearchableSpinner spinnerOnline;
+    private SearchableSpinner spinnerOnlineTakas;
     private String onlineId;
 
     FetchPaymentResponse.Result f;
@@ -353,6 +357,8 @@ public abstract class PaymentDialog extends BaseDialog  {
         formCash = findViewById(R.id.formCash);
         formCard = findViewById(R.id.formCard);
         formCard2 = findViewById(R.id.formCard2);
+        formTakas2 = findViewById(R.id.formTakas2);
+        formTakas = findViewById(R.id.formTakas);
         formOnline = findViewById(R.id.formOnline);
         formOnline2 = findViewById(R.id.formOnline2);
         formVoucher = findViewById(R.id.formGiftCheck);
@@ -373,6 +379,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         addGc = findViewById(R.id.addGc);
         addForex = findViewById(R.id.addForex);
         addGuest = findViewById(R.id.addGuest);
+        addTakas = findViewById(R.id.addTakas);
 
         pay = findViewById(R.id.pay);
         displayTotalChange = findViewById(R.id.totalChange);
@@ -381,6 +388,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         voucherCode = (EditText) findViewById(R.id.voucherCode);
         voucherAmount = (EditText) findViewById(R.id.voucherAmount);
         spinnerOnline = (SearchableSpinner) findViewById(R.id.spinnerOnline);
+        spinnerOnlineTakas = (SearchableSpinner) findViewById(R.id.spinnerOnlineTakas);
 
         listAvailedGcs = (RecyclerView) findViewById(R.id.listAvailedGcs);
         voucherNumber = (EditText) findViewById(R.id.voucherNumber);
@@ -611,6 +619,12 @@ public abstract class PaymentDialog extends BaseDialog  {
                     postedPaymentsAdapter.notifyDataSetChanged();
                 }
                 computeTotal();
+            }
+        });
+        addTakas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "TAKAS CLICKED", Toast.LENGTH_SHORT).show();
             }
         });
         addOnline.setOnClickListener(new View.OnClickListener() {
@@ -1243,6 +1257,8 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formOnline2.setVisibility(GONE);
+            formTakas.setVisibility(GONE);
+            formTakas2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("2")) { //card
@@ -1253,6 +1269,8 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formOnline2.setVisibility(GONE);
+            formTakas.setVisibility(GONE);
+            formTakas2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("3")) { //online
@@ -1263,6 +1281,8 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(View.VISIBLE);
             formOnline2.setVisibility(View.VISIBLE);
+            formTakas.setVisibility(GONE);
+            formTakas2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("5")) { //voucher
@@ -1273,6 +1293,8 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher2.setVisibility(VISIBLE);
             formOnline.setVisibility(GONE);
             formOnline2.setVisibility(GONE);
+            formTakas.setVisibility(GONE);
+            formTakas2.setVisibility(GONE);
             formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("6")) { //forex
@@ -1283,7 +1305,21 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formOnline2.setVisibility(GONE);
+            formTakas.setVisibility(GONE);
+            formTakas2.setVisibility(GONE);
             formForex.setVisibility(View.VISIBLE);
+            formGuestInfo.setVisibility(GONE);
+        } else if (coreId.equalsIgnoreCase("8")) { //forex
+            formCash.setVisibility(View.GONE);
+            formCard.setVisibility(GONE);
+            formCard2.setVisibility(GONE);
+            formVoucher.setVisibility(GONE);
+            formVoucher2.setVisibility(GONE);
+            formOnline.setVisibility(GONE);
+            formOnline2.setVisibility(GONE);
+            formTakas.setVisibility(VISIBLE);
+            formTakas2.setVisibility(VISIBLE);
+            formForex.setVisibility(GONE);
             formGuestInfo.setVisibility(GONE);
         } else if (coreId.equalsIgnoreCase("999")) {
             formGuestInfo.setVisibility(View.VISIBLE);
@@ -1294,6 +1330,8 @@ public abstract class PaymentDialog extends BaseDialog  {
             formVoucher2.setVisibility(GONE);
             formOnline.setVisibility(GONE);
             formOnline2.setVisibility(GONE);
+            formTakas.setVisibility(GONE);
+            formTakas2.setVisibility(GONE);
             formForex.setVisibility(View.GONE);
         }
     }

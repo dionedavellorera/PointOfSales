@@ -331,6 +331,44 @@
                             android:layout_height="wrap_content"/>
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_above="@id/add"
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formTakas"
+                        android:layout_toRightOf="@id/cardPayments"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                        <TextView
+                            android:padding="10dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Takas Type"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_marginBottom="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+
+                        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:id="@+id/spinnerOnlineTakas"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+
                     <LinearLayout
                         android:layout_above="@id/add"
                         android:background="@color/colorExp1"
@@ -641,6 +679,84 @@
                             android:layout_height="wrap_content"
                             android:text="APPLY VOUCHER"/>
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:background="@color/colorExp1"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:id="@+id/formTakas2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+
+                        <TextView
+                            android:padding="10dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/colorBlack"
+                            android:text="Takas Details"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/colorLtGrey"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilTakasRemarks"
+                            android:layout_below="@id/logo"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:imeOptions="actionNext"
+                                android:hint="Remarks"
+
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilTakasAmount"
+                            android:layout_below="@id/logo"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:maxLines="1"
+                                android:imeOptions="actionDone"
+                                android:inputType="numberDecimal"
+                                android:hint="Takas amount"
+                                android:id="@+id/takasAmount"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <Button
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:textColor="@color/colorWhite"
+                            android:background="@drawable/button_selector"
+                            android:layout_alignParentBottom="true"
+                            android:id="@+id/addTakas"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="APPLY TAKAS AMOUNT"/>
+                    </LinearLayout>
+
+
 
 
                     <LinearLayout

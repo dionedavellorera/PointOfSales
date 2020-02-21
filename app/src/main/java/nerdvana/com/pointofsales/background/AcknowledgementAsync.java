@@ -3,23 +3,30 @@ package nerdvana.com.pointofsales.background;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
+import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
 import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
+import static nerdvana.com.pointofsales.PrinterUtils.returnWithTwoDecimal;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class AcknowledgementAsync extends AsyncTask<Void, Void, Void> {
@@ -93,7 +100,27 @@ public class AcknowledgementAsync extends AsyncTask<Void, Void, Void> {
 
 
 
+                if (printModel.getRoomNumber().equalsIgnoreCase("xread")) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(printModel.getData());
+                        JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                        JSONArray dataCashAndRecoJsonObject = jsonObject.getJSONObject("data").getJSONArray("cash_and_reco");
+                        JSONObject cashierDataObject = jsonObject.getJSONObject("data").getJSONObject("cashier");
+                        JSONObject dutyManager = jsonObject.getJSONObject("data").getJSONObject("duty_manager");
+                        if (dataJsonObject != null) {
+                            addTextToPrinter(printer, "SHIFT : " + (dataJsonObject.getString("shift_no") != null ? dataJsonObject.getString("shift_no") : " NA"), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                        }
+                    } catch (JSONException e) {
 
+                    }
+
+                } else if (printModel.getRoomNumber().equalsIgnoreCase("zread")) {
+                    ZReadResponse.Result zReadResponse = GsonHelper.getGson().fromJson(printModel.getData(), ZReadResponse.Result.class);
+                    Log.d("1231321", String.valueOf(zReadResponse.getCount()));
+                    if (zReadResponse != null) {
+                        addTextToPrinter(printer, "Z COUNTER:" + String.valueOf(zReadResponse.getCount()), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    }
+                }
                 addTextToPrinter(printer, printModel.getMessage(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
                 addTextToPrinter(printer, "", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

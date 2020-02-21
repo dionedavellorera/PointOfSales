@@ -21,6 +21,7 @@ import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.SPrinter;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
+import nerdvana.com.pointofsales.interfaces.PrinterContract;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -41,10 +42,12 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
     private String kitchPath;
     private String printerPath;
+    private PrinterContract printerContract;
     public FoAsync(PrintModel printModel, Context context,
                    UserModel userModel, String currentDateTime,
                    MainActivity.AsyncFinishCallBack asyncFinishCallBack,
-                   String kitchPath, String printerPath) {
+                   String kitchPath, String printerPath,
+                   PrinterContract printerContract) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
@@ -52,6 +55,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
         this.asyncFinishCallBack = asyncFinishCallBack;
         this.kitchPath = kitchPath;
         this.printerPath = printerPath;
+        this.printerContract = printerContract;
     }
 
     @Override
@@ -76,6 +80,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                             public void run() {
                                 try {
                                     printer.disconnect();
+                                    printerContract.errorHappen(printerStatusInfo);
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
                                     try {
@@ -131,6 +136,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
             PrinterUtils.connect(context, printer);
 
+//            printerContract.errorHappen(printer.getStatus());
 
 //            if (!hasConnected) {
 //                PrinterUtils.connect(context, printer);

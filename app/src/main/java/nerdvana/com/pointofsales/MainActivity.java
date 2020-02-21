@@ -24,6 +24,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.cardview.widget.CardView;
 import androidx.appcompat.widget.TooltipCompat;
+
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -126,6 +128,7 @@ import nerdvana.com.pointofsales.dialogs.RoomListViewDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomEntity;
 import nerdvana.com.pointofsales.interfaces.PreloginContract;
+import nerdvana.com.pointofsales.interfaces.PrinterContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
@@ -154,7 +157,7 @@ import retrofit2.Response;
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
-public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener, PrinterContract {
     private CollectionDialog collectionDialog;
     private String currentText = "";
     public static String roomNumber;
@@ -325,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                             myPrintJobs.get(0).getTaskName().equalsIgnoreCase("checkout") ||
                             myPrintJobs.get(0).getTaskName().equalsIgnoreCase("soato") ||
                             myPrintJobs.get(0).getTaskName().equalsIgnoreCase("reprint_checkout")) {
-                        Handler handler = new Handler(Looper.getMainLooper());
+                        Handler handler = new Handler(  Looper.getMainLooper());
 
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -952,7 +955,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "FO": //done
                 willExecutGlobalPrint = false;
-                addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath()), "fo");
+                addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath(), this), "fo");
                 addAsync(new FoKitchenAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath()), "fo_kitchen");
 
                 break;
@@ -3151,6 +3154,40 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void errorHappen(PrinterStatusInfo printerStatusInfo) {
+
+        new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                Toast.makeText(getApplicationContext(), makeErrorMessage(printerStatusInfo) + dispPrinterWarnings(printerStatusInfo), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+    }
+
+    private String dispPrinterWarnings(PrinterStatusInfo status) {
+
+        String warningsMsg = "";
+
+        if (status == null) {
+            return "";
+        }
+
+        if (status.getPaper() == Printer.PAPER_NEAR_END) {
+            warningsMsg += getString(R.string.handlingmsg_warn_receipt_near_end);
+        }
+
+        if (status.getBatteryLevel() == Printer.BATTERY_LEVEL_1) {
+            warningsMsg += getString(R.string.handlingmsg_warn_battery_near_end);
+        }
+
+        return warningsMsg;
+
+//        Toast.makeText(MainActivity.this, warningsMsg, Toast.LENGTH_SHORT).show();
+    }
+
 
     public interface Loading {
         void show(boolean willShow);
