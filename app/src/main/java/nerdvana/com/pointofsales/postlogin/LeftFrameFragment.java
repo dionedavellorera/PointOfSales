@@ -3026,7 +3026,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             @Override
                             public void save(String remarks) {
                                 if (model.size() > 0) {
-                                    BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath, remarks));
+                                    BusProvider.getInstance().post(new PrintModel("", "TAKEOUT", "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath, remarks,kitchenPath, printerPath));
                                 }
 
                                 BusProvider.getInstance().post(
@@ -3090,7 +3090,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 @Override
                                 public void save(String remarks) {
                                     if (model.size() > 0) {
-                                        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath, remarks));
+                                        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model), kitchenPath, printerPath, remarks,kitchenPath, printerPath));
                                     }
 
 
@@ -3157,7 +3157,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         "BACKOUT",
                                                         GsonHelper.getGson().toJson(selectedRoom),
                                                         selectedRoom.getRoomType(),employeeName,
-                                                        remarks));
+                                                        remarks,
+                                                        kitchenPath, printerPath));
                                                 defaultView();
                                                 clearCartItems();
                                                 endLoading();
@@ -3190,7 +3191,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         "BACKOUT",
                                                         GsonHelper.getGson().toJson(selectedRoom),
                                                         selectedRoom.getRoomType(),employeeName,
-                                                        remarks));
+                                                        remarks,
+                                                        kitchenPath, printerPath));
                                                 defaultView();
                                                 clearCartItems();
                                                 endLoading();
@@ -3270,7 +3272,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         GsonHelper.getGson().toJson(selectedRoom),
                                                         selectedRoom.getRoomType(),
                                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                                                        remarks));
+                                                        remarks,
+                                                        kitchenPath, printerPath));
                                                 defaultView();
                                                 clearCartItems();
                                                 endLoading();
@@ -3302,7 +3305,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         GsonHelper.getGson().toJson(selectedRoom),
                                                         selectedRoom.getRoomType(),
                                                         SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                                                        remarks));
+                                                        remarks,
+                                                        kitchenPath, printerPath));
                                                 defaultView();
                                                 clearCartItems();
                                                 endLoading();
@@ -3360,7 +3364,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         "BACKOUT",
                                                         GsonHelper.getGson().toJson(selectedRoom),
                                                         selectedRoom.getRoomType(),employeeName,
-                                                        remarks));
+                                                        remarks,
+                                                        kitchenPath, printerPath));
                                                 defaultView();
                                                 clearCartItems();
                                                 endLoading();
@@ -3393,7 +3398,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                         "BACKOUT",
                                                         GsonHelper.getGson().toJson(selectedRoom),
                                                         selectedRoom.getRoomType(),employeeName,
-                                                        remarks));
+                                                        remarks,
+                                                        kitchenPath, printerPath));
                                                 defaultView();
                                                 clearCartItems();
                                                 endLoading();
@@ -3691,9 +3697,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                                                 response.body().getResults().getBooked().get(0).getRoomNumber(),
                                                                 "SWITCH_ROOM" ,
                                                                 GsonHelper.getGson().toJson(switchRoomPrintModel),
-                                                                "",
-                                                                "",
-                                                                remarks));
+                                                                kitchenPath,
+                                                                printerPath,
+                                                                remarks,
+                                                                kitchenPath, printerPath));
 
                                                 //dione
                                                 Handler hndl2 = new Handler(Looper.getMainLooper());
@@ -5278,7 +5285,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void save(String remarks) {
 
-                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model),kitchenPath, printerPath, remarks));
+                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model),kitchenPath, printerPath, remarks,kitchenPath, printerPath));
                 BusProvider.getInstance().post(new AddRoomPriceRequest(
                         model,
                         roomId, new ArrayList<VoidProductModel>(),
@@ -5336,7 +5343,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 selectedRoom.getName(),
                                 "DEPOSIT",
                                 GsonHelper.getGson().toJson(ppm),
-                                selectedRoom.getRoomType()));
+                                selectedRoom.getRoomType(),
+                                kitchenPath, printerPath));
 
 
                         if (selectedRoom.isTakeOut()) {
@@ -5454,7 +5462,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 BusProvider.getInstance().post(new PrintModel("",
                         "takeout",
                         "SOA-TO",
-                        GsonHelper.getGson().toJson(response.body().getResult())
+                        GsonHelper.getGson().toJson(response.body().getResult()),
+                        kitchenPath,
+                        printerPath
                 ));
             }
 
@@ -5477,7 +5487,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 BusProvider.getInstance().post(new PrintModel("",
                         selectedRoom.getName(),
                         "SOA-ROOM",
-                        GsonHelper.getGson().toJson(response.body().getResult())
+                        GsonHelper.getGson().toJson(response.body().getResult()),
+                                kitchenPath,
+                                printerPath
                 ));
             }
 
@@ -6019,7 +6031,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     BusProvider.getInstance().post(
                             new PrintModel("", switchRoomResponse.getResults().getBooked().get(0).getRoomNumber(),
-                                    "SWITCH_ROOM" ,GsonHelper.getGson().toJson(switchRoomPrintModel)));
+                                    "SWITCH_ROOM" ,GsonHelper.getGson().toJson(switchRoomPrintModel),
+                                    kitchenPath, printerPath));
 
                     fetchRoomViaIdRequest(String.valueOf(switchRoomResponse.getResults().getBooked().get(0).getRoomId()));
                     Utils.showDialogMessage(getActivity(), "Switch room succeeded", "Success");
@@ -6203,11 +6216,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
 
-                    BusProvider.getInstance().post(new PrintModel(
-                            "", "",
-                            "FRANCHISE_OR",
-                            GsonHelper.getGson().toJson(response.body().getResult()),
-                            ""));
+//                    BusProvider.getInstance().post(new PrintModel(
+//                            "", "",
+//                            "FRANCHISE_OR",
+//                            GsonHelper.getGson().toJson(response.body().getResult()),
+//                            ""));
                 }
                 else {
 
@@ -6222,7 +6235,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             "", TextUtils.isEmpty(roomName) ? "takeout" : roomName,
                             "POST_VOID",
                             GsonHelper.getGson().toJson(response.body().getResult()),
-                            roomType));
+                            roomType, kitchenPath, printerPath));
 
 
 //                    if (selectedRoom != null) {
@@ -6272,7 +6285,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             "", "",
                             "FRANCHISE_OR",
                             GsonHelper.getGson().toJson(response.body().getResult()),
-                            ""));
+                            "",kitchenPath, printerPath));
                 }
                 else {
 
@@ -6294,7 +6307,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     "", "takeout",
                                     "PRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
-                                    roomType));
+                                    roomType, kitchenPath, printerPath));
 
 
                         }
@@ -6304,7 +6317,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     "", roomName,
                                     "PRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
-                                    roomType));
+                                    roomType, kitchenPath, printerPath));
                         }
                     } else {
                         Utils.showDialogMessage(getActivity(), "Empty selected room on printing, please reprint", "Information");;
@@ -6694,7 +6707,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void fetchXReadingViaIdResponse(FetchXReadingViaIdResponse fetchXReadingViaIdResponse) {
         Log.d("REQ", "REQ X READ RESPONSE");
-        BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+        if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING).equalsIgnoreCase("y")) {
+            BusProvider.getInstance().post(new PrintModel("", "X READING", "REXREADING", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+        } else {
+            BusProvider.getInstance().post(new PrintModel("X READ SUCCESS", "ACK_SLIP", "ACK_SLIP", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+        }
+
 //        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }
 
@@ -6706,7 +6724,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void onResponse(Call<ZReadResponse> call, Response<ZReadResponse> response) {
 
-                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+                if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_ZREADING).equalsIgnoreCase("y")) {
+                    BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));
+                } else {
+                    BusProvider.getInstance().post(new PrintModel("Z READ SUCCESS", "ACK_SLIP", "ACK_SLIP", GsonHelper.getGson().toJson(response.body().getResult())));
+                }
+
+
 
 
 //                BusProvider.getInstance().post(new PrintModel("", "ZREAD", "ZREAD", GsonHelper.getGson().toJson(response.body().getResult())));

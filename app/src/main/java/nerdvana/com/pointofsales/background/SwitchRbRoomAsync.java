@@ -24,7 +24,7 @@ import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.convertDateToReadableDate;
 
-public class SwitchRoomAsync extends AsyncTask<Void, Void, Void> {
+public class SwitchRbRoomAsync extends AsyncTask<Void, Void, Void> {
 
     private PrintModel printModel;
     private Context context;
@@ -36,7 +36,7 @@ public class SwitchRoomAsync extends AsyncTask<Void, Void, Void> {
 
     private String kitchPath;
     private String printerPath;
-    public SwitchRoomAsync(PrintModel printModel, Context context,
+    public SwitchRbRoomAsync(PrintModel printModel, Context context,
                            UserModel userModel, String currentDateTime,
                            MainActivity.AsyncFinishCallBack asyncFinishCallBack,
                            String kitchPath, String printerPath) {
@@ -84,7 +84,18 @@ public class SwitchRoomAsync extends AsyncTask<Void, Void, Void> {
                         }).start();
                     }
                 });
-                PrinterUtils.connect(context, printer);
+//                PrinterUtils.connect(context, printer);
+                try {
+                    printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    asyncFinishCallBack.doneProcessing();
+                }
             } catch (Epos2Exception e) {
                 e.printStackTrace();
                 try {

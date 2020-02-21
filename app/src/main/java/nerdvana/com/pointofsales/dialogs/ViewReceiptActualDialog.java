@@ -84,7 +84,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                                     "", roomNo,
                                     "REPRINT_RECEIPT",
                                     GsonHelper.getGson().toJson(response.body().getResult()),
-                                    roomType));
+                                    roomType, "", ""));
                         }
 
                         @Override
@@ -197,7 +197,7 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
                         "", roomNo,
                         "REPRINT_RECEIPT",
                         GsonHelper.getGson().toJson(response.body().getResult()),
-                        roomType));
+                        roomType, "", ""));
             }
 
             @Override

@@ -222,7 +222,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                                             "",
                                                             "SAFEKEEPING",
                                                             GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                                            ""));
+                                                            "", "", ""));
 
 
                                                     dismiss();
@@ -272,7 +272,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                 "",
                                 "CASHRECONCILE",
                                 GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                ""));
+                                "", "", ""));
 
                         Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
                     } else {

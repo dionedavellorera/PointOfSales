@@ -25,6 +25,9 @@ public class MachineSetupFragment extends Fragment {
 
     private CheckBox toSwitch;
     private CheckBox allowedToCheckInSwitch;
+
+    private CheckBox allowedXReadSwitch;
+    private CheckBox allowedZReadSwitch;
     public MachineSetupFragment() {}
 
     @Nullable
@@ -33,6 +36,8 @@ public class MachineSetupFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_machine_setup, container, false);
 
         toSwitch = view.findViewById(R.id.machineSwitchTo);
+        allowedZReadSwitch = view.findViewById(R.id.allowedZRead);
+        allowedXReadSwitch = view.findViewById(R.id.allowedXRead);
         allowedToCheckInSwitch = view.findViewById(R.id.allowedToCheckInSwitch);
 
 //        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
@@ -44,6 +49,18 @@ public class MachineSetupFragment extends Fragment {
         if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
             if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
                 allowedToCheckInSwitch.setChecked(true);
+            }
+        }
+
+        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING).isEmpty()) {
+            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING).equalsIgnoreCase("y")) {
+                allowedXReadSwitch.setChecked(true);
+            }
+        }
+
+        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_ZREADING).isEmpty()) {
+            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_ZREADING).equalsIgnoreCase("y")) {
+                allowedZReadSwitch.setChecked(true);
             }
         }
 
@@ -73,13 +90,69 @@ public class MachineSetupFragment extends Fragment {
 //                passwordDialog.show();
 //            }
 //        });
+
+
+        allowedZReadSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CHANGE ZREAD CAPABILITY", "") {
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+                        SharedPreferenceManager.saveString(getContext(), allowedZReadSwitch.isChecked() ? "y" : "n", ApplicationConstants.IS_ALLOWED_FOR_ZREADING);
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+                    }
+                };
+
+                passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+
+                        allowedZReadSwitch.toggle();
+                    }
+                });
+
+                passwordDialog.show();
+            }
+        });
+
+
+        allowedXReadSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CHANGE XREAD CAPABILITY", "") {
+                    @Override
+                    public void passwordSuccess(String employeeId, String employeeName) {
+                        SharedPreferenceManager.saveString(getContext(), allowedXReadSwitch.isChecked() ? "y" : "n", ApplicationConstants.IS_ALLOWED_FOR_XREADING);
+                    }
+
+                    @Override
+                    public void passwordFailed() {
+                    }
+                };
+
+                passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+
+                        allowedXReadSwitch.toggle();
+                    }
+                });
+
+                passwordDialog.show();
+            }
+        });
+
+
         allowedToCheckInSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CHANGE MACHINE TYPE", "") {
+                PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CHANGE CHECKIN CAPABILITY", "") {
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
-                        SharedPreferenceManager.saveString(getContext(), allowedToCheckInSwitch.isChecked() ? "y" : "n", ApplicationConstants.MACHINE_SETUP);
+                        SharedPreferenceManager.saveString(getContext(), allowedToCheckInSwitch.isChecked() ? "y" : "n", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
                     }
 
                     @Override

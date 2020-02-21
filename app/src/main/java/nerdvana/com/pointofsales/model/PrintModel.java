@@ -40,18 +40,23 @@ public class PrintModel {
         this.printerPath = printerPath;
     }
 
-    public PrintModel(String message, String roomNumber, String type, String data, String roomType) {
+    public PrintModel(String message, String roomNumber,
+                      String type, String data,
+                      String roomType,String kitchenPath, String printerPath ) {
         this.message = message;
         this.roomNumber = roomNumber;
         this.type = type;
         this.data = data;
         this.roomType = roomType;
+        this.kitchenPath = kitchenPath;
+        this.printerPath = printerPath;
     }
 
     public PrintModel(String message, String roomNumber,
                       String type, String data,
                       String roomType, String dutyManager,
-                      String remarks) {
+                      String remarks,
+                      String kitchenPath, String printerPath) {
         this.message = message;
         this.roomNumber = roomNumber;
         this.type = type;
@@ -59,6 +64,8 @@ public class PrintModel {
         this.roomType = roomType;
         this.dutyManager = dutyManager;
         this.remarks = remarks;
+        this.kitchenPath = kitchenPath;
+        this.printerPath = printerPath;
     }
 
     public int getNewQty() {

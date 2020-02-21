@@ -92,23 +92,29 @@ import nerdvana.com.pointofsales.api_responses.FetchTimeResponse;
 import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
+import nerdvana.com.pointofsales.background.AcknowledgementAsync;
 import nerdvana.com.pointofsales.background.BackOutAsync;
 import nerdvana.com.pointofsales.background.CashNReconcileAsync;
 import nerdvana.com.pointofsales.background.ChangeQtyAsync;
 import nerdvana.com.pointofsales.background.ChangeWakeUpCallAsync;
 import nerdvana.com.pointofsales.background.CheckInAsync;
 import nerdvana.com.pointofsales.background.CheckOutAsync;
+import nerdvana.com.pointofsales.background.CheckOutRbAsync;
 import nerdvana.com.pointofsales.background.CreateReceiptAsync;
 import nerdvana.com.pointofsales.background.DepositAsync;
 import nerdvana.com.pointofsales.background.FoAsync;
+import nerdvana.com.pointofsales.background.FoKitchenAsync;
 import nerdvana.com.pointofsales.background.FranchiseCheckoutAsync;
 import nerdvana.com.pointofsales.background.IntransitAsync;
 import nerdvana.com.pointofsales.background.PostVoidAsync;
 import nerdvana.com.pointofsales.background.SafeKeepingAsync;
 import nerdvana.com.pointofsales.background.ShortOverAsync;
+import nerdvana.com.pointofsales.background.SoaRbRoomAsync;
+import nerdvana.com.pointofsales.background.SoaRbToAsync;
 import nerdvana.com.pointofsales.background.SoaRoomAsync;
 import nerdvana.com.pointofsales.background.SoaToAsync;
 import nerdvana.com.pointofsales.background.SpotAuditAsync;
+import nerdvana.com.pointofsales.background.SwitchRbRoomAsync;
 import nerdvana.com.pointofsales.background.SwitchRoomAsync;
 import nerdvana.com.pointofsales.background.VoidAsync;
 import nerdvana.com.pointofsales.background.XReadAsync;
@@ -213,7 +219,17 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         List<RoomEntity> books = RoomEntity.listAll(RoomEntity.class);
 
-        SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
+        }
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_XREADING);
+        }
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_ZREADING))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_ZREADING);
+        }
 //        PrintingCallback printingCallback = new PrintingCallback() {
 //            @Override
 //            public void connectingWithPrinter() {
@@ -820,6 +836,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
         }
         switch (printModel.getType()) {
+            case "ACK_SLIP":
+                addAsync(new AcknowledgementAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "ack_slip");
+                break;
             case "SPOT_AUDIT_PRINT":
                 //willExecutGlobalPrint = false;
                 addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
@@ -856,7 +875,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             case "CASHRECONCILE"://ignore
                 //willExecutGlobalPrint = false;
                 saveCashierReconcileToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
+                if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING).equalsIgnoreCase("y")) {
+                    addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
+                }
+
                 break;
             case "SAFEKEEPING"://ignore
                 //willExecutGlobalPrint = false;
@@ -884,12 +906,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SWITCH_ROOM"://done
                 //willExecutGlobalPrint = false;
-                addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "switchroom");
+//                addAsync(new SwitchRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "switchroom_rb");
+                addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "switchroom");
                 break;
             case "PRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
                 addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout");
+                addAsync(new CheckOutRbAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout_rb");
+
                 break;
             case "REPRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
@@ -907,7 +932,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SOA-TO"://done"
                 willExecutGlobalPrint = false;
-                addAsync(new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soato");
+                addAsync(new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soato");
+                addAsync(new SoaRbToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soato_rb");
+
                 break;
             case "CHECKIN"://done
                 //willExecutGlobalPrint = false;
@@ -919,11 +946,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
-                addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "soaroom");
+                addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soaroom");
+                addAsync(new SoaRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soaroom_rb");
+
                 break;
             case "FO": //done
                 willExecutGlobalPrint = false;
                 addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath()), "fo");
+                addAsync(new FoKitchenAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath()), "fo_kitchen");
+
                 break;
         }
 
@@ -3695,6 +3726,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private void runTask(String taskName, AsyncTask asyncTask) {
 
         switch (taskName) {
+            case "ack_slip":
+                AcknowledgementAsync acknowledgementAsync = (AcknowledgementAsync) asyncTask;
+                acknowledgementAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "create_receipt":
                 CreateReceiptAsync createReceiptAsync = (CreateReceiptAsync) asyncTask;
                 createReceiptAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -3711,6 +3746,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 FranchiseCheckoutAsync franchiseCheckoutAsync = (FranchiseCheckoutAsync) asyncTask;
                 franchiseCheckoutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
+            case "fo_kitchen":
+                FoKitchenAsync foKitchenAsync = (FoKitchenAsync) asyncTask;
+                foKitchenAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "fo":
                 FoAsync foAsync = (FoAsync) asyncTask;
                 foAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -3723,9 +3762,17 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 CheckOutAsync reprintAsync = (CheckOutAsync) asyncTask;
                 reprintAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
+            case "checkout_rb":
+                CheckOutRbAsync checkOutRbAsync = (CheckOutRbAsync) asyncTask;
+                checkOutRbAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "checkout":
                 CheckOutAsync checkOutAsync = (CheckOutAsync) asyncTask;
                 checkOutAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "soaroom_rb":
+                SoaRbRoomAsync soaRbRoomAsync = (SoaRbRoomAsync) asyncTask;
+                soaRbRoomAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
             case "soaroom":
                 SoaRoomAsync soaRoomAsync = (SoaRoomAsync) asyncTask;
@@ -3767,6 +3814,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 XReadAsync xReadAsync = (XReadAsync) asyncTask;
                 xReadAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
+//            case "switchroom_rb":
+//                SwitchRbRoomAsync switchRbRoomAsync = (SwitchRbRoomAsync) asyncTask;
+//                switchRbRoomAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+//                break;
             case "switchroom":
                 SwitchRoomAsync switchRoomAsync = (SwitchRoomAsync) asyncTask;
                 switchRoomAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -3774,6 +3825,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             case "deposit":
                 DepositAsync depositAsync =(DepositAsync) asyncTask;
                 depositAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "soato_rb":
+                SoaRbToAsync soaRbToAsync = (SoaRbToAsync) asyncTask;
+                soaRbToAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
             case "soato":
                 SoaToAsync soaToAsync = (SoaToAsync) asyncTask;

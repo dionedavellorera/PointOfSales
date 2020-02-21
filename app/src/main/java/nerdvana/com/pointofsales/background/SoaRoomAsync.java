@@ -54,16 +54,22 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     private MainActivity.AsyncFinishCallBack asyncFinishCallBack;
     private Printer printer;
 
+    private String kitchPath;
+    private String printerPath;
 
     public SoaRoomAsync(PrintModel printModel, Context context,
                         UserModel userModel, String currentDateTime,
-                        MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
+                        MainActivity.AsyncFinishCallBack asyncFinishCallBack,
+                        String kitchPath, String printerPath) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
 
         this.asyncFinishCallBack = asyncFinishCallBack;
+
+        this.kitchPath = kitchPath;
+        this.printerPath = printerPath;
 
 
     }

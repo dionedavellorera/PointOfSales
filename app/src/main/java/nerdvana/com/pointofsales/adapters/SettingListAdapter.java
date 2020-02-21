@@ -59,7 +59,7 @@ public class SettingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
             });
 
-            ImageLoader.loadImage(R.mipmap.baseline_add_circle_outline_black_24, ((SettingViewHolder)holder).icon);
+            ImageLoader.loadImage(model.getDrawableIcon(), ((SettingViewHolder)holder).icon);
             ((SettingViewHolder)holder).name.setText(model.getName());
         }
     }

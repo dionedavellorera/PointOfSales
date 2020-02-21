@@ -28,7 +28,7 @@ import nerdvana.com.pointofsales.model.UserModel;
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
-public class FoAsync extends AsyncTask<Void, Void, Void> {
+public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
 
 
     private PrintModel printModel;
@@ -41,7 +41,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
     private String kitchPath;
     private String printerPath;
-    public FoAsync(PrintModel printModel, Context context,
+    public FoKitchenAsync(PrintModel printModel, Context context,
                    UserModel userModel, String currentDateTime,
                    MainActivity.AsyncFinishCallBack asyncFinishCallBack,
                    String kitchPath, String printerPath) {
@@ -116,20 +116,18 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 //            }
 
 
-//            try {
-//                printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
-//            } catch (Epos2Exception e) {
-//                e.printStackTrace();
-//                hasConnected = false;
-//                try {
-//                    printer.disconnect();
-//                } catch (Epos2Exception e1) {
-//                    e1.printStackTrace();
-//                }
-////            asyncFinishCallBack.doneProcessing();
-//            }
-
-            PrinterUtils.connect(context, printer);
+            try {
+                printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+            } catch (Epos2Exception e) {
+                e.printStackTrace();
+                hasConnected = false;
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
+            asyncFinishCallBack.doneProcessing();
+            }
 
 
 //            if (!hasConnected) {

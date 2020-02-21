@@ -180,7 +180,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                                 "", roomNo,
                                 "PRINT_RECEIPT",
                                 GsonHelper.getGson().toJson(response.body().getResult()),
-                                roomType));
+                                roomType, "", ""));
 
                     }
 

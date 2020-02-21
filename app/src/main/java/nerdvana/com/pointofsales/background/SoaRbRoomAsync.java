@@ -10,12 +10,16 @@ import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
+import com.epson.epos2.printer.StatusChangeListener;
+import com.facebook.stetho.common.StringUtil;
+import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,12 +41,10 @@ import nerdvana.com.pointofsales.model.UserModel;
 import static nerdvana.com.pointofsales.MainActivity.formatSeconds;
 import static nerdvana.com.pointofsales.PrinterUtils.addPrinterSpace;
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
-import static nerdvana.com.pointofsales.PrinterUtils.returnWithTwoDecimal;
-import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterLr;
+import static nerdvana.com.pointofsales.PrinterUtils.getDuration;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
-public class SoaToAsync extends AsyncTask<Void, Void, Void> {
-
+public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
 
     private PrintModel printModel;
     private Context context;
@@ -54,21 +56,21 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
     private String kitchPath;
     private String printerPath;
-
-    public SoaToAsync(PrintModel printModel, Context context,
-                      UserModel userModel, String currentDateTime,
-                      MainActivity.AsyncFinishCallBack asyncFinishCallBack,
-                      String kitchPath, String printerPath) {
+    public SoaRbRoomAsync(PrintModel printModel, Context context,
+                        UserModel userModel, String currentDateTime,
+                        MainActivity.AsyncFinishCallBack asyncFinishCallBack,
+                          String kitchPath, String printerPath) {
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
         this.currentDateTime = currentDateTime;
+
         this.asyncFinishCallBack = asyncFinishCallBack;
         this.kitchPath = kitchPath;
         this.printerPath = printerPath;
+
+
     }
-
-
 
     @Override
     protected void onPreExecute() {
@@ -107,6 +109,9 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                             @Override
                             public void run() {
                                 try {
+                                    printer.clearCommandBuffer();
+                                    printer.setReceiveEventListener(null);
+//                                    printer.endTransaction();
                                     printer.disconnect();
                                     asyncFinishCallBack.doneProcessing();
                                 } catch (Epos2Exception e) {
@@ -122,7 +127,21 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         }).start();
                     }
                 });
-                PrinterUtils.connect(context, printer);
+//                PrinterUtils.connect(context, printer);
+
+                try {
+                    printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    asyncFinishCallBack.doneProcessing();
+                }
+
+
             } catch (Epos2Exception e) {
                 try {
                     printer.disconnect();
@@ -140,16 +159,12 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-
-
             FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
                     ;
             if (toList1 != null) {
-
 //                if (toList1.getIsSoa() > 1) {
 //                    addTextToPrinter(printer, "REPRINT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //                }
-
                 //region create receipt data
 
 
@@ -174,7 +189,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "CHECK IN",
-                        convertDateToReadableDate(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA")
+                        Utils.birDateTimeFormat(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA")
                         ,
                         40,
                         2,
@@ -190,6 +205,9 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
+
+
+
                 int count = 0;
                 if (Integer.valueOf(toList1.getSoaCount()) > 1) {
 
@@ -201,6 +219,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                             2,
                             context)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 
 
 //                    if ((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1)  == 1) {
@@ -220,7 +239,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //                                context)
 //                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 //                    }
-
 
 
                     List<List<String>> allData = new ArrayList<>();
@@ -279,7 +297,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                             context)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
-
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -438,6 +455,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 //                                }
 //
+//
 //                            }
 //                        }
                     }
@@ -477,9 +495,9 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
 //                addPrinterSpace(1);
-
-
-
+//
+//
+//
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "NO OF PERSON/S",
 //                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
@@ -501,19 +519,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-//                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "VAT 12%",
-//                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-////                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-//                        40,
-//                        2,
-//                        context)
-//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
                 if (toList1.getVatExempt() > 0 && toList1.getDiscountsList().size() > 0) {
                     addPrinterSpace(1);
                     addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -530,7 +535,24 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
 
+//                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "VAT 12%",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+////                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
+
+
+//                String dc1 = "";
+//                for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
+//                    dc1 += dc.getDiscountType();
+//                }
 
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "DISCOUNT",
@@ -554,6 +576,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                 addPrinterSpace(1);
 
 
+
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "   ADVANCED DEPOSIT",
 //                        toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
@@ -562,7 +585,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //                        context)
 //                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addPrinterSpace(1);
 
 //            bookedList.get(0).getTransaction().getTotal() + bookedList.get(0).getTransaction().getOtAmount() + bookedList.get(0).getTransaction().getXPersonAmount()
 
@@ -585,7 +607,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //                    context)
 //                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
+//
 //                addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                        "AMOUNT DUE",
 //                        returnWithTwoDecimal(String.valueOf(
@@ -616,7 +638,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //                        context)
 //                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
                 List<Integer> tmpArr = new ArrayList<>();
                 String pymType = "";
                 List<String> ccardArray = new ArrayList<>();
@@ -643,7 +664,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "MASTER",
+                                            "MASTERCARD",
                                             ""
                                             ,
                                             40,
@@ -678,8 +699,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 //                        ,
 //                        40,
 //                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -820,11 +839,12 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "ADDRESS",
-                                        "",
+                                        d.getInfo().getAddress() != null ? d.getInfo().getAddress() : "",
                                         40,
                                         2,
                                         context)
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
 
                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                         "SIGNATURE",
@@ -835,51 +855,15 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
+                                addPrinterSpace(1);
+
+
                             }
                         }
                     }
 
                 }
 
-//            if (hasSpecial) {
-//                for (SeniorReceiptCheckoutModel sr : seniorReceiptList) {
-//                    addPrinterSpace(1);
-//                    if (!TextUtils.isEmpty(sr.getName())) {
-//                        addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    } else {
-//                        addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    }
-//
-//                    if (!TextUtils.isEmpty(sr.getScPwdId())) {
-//                        addTextToPrinter(printer, "SC/PWD ID:"+sr.getScPwdId(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    } else {
-//                        addTextToPrinter(printer, "SC/PWD ID:______________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    }
-//
-//
-//                    if (toList1.getCustomer().getAddress() != null) {
-//                        addTextToPrinter(printer, "ADDRESS:"+sr.getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    } else {
-//                        addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    }
-//
-//                    if (toList1.getCustomer().getTin() != null) {
-//                        addTextToPrinter(printer, "TIN#:" +sr.getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    } else {
-//                        addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    }
-//
-//                    if (toList1.getCustomer().getBusinessStyle() != null) {
-//                        addTextToPrinter(printer, "BUSINESS STYLE:"+ sr.getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                        addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    } else {
-//                        addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-//                    }
-//
-//                    addPrinterSpace(1);
-//
-//                }
-//            }
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "SUB TOTAL",
@@ -904,6 +888,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
                 addPrinterSpace(1);
+
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "NO OF PERSON/S",
                         returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
@@ -920,8 +905,9 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         40,
                         2,context),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addPrinterSpace(1);
 
+
+                addPrinterSpace(1);
 
                 if (toList1.getCustomer() != null) {
                     if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
@@ -979,8 +965,8 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     }
                 } else {
-                    addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
+                    addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                     addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
@@ -1017,12 +1003,14 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
         try {
-            printer.addCut(Printer.CUT_FEED);
-
-            if (printer.getStatus().getConnection() == 1) {
-                printer.sendData(Printer.PARAM_DEFAULT);
-                printer.clearCommandBuffer();
+            if (printer != null) {
+                if (printer.getStatus().getConnection() == 1) {
+                    printer.addCut(Printer.CUT_FEED);
+                    printer.sendData(Printer.PARAM_DEFAULT);
+                    printer.clearCommandBuffer();
+                }
             }
+
 
 
 //            printer.endTransaction();
@@ -1038,6 +1026,9 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
 
 
 
+
+
+
         return null;
     }
 
@@ -1046,21 +1037,96 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(aVoid);
 
 
+//        if (!SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY).isEmpty()) {
+//            new SPrinter(
+//                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+//                    Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+//                    context);
+//            try {
+//                printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY), Printer.PARAM_DEFAULT);
+//            } catch (Epos2Exception e) {
+//                e.printStackTrace();
+////                asyncFinishCallBack.doneProcessing();
+//            }
+//        } else {
+//            if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT).isEmpty()) {
+//                Toast.makeText(context, "No Printer", Toast.LENGTH_SHORT).show();
+//            } else {
+//                new SPrinter(
+//                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+//                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+//                        context);
+//
+//                try {
+//                    printer.connect(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PORT), Printer.PARAM_DEFAULT);
+//                } catch (Epos2Exception e) {
+//                    e.printStackTrace();
+////                    asyncFinishCallBack.doneProcessing();
+//                }
+//            }
+//        }
+
+
 
     }
 
+    private void addTextToPrinter(Printer printer, String text,
+                                  int isBold, int isUnderlined,
+                                  int alignment, int feedLine,
+                                  int textSizeWidth, int textSizeHeight) {
+
+        if (printer != null) {
+            StringBuilder textData = new StringBuilder();
+            try {
+                printer.addTextSize(textSizeWidth, textSizeHeight);
+                printer.addTextAlign(alignment);
+                printer.addTextStyle(Printer.PARAM_DEFAULT, isUnderlined, isBold, Printer.PARAM_DEFAULT);
+                printer.addTextSmooth(Printer.TRUE);
+                printer.addText(textData.toString());
+                textData.append(text);
+                printer.addText(textData.toString());
+                textData.delete(0, textData.length());
+                printer.addFeedLine(feedLine);
+            } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
+                e.printStackTrace();
+//                asyncFinishCallBack.doneProcessing();
+            }
+        }
+    }
+
+    private String returnWithTwoDecimal(String amount) {
+        String finalValue = "";
+        if (amount.contains(".")) {
+            String[] tempArray = amount.split("\\.");
+            if (tempArray[1].length() > 2) {
+
+                finalValue = tempArray[0] + "." + tempArray[1].substring(0,2);
+            } else {
+                finalValue = tempArray[0] + "." + (tempArray[1].length() == 1 ? tempArray[1] + "0" : tempArray[1]);
+            }
+        } else {
+            finalValue = amount;
+        }
+        return finalValue;
+
+    }
 
 
     private void addPrinterSpace(int count) {
         try {
             printer.addFeedLine(count);
         } catch (Epos2Exception e) {
+            e.printStackTrace();
             try {
                 printer.disconnect();
             } catch (Epos2Exception e1) {
                 e1.printStackTrace();
             }
-            e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
         }
     }
@@ -1100,7 +1166,6 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-
         }
     }
 

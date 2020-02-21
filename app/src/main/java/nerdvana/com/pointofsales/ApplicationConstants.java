@@ -72,6 +72,8 @@ public class ApplicationConstants {
     public static final String THEME_SELECTED = "theme_selected";
     public static final String MACHINE_SETUP = "machine_setup";
     public static final String IS_ALLOWED_FOR_CHECK_IN = "is_allowed_for_check_in";
+    public static final String IS_ALLOWED_FOR_XREADING = "is_allowed_for_xreading";
+    public static final String IS_ALLOWED_FOR_ZREADING = "is_allowed_for_zreading";
 
     public static final String ROOM_JSON = "room_json";
     public static final String ACCESS_RIGHTS = "access_rights";

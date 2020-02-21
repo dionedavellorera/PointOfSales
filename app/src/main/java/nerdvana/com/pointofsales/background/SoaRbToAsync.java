@@ -41,7 +41,7 @@ import static nerdvana.com.pointofsales.PrinterUtils.returnWithTwoDecimal;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterLr;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
-public class SoaToAsync extends AsyncTask<Void, Void, Void> {
+public class SoaRbToAsync extends AsyncTask<Void, Void, Void> {
 
 
     private PrintModel printModel;
@@ -55,7 +55,7 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
     private String kitchPath;
     private String printerPath;
 
-    public SoaToAsync(PrintModel printModel, Context context,
+    public SoaRbToAsync(PrintModel printModel, Context context,
                       UserModel userModel, String currentDateTime,
                       MainActivity.AsyncFinishCallBack asyncFinishCallBack,
                       String kitchPath, String printerPath) {
@@ -122,7 +122,21 @@ public class SoaToAsync extends AsyncTask<Void, Void, Void> {
                         }).start();
                     }
                 });
-                PrinterUtils.connect(context, printer);
+//                PrinterUtils.connect(context, printer);
+
+                try {
+                    printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    asyncFinishCallBack.doneProcessing();
+                }
+
+
             } catch (Epos2Exception e) {
                 try {
                     printer.disconnect();

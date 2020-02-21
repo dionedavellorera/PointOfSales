@@ -155,7 +155,9 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                                 "", printModel.getRoomNumber(),
                                 "REPRINT_RECEIPT_SPEC",
                                 GsonHelper.getGson().toJson(toList1),
-                                printModel.getRoomType()));
+                                printModel.getRoomType(),
+                                printModel.getKitchenPath(),
+                                printModel.getPrinterPath()));
                     }
 
                 } else {
@@ -1161,113 +1163,137 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
                 addFooterToPrinter(toList1.getCreatedAt(), PrinterUtils.yearPlusFive(toList1.getCreatedAt()));
 
-//                try {
-//                    printer.addCut(Printer.CUT_FEED);
-//                } catch (Epos2Exception e) {
-//                    e.printStackTrace();
-////                asyncFinishCallBack.doneProcessing();
-//                }
+                try {
+                    printer.addCut(Printer.CUT_FEED);
+                } catch (Epos2Exception e) {
+                    e.printStackTrace();
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
+//                asyncFinishCallBack.doneProcessing();
+                }
 
                 //endregion
                 //regionpayment slip
-//                addTextToPrinter(printer, "PAYMENT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
-//
-//                addPrinterSpace(1);
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "ROOM NO",
-//                        String.valueOf(printModel.getRoomNumber())
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "ROOM TYPE",
-//                        printModel.getRoomType() != null ? printModel.getRoomType() : ""
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "CASHIER",
-//                        toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA"
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "ROOM BOY",
-//                        String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                addPrinterSpace(1);
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "CHECK IN",
-//                        convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckIn() : "NA" )
-//                        ,
-//                        40,
-//                        2,
-//                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "CHECK OUT",
-//                        convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
-//                        ,
-//                        40,
-//                        2,
-//                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                List<Integer> tempArray = new ArrayList<>();
-//                String paymentType = "";
-//                for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
-//                    if (!tempArray.contains(pym.getPaymentTypeId())) {
-//                        tempArray.add(pym.getPaymentTypeId());
-//                        paymentType = pym.getPaymentDescription();
-//                    }
-//                }
-//
-//                addPrinterSpace(1);
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "PAYMENT TYPE",
-//                        tempArray.size() > 1 ? "MULTIPLE" : paymentType
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                addPrinterSpace(1);
-//
-//
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "TENDERED",
-//                        returnWithTwoDecimal(String.valueOf(toList1.getTendered()))
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "AMOUNT DUE",
-//                        returnWithTwoDecimal(Utils.returnWithTwoDecimal(String.valueOf((toList1.getTotal() +
-//                                toList1.getOtAmount() +
-//                                toList1.getXPersonAmount())
-//                                - (
-//                                toList1.getDiscount() +
-//                                        toList1.getVatExempt())))),
-//                        40,
-//                        2,
-//                        context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "CHANGE",
-//                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange())))
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, "PAYMENT SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 2, 1);
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ROOM NO",
+                        String.valueOf(printModel.getRoomNumber())
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ROOM TYPE",
+                        printModel.getRoomType() != null ? printModel.getRoomType() : ""
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "CASHIER",
+                        toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA"
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "ROOM BOY",
+                        String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "CHECK IN",
+                        convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckIn() : "NA" )
+                        ,
+                        40,
+                        2,
+                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "CHECK OUT",
+                        convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
+                        ,
+                        40,
+                        2,
+                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                List<Integer> tempArray = new ArrayList<>();
+                String paymentType = "";
+                for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                    if (!tempArray.contains(pym.getPaymentTypeId())) {
+                        tempArray.add(pym.getPaymentTypeId());
+                        paymentType = pym.getPaymentDescription();
+                    }
+                }
+
+                addPrinterSpace(1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "PAYMENT TYPE",
+                        tempArray.size() > 1 ? "MULTIPLE" : paymentType
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addPrinterSpace(1);
+
+                if (toList1.getDiscountsList().size() > 0) {
+
+                    addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
+                      if (TextUtils.isEmpty(d.getVoid_by())) {
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    d.getDiscountType(),
+                                    "",
+                                    40,
+                                    2,
+                                    context)
+                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                        }
+                    }
+                    addPrinterSpace(1);
+                }
+
+
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "TENDERED",
+                        returnWithTwoDecimal(String.valueOf(toList1.getTendered()))
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "AMOUNT DUE",
+                        returnWithTwoDecimal(Utils.returnWithTwoDecimal(String.valueOf((toList1.getTotal() +
+                                toList1.getOtAmount() +
+                                toList1.getXPersonAmount())
+                                - (
+                                toList1.getDiscount() +
+                                        toList1.getVatExempt())))),
+                        40,
+                        2,
+                        context), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        "CHANGE",
+                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange())))
+                        ,
+                        40,
+                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 //endregion
 
 

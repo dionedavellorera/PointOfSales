@@ -1,7 +1,9 @@
 package nerdvana.com.pointofsales;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -56,11 +58,11 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         settingMenuList = new ArrayList<>();
-        settingMenuList.add(new ListSettingMenu(0, R.mipmap.baseline_print_black_24, "Printer Model", true));
+        settingMenuList.add(new ListSettingMenu(0, R.mipmap.baseline_print_black_24, "Printer Model(EPSON ONLY)", true));
         settingMenuList.add(new ListSettingMenu(1, R.mipmap.baseline_print_black_24, "Printer Connection", false));
-        settingMenuList.add(new ListSettingMenu(2, R.mipmap.baseline_print_black_24, "Theme", false));
-        settingMenuList.add(new ListSettingMenu(3, R.mipmap.baseline_print_black_24, "Receipt Setup", false));
-        settingMenuList.add(new ListSettingMenu(4, R.mipmap.baseline_print_black_24, "Machine Setup", false));
+        settingMenuList.add(new ListSettingMenu(2, R.mipmap.baseline_branding_watermark_black_24, "Theme", false));
+        settingMenuList.add(new ListSettingMenu(3, R.mipmap.baseline_receipt_black_24, "Receipt Setup", false));
+        settingMenuList.add(new ListSettingMenu(4, R.mipmap.baseline_lock_black_24, "Machine Setup", false));
 
 
         Setting setting = new Setting() {
@@ -72,7 +74,12 @@ public class SettingsActivity extends AppCompatActivity {
 //                        settingMenuList.get(position).setClicked(true);
                         break;
                     case 1: //PRINTER CONNECTION
-                        openFragment(printerConnectionFragment, settingMenuList.get(position));
+                        if (!isEmulator()) {
+                            openFragment(printerConnectionFragment, settingMenuList.get(position));
+                        } else {
+                            Utils.showDialogMessage(SettingsActivity.this, "Please use a real device for this setting", "Information");
+                        }
+
                         break;
                     case 2: //THEME
                         openFragment(themeFragment, settingMenuList.get(position));
@@ -138,4 +145,24 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+    private boolean isEmulator() {
+        return (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || Build.FINGERPRINT.startsWith("generic")
+                || Build.FINGERPRINT.startsWith("unknown")
+                || Build.HARDWARE.contains("goldfish")
+                || Build.HARDWARE.contains("ranchu")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || Build.PRODUCT.contains("sdk_google")
+                || Build.PRODUCT.contains("google_sdk")
+                || Build.PRODUCT.contains("sdk")
+                || Build.PRODUCT.contains("sdk_x86")
+                || Build.PRODUCT.contains("vbox86p")
+                || Build.PRODUCT.contains("emulator")
+                || Build.PRODUCT.contains("simulator");
+    }
+
 }

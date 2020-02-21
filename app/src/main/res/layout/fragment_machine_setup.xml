@@ -36,4 +36,20 @@
         android:layout_height="wrap_content"
         android:text="Check-in allowed?"/>
 
+    <CheckBox
+        android:id="@+id/allowedXRead"
+        android:layout_margin="10dp"
+        android:layout_below="@id/allowedToCheckInSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Can print x reading?"/>
+
+    <CheckBox
+        android:id="@+id/allowedZRead"
+        android:layout_margin="10dp"
+        android:layout_below="@id/allowedXRead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Can print z reading?"/>
+
 </RelativeLayout>
