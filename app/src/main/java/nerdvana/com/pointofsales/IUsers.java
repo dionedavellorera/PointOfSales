@@ -390,7 +390,7 @@ public interface IUsers {
     @FormUrlEncoded
     Call<ChangeRoomStatusResponse> changeRoomStatus(@FieldMap Map<String, String> params);
 
-    @POST("saveWakeUpCall")  //kailan tinawagan si customer
+    @POST("wakeUpCall")  //kailan tinawagan si customer
     @FormUrlEncoded
     Call<ResponseBody> saveWakeUpCall(@FieldMap Map<String, String> params);
 

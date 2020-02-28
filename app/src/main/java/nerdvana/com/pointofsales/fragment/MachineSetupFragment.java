@@ -93,6 +93,20 @@ public class MachineSetupFragment extends Fragment {
 //                                    SharedPreferenceManager.saveString(getContext(), SharedPreferenceManager.getString(getContext(), ApplicationConstants.POS_TO_ID), ApplicationConstants.POS_TO_ID);
 //                                    SharedPreferenceManager.saveString(getContext(), SharedPreferenceManager.getString(getContext(), ApplicationConstants.POS_TO_ID), ApplicationConstants.MACHINE_ID);
                                     toSwitch.toggle();
+
+                                    if (!toSwitch.isChecked()) {
+
+                                        allowedToCheckInSwitch.setVisibility(View.VISIBLE);
+                                        allowedXReadSwitch.setVisibility(View.VISIBLE);
+                                        allowedZReadSwitch.setVisibility(View.VISIBLE);
+                                    } else {
+                                        allowedToCheckInSwitch.setVisibility(View.GONE);
+                                        allowedXReadSwitch.setVisibility(View.GONE);
+                                        allowedZReadSwitch.setVisibility(View.GONE);
+                                        toMachineSelectionDialog.show();
+                                    }
+
+
                                 }
                             });
                             toMachineSelectionDialog.setOnDismissListener(new OnDismissListener() {
@@ -108,8 +122,13 @@ public class MachineSetupFragment extends Fragment {
                             SharedPreferenceManager.saveString(getContext(), SharedPreferenceManager.getString(getContext(), ApplicationConstants.POS_TO_ID), ApplicationConstants.POS_TO_ID);
                             SharedPreferenceManager.saveString(getContext(), SharedPreferenceManager.getString(getContext(), ApplicationConstants.POS_TO_ID), ApplicationConstants.MACHINE_ID);
 
-
+                            allowedToCheckInSwitch.setVisibility(View.VISIBLE);
+                            allowedXReadSwitch.setVisibility(View.VISIBLE);
+                            allowedZReadSwitch.setVisibility(View.VISIBLE);
                         } else {
+                            allowedToCheckInSwitch.setVisibility(View.GONE);
+                            allowedXReadSwitch.setVisibility(View.GONE);
+                            allowedZReadSwitch.setVisibility(View.GONE);
                             toMachineSelectionDialog.show();
                         }
                         ApplicationConstants.IS_MACHINE_CHANGED = "T";

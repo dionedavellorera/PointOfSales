@@ -88,6 +88,7 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                             boolean hasChanged = false;
                             if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
                                 room.setWake_up_call(r.getTransaction().getWakeUpCall());
+                                room.setControl_number(r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
                                 hasChanged = true;
                             }
 
