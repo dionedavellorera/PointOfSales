@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.VoidProductModel;
@@ -23,6 +24,8 @@ public class FetchZReadViaIdRequest extends BaseRequest {
         mapValue.put("currency_value", currencyValue);
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {

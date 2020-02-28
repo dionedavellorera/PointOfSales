@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -21,6 +22,7 @@ public class WakeUpCallUpdateRequest extends BaseRequest{
         mapValue.put("room_id", roomId);
         mapValue.put("date_time", dateTime);
 
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

@@ -674,9 +674,7 @@ public class ZReadAsync extends AsyncTask<Void, Void, Void> {
                 addTextToPrinter(printer, "Date Issued : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
                 addTextToPrinter(printer, "Valid Until : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
-                addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
-                addTextToPrinter(printer, "Date Issued : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                addTextToPrinter(printer, "Valid Until : " + Utils.birDateTimeFormat(folderName), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                PrinterUtils.addPtuFooter(printer, context);
 
                 addTextToPrinter(printer, "---------------------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
                 addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

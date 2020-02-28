@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -27,6 +28,8 @@ public class CancelOverTimeRequest extends BaseRequest {
         mapValue.put("tax", tax);
 
         mapValue.put("emp_id", empId);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

@@ -14,11 +14,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.GsonHelper;
+import nerdvana.com.pointofsales.IUsers;
+import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.adapters.WakeUpCallAdapter;
+import nerdvana.com.pointofsales.api_requests.SaveWakeUpCallRequest;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.entities.RoomEntity;
 import nerdvana.com.pointofsales.model.WakeUpCallModel;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DialogWakeUpCall extends BaseDialog {
     private AddOkWakeUpCall addOkWakeUpCall;
@@ -43,14 +51,30 @@ public class DialogWakeUpCall extends BaseDialog {
         addOkWakeUpCall = new AddOkWakeUpCall() {
             @Override
             public void click(int position) {
-                wakeUpCallModels.get(position).setIs_done(1);
-                wakeUpCallModels.get(position).save();
-                wakeUpCallModels.remove(position);
-                if (wakeUpCallAdapter != null) {
-                    wakeUpCallAdapter.notifyItemRemoved(position);
-                }
 
-                if (wakeUpCallModels.size() == 0) dismiss();
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                SaveWakeUpCallRequest saveWakeUpCallRequest = new SaveWakeUpCallRequest(wakeUpCallModels.get(position).getControl_number());
+                Call<ResponseBody> request = iUsers.saveWakeUpCall(saveWakeUpCallRequest.getMapValue());
+                request.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        wakeUpCallModels.get(position).setIs_done(1);
+                        wakeUpCallModels.get(position).save();
+                        wakeUpCallModels.remove(position);
+                        if (wakeUpCallAdapter != null) {
+                            wakeUpCallAdapter.notifyItemRemoved(position);
+                        }
+
+                        if (wakeUpCallModels.size() == 0) dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                    }
+                });
+
+
 
             }
         };

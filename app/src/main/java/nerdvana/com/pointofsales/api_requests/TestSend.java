@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -14,6 +15,7 @@ public class TestSend extends BaseRequest {
     public TestSend(String testData) {
         mapValue = new HashMap<>();
         mapValue.put("TESTDATA", testData);
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

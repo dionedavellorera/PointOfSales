@@ -54,10 +54,12 @@ import nerdvana.com.pointofsales.api_responses.FetchZReadListViaDateResponse;
 import nerdvana.com.pointofsales.api_responses.FocTransactionResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import nerdvana.com.pointofsales.api_responses.PosMachinesResponse;
 import nerdvana.com.pointofsales.api_responses.PostVoidResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
 import nerdvana.com.pointofsales.api_responses.SwitchRoomResponse;
+import nerdvana.com.pointofsales.api_responses.TakasListResponse;
 import nerdvana.com.pointofsales.api_responses.TestConnectionResponse;
 import nerdvana.com.pointofsales.api_responses.UpdateCheckInTimeResponse;
 import nerdvana.com.pointofsales.api_responses.VerifyMachineResponse;
@@ -188,6 +190,10 @@ public interface IUsers {
     @POST("fetchAROnline")
     @FormUrlEncoded
     Call<FetchArOnlineResponse> fetchArOnline(@FieldMap Map<String, String> params);
+
+    @POST("fetchTakasType")
+    @FormUrlEncoded
+    Call<TakasListResponse> fetchTakasList(@FieldMap Map<String, String> params);
 
     //fetchCreditCard
     @POST("fetchCreditCard")
@@ -383,4 +389,13 @@ public interface IUsers {
     @POST("changeRoomStatus")
     @FormUrlEncoded
     Call<ChangeRoomStatusResponse> changeRoomStatus(@FieldMap Map<String, String> params);
+
+    @POST("saveWakeUpCall")  //kailan tinawagan si customer
+    @FormUrlEncoded
+    Call<ResponseBody> saveWakeUpCall(@FieldMap Map<String, String> params);
+
+    @POST("fetchActivePos") //for supporting cashier function
+    @FormUrlEncoded
+    Call<PosMachinesResponse> fetchPosMachines(@FieldMap Map<String, String> params);
+
 }

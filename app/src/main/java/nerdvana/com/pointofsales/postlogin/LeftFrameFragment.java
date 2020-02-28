@@ -4732,7 +4732,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 symbolRight,
                                 pym.getIsAdvance() == 1 ? true : false,
                                 "",
-                                String.valueOf(pym.getId())
+                                String.valueOf(pym.getId()),
+                                ""
                         ));
                     }
                 }
@@ -5609,7 +5610,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             symbolRight,
                             pym.getIsAdvance() == 1 ? true : false,
                             "",
-                            String.valueOf(pym.getId())
+                            String.valueOf(pym.getId()),
+                            ""
                     ));
                 }
             }

@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class FetchRoomPendingRequest extends BaseRequest{
     private Map<String, String> mapValue;
     public FetchRoomPendingRequest(String roomId) {
@@ -14,6 +16,8 @@ public class FetchRoomPendingRequest extends BaseRequest{
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_code", branchCode);
         mapValue.put("branch_id", branchId);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
     }
 

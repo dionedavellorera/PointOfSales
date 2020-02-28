@@ -12,6 +12,8 @@ public class CheckEndOfDayRequest extends BaseRequest{
         mapValue.put("pos_id", machineNumber);
         mapValue.put("branch_id", branchId);
         mapValue.put("branch_code", branchCode);
+
+        mapValue.put("pos_to_id", toId);
     }
 
     public Map<String, String> getMapValue() {

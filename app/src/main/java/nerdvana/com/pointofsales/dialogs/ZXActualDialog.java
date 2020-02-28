@@ -14,12 +14,14 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.adapters.ZXReceiptAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchXReadListRequestViaDate;
 import nerdvana.com.pointofsales.api_requests.FetchXReadingViaIdRequest;
@@ -124,18 +126,13 @@ public class ZXActualDialog extends Dialog {
 
 
                         ZXReadModel zxReadModel = new ZXReadModel(
-//                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
-                                "ABC COMPANY",
-//                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
-                                "1 ABC ST. DE AVE\nPASIG CITY 1600",
-                                "TEL NO: 8123-4567",
-//                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
-                                "SERIAL NO:" + "***-***-***",
-                                "VAT REG TIN NO:" + "009-772-500-00000",
-//                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
-//                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
-                                "PERMIT NO:" + "********-***-*******-*****",
-                                "MIN NO: " + "****************",
+                                SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER),
+                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                                "TEL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
+                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
+                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.PERMIT_NO),
+                                "",
                                 title,
                                 "POSTING DATE:" + res.getData().getCutOffDate(),
                                 from.equalsIgnoreCase("x") ? "SHIFT " + String.valueOf(res.getData().getShiftNo()) : "",
@@ -306,18 +303,13 @@ public class ZXActualDialog extends Dialog {
 
 
                         ZXReadModel zxReadModel = new ZXReadModel(
-//                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
-                                "ABC COMPANY",
-//                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
-                                "1 ABC ST. DE AVE\nPASIG CITY 1600",
-                                "TEL NO: 8123-4567",
-//                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
-                                "SERIAL NO:" + "***-***-***",
-                                "VAT REG TIN NO:" + "009-772-500-00000",
-//                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
-//                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
-                                "PERMIT NO:" + "********-***-*******-*****",
-                                "MIN NO: " + "****************",
+                                SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER),
+                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                                "TEL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
+                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
+                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.PERMIT_NO),
+                                "",
                                 title,
                                 "POSTING DATE: " + res.getData().getGeneratedAt(),
                                 from.equalsIgnoreCase("x") ? "xxxx" : "",

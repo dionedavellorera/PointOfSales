@@ -57,14 +57,17 @@ import nerdvana.com.pointofsales.adapters.PaymentsAdapter;
 import nerdvana.com.pointofsales.adapters.PostedPaymentsAdapter;
 import nerdvana.com.pointofsales.api_requests.CheckGcRequest;
 import nerdvana.com.pointofsales.api_requests.SaveGuestInfoRequest;
+import nerdvana.com.pointofsales.api_requests.TakasListRequest;
 import nerdvana.com.pointofsales.api_requests.VoidPaymentRequest;
 import nerdvana.com.pointofsales.api_responses.CheckGcResponse;
 import nerdvana.com.pointofsales.api_responses.FetchArOnlineResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
+import nerdvana.com.pointofsales.api_responses.TakasListResponse;
 import nerdvana.com.pointofsales.api_responses.VoidPaymentResponse;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
 import nerdvana.com.pointofsales.interfaces.CreditCardContract;
@@ -104,6 +107,9 @@ public abstract class PaymentDialog extends BaseDialog  {
     private EditText guestBusinessStyle;
     private EditText guestAddressInput;
     private EditText guestTinInput;
+
+    private EditText takasRemarks;
+    private EditText takasAmount;
 
     String guestInfoEmployeeId;
     String guestInfoEmployeeName;
@@ -174,6 +180,7 @@ public abstract class PaymentDialog extends BaseDialog  {
     private SearchableSpinner spinnerOnline;
     private SearchableSpinner spinnerOnlineTakas;
     private String onlineId;
+    private String takasId;
 
     FetchPaymentResponse.Result f;
 
@@ -334,6 +341,10 @@ public abstract class PaymentDialog extends BaseDialog  {
         tilTin = findViewById(R.id.tilTin);
 
         rl1 = findViewById(R.id.rl1);
+
+        takasRemarks = findViewById(R.id.takasRemarks);
+        takasAmount = findViewById(R.id.takasAmount);
+
         rl2 = findViewById(R.id.rl2);
         rl3 = findViewById(R.id.rl3);
         rootView = findViewById(R.id.rootView);
@@ -445,6 +456,7 @@ public abstract class PaymentDialog extends BaseDialog  {
         setVoucherSpinner();
         setupCreditCardSpinner();
         setupGuestName();
+        setupTakasSpinner();
         if (isCheckout) {
             linRoomBoy.setVisibility(View.VISIBLE);
         } else {
@@ -521,7 +533,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                                 SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
                                 isCheckout ? false : true,
-                                "cash", ""));
+                                "cash", "", ""));
 
 
 
@@ -608,7 +620,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             jsonObject,SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
                             isCheckout ? false : true,
-                            "card", ""));
+                            "card", "",""));
 
 
                 } else {
@@ -621,12 +633,60 @@ public abstract class PaymentDialog extends BaseDialog  {
                 computeTotal();
             }
         });
+
         addTakas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "TAKAS CLICKED", Toast.LENGTH_SHORT).show();
+                boolean isValid = true;
+                String errorMessage = "";
+
+                if (paymentMethod == null) {
+                    isValid = false;
+                    errorMessage += "Invalid payment method \n";
+                }
+
+                if (TextUtils.isEmpty(takasId.trim())) {
+                    isValid = false;
+                    errorMessage += "Please select takas type \n" ;
+                }
+
+                if (TextUtils.isEmpty(takasRemarks.getText().toString().trim())) {
+                    isValid = false;
+                    errorMessage += "Empty takas remarks \n";
+                }
+
+                if (isValid) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("takas_id", takasId);
+                        jsonObject.put("remarks", takasRemarks.getText().toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    postedPaymentList.add(new PostedPaymentsModel(
+                            paymentMethod.getCore_id(),
+                            takasAmount.getText().toString(),
+                            paymentMethod.getPayment_type(),
+                            false,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.COUNTRY_CODE),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                            jsonObject,
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
+                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
+                            isCheckout ? false : true,
+                            "online", "",
+                            takasRemarks.getText().toString()));
+                } else {
+                    Utils.showDialogMessage(act, errorMessage, "Information");
+                }
+
+                if (postedPaymentsAdapter != null) {
+                    postedPaymentsAdapter.notifyDataSetChanged();
+                }
+                computeTotal();
             }
         });
+
         addOnline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -667,7 +727,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
                             isCheckout ? false : true,
-                            "online", ""));
+                            "online", "", ""));
                 } else {
                     Utils.showDialogMessage(act, errorMessage, "Information");
                 }
@@ -714,7 +774,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
                             isCheckout ? false : true,
-                            "voucher",""));
+                            "voucher","", ""));
                 } else {
                     Utils.showDialogMessage(act, "No gc added", "Information");
                 }
@@ -764,7 +824,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_LEFT),
                             SharedPreferenceManager.getString(getContext(), ApplicationConstants.DEFAULT_SYMBOL_RIGHT),
                             isCheckout ? false : true,
-                            "forex",""));
+                            "forex","", ""));
                 } else {
                     Utils.showDialogMessage(act, errorMessage, "Information");
                 }
@@ -1187,6 +1247,8 @@ public abstract class PaymentDialog extends BaseDialog  {
         totalAmountDue.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 
         amountToPay.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
+        takasAmount.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
+        creditCardAmount.setText(Utils.returnWithTwoDecimal(String.valueOf(amountDue)));
 //        amountToPay.requestFocus();
         totalChange = (deductibles) - totalBalance;
 
@@ -1418,6 +1480,63 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
         }
+
+
+    }
+
+    private void setupTakasSpinner() {
+        //spinnerOnlineTakas
+
+        final List<String> takasArray = new ArrayList<>();
+
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        TakasListRequest takasListRequest = new TakasListRequest();
+        Call<TakasListResponse> request = iUsers.fetchTakasList(takasListRequest.getMapValue());
+        request.enqueue(new Callback<TakasListResponse>() {
+            @Override
+            public void onResponse(Call<TakasListResponse> call, Response<TakasListResponse> response) {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        for (TakasListResponse.Result ar : response.body().getResult()) {
+                            takasArray.add(ar.getTakas());
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        super.onPostExecute(aVoid);
+                        CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(getContext(), R.id.spinnerItem,
+                                takasArray);
+                        spinnerOnlineTakas.setAdapter(rateSpinnerAdapter);
+
+                        spinnerOnlineTakas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                //fix this when api call ready
+                                takasId = String.valueOf(response.body().getResult().get(position).getId());
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+                    }
+                }.execute();
+            }
+
+            @Override
+            public void onFailure(Call<TakasListResponse> call, Throwable t) {
+
+            }
+        });
+
+
+
+
+
 
 
     }

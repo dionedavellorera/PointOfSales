@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class VoidDiscountRequest extends BaseRequest {
 
     private Map<String, String> mapValue;
@@ -17,6 +19,7 @@ public class VoidDiscountRequest extends BaseRequest {
         mapValue.put("control_no", controlNumber);
         mapValue.put("discount_id", discountId);
         mapValue.put("emp_id", empId);
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -18,6 +19,7 @@ public class CollectionRequest extends BaseRequest{
         mapValue.put("branch_id", branchId);
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {

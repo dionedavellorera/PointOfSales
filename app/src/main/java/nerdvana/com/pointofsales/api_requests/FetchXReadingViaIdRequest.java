@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 import retrofit2.http.FieldMap;
@@ -20,6 +21,8 @@ public class FetchXReadingViaIdRequest extends BaseRequest{
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);
         mapValue.put("xread_id", xReadId);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

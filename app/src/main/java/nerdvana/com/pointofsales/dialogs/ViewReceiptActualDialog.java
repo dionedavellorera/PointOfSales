@@ -13,6 +13,7 @@ import android.widget.Button;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
@@ -20,6 +21,7 @@ import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.PrinterUtils;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.Reprint;
+import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.adapters.ViewReceiptActualAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchOrderPendingViaControlNoRequest;
@@ -122,18 +124,13 @@ public class ViewReceiptActualDialog extends Dialog implements Reprint {
             }
 
             list.add(new ViewReceiptActualModel(
-                    //                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH),
-                    "ABC COMPANY",
-//                                SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
-                    "1 ABC ST. DE AVE\nPASIG CITY 1600",
-                    "TEL NO: 8123-4567",
-//                                "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
-                    "SERIAL NO:" + "*******",
-                    "VAT REG TIN NO:" + "009-772-500-00000",
-//                                "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
-//                                "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT),
-                    "PERMIT NO:" + "*******-***-******-*****",
-                    "MIN NO: " + "***-***-***",
+                    SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER),
+                    SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                    "TEL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS),
+                    "SERIAL NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER),
+                    "VAT REG TIN NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER),
+                    "PERMIT NO:" + SharedPreferenceManager.getString(null, ApplicationConstants.PERMIT_NO),
+                    "",
                     r.getGuestInfo() == null ? "OFFICIAL RECEIPT(REPRINT)\n\n"+ "TAKEOUT" :  r.getGuestInfo().getRoom().getRoomNo() != null ? "OFFICIAL RECEIPT(REPRINT)\n\n"+"ROOM #" + r.getGuestInfo().getRoom().getRoomNo().toString() : "EMPTY",
                     r.getCashierOut().getName(),
                     r.getRoomBoy() == null ? "" : r.getGuestInfo().getRoomBoyIn().getName(),

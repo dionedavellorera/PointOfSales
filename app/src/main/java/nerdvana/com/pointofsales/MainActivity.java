@@ -219,12 +219,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        SharedPreferenceManager.saveString(getApplicationContext(), "100", ApplicationConstants.POS_TO_ID);
         List<RoomEntity> books = RoomEntity.listAll(RoomEntity.class);
 
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN))) {
             SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
         }
+
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL);
+        }
+
 
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING))) {
             SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_XREADING);
@@ -990,14 +996,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         String receiptNo = "NA";
 
 
-        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
-        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
-
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", getApplicationContext(), true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", getApplicationContext(), true);
         finalString += receiptString("V O I D", "", MainActivity.this, true);
 
         FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
@@ -1456,13 +1460,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         String finalString = "";
 
 
-        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
-        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
-//        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", getApplicationContext(), true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", getApplicationContext(), true);
 
         finalString += receiptString("Z READING", "", MainActivity.this, true);
 
@@ -1756,13 +1759,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         String finalString = "";
 
 
-        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
-        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
-//        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", getApplicationContext(), true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", getApplicationContext(), true);
 
         finalString += receiptString("X READING", "", MainActivity.this, true);
 
@@ -2058,13 +2060,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         String finalString = "";
 
-        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
-        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", getApplicationContext(), true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", getApplicationContext(), true);
 
         finalString += receiptString("CASHIER RECONCILE", "", MainActivity.this, true);
 
@@ -2140,14 +2141,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         String finalString = "";
 
-        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
-        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
-
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", getApplicationContext(), true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", getApplicationContext(), true);
         finalString += receiptString("SAFEKEEPING", "", MainActivity.this, true);
 
 
@@ -2222,15 +2221,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         String finalString = "";
         String receiptNo = "NA";
-        finalString += receiptString("NERDVANA CORP.", "", MainActivity.this, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", MainActivity.this, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", MainActivity.this, true);
-        finalString += receiptString("TEL NO: 8671-9782", "", MainActivity.this, true);
-        finalString += receiptString("SERIAL NO: ********", "", MainActivity.this, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", MainActivity.this, true);
-//        finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
-
-
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", getApplicationContext(), true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", getApplicationContext(), true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", getApplicationContext(), true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", getApplicationContext(), true);
 
         finalString += receiptString("OFFICIAL RECEIPT", "", MainActivity.this, true);
         finalString += receiptString("", "", MainActivity.this, true);
@@ -2852,10 +2848,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(toList1.getCreatedAt())),
                     "", MainActivity.this, true);
 
-            finalString += receiptString("PERMIT NO: ********-***-******", "", MainActivity.this, true);
-            finalString += receiptString("Date Issued : " + Utils.birDateTimeFormat(toList1.getCreatedAt()),
+
+            finalString += receiptString("PERMIT NO:"+SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_NO), "", MainActivity.this, true);
+            finalString += receiptString("Date Issued :" + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_ISSUED_DATE),
                     "", MainActivity.this, true);
-            finalString += receiptString("Valid Until " + Utils.birDateTimeFormat(PrinterUtils.yearPlusFive(toList1.getCreatedAt())),
+            finalString += receiptString("Valid Until " + SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.PERMIT_END_DATE),
                     "", MainActivity.this, true);
 
 
@@ -3452,7 +3449,19 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         user.setText(currentText);
 //        role.setText(String.format("%s SHIFT : %s", userModel.getUserGroup().toUpperCase(), timerModel.getShiftNumber()));
-        role.setText(String.format("%s SHIFT : %s", "CASHIER", timerModel.getShiftNumber()));
+
+        if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_TELEPHONE_OPERATOR).isEmpty()) {
+            if(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+                role.setText(String.format("M.I.D -> %s, %s SHIFT: %s, T.O : ACTIVE(%s)",SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.POS_TO_ID), "CASHIER", timerModel.getShiftNumber(), SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID)));
+            } else {
+                role.setText(String.format("M.I.D -> %s, %s SHIFT: %s",SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_ID), "CASHIER", timerModel.getShiftNumber()));
+            }
+        } else {
+            role.setText(String.format("M.I.D -> %s, %s SHIFT: %s",SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_ID), "CASHIER", timerModel.getShiftNumber()));
+        }
+
+
+
     }
 
     private void fetchTimeRequest() {

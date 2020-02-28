@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 
@@ -118,6 +120,12 @@ public class PrinterUtils {
         }
 
 
+    }
+
+    public static void addPtuFooter(Printer printer, Context context) {
+        addTextToPrinter(printer, "Permit No" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_NO) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+        addTextToPrinter(printer, "Date Issued :" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_ISSUED_DATE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "Valid Until : " + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_END_DATE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
     }
 
     public static void addFooterToPrinter() {
@@ -253,21 +261,21 @@ public class PrinterUtils {
     }
 
     public static void addHeader(PrintModel printModel, Printer printer) {
-//        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer,SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer, "SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-//        addTextToPrinter(printer, "VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer, "PERMIT NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer,SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
+        addTextToPrinter(printer, "VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PERMIT NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.PERMIT_NO) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
 
-        addTextToPrinter(printer, "ABC COMPANY", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "1 ABC ST. DE AVE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer," TEL NO: 8123-4567", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
-        addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
+//        addTextToPrinter(printer, "ABC COMPANY", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        addTextToPrinter(printer, "1 ABC ST. DE AVE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        addTextToPrinter(printer, "PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        addTextToPrinter(printer," TEL NO: 8123-4567", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        addTextToPrinter(printer, "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//        addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+//        addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
 //        addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
 
@@ -346,22 +354,13 @@ public class PrinterUtils {
 
 
     public static void addHeader(PrintModel printModel, Printer printer, int i) {
-//        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer,SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer, "SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-//        addTextToPrinter(printer, "VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//        addTextToPrinter(printer, "PERMIT NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_PERMIT) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
+        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer,SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
+        addTextToPrinter(printer, "VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        addTextToPrinter(printer, "PERMIT NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.PERMIT_NO) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
-
-        addTextToPrinter(printer, "ABC COMPANY", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "1 ABC ST. DE AVE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "PASIG CITY 1600", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer," TEL NO: 8123-4567", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "VAT REG TIN NO: 009-772-500-000" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-        addTextToPrinter(printer, "MIN NO: *****************", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
-        addTextToPrinter(printer, "SERIAL NO: ********", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1,1);
-//        addTextToPrinter(printer, "PERMIT NO: ********-***-*******-*****" , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
 
         if (printModel.getType().equalsIgnoreCase("FO"))  addTextToPrinter(printer,"FOOD ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);
         if (printModel.getType().equalsIgnoreCase("BACKOUT"))  addTextToPrinter(printer,"BACK OUT SLIP" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 2,1,2);

@@ -185,11 +185,16 @@ public abstract class GuestInfoDialog extends BaseDialog {
                                             finalTime = dateSet + " " + timeSet;
 
                                             //finalTime = dateSet + " " + timeSet; //24hrs time 23:23:00
+                                            Log.d("WEKWEK", checkInJodaTime.toString());
+                                            Log.d("WEKWEK", dtf.parseDateTime(finalTime).toString());
+
                                             if (dtf.parseDateTime(finalTime).isBefore(checkInJodaTime)) {
                                                 Utils.showDialogMessage(act, "Wake up call time invalid, time set before check in time", "Error");
-                                            } else if(dtf.parseDateTime(finalTime).isAfter(checkOutJodaTime)) {
-                                                Utils.showDialogMessage(act, "Wake up call time invalid, time set after check out time", "Error");
-                                            } else {
+                                            }
+//                                            else if(dtf.parseDateTime(finalTime).isAfter(checkOutJodaTime)) {
+//                                                Utils.showDialogMessage(act, "Wake up call time invalid, time set after check out time", "Error");
+//                                            }
+                                            else {
                                                 updateGuestInfo(finalTime);
                                             }
                                         }

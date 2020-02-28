@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class ViewReceiptViaDateRequest extends BaseRequest {
     private Map<String, String> mapValue;
 
@@ -21,6 +23,8 @@ public class ViewReceiptViaDateRequest extends BaseRequest {
 
         mapValue.put("sDate", sDate);
         mapValue.put("eDate", eDate);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {

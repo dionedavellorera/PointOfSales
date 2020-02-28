@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class FetchXReadListRequestViaDate extends BaseRequest{
     private Map<String, String> mapValue;
 
@@ -17,6 +19,8 @@ public class FetchXReadListRequestViaDate extends BaseRequest{
 
         mapValue.put("sDate", sDate);
         mapValue.put("eDate", eDate);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

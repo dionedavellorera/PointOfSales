@@ -15,12 +15,15 @@ public class PostedPaymentsModel {
     private String symbolRight;
     private boolean isAdvance;
     private String type;
+    private String remarks;
 
     public PostedPaymentsModel(String paymentType, String paymentAmount,
                                String paymentDescription, boolean isPosted,
                                String currencyId, String currencyValue,
                                JSONObject data, String symbolLeft, String symbolRight,
-                               boolean isAdvance, String type, String paymentId) {
+                               boolean isAdvance, String type, String paymentId,
+                               String remarks) {
+        this.remarks = remarks;
         this.payment_method = paymentType;
         this.amount = paymentAmount;
         this.payment_description = paymentDescription;
@@ -33,6 +36,10 @@ public class PostedPaymentsModel {
         this.isAdvance = isAdvance;
         this.type = type;
         this.paymentId = paymentId;
+    }
+
+    public String getRemarks() {
+        return remarks;
     }
 
     public String getPaymentId() {

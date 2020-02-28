@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 
 public class CashNReconcileRequest extends BaseRequest{
@@ -18,6 +19,9 @@ public class CashNReconcileRequest extends BaseRequest{
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
         mapValue.put("emp_id", empId);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
+
     }
 
     public Map<String, String> getMapValue() {

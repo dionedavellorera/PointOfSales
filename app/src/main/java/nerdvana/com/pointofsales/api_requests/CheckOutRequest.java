@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -18,6 +19,7 @@ public class CheckOutRequest extends BaseRequest {
         mapValue.put("control_no", controlNumber);
         mapValue.put("emp_id", roomBoyId);
         mapValue.put("branch_code", branchCode);
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
      }
 
     public Map<String, String> getMapValue() {

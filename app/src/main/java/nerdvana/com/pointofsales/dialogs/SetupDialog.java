@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
@@ -142,7 +143,17 @@ public class SetupDialog extends BaseDialog {
                     if (response.body().getStatus() == 1) { //success
                         SharedPreferenceManager.saveString(context, "40", ApplicationConstants.MAX_COLUMN_COUNT);
                         SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getPrinter_path()), ApplicationConstants.SELECTED_PORT);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getReceipt_header()), ApplicationConstants.RECEIPT_HEADER);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getTelephone()), ApplicationConstants.TELEPHONE);
+
+
+
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getPermit_nos()), ApplicationConstants.PERMIT_NO);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getPermit_issued_at()), ApplicationConstants.PERMIT_ISSUED_DATE);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getPermit_valid_at()), ApplicationConstants.PERMIT_END_DATE);
+
                         SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getId()), ApplicationConstants.MACHINE_ID);
+                        SharedPreferenceManager.saveString(context, String.valueOf(response.body().getResult().get(0).getId()), ApplicationConstants.POS_TO_ID);
                         SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getCompany()), ApplicationConstants.BUSINESS_NAME);
                         SharedPreferenceManager.saveString(context, String.valueOf(response.body().getCompany().get(0).getOwner()), ApplicationConstants.TAXPAYERS_NAME);
                         SharedPreferenceManager.saveString(context, String.valueOf(response.body().getBranch().getInfo().getTinNo()), ApplicationConstants.TIN_NUMBER);

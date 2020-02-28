@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -22,6 +23,7 @@ public class VoidPaymentRequest extends BaseRequest{
         mapValue.put("payment_id", paymentId);
         mapValue.put("emp_id", empId);
 
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

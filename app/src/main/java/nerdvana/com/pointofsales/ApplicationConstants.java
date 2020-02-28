@@ -21,6 +21,7 @@ public class ApplicationConstants {
     public static final String API_IMAGE_URL = "api_image_url";
 
     public static final String MACHINE_ID = "machine_id";
+    public static final String POS_TO_ID = "pos_to_id";
     public static final String USER_ID = "user_id";
     public static final String USERNAME = "username";
     public static final String BUSINESS_NAME = "business_name";
@@ -71,7 +72,9 @@ public class ApplicationConstants {
     public static final String PRINTER_PATH = "printer_path";
     public static final String THEME_SELECTED = "theme_selected";
     public static final String MACHINE_SETUP = "machine_setup";
+    public static final String IS_TELEPHONE_OPERATOR = "is_telephone_operator";
     public static final String IS_ALLOWED_FOR_CHECK_IN = "is_allowed_for_check_in";
+    public static final String IS_ALLOWED_WAKE_UP_CALL = "is_allowed_wake_up_call";
     public static final String IS_ALLOWED_FOR_XREADING = "is_allowed_for_xreading";
     public static final String IS_ALLOWED_FOR_ZREADING = "is_allowed_for_zreading";
 
@@ -83,5 +86,11 @@ public class ApplicationConstants {
     public static String IS_THEME_CHANGED = "T";
     public static String IS_MACHINE_CHANGED = "F";
 //    public static final String SELECTED_ROOM_TABLE = "selected_room_table";
+
+    public static final String PERMIT_NO = "permit_no";
+    public static final String PERMIT_ISSUED_DATE = "permit_issued_at";
+    public static final String PERMIT_END_DATE = "permit_valid_at";
+    public static final String RECEIPT_HEADER = "receipt_header";
+    public static final String TELEPHONE = "telephone";
 
 }

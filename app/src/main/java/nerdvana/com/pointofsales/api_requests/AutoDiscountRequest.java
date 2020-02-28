@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class AutoDiscountRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
@@ -39,6 +41,8 @@ public class AutoDiscountRequest extends BaseRequest{
         mapValue.put("currency_value", currencyValue);
         mapValue.put("branch_code", branchCode);
         mapValue.put("tax", tax);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

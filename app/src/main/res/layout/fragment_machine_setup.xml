@@ -20,7 +20,7 @@
         android:background="@color/colorLtGrey" />
 
     <CheckBox
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/machineSwitchTo"
         android:layout_margin="10dp"
         android:layout_below="@id/topSeparator"
@@ -51,5 +51,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Can print z reading?"/>
+
+    <CheckBox
+        android:id="@+id/allowedWakeUpCall"
+        android:layout_margin="10dp"
+        android:layout_below="@id/allowedZRead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Will remind for wake up call?"/>
 
 </RelativeLayout>

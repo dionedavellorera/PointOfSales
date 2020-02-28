@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -19,6 +20,7 @@ public class FocTransactionRequest extends BaseRequest {
         mapValue.put("control_no", controlNumber);
         mapValue.put("emp_id", empId);
         mapValue.put("branch_code", branchCode);
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
 
     }

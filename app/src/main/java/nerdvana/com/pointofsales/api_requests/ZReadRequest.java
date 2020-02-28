@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class ZReadRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
@@ -13,6 +15,8 @@ public class ZReadRequest extends BaseRequest{
         mapValue.put("branch_id", branchId);
         mapValue.put("branch_code", branchCode);
         mapValue.put("emp_id", empId);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 
     }
 

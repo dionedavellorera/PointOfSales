@@ -712,11 +712,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
                             <nerdvana.com.pointofsales.custom.HidingEditText
+                                android:id="@+id/takasRemarks"
                                 android:inputType="text"
                                 android:maxLines="1"
                                 android:imeOptions="actionNext"
                                 android:hint="Remarks"
-
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content" />
                         </com.google.android.material.textfield.TextInputLayout>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.AddRateProductModel;
 import nerdvana.com.pointofsales.model.UpdateProductModel;
@@ -35,6 +36,7 @@ public class AddProductToRequest extends BaseRequest {
         mapValue.put("post_trans_id", postTransId);
         mapValue.put("freebie_id", freebieId);
         mapValue.put("update", GsonHelper.getGson().toJson(updateProductModelArrayList));
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {

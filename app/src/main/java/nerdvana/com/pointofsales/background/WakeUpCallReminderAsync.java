@@ -80,7 +80,8 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                         if (insertedRoom.size() == 0) {
                             RoomEntity roomEntity = new RoomEntity(r.getRoomName(), r.getType().getRoomType(),
                                     String.valueOf(r.getStatus().getCoreId()), r.getStatus().getRoomStatus(),
-                                    r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "", 0);
+                                    r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "", 0,
+                                    r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
                             roomEntity.save();
                         } else {
                             RoomEntity room = insertedRoom.get(0);
@@ -97,6 +98,7 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                                 room.setIs_done(0);
                                 hasChanged = true;
                             }
+
                             if (hasChanged) {
                                 room.save();
                             }

@@ -68,6 +68,8 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
 
         setCancelable(false);
 
+        username.requestFocus();
+
     }
 
     public abstract void passwordSuccess(String employeeId, String employeeName);

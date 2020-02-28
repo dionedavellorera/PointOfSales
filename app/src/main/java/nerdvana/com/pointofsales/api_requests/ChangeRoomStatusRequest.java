@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class ChangeRoomStatusRequest extends BaseRequest {
 
     private Map<String, String> mapValue;
@@ -22,6 +24,8 @@ public class ChangeRoomStatusRequest extends BaseRequest {
         mapValue.put("room_id", roomId);
         mapValue.put("emp_id", empId);
         mapValue.put("remarks", remarks);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {

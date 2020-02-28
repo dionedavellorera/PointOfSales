@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 
+import com.epson.epos2.printer.Printer;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -64,13 +66,12 @@ public class CreateReceiptAsync extends AsyncTask<Void, Void, Void> {
 
         String finalString = "";
         String receiptNo = "NA";
-        finalString += receiptString("NERDVANA CORP.", "", context, true);
-        finalString += receiptString("1 CANLEY ROAD BRGY BAGONG", "", context, true);
-        finalString += receiptString("ILOG PASIG CITY 1600", "", context, true);
-        finalString += receiptString("671-9782", "", context, true);
-        finalString += receiptString("SERIAL NO: ********", "", context, true);
-        finalString += receiptString("VAT REG TIN NO: 009-772-500-00000", "", context, true);
-        finalString += receiptString("PERMIT NO: ********-***-******", "", context, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", context, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", context, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", context, true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", context, true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", context, true);
+        finalString += receiptString("PERMIT NO:" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_NO), "", context, true);
 
         FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
                 ;

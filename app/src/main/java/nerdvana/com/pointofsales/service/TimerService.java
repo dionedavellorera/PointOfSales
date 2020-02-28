@@ -242,9 +242,12 @@ public class TimerService extends Service {
 //                        else if (secsOfDate % 15 == 0) {
 //                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
 //                        }
-                        if (secsOfDate % 10 == 0){
-                            new WakeUpCallReminderAsync(secsOfDate).execute();
+                        if (SharedPreferenceManager.getString(null, ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).equalsIgnoreCase("y")) {
+                            if (secsOfDate % 10 == 0){
+                                new WakeUpCallReminderAsync(secsOfDate).execute();
+                            }
                         }
+
 
 
                         if (secsOfDate % 5 == 0) {

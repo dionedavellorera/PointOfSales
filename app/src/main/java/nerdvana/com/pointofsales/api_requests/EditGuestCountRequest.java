@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
 
@@ -25,6 +26,7 @@ public class EditGuestCountRequest extends BaseRequest {
         mapValue.put("room_id", roomId);
         mapValue.put("emp_id", empId);
         mapValue.put("remarks", remarks);
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {

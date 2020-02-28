@@ -3,6 +3,8 @@ package nerdvana.com.pointofsales.api_requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import nerdvana.com.pointofsales.ApplicationConstants;
+
 public class FetchVehicleRequest extends BaseRequest {
     private Map<String, String> mapValue;
     public FetchVehicleRequest() {
@@ -14,6 +16,8 @@ public class FetchVehicleRequest extends BaseRequest {
 
         mapValue.put("branch_code", branchCode);
         mapValue.put("branch_id", branchId);
+
+        mapValue.put(ApplicationConstants.POS_TO_ID, toId);
     }
 
     public Map<String, String> getMapValue() {
