@@ -62,6 +62,7 @@ import nerdvana.com.pointofsales.SettingsActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.SocketManager;
 import nerdvana.com.pointofsales.SqlQueries;
+import nerdvana.com.pointofsales.UpdateDataModel;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.AddPaymentRequest;
 import nerdvana.com.pointofsales.api_requests.AddProductToRequest;
@@ -622,6 +623,30 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         super.onResume();
 //        BusProvider.getInstance().register(this);
     }
+
+    @Subscribe
+    public void updateRoom(UpdateDataModel updateDataModel) {
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (selectedRoom != null) {
+                        if (selectedRoom.getName().equalsIgnoreCase(updateDataModel.getRoomno())) {
+                            if (!selectedRoom.getStatus().equalsIgnoreCase(updateDataModel.getStatus())) {
+                                clearCartItems();
+                                defaultView();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+    }
+
+
 
     @Override
     public void onAttach(Context context) {

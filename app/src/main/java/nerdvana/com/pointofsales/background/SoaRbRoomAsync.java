@@ -174,7 +174,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         ,
                         40,
                         2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context,
+                        false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -183,7 +184,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         ,
                         40,
                         2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context,
+                        false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
@@ -193,7 +195,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         ,
                         40,
                         2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context,
+                        false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -202,7 +205,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         ,
                         40,
                         2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context,
+                        false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
@@ -217,7 +221,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                             toList1.getControlNo().split("-")[2] + "-" + (Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1),
                             40,
                             2,
-                            context)
+                            context,
+                            false)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -272,7 +277,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                     my,
                                     40,
                                     2,
-                                    context)
+                                    context,
+                                    false)
                                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         } else {
                             addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -280,7 +286,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                     my,
                                     40,
                                     2,
-                                    context)
+                                    context,
+                                    false)
                                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         }
                         displayCount++;
@@ -294,7 +301,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                             toList1.getControlNo().split("-")[2],
                             40,
                             2,
-                            context)
+                            context,
+                            false)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
 
@@ -304,17 +312,29 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
                         40,
                         2,
-                        context)
+                        context,
+                        false)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT_RB))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                String qtyDescString = "";
+                if (Integer.valueOf(SharedPreferenceManager.getString(null, ApplicationConstants.MAX_COLUMN_COUNT_RB))>32) {
+                    String filler = "";
+                    for (int i = 0;i <Integer.valueOf(SharedPreferenceManager.getString(null, ApplicationConstants.MAX_COLUMN_COUNT_RB)) - 32; i++) {
+                        filler += " ";
+                    }
+                    qtyDescString = "QTY   DESCRIPTION    "+filler+"     AMOUNT";
+                } else {
+                    qtyDescString = "QTY   DESCRIPTION         AMOUNT";
+                }
 
 
-                addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, qtyDescString, Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT_RB))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
                     if (soaTrans.getVoid() == 0) {
                         String qty = "";
@@ -350,7 +370,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                 returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty()))
                                 ,
                                 40,
-                                2,context),
+                                2,context,
+                                false),
                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -373,7 +394,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                             ,
                                             40,
                                             2,
-                                            context),
+                                            context,
+                                            false),
                                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 }
                             }
@@ -391,7 +413,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                                 ,
                                                 40,
                                                 2,
-                                                context),
+                                                context,
+                                                false),
                                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                     }
                                 }
@@ -412,7 +435,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                         ,
                                         40,
                                         2,
-                                        context),
+                                        context,
+                                        false),
                                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             }
                         }
@@ -428,7 +452,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                             ,
                                             40,
                                             2,
-                                            context),
+                                            context,
+                                            false),
                                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 }
 
@@ -473,7 +498,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                             ,
                             40,
                             2,
-                            context
+                            context,
+                            false
                             ),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
@@ -489,7 +515,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                             returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount()))
                             ,
                             40,
-                            2,context),
+                            2,context,false),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
 
@@ -531,7 +557,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
 //                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
                             40,
                             2,
-                            context)
+                            context,false)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
 
@@ -569,7 +595,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                             returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
                             40,
                             2,
-                            context)
+                            context,false)
                             ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
 
@@ -668,7 +694,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                             ""
                                             ,
                                             40,
-                                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            2,context,false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 } else {
 
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -676,7 +702,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                             ""
                                             ,
                                             40,
-                                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            2,context,false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 }
 
 
@@ -685,7 +711,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                         finalData
                                         ,
                                         40,
-                                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        2,context,false), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             }
                         }
                     }
@@ -706,7 +732,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         returnWithTwoDecimal(String.valueOf(toList1.getVatable())),
                         40,
                         2,
-                        context)
+                        context,false)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -714,7 +740,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         "VAT AMOUNT",
                         returnWithTwoDecimal(String.valueOf(toList1.getVat())),
                         40,
-                        2,context)
+                        2,context,
+                        false)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -722,7 +749,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales())),
                         40,
                         2,
-                        context)
+                        context,
+                        false)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -733,7 +761,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         "0.00",
                         40,
                         2,
-                        context)
+                        context,
+                        false)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 addPrinterSpace(1);
@@ -746,7 +775,8 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                 pym.getPaymentDescription(),
                                 returnWithTwoDecimal(String.valueOf(pym.getAmount())),
                                 40,
-                                2,context)
+                                2,context,
+                                false)
                                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                     }
                 }
@@ -788,7 +818,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                                 "NA",
                                                 40,
                                                 2,
-                                                context)
+                                                context,false)
                                                 ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                     } else {
 
@@ -801,7 +831,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                                     "NA",
                                                     40,
                                                     2,
-                                                    context)
+                                                    context,false)
                                                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                         } else {
                                             if (d.getInfo().getCardNo() != null) {
@@ -814,7 +844,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                                         d.getInfo().getCardNo().toUpperCase(),
                                                         40,
                                                         2,
-                                                        context)
+                                                        context,false)
                                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                             }
 
@@ -827,7 +857,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                                         d.getInfo().getName().toUpperCase(),
                                                         40,
                                                         2,
-                                                        context)
+                                                        context,false)
                                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                             }
                                         }
@@ -842,7 +872,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                         d.getInfo().getAddress() != null ? d.getInfo().getAddress() : "",
                                         40,
                                         2,
-                                        context)
+                                        context,false)
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -851,7 +881,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                         "",
                                         40,
                                         2,
-                                        context)
+                                        context,false)
                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -870,7 +900,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
                         40,
                         2,
-                        context)
+                        context,false)
                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -882,7 +912,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                                         - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
                         40,
                         2,
-                        context)
+                        context,false)
                         ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -894,7 +924,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
                         ,
                         40,
-                        2,context),
+                        2,context,false),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
@@ -903,7 +933,7 @@ public class SoaRbRoomAsync extends AsyncTask<Void, Void, Void> {
                         returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
                         ,
                         40,
-                        2,context),
+                        2,context,false),
                         Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 

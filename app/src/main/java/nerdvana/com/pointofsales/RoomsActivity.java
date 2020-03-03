@@ -165,6 +165,10 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                         cleanCount+=1;
                     }
 
+                    if (rtm.getStatus().equalsIgnoreCase(RoomConstants.FOR_INSPECTION)) {
+                        dirtyCount+=1;
+                    }
+
                     if (rtm.getStatus().equalsIgnoreCase(RoomConstants.DIRTY)) {
                         dirtyCount+=1;
                     }

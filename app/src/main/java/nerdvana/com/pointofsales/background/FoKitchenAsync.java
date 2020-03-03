@@ -137,9 +137,19 @@ public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
             PrinterUtils.addHeader(printModel, printer);
             Double totalAmount = 0.00;
 //            addTextToPrinter(printer, "FO ORDER SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            String qtyDescString;
+            if (Integer.valueOf(SharedPreferenceManager.getString(null, ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN))>32) {
+                String filler = "";
+                for (int i = 0;i <Integer.valueOf(SharedPreferenceManager.getString(null, ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN)) - 32; i++) {
+                    filler += " ";
+                }
+                qtyDescString = "QTY   DESCRIPTION    "+filler+"     AMOUNT";
+            } else {
+                qtyDescString = "QTY   DESCRIPTION         AMOUNT";
+            }
+            addTextToPrinter(printer, qtyDescString, Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+            addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             TypeToken<List<AddRateProductModel>> token = new TypeToken<List<AddRateProductModel>>() {};
             List<AddRateProductModel> aprm = GsonHelper.getGson().fromJson(printModel.getData(), token.getType());
@@ -154,7 +164,7 @@ public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
                 }
 
                 totalAmount += Double.valueOf(r.getPrice());
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), PrinterUtils.returnWithTwoDecimal(r.getPrice()), 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), PrinterUtils.returnWithTwoDecimal(r.getPrice()), 40, 2, context, true), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 if (r.getAlaCarteList().size() > 0) {
                     for (AddRateProductModel.AlaCarte palac : r.getAlaCarteList()) {
@@ -164,7 +174,7 @@ public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
                                 ,
                                 40,
                                 2,
-                                context),
+                                context,true),
                                 Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                     }
                 }
@@ -178,7 +188,7 @@ public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
                                     ,
                                     40,
                                     2,
-                                    context),
+                                    context,true),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                         }
                     }

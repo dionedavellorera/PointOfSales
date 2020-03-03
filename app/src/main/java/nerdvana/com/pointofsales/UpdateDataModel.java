@@ -1,13 +1,18 @@
 package nerdvana.com.pointofsales;
 
 public class UpdateDataModel {
-    private String update;
-
-    public UpdateDataModel(String update) {
-        this.update = update;
+    private String roomno;
+    private String status;
+    public UpdateDataModel(String roomno, String status) {
+        this.roomno = roomno;
+        this.status = status;
     }
 
-    public String getUpdate() {
-        return update;
+    public String getRoomno() {
+        return roomno;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

@@ -59,6 +59,8 @@ public class ApplicationConstants {
     public static final String SELECTED_LANGUAGE = "selected_language";
     public static final String SELECTED_PORT = "selected_port";
     public static final String MAX_COLUMN_COUNT = "max_column_count";
+    public static final String MAX_COLUMN_COUNT_KITCHEN = "max_column_count_kitchen";
+    public static final String MAX_COLUMN_COUNT_RB = "max_column_count_rb";
 
     public static final String DISCARD_STRING = "You still have unposted item/s, It might be discarded, Do you want to continue?";
 

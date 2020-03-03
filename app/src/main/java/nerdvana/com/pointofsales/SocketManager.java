@@ -74,14 +74,25 @@ public class SocketManager {
                     @Override
                     public void call(Object... args) {
 
-                        BusProvider.getInstance().post(new UpdateDataModel("y"));
+//                        BusProvider.getInstance().post(new UpdateDataModel("y"));
 
                     }
                 }).on("loadroom", new Emitter.Listener() {
                     @Override
                     public void call(Object... args) {
                         Log.d("SUCKET", "LOAD ROOM");
-                        BusProvider.getInstance().post(new UpdateDataModel("y"));
+                        JSONObject data = (JSONObject) args[0];
+                        String roomno = "";
+                        String status = "";
+
+                        try {
+                            roomno = data.getString("roomno");
+                            status = data.getString("status");
+                        } catch (JSONException e) {
+                            return;
+                        }
+
+                        BusProvider.getInstance().post(new UpdateDataModel(roomno, status));
 
                     }
                 });
@@ -160,8 +171,7 @@ public class SocketManager {
 
     public static void reloadPosBackoutRoom(String roomNumber,
                                            String userId) {
-        Log.d("SUCKETDATA", roomNumber);
-        Log.d("SUCKETDATA", userId);
+
         try {
             JSONObject roomObject = new JSONObject();
             roomObject.put("roomno", roomNumber);

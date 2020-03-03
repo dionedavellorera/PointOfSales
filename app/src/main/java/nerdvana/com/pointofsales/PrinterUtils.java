@@ -80,6 +80,31 @@ public class PrinterUtils {
         return finalString;
     }
 
+    public static String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns, Context context, boolean isKitchen) {
+        String finalString = "";
+        int filler = 0;
+        int maxColumnDivideTwo = 0;
+        if (isKitchen) {
+            maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN)) / 2);
+        } else {
+            maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT_RB)) / 2);
+        }
+        if (partOne != null) {
+            if (partOne.length() < maxColumnDivideTwo) {
+                filler += (maxColumnDivideTwo - partOne.length());
+            }
+        }
+        if (partTwo != null) {
+            if (partTwo.length() < maxColumnDivideTwo) {
+                filler += (maxColumnDivideTwo - partTwo.length());
+            }
+        }
+
+        finalString = (partOne.length() >= maxColumnDivideTwo ? partOne.substring(0, maxColumnDivideTwo) : partOne) + repeat(" ", filler) + (partTwo.length() >= maxColumnDivideTwo ? partTwo.substring(0, maxColumnDivideTwo) : partTwo);
+
+
+        return finalString;
+    }
 
     public static String twoColumnsRightGreaterTr(String partOne, String partTwo, int maxTextCountPerLine, int columns, Context context) {
         String finalString = "";

@@ -278,7 +278,17 @@ public class ViewReceiptActualAdapter extends RecyclerView.Adapter<RecyclerView.
                 tvName.setLayoutParams(llp);
                 TextView tvNameValue = new TextView(context);
                 tvNameValue.setGravity(Gravity.RIGHT);
-                tvNameValue.setText(disc.getVrInfo() != null ? disc.getVrInfo().getName().toUpperCase() : "");
+                if (disc.getVrInfo() != null) {
+                    if (disc.getVrInfo().getName() != null) {
+                        tvNameValue.setText(disc.getVrInfo().getName().toUpperCase());
+                    } else {
+                        tvNameValue.setText("");
+                    }
+
+                } else {
+                    tvNameValue.setText("");
+                }
+
                 tvNameValue.setLayoutParams(llp1);
 
 

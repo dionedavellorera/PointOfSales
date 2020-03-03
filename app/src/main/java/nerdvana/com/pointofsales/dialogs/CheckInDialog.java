@@ -104,7 +104,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setDialogLayout(R.layout.dialog_checkin, String.format("%s - %s (%s)", "GUEST INFO", selectedRoom.getName(), selectedRoom.getRoomType()));
-
+        setCancelable(false);
         child = findViewById(R.id.child);
         adult = findViewById(R.id.adult);
         customer = findViewById(R.id.customer);

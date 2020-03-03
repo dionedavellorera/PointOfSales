@@ -95,28 +95,9 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     }
 
     private void sendLoginRequest(String username, String password) {
-//        CheckPermissionRequest checkPermissionRequest =  new CheckPermissionRequest(username, password, actionId);
-//        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-//        Call<CheckPermissionResponse> request = iUsers.checkPermission(checkPermissionRequest.getMapValue());
-//        request.enqueue(new Callback<CheckPermissionResponse>() {
-//            @Override
-//            public void onResponse(Call<CheckPermissionResponse> call, Response<CheckPermissionResponse> response) {
-//                if (response.body().getStatus() == 0) {
-//                    Utils.showDialogMessage(((MainActivity)context), response.body().getMessage(), "Warning!");
-//                } else {
-//                    TODO :
-//                    passwordSuccess("656", "DIONEY");
-//                }
-//                dismiss();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CheckPermissionResponse> call, Throwable t) {
-//
-//            }
-//        });
 
-        LoginRequest loginRequest = new LoginRequest(username, password, actionId);
+
+        LoginRequest loginRequest = new LoginRequest(username, password, "");
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<LoginResponse> request = iUsers.sendLoginRequest(loginRequest.getMapValue());
         request.enqueue(new Callback<LoginResponse>() {
@@ -127,8 +108,32 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
                     Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     cancel();
                 } else {
-                    passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()), response.body().getResult().get(0).getName());
-                    dismiss();
+                    if (response.body().getResult().get(0).getRols().getId() == 2 ||
+                            response.body().getResult().get(0).getRols().getId() == 5 ||
+                            response.body().getResult().get(0).getRols().getId() == 22 ||
+                            response.body().getResult().get(0).getRols().getId() == 27 ||
+                            response.body().getResult().get(0).getRols().getId() == 32 ||
+                            response.body().getResult().get(0).getRols().getId() == 39 ||
+                            response.body().getResult().get(0).getRols().getId() == 45 ||
+                            response.body().getResult().get(0).getRols().getId() == 46 ||
+                            response.body().getResult().get(0).getRols().getId() == 48 ||
+                            response.body().getResult().get(0).getRols().getId() == 49 ||
+                            response.body().getResult().get(0).getRols().getId() == 50 ||
+                            response.body().getResult().get(0).getRols().getId() == 57 ||
+                            response.body().getResult().get(0).getRols().getId() == 59 ||
+                            response.body().getResult().get(0).getRols().getId() == 61 ||
+                            response.body().getResult().get(0).getRols().getId() == 62 ||
+                            response.body().getResult().get(0).getRols().getId() == 95 ||
+                            response.body().getResult().get(0).getRols().getId() == 112 ||
+                            response.body().getResult().get(0).getRols().getId() == 113 ||
+                            response.body().getResult().get(0).getRols().getId() == 114) {
+                        passwordSuccess(String.valueOf(response.body().getResult().get(0).getUserId()), response.body().getResult().get(0).getName());
+                        dismiss();
+                    } else {
+                        Toast.makeText(context, "You are not authorized to alter this transaction", Toast.LENGTH_SHORT).show();
+                        cancel();
+                    }
+
                 }
             }
 

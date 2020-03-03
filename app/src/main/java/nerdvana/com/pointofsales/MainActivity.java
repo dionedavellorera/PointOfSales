@@ -222,6 +222,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        SharedPreferenceManager.saveString(getApplicationContext(), "100", ApplicationConstants.POS_TO_ID);
         List<RoomEntity> books = RoomEntity.listAll(RoomEntity.class);
 
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_TELEPHONE_OPERATOR))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_TELEPHONE_OPERATOR);
+        }
+
+
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN))) {
             SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN);
         }
@@ -301,6 +306,14 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 changeTheme();
             }
         });
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT_RB))) {
+            SharedPreferenceManager.saveString(MainActivity.this, "32", ApplicationConstants.MAX_COLUMN_COUNT_RB);
+        }
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN))) {
+            SharedPreferenceManager.saveString(MainActivity.this, "32", ApplicationConstants.MAX_COLUMN_COUNT_KITCHEN);
+        }
 
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))) {
             SharedPreferenceManager.saveString(MainActivity.this, "32", ApplicationConstants.MAX_COLUMN_COUNT);
@@ -922,7 +935,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
                 addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout");
-                addAsync(new CheckOutRbAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout_rb");
+//                addAsync(new CheckOutRbAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout_rb");
 
                 break;
             case "REPRINT_RECEIPT"://done //checkout
