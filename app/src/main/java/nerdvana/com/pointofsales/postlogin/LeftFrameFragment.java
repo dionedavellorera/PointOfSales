@@ -4789,7 +4789,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                     total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))))));
-                    discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
+                    if (discountPayment > totalBalance) {
+                        discount.setText(Utils.digitsWithComma(totalBalance));
+                    } else {
+                        discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
+                    }
                     deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())))));
                     depositInfoData = String.valueOf(r.getTransaction().getAdvance());
                     for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
@@ -5596,7 +5600,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getTin() != null ? fetchOrderPendingViaControlNoResponse.getResult().getCustomer().getAddress() : "");
             }
 
-            discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))));
+            if (fetchOrderPendingViaControlNoResponse.getResult().getDiscount() > Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal())))) {
+                discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal()))))))));
+            } else {
+                discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getDiscount())))));
+            }
+
             subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getTotal())))));
             deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance())))));
             depositInfoData = String.valueOf(fetchOrderPendingViaControlNoResponse.getResult().getAdvance());
@@ -5817,9 +5826,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
+        Log.d("CHECKOUT_REQ", new CheckOutRequest(roomId, controlNumber, roomBoyId).toString());
 
-
-        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
+//        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
 
         SocketManager.reloadPos(
                 selectedRoom.getName(),

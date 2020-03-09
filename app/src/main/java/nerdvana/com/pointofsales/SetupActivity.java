@@ -22,11 +22,16 @@ import com.squareup.otto.Subscribe;
 
 
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
+import nerdvana.com.pointofsales.api_requests.RepatchDataRequest;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
 import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.dialogs.SetupDialog;
 import nerdvana.com.pointofsales.model.UserModel;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SetupActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -45,6 +50,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
+        callRepatch();
 
 
         progressBar = findViewById(R.id.progressBar);
@@ -121,6 +127,24 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 //                "Version Code: " + Build.VERSION.RELEASE + "\n");
 
 
+    }
+
+    private void callRepatch() {
+        RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ResponseBody> repatchData = iUsers.repatchData(
+                repatchDataRequest.getMapValue());
+        repatchData.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     private void enableViews() {
