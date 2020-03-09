@@ -82,12 +82,12 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
         request.enqueue(new Callback<FetchBranchInfoResponse>() {
             @Override
             public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
+                if (response.body() != null) {
+                    SharedPreferenceManager.saveString(getContext(), String.valueOf(response.body().getResult().getCompanyInfo().getIsRoom()), ApplicationConstants.IS_SYSTEM_ROOM);
+                    SharedPreferenceManager.saveString(getContext(), String.valueOf(response.body().getResult().getCompanyInfo().getIsTable()), ApplicationConstants.IS_SYSTEM_TABLE);
+                    new ButtonsAsync(BottomFrameFragment.this, getContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
 
-                SharedPreferenceManager.saveString(getContext(), String.valueOf(response.body().getResult().getCompanyInfo().getIsRoom()), ApplicationConstants.IS_SYSTEM_ROOM);
-                SharedPreferenceManager.saveString(getContext(), String.valueOf(response.body().getResult().getCompanyInfo().getIsTable()), ApplicationConstants.IS_SYSTEM_TABLE);
-
-
-                new ButtonsAsync(BottomFrameFragment.this, getContext()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
             @Override

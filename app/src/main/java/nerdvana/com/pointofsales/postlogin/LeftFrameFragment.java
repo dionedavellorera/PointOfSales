@@ -7018,27 +7018,45 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         request.enqueue(new Callback<FetchBranchInfoResponse>() {
             @Override
             public void onResponse(Call<FetchBranchInfoResponse> call, Response<FetchBranchInfoResponse> response) {
-                if (response.body().getResult().getCompanyInfo().getIsRoom().equalsIgnoreCase("0") &&
-                        response.body().getResult().getCompanyInfo().getIsTable().equalsIgnoreCase("0")) {
-                    //franchise
-                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                    FetchOrderPendingRequest fetchOrderPendingRequest = new FetchOrderPendingRequest();
-                    Call<FetchOrderPendingResponse> request = iUsers.fetchOrderPending(fetchOrderPendingRequest.getMapValue());
-                    request.enqueue(new Callback<FetchOrderPendingResponse>() {
-                        @Override
-                        public void onResponse(Call<FetchOrderPendingResponse> call, Response<FetchOrderPendingResponse> response) {
-                            boolean hasPendingCleanTransaction = false;
-                            if (response.body().getResult().size() > 0) {
-                                for (FetchOrderPendingResponse.Result r : response.body().getResult()) {
-                                    if (r.getTotal() < 1) {
-                                        selectedRoom = new RoomTableModel(r.getControlNo(), true);
-                                        fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                                        hasPendingCleanTransaction = true;
-                                        break;
+                if (response.body() != null) {
+                    if (response.body().getResult().getCompanyInfo().getIsRoom().equalsIgnoreCase("0") &&
+                            response.body().getResult().getCompanyInfo().getIsTable().equalsIgnoreCase("0")) {
+                        //franchise
+                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                        FetchOrderPendingRequest fetchOrderPendingRequest = new FetchOrderPendingRequest();
+                        Call<FetchOrderPendingResponse> request = iUsers.fetchOrderPending(fetchOrderPendingRequest.getMapValue());
+                        request.enqueue(new Callback<FetchOrderPendingResponse>() {
+                            @Override
+                            public void onResponse(Call<FetchOrderPendingResponse> call, Response<FetchOrderPendingResponse> response) {
+                                boolean hasPendingCleanTransaction = false;
+                                if (response.body().getResult().size() > 0) {
+                                    for (FetchOrderPendingResponse.Result r : response.body().getResult()) {
+                                        if (r.getTotal() < 1) {
+                                            selectedRoom = new RoomTableModel(r.getControlNo(), true);
+                                            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                                            hasPendingCleanTransaction = true;
+                                            break;
+                                        }
                                     }
-                                }
 
-                                if (!hasPendingCleanTransaction) {
+                                    if (!hasPendingCleanTransaction) {
+                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                        GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
+                                        Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
+                                        request.enqueue(new Callback<GetOrderResponse>() {
+                                            @Override
+                                            public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
+                                                selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
+                                                fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<GetOrderResponse> call, Throwable t) {
+
+                                            }
+                                        });
+                                    }
+                                } else {
                                     IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                     GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
                                     Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
@@ -7055,38 +7073,23 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                         }
                                     });
                                 }
-                            } else {
-                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                GetOrderRequest getOrderRequest = new GetOrderRequest("EMPTY", "1", "");
-                                Call<GetOrderResponse> request = iUsers.getOrder(getOrderRequest.getMapValue());
-                                request.enqueue(new Callback<GetOrderResponse>() {
-                                    @Override
-                                    public void onResponse(Call<GetOrderResponse> call, final Response<GetOrderResponse> response) {
-                                        selectedRoom = new RoomTableModel(response.body().getResult().getControlNo(), true);
-                                        fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<GetOrderResponse> call, Throwable t) {
-
-                                    }
-                                });
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<FetchOrderPendingResponse> call, Throwable t) {
+                            @Override
+                            public void onFailure(Call<FetchOrderPendingResponse> call, Throwable t) {
 
-                        }
-                    });
+                            }
+                        });
 
-                } else if (response.body().getResult().getCompanyInfo().getIsTable().equalsIgnoreCase("1")) {
-                    //table
-                } else if (response.body().getResult().getCompanyInfo().getIsRoom().equalsIgnoreCase("1")) {
-                    //room
-                } else {
-                    //not supported
+                    } else if (response.body().getResult().getCompanyInfo().getIsTable().equalsIgnoreCase("1")) {
+                        //table
+                    } else if (response.body().getResult().getCompanyInfo().getIsRoom().equalsIgnoreCase("1")) {
+                        //room
+                    } else {
+                        //not supported
+                    }
                 }
+
             }
 
             @Override
