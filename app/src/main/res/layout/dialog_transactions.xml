@@ -39,7 +39,7 @@
                     android:layout_width="0dp"
                     android:layout_height="30dp"/>
 
-                <Spinner
+                <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                     android:layout_margin="10dp"
                     android:id="@+id/roomSpinner"
                     android:layout_weight="0.5"

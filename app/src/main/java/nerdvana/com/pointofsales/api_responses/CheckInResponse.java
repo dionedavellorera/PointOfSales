@@ -43,9 +43,24 @@ public class CheckInResponse {
     }
 
 
+    public class RoomBoyIn {
+        @SerializedName("name")
+        @Expose
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public class Booked {
-
+        @SerializedName("room_boy_in")
+        @Expose
+        private RoomBoyIn roomBoyIn;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -139,6 +154,14 @@ public class CheckInResponse {
         @SerializedName("rate_room")
         @Expose
         private RateRoom rateRoom;
+
+        public RoomBoyIn getRoomBoyIn() {
+            return roomBoyIn;
+        }
+
+        public void setRoomBoyIn(RoomBoyIn roomBoyIn) {
+            this.roomBoyIn = roomBoyIn;
+        }
 
         public Integer getId() {
             return id;

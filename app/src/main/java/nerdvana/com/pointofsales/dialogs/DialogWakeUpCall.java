@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.ArrayList;
 import java.util.List;
 
+import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
@@ -22,6 +23,7 @@ import nerdvana.com.pointofsales.adapters.WakeUpCallAdapter;
 import nerdvana.com.pointofsales.api_requests.SaveWakeUpCallRequest;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.entities.RoomEntity;
+import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.WakeUpCallModel;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -58,9 +60,22 @@ public class DialogWakeUpCall extends BaseDialog {
                 request.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        BusProvider.getInstance().post(new PrintModel(
+                                "", wakeUpCallModels.get(position).getRoom_number(),
+                                "PRINT_WAKEUP_CALL",
+                                GsonHelper.getGson().toJson(wakeUpCallModels.get(position)),
+                                wakeUpCallModels.get(position).getRoom_type(), "", ""));
+
+
                         wakeUpCallModels.get(position).setIs_done(1);
                         wakeUpCallModels.get(position).save();
                         wakeUpCallModels.remove(position);
+
+
+
+
+
                         if (wakeUpCallAdapter != null) {
                             wakeUpCallAdapter.notifyItemRemoved(position);
                         }

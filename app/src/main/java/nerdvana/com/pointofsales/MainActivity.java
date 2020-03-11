@@ -109,6 +109,7 @@ import nerdvana.com.pointofsales.background.FoKitchenAsync;
 import nerdvana.com.pointofsales.background.FranchiseCheckoutAsync;
 import nerdvana.com.pointofsales.background.IntransitAsync;
 import nerdvana.com.pointofsales.background.PostVoidAsync;
+import nerdvana.com.pointofsales.background.PrintFocAsync;
 import nerdvana.com.pointofsales.background.SafeKeepingAsync;
 import nerdvana.com.pointofsales.background.ShortOverAsync;
 import nerdvana.com.pointofsales.background.SoaRbRoomAsync;
@@ -119,6 +120,7 @@ import nerdvana.com.pointofsales.background.SpotAuditAsync;
 import nerdvana.com.pointofsales.background.SwitchRbRoomAsync;
 import nerdvana.com.pointofsales.background.SwitchRoomAsync;
 import nerdvana.com.pointofsales.background.VoidAsync;
+import nerdvana.com.pointofsales.background.WakeUpCallAsync;
 import nerdvana.com.pointofsales.background.XReadAsync;
 import nerdvana.com.pointofsales.background.ZReadAsync;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
@@ -220,7 +222,15 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        SharedPreferenceManager.saveString(getApplicationContext(), "100", ApplicationConstants.POS_TO_ID);
+
+//        SharedPreferenceManager.saveString(getApplicationContext(), "2", ApplicationConstants.MACHINE_ID);
+//        SharedPreferenceManager.saveString(getApplicationContext(), "963", ApplicationConstants.USER_ID);
+
         List<RoomEntity> books = RoomEntity.listAll(RoomEntity.class);
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MAX_GRID_COLUMN))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "5", ApplicationConstants.MAX_GRID_COLUMN);
+        }
 
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_TELEPHONE_OPERATOR))) {
             SharedPreferenceManager.saveString(getApplicationContext(), "y", ApplicationConstants.IS_TELEPHONE_OPERATOR);
@@ -740,6 +750,20 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         super.onResume();
         BusProvider.getInstance().register(this);
 
+//        JSONObject roomObject = new JSONObject();
+//        try {
+//            roomObject.put("roomno", "");
+//            roomObject.put("status", "");
+//            roomObject.put("oldstatus", "");
+//            roomObject.put("userid", "");
+//            roomObject.put("action", "");
+//            roomObject.put("from", "pos");
+//            SocketManager.getInstance().emit("reloadposnerdvana", roomObject);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+
         new SocketManager(this);
 //        if (canTransact()) {
 //            checkSafeKeepingRequest();
@@ -861,6 +885,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             }
         }
         switch (printModel.getType()) {
+            case "PRINT_WAKEUP_CALL":
+                addAsync(new WakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "wake_up_call");
+                break;
             case "ACK_SLIP":
                 addAsync(new AcknowledgementAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "ack_slip");
                 break;
@@ -934,6 +961,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //                addAsync(new SwitchRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "switchroom_rb");
                 addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "switchroom");
                 break;
+            case "PRINT_FOC"://done //checkout
+                willExecutGlobalPrint = false;
+                addAsync(new PrintFocAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "print_foc");
+                break;
             case "PRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
@@ -966,6 +997,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
                 break;
             case "VOID"://done
+                Log.d("VOIDASYNCDATA","START VOID PRINT");
                 willExecutGlobalPrint = false;
                 addAsync(new VoidAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "voiditem");
                 break;
@@ -1494,7 +1526,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
             finalString += receiptString("POSTING DATE: " + zReadResponse.getData().getGeneratedAt(), "", MainActivity.this, true);
             finalString += receiptString("USER : " + userModel.getUsername(), "", MainActivity.this, true);
-            finalString += receiptString("MANAGER : " + zReadResponse.getData().getDutyManager().getName(), "", MainActivity.this, true);
+            if (zReadResponse.getData().getDutyManager() != null) {
+                finalString += receiptString("MANAGER : " + zReadResponse.getData().getDutyManager().getName(), "", MainActivity.this, true);
+            } else {
+                finalString += receiptString("MANAGER : " + "", "", MainActivity.this, true);
+            }
+
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
             finalString += receiptString("DESCRIPTION                VALUE", "", MainActivity.this, true);
             finalString += receiptString(new String(new char[Integer.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), "", MainActivity.this, true);
@@ -2268,7 +2305,16 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
             //region create receipt data
 
-            finalString += receiptString("CASHIER", toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCashierOut().getName() : userModel.getUsername(), MainActivity.this, false);
+            if (toList1.getGuestInfo() != null) {
+                if (toList1.getGuestInfo().getCashierOut() != null) {
+                    finalString += receiptString("CASHIER", toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCashierOut().getName() : userModel.getUsername(), MainActivity.this, false);
+                } else {
+                    finalString += receiptString("CASHIER", "", MainActivity.this, false);
+                }
+            } else {
+                finalString += receiptString("CASHIER", "", MainActivity.this, false);
+            }
+
             finalString += receiptString("ROOM BOY", String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA"), MainActivity.this, false);
             finalString += receiptString("CHECK IN", toList1.getGuestInfo() != null ? Utils.birDateTimeFormat(toList1.getGuestInfo().getCheckIn()) : "NA", MainActivity.this, false);
             finalString += receiptString("CHECK OUT", toList1.getGuestInfo() != null ? Utils.birDateTimeFormat(toList1.getGuestInfo().getCheckOut()) : "NA", MainActivity.this, false);
@@ -3615,17 +3661,36 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (event.isShiftPressed()) {
-            Toast.makeText(getApplicationContext(), "KEY PRESSED", Toast.LENGTH_SHORT).show();
+        if (event.isCtrlPressed()) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_R:
+                    Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
+                    startActivityForResult(roomSelectionIntent, 10);
+                    break;
+                case KeyEvent.KEYCODE_S:
+                    BusProvider.getInstance().post(new ButtonsModel(100,"SAVE", "",3, 0));
+                    break;
+                case KeyEvent.KEYCODE_I:
+                    BusProvider.getInstance().post(new ButtonsModel(125,"ROOM LIST VIEW", "",8, 0));
+                    break;
+                case KeyEvent.KEYCODE_G:
+                    BusProvider.getInstance().post(new ButtonsModel(111,"GUEST INFO", "",4, 0));
+
+                    break;
+                default:
+                    return super.onKeyUp(keyCode, event);
+            }
         }
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_J:
-//                Toast.makeText(getApplicationContext(), "J IS PRESSED", Toast.LENGTH_SHORT).show();
-//                break;
-//            default:
-//                return super.onKeyUp(keyCode, event);
-//
-//        }
+        if (event.isAltPressed()) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_S:
+                    BusProvider.getInstance().post(new ButtonsModel(106,"SOA", "",5, 123));
+                    break;
+                default:
+                    return super.onKeyUp(keyCode, event);
+            }
+        }
+
         return super.onKeyUp(keyCode, event);
     }
 
@@ -3791,6 +3856,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     private void runTask(String taskName, AsyncTask asyncTask) {
 
         switch (taskName) {
+            case "wake_up_call":
+                WakeUpCallAsync wakeUpCallAsync = (WakeUpCallAsync) asyncTask;
+                wakeUpCallAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
             case "ack_slip":
                 AcknowledgementAsync acknowledgementAsync = (AcknowledgementAsync) asyncTask;
                 acknowledgementAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -3830,6 +3899,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             case "checkout_rb":
                 CheckOutRbAsync checkOutRbAsync = (CheckOutRbAsync) asyncTask;
                 checkOutRbAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                break;
+            case "print_foc":
+                PrintFocAsync printFocAsync = (PrintFocAsync) asyncTask;
+                printFocAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
             case "checkout":
                 CheckOutAsync checkOutAsync = (CheckOutAsync) asyncTask;
@@ -3900,6 +3973,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 soaToAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;
             case "voiditem":
+                Log.d("VOIDASYNC", "EXECUTING");
                 VoidAsync voidAsync = (VoidAsync) asyncTask;
                 voidAsync.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 break;

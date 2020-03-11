@@ -88,7 +88,33 @@ public class SocketManager {
                         try {
                             roomno = data.getString("roomno");
                             status = data.getString("status");
+
+                            Log.d("SUCKET", roomno);
+                            Log.d("SUCKET", status);
                         } catch (JSONException e) {
+                            Log.d("SUCKET", e.getMessage());
+                            return;
+                        }
+
+                        BusProvider.getInstance().post(new UpdateDataModel(roomno, status));
+
+                    }
+                }).on("dashboardreload", new Emitter.Listener() {
+                    @Override
+                    public void call(Object... args) {
+                        Log.d("SUCKET", "DASHBOARD RELOAD");
+                        JSONObject data = (JSONObject) args[0];
+                        String roomno = "";
+                        String status = "";
+
+                        try {
+                            roomno = data.getString("roomno");
+                            status = data.getString("status");
+
+                            Log.d("SUCKET", roomno);
+                            Log.d("SUCKET", status);
+                        } catch (JSONException e) {
+                            Log.d("SUCKET", e.getMessage());
                             return;
                         }
 
@@ -140,6 +166,7 @@ public class SocketManager {
                                  String userId, String action) {
 
         try {
+            Log.d("SUCKET", "EMITING");
             JSONObject roomObject = new JSONObject();
             roomObject.put("roomno", roomNumber);
 //            roomObject.put("roomid", roomId);

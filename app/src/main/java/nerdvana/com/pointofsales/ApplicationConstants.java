@@ -75,6 +75,7 @@ public class ApplicationConstants {
     public static final String THEME_SELECTED = "theme_selected";
     public static final String MACHINE_SETUP = "machine_setup";
     public static final String IS_TELEPHONE_OPERATOR = "is_telephone_operator";
+    public static final String MAX_GRID_COLUMN = "max_grid_columns";
     public static final String IS_ALLOWED_FOR_CHECK_IN = "is_allowed_for_check_in";
     public static final String IS_ALLOWED_WAKE_UP_CALL = "is_allowed_wake_up_call";
     public static final String IS_ALLOWED_FOR_XREADING = "is_allowed_for_xreading";

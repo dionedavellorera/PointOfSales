@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -13,7 +14,11 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
@@ -26,11 +31,13 @@ import nerdvana.com.pointofsales.adapters.RoomFilterAdapter;
 import nerdvana.com.pointofsales.api_requests.ChangeRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomRequest;
 import nerdvana.com.pointofsales.api_responses.ChangeRoomStatusResponse;
+import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.dialogs.ChangeRoomStatusDialog;
+import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.AsyncRequest;
 import nerdvana.com.pointofsales.interfaces.RoomFilterContract;
@@ -44,7 +51,7 @@ import retrofit2.Response;
 
 public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         SelectionContract, RoomFilterContract, AsyncRequest {
-
+    private CollectionDialog collectionDialog;
     boolean isLoadingData = false;
 
     ChangeRoomStatusDialog changeRoomStatusDialog;
@@ -73,14 +80,13 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         searchView = findViewById(R.id.search);
         rootView = findViewById(R.id.rootView);
         allowedRoomStatusList = new ArrayList<>();
-
-
         allowedRoomStatusList.add(RoomConstants.CLEAN);
         allowedRoomStatusList.add(RoomConstants.HOTELIFIED);
         allowedRoomStatusList.add(RoomConstants.INSPECTED_CLEAN);
         allowedRoomStatusList.add(RoomConstants.DIRTY);
         allowedRoomStatusList.add(RoomConstants.OCCUPIED);
         allowedRoomStatusList.add(RoomConstants.SOA);
+
 //        allowedRoomStatusList.add(RoomConstants.ONGOING_RC);
 //        allowedRoomStatusList.add(RoomConstants.ONGOING_RC_WAITING_GUEST);
 //        allowedRoomStatusList.add(RoomConstants.ONGOING_DIRTY_WAITING_GUEST);
@@ -130,6 +136,33 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             }
         });
+        searchView.requestFocus();
+
+        searchView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction()==0) {
+                    if (roomsTablesAdapter != null) {
+                        if (roomsTablesAdapter.getRoomsFilteredList().size() == 1) {
+
+                            if (allowedRoomStatusList.contains(roomsTablesAdapter.getRoomsFilteredList().get(0).getStatus())) {
+                                Intent intent = new Intent();
+                                intent.putExtra("selected", GsonHelper.getGson().toJson(roomsTablesAdapter.getRoomsFilteredList().get(0)));
+                                setResult(RESULT_OK, intent);
+                                finish();
+                            } else {
+                                Utils.showDialogMessage(RoomsActivity.this, String.format("%s %s", "You are not allowed to use this room, current status is", roomsTablesAdapter.getRoomsFilteredList().get(0).getStatusDescription()), "Warning");
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+
+        });
+
     }
 
     @Override
@@ -221,13 +254,19 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                 }
 
                 roomsTablesAdapter.addItems(list);
+
+
+                if (!TextUtils.isEmpty(searchView.getText().toString())) {
+                    roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
+                }
                 break;
         }
     }
 
     private void setRoomsTableAdapter() {
+        int spanCount = Integer.valueOf(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.MAX_GRID_COLUMN));
         roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
+        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, spanCount));
 //        listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
         roomsTablesAdapter.notifyDataSetChanged();
@@ -325,6 +364,9 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 //                            ApplicationConstants.ROOM_JSON);
             new RoomsTablesAsync(this, fetchRoomResponse.getResult(), this).execute();
             setRoomFilter();
+
+
+
 //            isLoadingData = false;
         }
     }
@@ -448,6 +490,47 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 //        Log.d("FINISHASYNC","TRUE DESTROY");
         isLoadingData = false;
     }
+
+//    @Subscribe
+//    public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
+//        Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
+//        if (safeKeepAmount != 0) {
+//            if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
+//
+//
+//                if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
+//                    if (collectionDialog == null) {
+//                        ApplicationConstants.IS_ACTIVE = "T";
+//                        collectionDialog = new CollectionDialog(RoomsActivity.this, "Safekeeping", false) {
+//                            @Override
+//                            public void printCashRecoData(String cashNRecoData) {
+//
+//                            }
+//                        };
+//
+//                        collectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                            @Override
+//                            public void onCancel(DialogInterface dialog) {
+//                                collectionDialog = null;
+//                                ApplicationConstants.IS_ACTIVE = "F";
+//                            }
+//                        });
+//
+//                        collectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                            @Override
+//                            public void onDismiss(DialogInterface dialog) {
+//                                collectionDialog = null;
+//                                ApplicationConstants.IS_ACTIVE = "F";
+//                            }
+//                        });
+//
+//                        if (!collectionDialog.isShowing()) collectionDialog.show();
+//                    }
+//                }
+//            }
+//        }
+//    }
+
 
     //    ChangeRoomStatusRequest changeRoomStatusRequest = new ChangeRoomStatusRequest(
 //            previousPersonCount,

@@ -38,7 +38,7 @@
                         android:singleLine="true"
                         android:textColor="@color/colorBlack"
                         android:textColorHint="@color/colorBlack"
-                        android:imeOptions="actionDone"
+                        android:imeOptions="actionSearch"
                         android:hint="Search room"
                         android:layout_centerVertical="true"
                         android:id="@+id/search"

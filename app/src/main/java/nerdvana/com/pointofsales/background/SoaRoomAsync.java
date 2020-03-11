@@ -552,13 +552,17 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 //                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
-                            returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
-                            40,
-                            2,
-                            context)
-                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    if (!TextUtils.isEmpty(dc.getVoid_by())) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
+                                dc.getDiscountType(),
+                                returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
+                                40,
+                                2,
+                                context)
+                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
                 }
 
                 addPrinterSpace(1);

@@ -3,6 +3,7 @@ package nerdvana.com.pointofsales.background;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.epson.epos2.Epos2Exception;
@@ -50,6 +51,8 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
+
+
         if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
                 !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
             try {
@@ -93,7 +96,6 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
             TypeToken<List<VoidProductModel>> voidToken = new TypeToken<List<VoidProductModel>>() {};
             List<VoidProductModel> voidList = GsonHelper.getGson().fromJson(printModel.getData(), voidToken.getType());
 
-//            addTextToPrinter(printer, "VOID SLIP", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
@@ -111,7 +113,7 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
                 }
 
                 voidTotalAmount += Double.valueOf(vpm.getPrice());
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ vpm.getName(), vpm.getPrice(), 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ vpm.getName(), PrinterUtils.returnWithTwoDecimal(String.valueOf(Double.valueOf(vpm.getPrice()) * Integer.valueOf(vpm.getQuantity()))), 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
             }
 
@@ -123,16 +125,11 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "PRINTED BY: " + userModel.getUsername(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
             try {
-
                 printer.addCut(Printer.CUT_FEED);
-
                 if (printer.getStatus().getConnection() == 1) {
                     printer.sendData(Printer.PARAM_DEFAULT);
                     printer.clearCommandBuffer();
                 }
-
-
-//            printer.endTransaction();
             } catch (Epos2Exception e) {
                 try {
                     printer.disconnect();
@@ -142,12 +139,6 @@ public class VoidAsync extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
-//        else {
-//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
-//        }
-
-
-
         return null;
     }
 }

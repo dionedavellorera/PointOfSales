@@ -150,7 +150,7 @@ public class ZXActualDialog extends Dialog {
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(cardSales)),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAdvancePayment)),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(onlineSales)),
-                                PrinterUtils.returnWithTwoDecimal(res.getData().getCashAndReco().get(0).getAdjustmentDeposit()),
+                                PrinterUtils.returnWithTwoDecimal(res.getData().getCashAndReco().size() > 0 ? res.getData().getCashAndReco().get(0).getAdjustmentDeposit() : ""),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(res.getData().getVoidAmount())),
                                 String.valueOf(pwdCount),
                                 PrinterUtils.returnWithTwoDecimal(String.valueOf(pwdAmount)),

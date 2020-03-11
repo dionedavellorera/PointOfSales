@@ -21,6 +21,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +85,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
 
     private CheckBox isTo;
     private SearchView receiptNumber;
-    private Spinner roomSpinner;
+    private SearchableSpinner roomSpinner;
     private Button search;
 
     private ViewReceiptResponse.Result selectedOrToPrintOrVoid;

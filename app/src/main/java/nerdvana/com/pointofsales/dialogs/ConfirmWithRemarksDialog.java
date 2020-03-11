@@ -101,7 +101,7 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
         if (dialog != null) {
 //            int width = ViewGroup.LayoutParams.MATCH_PARENT;
             int height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            dialog.getWindow().setLayout(300, height);
+            dialog.getWindow().setLayout(600, height);
         }
     }
 }

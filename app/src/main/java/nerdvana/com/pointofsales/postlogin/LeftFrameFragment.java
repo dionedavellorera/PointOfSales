@@ -1739,6 +1739,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
+                        Log.d("WEKWEK", "TEST");
                         doSwitchCaseFunction(clickedItem);
                     }
 
@@ -3951,15 +3952,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     model.add(new VoidProductModel(
                             cim.getPostId(),
                             cim.getName(),
-                            String.valueOf(cim.getAmount()),
+                            String.valueOf(cim.getUnitPrice()),
                             String.valueOf(cim.getQuantity())
                     ));
                 }
             }
 
-            if (totalRoomCounter == roomCounterToVoid) {
-                hasRemainingRate = false;
+            if (!selectedRoom.isTakeOut()) {
+                if (totalRoomCounter == roomCounterToVoid) {
+                    hasRemainingRate = false;
+                }
             }
+
 
             Log.d("PEKPEK", String.valueOf(totalRoomCounter));
             Log.d("PEKPEK", String.valueOf(roomCounterToVoid));
@@ -4276,7 +4280,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         checkoutSwipe.setRefreshing(false);
                     }
                 });
-
                 alertYesNo.show();
             } else {
                 BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
@@ -5826,9 +5829,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
-        Log.d("CHECKOUT_REQ", new CheckOutRequest(roomId, controlNumber, roomBoyId).toString());
+//        Log.d("CHECKOUT_REQ", new CheckOutRequest(roomId, controlNumber, roomBoyId).toString());
 
-//        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
+        BusProvider.getInstance().post(new CheckOutRequest(roomId, controlNumber, roomBoyId));
 
         SocketManager.reloadPos(
                 selectedRoom.getName(),
@@ -5879,34 +5882,40 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             }
 
 
-            ChangeRoomStatusRequest cr =
-                    new ChangeRoomStatusRequest("3",
-                            String.valueOf(selectedRoom.getRoomId()),
-                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.USER_ID),
-                            "");
+            if (selectedRoom != null) {
+                ChangeRoomStatusRequest cr =
+                        new ChangeRoomStatusRequest("3",
+                                String.valueOf(selectedRoom.getRoomId()),
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USER_ID),
+                                "");
 
-            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-            Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(cr.getMapValue());
-            request.enqueue(new Callback<ChangeRoomStatusResponse>() {
-                @Override
-                public void onResponse(Call<ChangeRoomStatusResponse> call, Response<ChangeRoomStatusResponse> response) {
+                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(cr.getMapValue());
+                request.enqueue(new Callback<ChangeRoomStatusResponse>() {
+                    @Override
+                    public void onResponse(Call<ChangeRoomStatusResponse> call, Response<ChangeRoomStatusResponse> response) {
 
-                    SocketManager.reloadPos(
-                            selectedRoom.getName(),
-                            String.valueOf(selectedRoom.getRoomId()),
-                            "3",
-                            "3",
-                            SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                            "end");
+                        if (selectedRoom != null) {
+                            SocketManager.reloadPos(
+                                    selectedRoom.getName(),
+                                    String.valueOf(selectedRoom.getRoomId()),
+                                    "3",
+                                    "3",
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                    "end");
+                        }
 
 
-                }
 
-                @Override
-                public void onFailure(Call<ChangeRoomStatusResponse> call, Throwable t) {
+                    }
 
-                }
-            });
+                    @Override
+                    public void onFailure(Call<ChangeRoomStatusResponse> call, Throwable t) {
+
+                    }
+                });
+            }
+
 
 
 
@@ -6789,9 +6798,47 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Subscribe
     public void focResponse(FocTransactionResponse focResponse) {
         if (focResponse.getStatus() == 1) {
-            defaultView();
-            clearCartItems();
-            Utils.showDialogMessage(getActivity(), "FOC SUCCESS", "Information");
+            //return dione here
+            Log.d("FOCRESPONSe"," GO REQUEST");
+            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+
+            FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo());
+
+            Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+            request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+                @Override
+                public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+                    Log.d("FOCRESPONSe"," GO RESPONSE RECEIVED");
+                    Log.d("FOCRESPONSe",String.valueOf(selectedRoom.isTakeOut()));
+                    if (selectedRoom.isTakeOut()) {
+                        BusProvider.getInstance().post(new PrintModel(
+                                "", "takeout",
+                                "PRINT_FOC",
+                                GsonHelper.getGson().toJson(response.body().getResult()),
+                                "", kitchenPath, printerPath));
+                    } else {
+                        BusProvider.getInstance().post(new PrintModel(
+                                "", selectedRoom.getName(),
+                                "PRINT_FOC",
+                                GsonHelper.getGson().toJson(response.body().getResult()),
+                                selectedRoom.getRoomType(), kitchenPath, printerPath));
+                    }
+
+
+                    defaultView();
+                    clearCartItems();
+                    Utils.showDialogMessage(getActivity(), "FOC SUCCESS", "Information");
+
+
+                }
+
+                @Override
+                public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+
+                }
+            });
+
+
         } else {
             Utils.showDialogMessage(getActivity(), focResponse.getMessage(), "Information");
         }

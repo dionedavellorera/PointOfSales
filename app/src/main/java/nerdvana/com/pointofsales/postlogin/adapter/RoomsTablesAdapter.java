@@ -88,6 +88,10 @@ public class RoomsTablesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         };
     }
 
+    public List<RoomTableModel> getRoomsFilteredList(){
+        return roomsFilteredList;
+    }
+
     static class ProductsViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private TextView timer;
