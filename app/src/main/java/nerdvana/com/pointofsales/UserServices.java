@@ -282,12 +282,12 @@ public class UserServices extends BaseService {
         asyncRequest(request);
     }
 
-    @Subscribe
-    public void onReceiveCheckoutRequest(CheckOutRequest checkOutRequest) {
-        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        Call<CheckOutResponse> request = iUsers.checkOut(checkOutRequest.getMapValue());
-        asyncRequest(request);
-    }
+//    @Subscribe
+//    public void onReceiveCheckoutRequest(CheckOutRequest checkOutRequest) {
+//        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+//        Call<CheckOutResponse> request = iUsers.checkOut(checkOutRequest.getMapValue());
+//        asyncRequest(request);
+//    }
 
     //
     @Subscribe

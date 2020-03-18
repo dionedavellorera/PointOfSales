@@ -11,6 +11,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,11 +32,20 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ButtonsContract buttonsContract;
     private List<String> shortcutString;
     private Context context;
+
+    Animation anim = new AlphaAnimation(0.0f, 1.0f);
+
+
     public ButtonsAdapter(List<ButtonsModel> buttonsModelList, ButtonsContract buttonsContract, Context context) {
         this.buttonsModelList = buttonsModelList;
         this.buttonsContract = buttonsContract;
         this.context = context;
         this.shortcutString = new ArrayList<>();
+
+        anim.setDuration(1000); //You can manage the blinking time with this parameter
+        anim.setStartOffset(0);
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatCount(Animation.INFINITE);
     }
 
     @NonNull
@@ -48,6 +59,7 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class ButtonsViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private ImageView imageUrl;
+        private ImageView ivWelcomeNotifier;
         private CardView rootView;
         private RelativeLayout relView;
         public ButtonsViewHolder(@NonNull View itemView) {
@@ -56,6 +68,7 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             imageUrl = itemView.findViewById(R.id.image);
             rootView = itemView.findViewById(R.id.rootView);
             relView = itemView.findViewById(R.id.relView);
+            ivWelcomeNotifier = itemView.findViewById(R.id.ivWelcomeNotifier);
         }
     }
 
@@ -116,11 +129,58 @@ public class ButtonsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             );
         }
 
+
         if (buttonsModelList.get(i).isEnabled()) {
             ((ButtonsViewHolder)holder).rootView.setEnabled(true);
         } else {
             ((ButtonsViewHolder)holder).rootView.setEnabled(false);
         }
+
+        if (buttonsModelList.get(i).isHasWelcome()) {
+            if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_pink));
+            } else {
+                ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_pink));
+            }
+
+
+            ((ButtonsViewHolder)holder).rootView.startAnimation(anim);
+        } else {
+            if (((ButtonsViewHolder)holder).rootView.getAnimation() != null) {
+                ((ButtonsViewHolder)holder).rootView.getAnimation().cancel();
+
+                if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).isEmpty()) { //show light theme
+                    if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+                    } else {
+                        ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+                    }
+
+                    ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColorStateList(R.color.colorBlack));
+                } else {
+                    if (SharedPreferenceManager.getString(context, ApplicationConstants.THEME_SELECTED).equalsIgnoreCase("light")) {
+                        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+                        } else {
+                            ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_light));
+                        }
+                        ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColorStateList(R.color.light_text_color));
+                    } else {
+                        if(sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            ((ButtonsViewHolder)holder).relView.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.bottom_button_dark));
+                        } else {
+                            ((ButtonsViewHolder)holder).relView.setBackground(ContextCompat.getDrawable(context, R.drawable.bottom_button_dark));
+                        }
+                        ((ButtonsViewHolder)holder).name.setTextColor(context.getResources().getColorStateList(R.color.colorBlack));
+                    }
+                }
+
+
+            }
+
+        }
+
+
     }
 
 

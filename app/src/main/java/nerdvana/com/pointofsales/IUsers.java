@@ -174,7 +174,7 @@ public interface IUsers {
 
     @POST("checkOut")
     @FormUrlEncoded
-    Call<CheckOutResponse> checkOut(@FieldMap Map<String, String> params);
+    Call<ResponseBody> checkOut(@FieldMap Map<String, String> params);
 
     //fetchDefaultCurrency
     @POST("fetchDefaultCurrency")
@@ -398,4 +398,8 @@ public interface IUsers {
     @FormUrlEncoded
     Call<PosMachinesResponse> fetchPosMachines(@FieldMap Map<String, String> params);
 
+
+    @POST("addRemakrsPostTrans") //for adding remarks to selected product
+    @FormUrlEncoded
+    Call<ResponseBody> addRemarksToProduct(@FieldMap Map<String, String> params);
 }

@@ -29,6 +29,7 @@ import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.entities.RoomEntity;
 import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
+import nerdvana.com.pointofsales.model.RoomWelcomeNotifier;
 import nerdvana.com.pointofsales.model.WakeUpCallModel;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,26 +53,14 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
     @Override
     protected List<WakeUpCallModel> doInBackground(Void... voids) {
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-
-
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         FetchRoomRequest fetchRoomRequest = new FetchRoomRequest();
         Call<FetchRoomResponse> request = iUsers.sendRoomListRequest(fetchRoomRequest.getMapValue());
         request.enqueue(new Callback<FetchRoomResponse>() {
             @Override
             public void onResponse(Call<FetchRoomResponse> call, Response<FetchRoomResponse> response) {
-
-
-//                DateTime endShiftTime = dateTimeFormatter.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
-//
-//                if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
-//
-//                }
-
-
-
                 if (response.body().getResult().size() > 0) {
+                    boolean hasWelcome = false;
                     for (FetchRoomResponse.Result r : response.body().getResult()) {
                         List<RoomEntity> insertedRoom = RoomEntity
                                 .findWithQuery(RoomEntity.class,
@@ -87,8 +76,6 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                             RoomEntity room = insertedRoom.get(0);
                             boolean hasChanged = false;
                             if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
-
-
                                 room.setWake_up_call(r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "");
                                 room.setControl_number(r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
                                 hasChanged = true;
@@ -102,32 +89,16 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                                 hasChanged = true;
                             }
 
+                            if (r.getStatus().getCoreId() == 59) {
+                                hasWelcome = true;
+                            }
+
                             if (hasChanged) {
                                 room.save();
                             }
-
                         }
-
-
-
-//                    if (r.getStatus().getCoreId() == 2 || r.getStatus().getCoreId() == 17) {
-//                        if (r.getTransaction() != null) {
-//
-//                            if (!TextUtils.isEmpty(r.getTransaction().getWakeUpCall())) {
-//                                DateTime dateTime = dateTimeFormatter.parseDateTime(r.getTransaction().getWakeUpCall());
-//                                if (secsOfDate >= (dateTime.getMillis() / 1000)) {
-//                                    occupiedCount += 1;
-//                                    wakeUpCallModels.add(new WakeUpCallModel(
-//                                            r.getRoomNo(),
-//                                            r.getTransaction().getWakeUpCall(),
-//                                            String.valueOf(dateTime.getMillis())
-//                                    ));
-//
-//                                }
-//                            }
-//                        }
-//                    }
                     }
+                    BusProvider.getInstance().post(new RoomWelcomeNotifier(hasWelcome));
                 }
             }
 

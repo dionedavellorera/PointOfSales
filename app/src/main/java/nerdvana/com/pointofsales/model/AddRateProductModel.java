@@ -14,6 +14,9 @@ public class AddRateProductModel {
     private String product_initial;
     private List<AlaCarte> alacart;
     private List<Group> group;
+
+    private String remarks;
+
     public static class AlaCarte {
         private String product_id;
         private String room_rate_price_id;
@@ -114,7 +117,7 @@ public class AddRateProductModel {
                                String price, int isPriceChanged,
                                String productInitial,
                                List<AlaCarte> alacart,
-                               List<Group> group) {
+                               List<Group> group, String remarks) {
         this.product_id = product_id;
         this.room_rate_price_id = room_rate_price_id;
         this.qty = qty;
@@ -124,6 +127,7 @@ public class AddRateProductModel {
         this.product_initial = productInitial;
         this.alacart = alacart;
         this.group = group;
+        this.remarks = remarks;
     }
 
 

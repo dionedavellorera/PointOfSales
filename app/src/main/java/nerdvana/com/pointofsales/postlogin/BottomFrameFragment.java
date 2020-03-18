@@ -37,6 +37,7 @@ import nerdvana.com.pointofsales.interfaces.ButtonsContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.MachineChangeRefresh;
+import nerdvana.com.pointofsales.model.RoomWelcomeNotifier;
 import nerdvana.com.pointofsales.postlogin.adapter.ButtonsAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,6 +50,8 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     private ConstraintLayout mainContainer;
     LayoutAnimationController anim;
     private ProgressBar progressBar;
+
+    private List<ButtonsModel> buttonList = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -108,6 +111,7 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
 //        Log.d("WEKWEK", "ISDONEBOTTOM");
         switch (isFor) {
             case "buttons":
+                buttonList = list;
                 progressBar.setVisibility(View.GONE);
                 buttonsAdapter.addItems(list);
                 buttonsAdapter.notifyDataSetChanged();
@@ -159,5 +163,18 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
     public void onDetach() {
         super.onDetach();
         BusProvider.getInstance().unregister(this);
+    }
+
+    @Subscribe
+    public void roomNotifier(RoomWelcomeNotifier roomWelcomeNotifier) {
+        for (ButtonsModel btm : buttonList) {
+            if (btm.getId() == 9999) {
+                btm.setHasWelcome(roomWelcomeNotifier.isHasWelcome());
+                if (buttonsAdapter != null) {
+                    buttonsAdapter.notifyDataSetChanged();
+                }
+                break;
+            }
+        }
     }
 }

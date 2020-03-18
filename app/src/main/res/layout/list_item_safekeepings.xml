@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSkDetailedData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:id="@+id/linearSkCount"
+        android:layout_below="@id/rvSkDetailedData"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="SK Count"/>
+
+        <TextView
+            android:id="@+id/tvSkCount"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="test"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearSkTotal"
+        android:layout_below="@id/linearSkCount"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="SK Total"/>
+
+        <TextView
+            android:id="@+id/tvSkTotal"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="test"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/button_selector"
+        android:layout_below="@id/linearSkTotal"
+        android:id="@+id/btnReprintSk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REPRINT"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorLtGrey"
+        android:layout_below="@id/btnReprintSk"/>
+
+</RelativeLayout>

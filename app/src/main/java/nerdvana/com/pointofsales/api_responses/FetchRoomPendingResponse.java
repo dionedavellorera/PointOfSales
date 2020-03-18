@@ -1808,6 +1808,9 @@ public class FetchRoomPendingResponse {
     }
 
     public class Post {
+        @SerializedName("remarks")
+        @Expose
+        private String remarks;
         @SerializedName("freebie")
         @Expose
         private TransactionPostFreebies transactionPostFreebies;
@@ -1916,6 +1919,14 @@ public class FetchRoomPendingResponse {
         @SerializedName("discounts")
         @Expose
         private List<Discount> discounts;
+
+        public String getRemarks() {
+            return remarks;
+        }
+
+        public void setRemarks(String remarks) {
+            this.remarks = remarks;
+        }
 
         public TransactionPostFreebies getTransactionPostFreebies() {
             return transactionPostFreebies;

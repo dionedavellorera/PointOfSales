@@ -98,6 +98,15 @@ public class CashNReconcileAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "CASHIER RECONCILE", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             TypeToken<List<CollectionFinalPostModel>> cashrecotoken = new TypeToken<List<CollectionFinalPostModel>>() {};
             List<CollectionFinalPostModel> cashrecodetails = GsonHelper.getGson().fromJson(printModel.getData(), cashrecotoken.getType());
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "SK COUNT",
+                    String.valueOf(cashrecodetails.get(0).getSkCount())
+                    ,
+                    40,
+                    2,
+                    context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             fixDenoPrint(cashrecodetails);

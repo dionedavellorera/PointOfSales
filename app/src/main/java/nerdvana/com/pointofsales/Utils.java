@@ -152,6 +152,13 @@ public class Utils {
         return formatter.format(new Date(seconds * 1000L));
     }
 
+    public static String convertSecondsToSqlDate(long seconds) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        return formatter.format(new Date(seconds * 1000L));
+        //.toString("yyyy-MM-dd HH:mm:ss")
+    }
+
     public static String getDuration(String dateStart, String dateEnd) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         DateTime endDate = formatter.parseDateTime(dateEnd);
@@ -254,5 +261,31 @@ public class Utils {
 
     public static String removeStartingZero(String myString) {
         return myString.replaceAll("^0*", "");
+    }
+
+    public static String durationOfStay(String dateToday, String checkInDate) {
+        String finalString = "";
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        DateTime today = formatter.parseDateTime(dateToday);
+        DateTime yesterday = formatter.parseDateTime(checkInDate);
+        Duration duration = new Duration(yesterday, today);
+
+        Double days_to_hours = 0.00;
+        Double running_hours = 0.00;
+        Double running_hours_to_minutes = 0.00;
+        Double running_minutes = 0.00;
+        if (duration.getStandardDays() > 0) {
+            days_to_hours = Double.valueOf(duration.getStandardDays() * 24);
+            running_hours = duration.getStandardHours() - days_to_hours;
+            running_hours_to_minutes = days_to_hours * 60;
+            running_minutes = Double.valueOf(String.valueOf((duration.getStandardMinutes() - running_hours_to_minutes) % 60));
+            finalString = String.format("%s days, %s hrs, %s mins", (int) duration.getStandardDays(),(int)Math.round(running_hours), (int)Math.round(running_minutes));
+        } else {
+            running_hours = duration.getStandardHours() - days_to_hours;
+            running_hours_to_minutes = days_to_hours * 60;
+            running_minutes = Double.valueOf(String.valueOf((duration.getStandardMinutes() - running_hours_to_minutes) % 60));
+            finalString = String.format("%s hrs, %s mins", (int)Math.round(running_hours), (int)Math.round(running_minutes));
+        }
+        return finalString;
     }
 }

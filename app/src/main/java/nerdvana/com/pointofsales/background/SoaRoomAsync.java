@@ -57,10 +57,13 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     private String kitchPath;
     private String printerPath;
 
+    private String globalServerTime = "";
     public SoaRoomAsync(PrintModel printModel, Context context,
                         UserModel userModel, String currentDateTime,
                         MainActivity.AsyncFinishCallBack asyncFinishCallBack,
-                        String kitchPath, String printerPath) {
+                        String kitchPath, String printerPath,
+                        String globalServerTime) {
+        this.globalServerTime = globalServerTime;
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
@@ -192,7 +195,15 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                         2,
                         context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-
+                if (!TextUtils.isEmpty(globalServerTime)) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "DURATION",
+                            toList1.getGuestInfo() != null ? Utils.durationOfStay(globalServerTime, toList1.getGuestInfo().getCheckIn()) : "NA"
+                            ,
+                            40,
+                            2,
+                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
 
 
 

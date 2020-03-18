@@ -24,6 +24,7 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
     private Activity context;
     private TextView header;
     private Boolean isRequired;
+    private String appliedRemarks = "";
     public ConfirmWithRemarksDialog(@NonNull Context context) {
         super(context);
     }
@@ -33,6 +34,16 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
         this.context = context;
         this.isRequired = isRequired;
     }
+
+    public ConfirmWithRemarksDialog(@NonNull Activity context, boolean isRequired,
+                                    String appliedRemarks) {
+        super(context);
+        this.context = context;
+        this.isRequired = isRequired;
+        this.appliedRemarks = appliedRemarks;
+    }
+
+
 
     public ConfirmWithRemarksDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
@@ -50,6 +61,8 @@ public abstract class ConfirmWithRemarksDialog extends BaseDialog {
         remarks = findViewById(R.id.remarks);
         save = findViewById(R.id.save);
         header = findViewById(R.id.header);
+
+        remarks.setText(appliedRemarks);
 
         if (isRequired != null) {
             if (isRequired) {

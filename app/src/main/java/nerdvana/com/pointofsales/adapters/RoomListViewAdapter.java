@@ -21,8 +21,11 @@ import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 
 public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<FetchRoomResponse.Result> roomDataList;
-    public RoomListViewAdapter(List<FetchRoomResponse.Result> roomDataList) {
+    private String globalServerTime;
+    public RoomListViewAdapter(List<FetchRoomResponse.Result> roomDataList, String globalServerTime) {
         this.roomDataList = roomDataList;
+        this.globalServerTime = globalServerTime;
+
     }
 
     @NonNull
@@ -98,10 +101,16 @@ public class RoomListViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 ((RoomListViewAdapter.RoomDataHolder) holder).rate.setText(TextUtils.join(",", rateList));
                 if (roomDataList.get(i).getTransaction() != null) {
                     ((RoomListViewAdapter.RoomDataHolder) holder).wakeUpCall.setText(roomDataList.get(i).getTransaction().getWakeUpCall());
-                    ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText(PrinterUtils.getDuration(roomDataList.get(i).getTransaction().getCheckIn()));
+
+
+
+//                    ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText(PrinterUtils.getDuration(roomDataList.get(i).getTransaction().getCheckIn()));
+                    ((RoomListViewAdapter.RoomDataHolder) holder).elapsed.setText(Utils.durationOfStay(globalServerTime, roomDataList.get(i).getTransaction().getCheckIn()));
+
+
                     ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeIn.setText(roomDataList.get(i).getTransaction().getCheckIn());
                     ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
-                    ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
+//                    ((RoomListViewAdapter.RoomDataHolder) holder).dateTimeOut.setText(roomDataList.get(i).getTransaction().getExpectedCheckOut());
                     ((RoomDataHolder) holder).remarks.setText("-----");
                     ((RoomDataHolder) holder)
                             .deposit

@@ -55,7 +55,12 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
     private Printer printer;
 
     private String currentDateTime;
-    public CheckOutAsync(PrintModel printModel, Context context, UserModel userModel, String currentDateTime, MainActivity.AsyncFinishCallBack asyncFinishCallBack) {
+    private String globalServerTime = "";
+    public CheckOutAsync(PrintModel printModel, Context context,
+                         UserModel userModel, String currentDateTime,
+                         MainActivity.AsyncFinishCallBack asyncFinishCallBack,
+                         String globalServerTime) {
+        this.globalServerTime = globalServerTime;
         this.context = context;
         this.printModel = printModel;
         this.userModel = userModel;
@@ -239,6 +244,18 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                         40,
                         2,
                         context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                if (!TextUtils.isEmpty(globalServerTime)) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "DURATION",
+                            toList1.getGuestInfo() != null ? Utils.durationOfStay(globalServerTime, toList1.getGuestInfo().getCheckIn()) : "NA"
+                            ,
+                            40,
+                            2,
+                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
 
 
                 if (toList1.get_void() == 1) {

@@ -7,7 +7,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,9 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     private Button proceed;
     private Context context;
     private String headerAppend = "";
+    private Button btnResetPw;
     private String actionId = "";
+
     public PasswordDialog(@NonNull Context context, String actionId) {
         super(context);
         this.context = context;
@@ -63,6 +67,9 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
         setDialogLayout(R.layout.dialog_password, headerAppend);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
+        btnResetPw = findViewById(R.id.btnResetPw);
+        btnResetPw.setOnClickListener(this);
+
         proceed = findViewById(R.id.proceed);
         proceed.setOnClickListener(this);
 
@@ -72,12 +79,45 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
 
     }
 
+    static String getAlphaNumericString(int n)
+    {
+
+        // chose a Character random from this String
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
+
+        // create StringBuffer size of AlphaNumericString
+        StringBuilder sb = new StringBuilder(n);
+
+        for (int i = 0; i < n; i++) {
+
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                    = (int)(AlphaNumericString.length()
+                    * Math.random());
+
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                    .charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+
+
+
     public abstract void passwordSuccess(String employeeId, String employeeName);
     public abstract void passwordFailed();
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btnResetPw:
+                password.setText("");
+                break;
             case R.id.proceed:
                 if (TextUtils.isEmpty(username.getText().toString()) ||
                         TextUtils.isEmpty(password.getText().toString())) {
@@ -85,6 +125,8 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
                         Utils.showDialogMessage(getContext(), "Please provide username and password", "Missing information!");
                     }
                 } else {
+
+
                     sendLoginRequest(username.getText().toString(), password.getText().toString());
                 }
 
@@ -95,7 +137,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     }
 
     private void sendLoginRequest(String username, String password) {
-
+        Log.d("DIONEPW", password);
 
         LoginRequest loginRequest = new LoginRequest(username, password, "");
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);

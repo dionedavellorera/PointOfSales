@@ -25,8 +25,8 @@ public class HidingEditText extends androidx.appcompat.widget.AppCompatEditText 
         setTextIsSelectable(true);
     }
 
-    @Override
-    public boolean onCheckIsTextEditor() {
-        return false;
-    }
+//    @Override
+//    public boolean onCheckIsTextEditor() {
+//        return false;
+//    }
 }

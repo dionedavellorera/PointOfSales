@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/partial_header"
+        android:id="@+id/header"/>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_below="@id/header"
+        android:id="@+id/refreshSkList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSkList"
+            android:layout_below="@id/header"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:layout_below="@id/header"
+        android:gravity="center"
+        android:id="@+id/tvNoData"
+        android:text="No data for safekeeping"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

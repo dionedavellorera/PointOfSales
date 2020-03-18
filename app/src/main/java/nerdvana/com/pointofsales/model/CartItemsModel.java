@@ -25,6 +25,7 @@ public class CartItemsModel {
     private boolean forVoid;
     private String type;
     private boolean isUpdated;
+    private String remarks;
 
     private List<AddRateProductModel.AlaCarte> alaCarteList;
     private List<AddRateProductModel.Group> groupList;
@@ -43,7 +44,9 @@ public class CartItemsModel {
                           List<AddRateProductModel.AlaCarte> alaCarteList,
                           List<AddRateProductModel.Group> groupList,
                           boolean isUpdated,
-                          FetchRoomPendingResponse.TransactionPostFreebies transactionPostFreebies) {
+                          FetchRoomPendingResponse.TransactionPostFreebies transactionPostFreebies,
+                          String remarks) {
+        this.remarks = remarks;
         this.transactionPostFreebies = transactionPostFreebies;
         this.controlNo = controlNo;
         this.roomId = roomId;
@@ -67,6 +70,10 @@ public class CartItemsModel {
         this.alaCarteList = alaCarteList;
         this.groupList = groupList;
         this.isUpdated = isUpdated;
+    }
+
+    public String getRemarks() {
+        return remarks;
     }
 
     public FetchRoomPendingResponse.TransactionPostFreebies getTransactionPostFreebies() {

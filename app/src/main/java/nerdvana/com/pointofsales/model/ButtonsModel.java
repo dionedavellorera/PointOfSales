@@ -9,6 +9,8 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
     private boolean isSpecial;
     private  boolean isEnabled = true;
     private int core_id;
+
+    private boolean hasWelcome;
     public ButtonsModel(int id, String name, String imageUrl, int position, int core_id) {
         this.id = id;
         this.name = name;
@@ -62,6 +64,14 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
             return -1;
         }
         return 0;
+    }
+
+    public boolean isHasWelcome() {
+        return hasWelcome;
+    }
+
+    public void setHasWelcome(boolean hasWelcome) {
+        this.hasWelcome = hasWelcome;
     }
 
     public int getCore_id() {

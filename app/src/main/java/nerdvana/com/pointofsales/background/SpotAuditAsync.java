@@ -103,6 +103,17 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
             addTextToPrinter(printer, "SPOT AUDIT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 //        TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
             SpotAuditModel collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), SpotAuditModel.class);
+
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "SK COUNT",
+//                    String.valueOf(collectionDetails.ge(0).getSkCount())
+//                    ,
+//                    40,
+//                    2,
+//                    context),
+//                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
             addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             fixDenoPrint(collectionDetails.getCollectionFinalPostModels(),

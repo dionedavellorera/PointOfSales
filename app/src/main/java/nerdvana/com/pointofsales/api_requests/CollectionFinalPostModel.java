@@ -10,6 +10,8 @@ public class CollectionFinalPostModel {
     private String user_id;
     private String emp_id;
 
+    private int skCount = 0;
+
     public CollectionFinalPostModel(String cash_denomination_id, String amount,
                                     String cash_valued, String currency_id,
                                     String currency_value, String pos_id,
@@ -68,5 +70,13 @@ public class CollectionFinalPostModel {
                 ", user_id='" + user_id + '\'' +
                 ", emp_id='" + emp_id + '\'' +
                 '}';
+    }
+
+    public int getSkCount() {
+        return skCount;
+    }
+
+    public void setSkCount(int skCount) {
+        this.skCount = skCount;
     }
 }

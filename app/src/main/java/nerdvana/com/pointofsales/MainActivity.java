@@ -135,6 +135,8 @@ import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
+import nerdvana.com.pointofsales.model.GlobalServerTime;
+import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.MachineChangeRefresh;
 import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
@@ -165,6 +167,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public static String roomNumber;
     private Loading loadingInterface;
     private SelectionContract centralInterface;
+
+    private String globalServerTimeString = "";
+
 
     private AsyncFinishCallBack asyncFinishCallBack;
 
@@ -221,6 +226,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 //        SharedPreferenceManager.saveString(getApplicationContext(), "100", ApplicationConstants.POS_TO_ID);
 
 //        SharedPreferenceManager.saveString(getApplicationContext(), "2", ApplicationConstants.MACHINE_ID);
@@ -968,19 +975,19 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             case "PRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, globalServerTimeString), "checkout");
 //                addAsync(new CheckOutRbAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout_rb");
 
                 break;
             case "REPRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "reprint_checkout");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, globalServerTimeString), "reprint_checkout");
                 break;
             case "REPRINT_RECEIPT_SPEC":
                 willExecutGlobalPrint = false;
 //                saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "reprint_checkout");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, globalServerTimeString), "reprint_checkout");
                 break;
             case "DEPOSIT"://done
                 //willExecutGlobalPrint = false;
@@ -1003,8 +1010,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
-                addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soaroom");
-                addAsync(new SoaRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soaroom_rb");
+                addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath(), globalServerTimeString), "soaroom");
+                addAsync(new SoaRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath(), globalServerTimeString), "soaroom_rb");
 
                 break;
             case "FO": //done
@@ -3403,7 +3410,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 break;
             case 125: //ROOM LIST VIEW POPUP
                 if (roomListViewDialog == null) {
-                    roomListViewDialog = new RoomListViewDialog(MainActivity.this) {
+
+                    roomListViewDialog = new RoomListViewDialog(MainActivity.this, globalServerTimeString) {
                         @Override
                         public void instransitClicked(List<FetchRoomResponse.Result> data) {
                             BusProvider.getInstance().post(new PrintModel("",
@@ -3428,7 +3436,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     });
                 }
 
-                if (!roomListViewDialog.isShowing()) roomListViewDialog.show();
+                if (!TextUtils.isEmpty(globalServerTimeString)) {
+                    roomListViewDialog.show();
+                } else {
+                    Utils.showDialogMessage(MainActivity.this, "No server time yet", "Information");
+                }
+
                 break;
             case 999: //rooms
                 Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
@@ -3442,13 +3455,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (timerIntent != null) {
                     stopService(timerIntent);
                 }
+                RoomEntity.deleteAll(RoomEntity.class);
                 ApplicationConstants.IS_THEME_CHANGED = "T";
-                SharedPreferenceManager
-                        .saveString(
-                                MainActivity.this,
-                                null,
-                                "room_no_list");
-
                 userModel.setLoggedIn(false);
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 SharedPreferenceManager.saveString(MainActivity.this, "", ApplicationConstants.ACCESS_RIGHTS);
@@ -3464,7 +3472,26 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     @Subscribe
+    public void logoutUser(LogoutUserAction logoutUserAction) {
+
+        if (timerIntent != null) {
+            stopService(timerIntent);
+        }
+        RoomEntity.deleteAll(RoomEntity.class);
+        ApplicationConstants.IS_THEME_CHANGED = "T";
+        userModel.setLoggedIn(false);
+        SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+        SharedPreferenceManager.saveString(MainActivity.this, "", ApplicationConstants.ACCESS_RIGHTS);
+        CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
+        finish();
+        startActivity(new Intent(MainActivity.this, SetupActivity.class));
+    }
+
+    @Subscribe
     public void checkSafeKeeping(CheckSafeKeepingResponse checkSafeKeepingResponse) {
+
+
+
         Double safeKeepAmount = Double.valueOf(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SAFEKEEPING_AMOUNT));
         if (safeKeepAmount != 0) {
             if (checkSafeKeepingResponse.getResult().getUnCollected() >= safeKeepAmount) {
@@ -3505,7 +3532,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     @Subscribe
     public void updateTime(TimerModel timerModel) {
-
         currentDateTime = timerModel.getTime();
         timer.setText(timerModel.getTime());
 
@@ -4109,6 +4135,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             onlineTextIndicator.setText("OFFLINE");
             onlineImageIndicator.setBackground(getResources().getDrawable(R.drawable.circle_offline));
         }
+    }
+
+    @Subscribe
+    public void globalServerTimeListener(GlobalServerTime globalServerTime) {
+        globalServerTimeString = globalServerTime.getServerTime();
     }
 }
 

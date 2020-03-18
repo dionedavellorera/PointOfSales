@@ -35,6 +35,7 @@ import nerdvana.com.pointofsales.api_requests.RepatchDataRequest;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.background.CountUpTimer;
 import nerdvana.com.pointofsales.background.WakeUpCallReminderAsync;
+import nerdvana.com.pointofsales.model.GlobalServerTime;
 import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.ServerConnectionModel;
 import nerdvana.com.pointofsales.model.TimerModel;
@@ -74,9 +75,12 @@ public class TimerService extends Service {
                     @Override
                     public void onTick(int second) {
                         secsOfDate+= 1;
+                        //currentDate = Utils.convertSecondsToSqlDate(secsOfDate);
 
+                        BusProvider.getInstance().post(new GlobalServerTime(Utils.convertSecondsToSqlDate(secsOfDate)));
                         BusProvider.getInstance().post(new TimerModel(Utils.convertSecondsToReadableDate(secsOfDate), shiftDisplay));
                         currentDate = Utils.convertSecondsToReadableDate(secsOfDate);
+
                         if (secsOfDate % 10 == 0) {
 //                            RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
                             IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
@@ -222,7 +226,7 @@ public class TimerService extends Service {
 //                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
 //                        }
                         if (SharedPreferenceManager.getString(null, ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).equalsIgnoreCase("y")) {
-                            if (secsOfDate % 30 == 0){
+                            if (secsOfDate % 20 == 0){
                                 new WakeUpCallReminderAsync(secsOfDate).execute();
                             }
                         }

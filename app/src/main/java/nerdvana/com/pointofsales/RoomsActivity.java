@@ -443,7 +443,6 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
             //SHOW SELECTED STATUS
             filteredRoomList = new ArrayList<>();
 
-            Log.d("DIONEDATA", String.valueOf(statusId));
 
             for (RoomTableModel rtm : originalRoomList) {
                 if (statusId == 3) {

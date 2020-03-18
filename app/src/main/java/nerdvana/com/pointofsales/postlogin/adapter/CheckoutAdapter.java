@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -215,7 +216,12 @@ public class CheckoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
 
-            ((ProductsViewHolder)holder).name.setText(cartItem.getName());
+            if (!TextUtils.isEmpty(cartItem.getRemarks())) {
+                ((ProductsViewHolder)holder).name.setText("*" +cartItem.getName());
+            } else {
+                ((ProductsViewHolder)holder).name.setText(cartItem.getName());
+            }
+
             ((ProductsViewHolder)holder).quantity.setText(String.valueOf(cartItem.getQuantity())); //oki
             ((ProductsViewHolder)holder).price.setText(Utils.returnWithTwoDecimal(String.valueOf(cartItem.getUnitPrice())));
 

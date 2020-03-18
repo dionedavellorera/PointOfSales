@@ -64,6 +64,7 @@ public abstract class GuestInfoDialog extends BaseDialog {
     private TextView wakeUpCall;
     private TextView checkInTime;
     private TextView guestCountValue;
+    private TextView durationOfStayValue;
 
     String finalCheckInDateTime = ""; //24hrs time 23:23:00
     String finalCheckInDate = "";
@@ -84,13 +85,15 @@ public abstract class GuestInfoDialog extends BaseDialog {
     private DateTime jodatime;
     private DateTime checkOutJodaTime;
     private DateTime checkInJodaTime;
+    private String globalServerTime;
     private FetchRoomPendingResponse.Result fetchRoomPendingResult;
     public GuestInfoDialog(@NonNull Context context,
                            FetchRoomPendingResponse.Result fetchRoomPendingResult,
-                           Activity act) {
+                           Activity act, String globalServerTime) {
         super(context);
         this.fetchRoomPendingResult = fetchRoomPendingResult;
         this.act = act;
+        this.globalServerTime = globalServerTime;
     }
 
     public GuestInfoDialog(@NonNull Context context, int themeResId) {
@@ -153,12 +156,15 @@ public abstract class GuestInfoDialog extends BaseDialog {
 
 
         wakeUpCall = findViewById(R.id.wakeUpCallValue);
+        durationOfStayValue = findViewById(R.id.durationOfStayValue);
 
         wakeUpCall.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getWakeUpCall())));
 
         checkInTime = findViewById(R.id.checkInTimeValue);
         checkInTime.setText(Utils.convertDateToReadableDate(String.valueOf(fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString())));
 
+
+        durationOfStayValue.setText(Utils.durationOfStay(globalServerTime, fetchRoomPendingResult.getBooked().get(0).getCheckIn().toString()));
 
         guestCountValue = findViewById(R.id.guestCountValue);
         guestCountValue.setText(fetchRoomPendingResult.getBooked().get(0).getTransaction().getPersonCount());

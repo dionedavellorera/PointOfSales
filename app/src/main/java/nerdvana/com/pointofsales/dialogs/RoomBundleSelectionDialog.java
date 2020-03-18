@@ -108,7 +108,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                             0,
                             b.getProduct().getProduct(),
                             new ArrayList<AddRateProductModel.AlaCarte>(),
-                            new ArrayList<AddRateProductModel.Group>()
+                            new ArrayList<AddRateProductModel.Group>(),
+                            ""
                     ));
                     ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getContext()) {
                         @Override
@@ -182,7 +183,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                             "",
                             b.getProduct().getAmount(),
                             result.getProductBundleList().get(position).getProduct().getBranchAlaCart(),
-                            result.getProductBundleList().get(position).getProduct().getBranchGroup());
+                            result.getProductBundleList().get(position).getProduct().getBranchGroup(),
+                            "");
 
 
 
@@ -212,7 +214,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                                                     0,
                                                     bpm.getName(),
                                                     new ArrayList<AddRateProductModel.AlaCarte>(),
-                                                    new ArrayList<AddRateProductModel.Group>()
+                                                    new ArrayList<AddRateProductModel.Group>(),
+                                                    ""
                                             ));
 
                                 }
@@ -245,7 +248,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                                         0,
                                         b.getProduct().getProduct(),
                                         alaCartes,
-                                        groupLst
+                                        groupLst,
+                                        ""
                                 ));
                                 ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getContext()) {
                                     @Override

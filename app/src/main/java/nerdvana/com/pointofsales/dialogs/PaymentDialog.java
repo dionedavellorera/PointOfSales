@@ -1158,6 +1158,17 @@ public abstract class PaymentDialog extends BaseDialog  {
 
 
                 } else {
+
+                    if (totalPayment >= amountDue) {
+                        paymentSuccess(postedPaymentList, empId);
+//                        pay.setBackgroundColor(Color.GREEN);
+                    }
+//                    else {
+//                        pay.setBackgroundColor(Color.RED);
+//                    }
+
+
+
                     Utils.showDialogMessage(act, "No payment to post", "Warning");
                 }
             }

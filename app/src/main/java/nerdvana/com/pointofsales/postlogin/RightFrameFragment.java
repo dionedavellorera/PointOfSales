@@ -295,7 +295,8 @@ public class RightFrameFragment extends Fragment implements
                                     productsModel.getDepartment(),
                                     productsModel.getUnitPrice(),
                                     productsModel.getBranchAlaCartList(),
-                                    productsModel.getBranchGroupList()));
+                                    productsModel.getBranchGroupList(),
+                                    ""));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -493,7 +494,8 @@ public class RightFrameFragment extends Fragment implements
                             productsModel.getDepartment(),
                             productsModel.getUnitPrice(),
                             productsModel.getBranchAlaCartList(),
-                            productsModel.getBranchGroupList()));
+                            productsModel.getBranchGroupList(),
+                            ""));
         }
     }
 

@@ -116,7 +116,8 @@ public class OrderSlipDialog extends BaseDialog {
                             0,
                             osp.getProductInitial(),
                             new ArrayList<AddRateProductModel.AlaCarte>(),
-                            new ArrayList<AddRateProductModel.Group>()
+                            new ArrayList<AddRateProductModel.Group>(),
+                            ""
                     ));
                 }
 

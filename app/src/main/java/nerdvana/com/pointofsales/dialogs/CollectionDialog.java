@@ -41,6 +41,7 @@ import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
 import nerdvana.com.pointofsales.model.SpotAuditModel;
@@ -99,16 +100,16 @@ public abstract class CollectionDialog extends BaseDialog {
 
                             } else {
                                 totalSafeKeepAmount += (Double.valueOf(skdm.getValue()) * Double.valueOf(skdm.getEditText().getText().toString()));
-                                collectionFinalPostModels.add(
-                                        new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
-                                                skdm.getEditText().getText().toString(),
-                                                skdm.getValue(),
-                                                SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE),
-                                                SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE),
-                                                SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID),
-                                                SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID),
-                                                ""
-                                        ));
+                                CollectionFinalPostModel cfpm = new CollectionFinalPostModel(String.valueOf(skdm.getEditText().getId()),
+                                        skdm.getEditText().getText().toString(),
+                                        skdm.getValue(),
+                                        SharedPreferenceManager.getString(null, ApplicationConstants.COUNTRY_CODE),
+                                        SharedPreferenceManager.getString(null, ApplicationConstants.DEFAULT_CURRENCY_VALUE),
+                                        SharedPreferenceManager.getString(null, ApplicationConstants.MACHINE_ID),
+                                        SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID),
+                                        ""
+                                );
+                                collectionFinalPostModels.add(cfpm);
                             }
                         }
                     }
@@ -159,7 +160,8 @@ public abstract class CollectionDialog extends BaseDialog {
                         checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
                             @Override
                             public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
-
+                                int skCount = Integer.valueOf(response.body().getResult().getCount()) + 1;
+                                collectionFinalPostModels.get(0).setSkCount(skCount);
                                 if (type.equalsIgnoreCase("SPOT AUDIT")) {
                                     SpotAuditModel spotAuditModel = new SpotAuditModel(
                                             String.valueOf(totalSafeKeepAmount - response.body().getResult().getUnCollected()),
@@ -203,8 +205,6 @@ public abstract class CollectionDialog extends BaseDialog {
                                                         String valueAmount = "0.00";
                                                         for (CollectionFinalPostModel c : collectionFinalPostModels) {
 
-                                                            Log.d("QWEQWE", String.valueOf(cfm.getCoreId()) + " -- " +c.getCash_denomination_id());
-
                                                             if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
                                                                 valueCount = c.getAmount();
                                                                 valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
@@ -212,19 +212,24 @@ public abstract class CollectionDialog extends BaseDialog {
                                                             }
                                                         }
 
-                                                        Log.d("SAFEKEEPVALUE", String.valueOf(valueAmount) + " - " + String.valueOf(valueCount));
-
 
                                                     }
 
 
+                                                    //print safekeeping twice, not an error
+                                                    //region print safekeep
                                                     BusProvider.getInstance().post(new PrintModel("",
                                                             "",
                                                             "SAFEKEEPING",
                                                             GsonHelper.getGson().toJson(collectionFinalPostModels),
                                                             "", "", ""));
 
-
+                                                    BusProvider.getInstance().post(new PrintModel("",
+                                                            "",
+                                                            "SAFEKEEPING",
+                                                            GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                                            "", "", ""));
+                                                    //endregion
                                                     dismiss();
                                                 }
                                             }
@@ -275,6 +280,10 @@ public abstract class CollectionDialog extends BaseDialog {
                                 "", "", ""));
 
                         Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+
+                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
+
+
                     } else {
                         Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
                     }

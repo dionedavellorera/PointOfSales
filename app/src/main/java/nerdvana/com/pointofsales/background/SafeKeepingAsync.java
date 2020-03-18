@@ -96,8 +96,23 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
             PrinterUtils.addHeader(printModel, printer);
 
             addTextToPrinter(printer, "SAFEKEEPING", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+
+
             TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
             List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
+
+            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    "SK COUNT",
+                    String.valueOf(collectionDetails.get(0).getSkCount())
+                    ,
+                    40,
+                    2,
+                    context),
+                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
             addTextToPrinter(printer, "BILLS", Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
             fixDenoPrint(collectionDetails);

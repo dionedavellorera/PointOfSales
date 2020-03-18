@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.model.CartItemsModel;
 
 public abstract class OpenPriceDialog extends BaseDialog {
@@ -25,6 +26,7 @@ public abstract class OpenPriceDialog extends BaseDialog {
     private Boolean isPosted;
     private int selectedItemPosition = 0;
     private String type;
+    PasswordDialog passwordDialog;
     public OpenPriceDialog(@NonNull Context context,
                            CartItemsModel cartItemsModel,
                            int position,
@@ -72,11 +74,13 @@ public abstract class OpenPriceDialog extends BaseDialog {
                             if (Integer.valueOf(newQty.getText().toString()) > cartItemsModel.getQuantity()) {
                                 Toast.makeText(getContext(), "Please punch new item instead of adding", Toast.LENGTH_SHORT).show();
                             } else {
+
                                 openPriceChangeSuccess(
                                         Integer.valueOf(newQty.getText().toString()),
                                         Double.valueOf(newPrice.getText().toString()),
                                         selectedItemPosition,
                                         type);
+
                             }
                         } else {
                             openPriceChangeSuccess(
@@ -85,7 +89,6 @@ public abstract class OpenPriceDialog extends BaseDialog {
                                     selectedItemPosition,
                                     type);
                         }
-                        Toast.makeText(getContext(), "Please update", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getContext(), "Please put quantity and amount", Toast.LENGTH_SHORT).show();

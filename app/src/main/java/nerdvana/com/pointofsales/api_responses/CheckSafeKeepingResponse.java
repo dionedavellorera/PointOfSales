@@ -40,13 +40,24 @@ public class CheckSafeKeepingResponse {
         this.message = message;
     }
 
-    public class Denomination {
+    public static class Denomination {
+        @SerializedName("cash_denomination_id")
+        @Expose
+        private String cashDenominationId;
         @SerializedName("cash_denomination_value")
         @Expose
         private String cashDenominationValue;
         @SerializedName("amount")
         @Expose
         private String amount;
+
+        public String getCashDenominationId() {
+            return cashDenominationId;
+        }
+
+        public void setCashDenominationId(String cashDenominationId) {
+            this.cashDenominationId = cashDenominationId;
+        }
 
         public String getCashDenominationValue() {
             return cashDenominationValue;

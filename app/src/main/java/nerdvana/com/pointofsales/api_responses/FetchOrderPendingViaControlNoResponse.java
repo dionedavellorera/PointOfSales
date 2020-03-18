@@ -476,6 +476,9 @@ public class FetchOrderPendingViaControlNoResponse {
     }
 
     public class Post {
+        @SerializedName("remarks")
+        @Expose
+        private String remarks;
         @SerializedName("discounts")
         @Expose
         private List<PostObjectDiscount> discounts;
@@ -593,6 +596,14 @@ public class FetchOrderPendingViaControlNoResponse {
         @SerializedName("product")
         @Expose
         private Product product;
+
+        public String getRemarks() {
+            return remarks;
+        }
+
+        public void setRemarks(String remarks) {
+            this.remarks = remarks;
+        }
 
         public List<PostObjectDiscount> getDiscounts() {
             return discounts;
