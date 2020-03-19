@@ -218,13 +218,31 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ROOM BOY",
-                        String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-                        ,
-                        40,
-                        2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                if (toList1.getGuestInfo() != null) {
+                    if (toList1.getGuestInfo().getRoomBoyOut() != null) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                toList1.getGuestInfo().getRoomBoyOut().getName(),
+                                40,
+                                2,
+                                context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    } else {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                "NA",
+                                40,
+                                2,
+                                context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                } else {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "ROOM BOY",
+                            "NA",
+                            40,
+                            2,
+                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
 
 
 
@@ -1013,7 +1031,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "CHANGE",
-                            returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))),
+                            returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? "0.00" : toList1.getChange()))),
                             40,
                             2,
                             context)
@@ -1244,18 +1262,63 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                         40,
                         2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "CASHIER",
-                        toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA"
-                        ,
-                        40,
-                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ROOM BOY",
-                        String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-                        ,
-                        40,
-                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "CASHIER",
+//                        toList1.getCashier() != null ? String.valueOf(toList1.getCashier().getName()) : "NA"
+//                        ,
+//                        40,
+//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                if (toList1.getGuestInfo() != null) {
+                    if (toList1.getGuestInfo().getCashierOut() != null) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "CASHIER",
+                                toList1.getGuestInfo().getCashierOut().getName()
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    } else {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "CASHIER",
+                                "NA"
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                } else {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "CASHIER",
+                            "NA"
+                            ,
+                            40,
+                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
+
+                if (toList1.getGuestInfo() != null) {
+                    if (toList1.getGuestInfo().getRoomBoyOut() != null) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                toList1.getGuestInfo().getRoomBoyOut().getName()
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    } else {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                "NA"
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                } else {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "ROOM BOY",
+                            "NA"
+                            ,
+                            40,
+                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
+
 
 
                 addPrinterSpace(1);
@@ -1340,7 +1403,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "CHANGE",
-                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange())))
+                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? 0.00 : toList1.getChange())))
                         ,
                         40,
                         2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);

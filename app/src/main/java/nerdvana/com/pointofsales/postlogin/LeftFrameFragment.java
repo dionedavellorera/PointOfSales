@@ -4902,6 +4902,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
                     }
                     if (r.getCheckIn() != null && !TextUtils.isEmpty(globalServerTimeString)) {
+
+                        if (selectedRoom.getRoomType() != null) {
+                            setView(selectedRoom.getName(), selectedRoom.getRoomType());
+                        } else {
+                            setView(selectedRoom.getName(), "TO");
+                        }
+
+
+
                         header.setText(String.format("%s(%s)", header.getText().toString(),
                                 Utils.durationOfStay(globalServerTimeString, r.getCheckIn().toString())));
                     }

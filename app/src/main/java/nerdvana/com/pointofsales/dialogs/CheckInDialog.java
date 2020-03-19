@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;

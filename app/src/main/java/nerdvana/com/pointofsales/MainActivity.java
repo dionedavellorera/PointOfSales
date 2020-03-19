@@ -3461,7 +3461,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 SharedPreferenceManager.saveString(MainActivity.this, "", ApplicationConstants.ACCESS_RIGHTS);
                 CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
-                finish();
+//                finish();
                 startActivity(new Intent(MainActivity.this, SetupActivity.class));
                 break;
         }

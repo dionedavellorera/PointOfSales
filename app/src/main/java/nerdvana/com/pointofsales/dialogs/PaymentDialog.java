@@ -66,6 +66,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchPaymentResponse;
+import nerdvana.com.pointofsales.api_responses.FetchUserResponse;
 import nerdvana.com.pointofsales.api_responses.SaveGuestInfoResponse;
 import nerdvana.com.pointofsales.api_responses.TakasListResponse;
 import nerdvana.com.pointofsales.api_responses.VoidPaymentResponse;
@@ -1696,15 +1697,15 @@ public abstract class PaymentDialog extends BaseDialog  {
 
     private void setRoomBoySpinner() {
 
-        TypeToken<List<FetchCompanyUserResponse.Result>> companyUser = new TypeToken<List<FetchCompanyUserResponse.Result>>() {};
-        final List<FetchCompanyUserResponse.Result> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.COMPANY_USER), companyUser.getType());
+        TypeToken<List<FetchUserResponse.Result>> companyUser = new TypeToken<List<FetchUserResponse.Result>>() {};
+        final List<FetchUserResponse.Result> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.USER_JSON), companyUser.getType());
 
         final List<String> userArray = new ArrayList<>();
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                for (FetchCompanyUserResponse.Result res : userList) {
+                for (FetchUserResponse.Result res : userList) {
                     userArray.add(res.getName());
                 }
                 return null;

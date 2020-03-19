@@ -161,21 +161,37 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "CASHIER",
-                        userModel.getUsername()
+                        toList1.getCashier().getName()
                         ,
                         40,
                         2,
                         context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "ROOM BOY",
-                        String.valueOf(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getRoomBoy().getName() : "NA")
-                        ,
-                        40,
-                        2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
+                if (toList1.getGuestInfo() != null) {
+                    if (toList1.getGuestInfo().getRoomBoy() != null) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                toList1.getGuestInfo().getRoomBoy().getName()
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    } else {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                "NA"
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+                } else {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "ROOM BOY",
+                            "NA"
+                            ,
+                            40,
+                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                }
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
