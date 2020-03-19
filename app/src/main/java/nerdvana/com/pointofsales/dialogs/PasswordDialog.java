@@ -64,6 +64,7 @@ public abstract class PasswordDialog extends BaseDialog implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.dialog_password);
+
         setDialogLayout(R.layout.dialog_password, headerAppend);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
