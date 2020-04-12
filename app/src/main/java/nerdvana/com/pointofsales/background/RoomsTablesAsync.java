@@ -102,7 +102,7 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
                     if (r.getTransaction().getExpectedCheckOut() != null) {
                         DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
                         DateTime jodatime = dtf.parseDateTime(r.getTransaction().getExpectedCheckOut());
-                        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d h:m a");
+                        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d hh:mm a");
 
                         amountSelected = r.getTransaction().getTransaction().getTotal();
                         checkoutExpected = dtfOut.print(jodatime);

@@ -449,30 +449,27 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                             }
                         }
+                        if (soaTrans.getDiscounts().size() > 0) {
+                            for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
+                                if (TextUtils.isEmpty(d.getDeleted_at())) {
+                                    String itemDiscount = "";
+                                    if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
+                                        itemDiscount = "LESS " + d.getDiscountAmount();
+                                    } else {
+                                        itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
+                                    }
 
-//                        if (soaTrans.getDiscounts().size() > 0) {
-//                            for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
-//
-//                                if (TextUtils.isEmpty(d.getDeleted_at())) {
-//                                    String itemDiscount = "";
-//                                    if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
-//                                        itemDiscount = "LESS ";
-//                                    } else {
-//                                        itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
-//                                    }
-//
-//                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                                            qtyFiller+ " "+itemDiscount,
-//                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
-//                                            ,
-//                                            40,
-//                                            2,context),
-//                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                                }
-//
-//
-//                            }
-//                        }
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            qtyFiller+ " "+itemDiscount,
+                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
+                                            ,
+                                            40,
+                                            2,context),
+                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+
+                            }
+                        }
                     }
                 }
 
@@ -495,10 +492,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 if (Integer.valueOf(toList1.getPersonCount()) > 2) {
 
-
-
-
-
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             String.valueOf(Integer.valueOf(toList1.getPersonCount()) - 2) + " " + "EXTRA PERSON",
                             returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount()))
@@ -507,28 +500,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                             2,context),
                             Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 }
-
-
-//                addPrinterSpace(1);
-//
-//
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "NO OF PERSON/S",
-//                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
-//                        ,
-//                        40,
-//                        2,context),
-//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "NO OF FOOD ITEMS",
-//                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
-//                        ,
-//                        40,
-//                        2,context),
-//                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
@@ -579,7 +550,7 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 //                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
-                    if (!TextUtils.isEmpty(dc.getVoid_by())) {
+                    if (TextUtils.isEmpty(dc.getVoid_by())) {
                         addTextToPrinter(printer, twoColumnsRightGreaterTr(
 //                                dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
                                 dc.getDiscountType(),
@@ -661,63 +632,58 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 String pymType = "";
                 List<String> ccardArray = new ArrayList<>();
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
-                    if (!tmpArr.contains(pym.getPaymentTypeId())) {
-                        tmpArr.add(pym.getPaymentTypeId());
-                        pymType = pym.getPaymentDescription();
-                    }
+                    if (pym.getVoidBy() == null) {
+                        if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                            tmpArr.add(pym.getPaymentTypeId());
+                            pymType = pym.getPaymentDescription();
+                        }
 
-                    if (pym.getPaymentTypeId() == 2) {
-                        if (pym.getCardDetail() != null) {
-                            if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
-                                int starCount = 0;
-                                String finalData = "";
-                                if (pym.getCardDetail().getCardNumber().length() < 3) {
-                                    finalData += pym.getCardDetail().getCardNumber();
-                                } else {
-                                    starCount = pym.getCardDetail().getCardNumber().length() - 3;
-                                    finalData += new String(new char[starCount]).replace("\0", "*");
-                                    finalData += pym.getCardDetail().getCardNumber().substring(starCount);
-                                }
+                        if (pym.getPaymentTypeId() == 2) {
+                            if (pym.getCardDetail() != null) {
+                                if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
+                                    int starCount = 0;
+                                    String finalData = "";
+                                    if (pym.getCardDetail().getCardNumber().length() < 3) {
+                                        finalData += pym.getCardDetail().getCardNumber();
+                                    } else {
+                                        starCount = pym.getCardDetail().getCardNumber().length() - 3;
+                                        finalData += new String(new char[starCount]).replace("\0", "*");
+                                        finalData += pym.getCardDetail().getCardNumber().substring(starCount);
+                                    }
 
-                                if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+                                    if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+
+
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                "MASTERCARD",
+                                                ""
+                                                ,
+                                                40,
+                                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    } else {
+
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                "VISA",
+                                                ""
+                                                ,
+                                                40,
+                                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
 
 
                                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "MASTERCARD",
-                                            ""
-                                            ,
-                                            40,
-                                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                } else {
-
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                            "VISA",
-                                            ""
+                                            pym.getPaymentDescription(),
+                                            finalData
                                             ,
                                             40,
                                             2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                 }
-
-
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        pym.getPaymentDescription(),
-                                        finalData
-                                        ,
-                                        40,
-                                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                             }
                         }
                     }
+
                 }
 
-
-
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "PAYMENT TYPE",
-//                        tmpArr.size() > 1 ? "MULTIPLE" : pymType
-//                        ,
-//                        40,
-//                        2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -776,7 +742,6 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                     for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
-//                        addTextToPrinter(printer, d.getDiscountType(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                         if (TextUtils.isEmpty(d.getVoid_by())) {
                             if (d.getId().equalsIgnoreCase("0")) { //MANUAL

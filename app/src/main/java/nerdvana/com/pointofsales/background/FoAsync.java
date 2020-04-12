@@ -89,7 +89,6 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                                         e1.printStackTrace();
                                     }
                                     e.printStackTrace();
-//                                asyncFinishCallBack.doneProcessing();
                                 }
                             }
                         }).start();
@@ -104,43 +103,10 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 } catch (Epos2Exception e1) {
                     e1.printStackTrace();
                 }
-//            asyncFinishCallBack.doneProcessing();
             }
 
-//            try {
-//                printer.connect("TCP:" + printerPath, Printer.PARAM_DEFAULT);
-//            } catch (Epos2Exception e) {
-//                e.printStackTrace();
-//                try {
-//                    printer.disconnect();
-//                } catch (Epos2Exception e1) {
-//                    e1.printStackTrace();
-//                }
-//                hasConnected = false;
-////            asyncFinishCallBack.doneProcessing();
-//            }
-
-
-//            try {
-//                printer.connect("TCP:" + kitchPath, Printer.PARAM_DEFAULT);
-//            } catch (Epos2Exception e) {
-//                e.printStackTrace();
-//                hasConnected = false;
-//                try {
-//                    printer.disconnect();
-//                } catch (Epos2Exception e1) {
-//                    e1.printStackTrace();
-//                }
-////            asyncFinishCallBack.doneProcessing();
-//            }
 
             PrinterUtils.connect(context, printer);
-
-//            printerContract.errorHappen(printer.getStatus());
-
-//            if (!hasConnected) {
-//                PrinterUtils.connect(context, printer);
-//            }
 
             PrinterUtils.addHeader(printModel, printer);
             Double totalAmount = 0.00;
@@ -162,8 +128,20 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 }
 
                 totalAmount += Double.valueOf(r.getPrice());
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), "", 40, 2, context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
+                addTextToPrinter(printer,
+                        twoColumnsRightGreaterTr(
+                                qty+ r.getProduct_initial(),
+                                "", 40, 2, context),
+                        Printer.FALSE, Printer.FALSE,
+                        Printer.ALIGN_LEFT,
+                        1,1,1);
+                if (!TextUtils.isEmpty(r.getRemarks())) {
+                    addTextToPrinter(printer,
+                            "  " + r.getRemarks(),
+                            Printer.FALSE, Printer.FALSE,
+                            Printer.ALIGN_LEFT,
+                            1,1,1);
+                }
                 if (r.getAlaCarteList().size() > 0) {
                     for (AddRateProductModel.AlaCarte palac : r.getAlaCarteList()) {
                         addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -188,6 +166,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                                     2,
                                     context),
                                     Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
                         }
                     }
                 }
@@ -195,9 +174,7 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
 
 
 //            addTextToPrinter(printer, "TOTAL: " + PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAmount)), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
-            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, printModel.getRemarks(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
             addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
             addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -214,14 +191,10 @@ public class FoAsync extends AsyncTask<Void, Void, Void> {
                 } catch (Epos2Exception e1) {
                     e1.printStackTrace();
                 }
-//            asyncFinishCallBack.doneProcessing();
             }
 
 
         }
-//        else {
-//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
-//        }
 
 
         return null;

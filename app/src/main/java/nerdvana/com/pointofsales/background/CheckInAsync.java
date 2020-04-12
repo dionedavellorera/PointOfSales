@@ -175,7 +175,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
                 } else {
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "ROOM BOY",
-                            "",
+                            "--",
                             40,
                             2,
                             context)
@@ -184,7 +184,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
             } else {
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                         "ROOM BOY",
-                        "",
+                        "NA",
                         40,
                         2,
                         context)
@@ -197,9 +197,9 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 //                "ROOM BOY:  " + getUserInfo(String.valueOf(checkinDetails.get(0).getUserId())),Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
+//            addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//            addTextToPrinter(printer, "PENDING TO DO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
 
             addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
             addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

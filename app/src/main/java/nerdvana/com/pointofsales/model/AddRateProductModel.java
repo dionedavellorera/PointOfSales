@@ -131,7 +131,9 @@ public class AddRateProductModel {
     }
 
 
-
+    public String getRemarks() {
+        return remarks;
+    }
 
     public List<AlaCarte> getAlaCarteList() {
         return alacart;

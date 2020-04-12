@@ -181,6 +181,16 @@ public class SocketManager {
         }
     }
 
+    public static void reloadPosGraph() {
+        try {
+            JSONObject roomObject = new JSONObject();
+            roomObject.put("from", "pos");
+            SocketManager.getInstance().emit("reloadposgraph", roomObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void reloadPosSwitchRoom(String oldRoomNumber, String newRoomNumber,
                                  String userId) {
 

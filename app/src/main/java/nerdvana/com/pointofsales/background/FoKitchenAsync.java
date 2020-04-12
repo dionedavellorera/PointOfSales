@@ -165,7 +165,13 @@ public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
 
                 totalAmount += Double.valueOf(r.getPrice());
                 addTextToPrinter(printer, twoColumnsRightGreaterTr(qty+ r.getProduct_initial(), PrinterUtils.returnWithTwoDecimal(r.getPrice()), 40, 2, context, true), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
+                if (!TextUtils.isEmpty(r.getRemarks())) {
+                    addTextToPrinter(printer,
+                            "  " + r.getRemarks(),
+                            Printer.FALSE, Printer.FALSE,
+                            Printer.ALIGN_LEFT,
+                            1,1,1);
+                }
                 if (r.getAlaCarteList().size() > 0) {
                     for (AddRateProductModel.AlaCarte palac : r.getAlaCarteList()) {
                         addTextToPrinter(printer, twoColumnsRightGreaterTr(
@@ -197,9 +203,6 @@ public class FoKitchenAsync extends AsyncTask<Void, Void, Void> {
 
 
             addTextToPrinter(printer, "TOTAL: " + PrinterUtils.returnWithTwoDecimal(String.valueOf(totalAmount)), Printer.TRUE, Printer.FALSE, Printer.ALIGN_RIGHT, 1,1,1);
-            addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
-            addTextToPrinter(printer, "REMARKS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-            addTextToPrinter(printer, printModel.getRemarks(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, "------------", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1,1);
             addTextToPrinter(printer, "PRINTED DATE" , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
             addTextToPrinter(printer, currentDateTime , Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

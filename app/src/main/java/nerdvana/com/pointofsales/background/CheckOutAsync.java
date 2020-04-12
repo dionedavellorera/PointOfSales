@@ -519,27 +519,27 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                             }
                         }
 
-//                        if (soaTrans.getDiscounts().size() > 0) {
-//                            for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
-//                                if (TextUtils.isEmpty(d.getDeleted_at())) {
-//                                    String itemDiscount = "";
-//                                    if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
-//                                        itemDiscount = "LESS ";
-//                                    } else {
-//                                        itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
-//                                    }
-//
-//                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                                            qtyFiller+ " "+itemDiscount,
-//                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
-//                                            ,
-//                                            40,
-//                                            2,context),
-//                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                                }
-//
-//                            }
-//                        }
+                        if (soaTrans.getDiscounts().size() > 0) {
+                            for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
+                                if (TextUtils.isEmpty(d.getDeleted_at())) {
+                                    String itemDiscount = "";
+                                    if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
+                                        itemDiscount = "LESS " + d.getDiscountAmount();
+                                    } else {
+                                        itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
+                                    }
+
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            qtyFiller+ " "+itemDiscount,
+                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
+                                            ,
+                                            40,
+                                            2,context),
+                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+
+                            }
+                        }
                     }
                 }
 
@@ -1031,7 +1031,7 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
 
                     addTextToPrinter(printer, twoColumnsRightGreaterTr(
                             "CHANGE",
-                            returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? "0.00" : toList1.getChange()))),
+                            returnWithTwoDecimal(String.valueOf((toList1.getChange() <= 0 ? "0.00" : toList1.getChange()))),
                             40,
                             2,
                             context)

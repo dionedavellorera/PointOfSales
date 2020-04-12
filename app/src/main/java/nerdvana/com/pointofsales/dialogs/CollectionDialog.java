@@ -223,12 +223,6 @@ public abstract class CollectionDialog extends BaseDialog {
                                                             "SAFEKEEPING",
                                                             GsonHelper.getGson().toJson(collectionFinalPostModels),
                                                             "", "", ""));
-
-                                                    BusProvider.getInstance().post(new PrintModel("",
-                                                            "",
-                                                            "SAFEKEEPING",
-                                                            GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                                            "", "", ""));
                                                     //endregion
                                                     dismiss();
                                                 }
@@ -264,39 +258,41 @@ public abstract class CollectionDialog extends BaseDialog {
     private void doCashAndRecoFunction(String employeeId) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
-        Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-        request.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-                    if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
-                        printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
-
-                        BusProvider.getInstance().post(new PrintModel("",
-                                "",
-                                "CASHRECONCILE",
-                                GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                "", "", ""));
-
-                        Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
-
-                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
-
-
-                    } else {
-                        Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-
-            }
-        });
+        Log.d("CASHRECODATA", new CashNReconcileRequest(collectionFinalPostModels, employeeId).toString());
+        //return later
+//        Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+//        request.enqueue(new Callback<Object>() {
+//            @Override
+//            public void onResponse(Call<Object> call, Response<Object> response) {
+//                try {
+//                    JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+//                    if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
+//                        printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+//
+//                        BusProvider.getInstance().post(new PrintModel("",
+//                                "",
+//                                "CASHRECONCILE",
+//                                GsonHelper.getGson().toJson(collectionFinalPostModels),
+//                                "", "", ""));
+//
+//                        Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+//
+////                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
+//
+//
+//                    } else {
+//                        Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Object> call, Throwable t) {
+//
+//            }
+//        });
     }
 
     @Override

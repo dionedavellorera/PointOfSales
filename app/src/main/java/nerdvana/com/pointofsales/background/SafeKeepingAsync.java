@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
+import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.MainActivity;
 import nerdvana.com.pointofsales.PrinterUtils;
@@ -100,8 +101,19 @@ public class SafeKeepingAsync extends AsyncTask<Void, Void, Void> {
 
 
 
+
             TypeToken<List<CollectionFinalPostModel>> collectionToken = new TypeToken<List<CollectionFinalPostModel>>() {};
             List<CollectionFinalPostModel> collectionDetails = GsonHelper.getGson().fromJson(printModel.getData(), collectionToken.getType());
+
+            if (printModel.getType().equalsIgnoreCase("SAFEKEEPING")) {
+                BusProvider.getInstance().post(new PrintModel("",
+                        "",
+                        "RESAFEKEEPING",
+                        GsonHelper.getGson().toJson(collectionDetails),
+                        "", "", ""));
+            }
+
+
 
             addTextToPrinter(printer, twoColumnsRightGreaterTr(
                     "SK COUNT",
