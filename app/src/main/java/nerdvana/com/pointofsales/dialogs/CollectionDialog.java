@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.epson.epos2.printer.Printer;
 import com.google.gson.reflect.TypeToken;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
@@ -30,6 +32,7 @@ import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
+import nerdvana.com.pointofsales.PosClientCompany;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
@@ -38,6 +41,7 @@ import nerdvana.com.pointofsales.api_requests.CheckSafeKeepingRequest;
 import nerdvana.com.pointofsales.api_requests.CollectionFinalPostModel;
 import nerdvana.com.pointofsales.api_requests.CollectionRequest;
 import nerdvana.com.pointofsales.api_requests.FetchDenominationRequest;
+import nerdvana.com.pointofsales.api_requests.SirGeloCutOffRequest;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
@@ -45,6 +49,7 @@ import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
 import nerdvana.com.pointofsales.model.SpotAuditModel;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -73,11 +78,16 @@ public abstract class CollectionDialog extends BaseDialog {
     List<Double> totalAmountList = new ArrayList<>();
 
 
-    public CollectionDialog(@NonNull Activity context, String type, boolean continueCashReco) {
+    private String pShiftNumber = "";
+
+    public CollectionDialog(@NonNull Activity context,
+                            String type, boolean continueCashReco,
+                            String shiftNumber) {
         super(context);
         this.type = type;
         this.act = context;
         this.willCashReco = continueCashReco;
+        this.pShiftNumber = shiftNumber;
     }
 
     @Override
@@ -88,6 +98,7 @@ public abstract class CollectionDialog extends BaseDialog {
         relContainer = findViewById(R.id.relContainer);
         save = findViewById(R.id.save);
         totalSafeKeep = findViewById(R.id.totalSafeKeep);
+        Toast.makeText(getContext(), "SHIFT# IS " + pShiftNumber, Toast.LENGTH_LONG).show();
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,39 +271,57 @@ public abstract class CollectionDialog extends BaseDialog {
         CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
         Log.d("CASHRECODATA", new CashNReconcileRequest(collectionFinalPostModels, employeeId).toString());
         //return later
-//        Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-//        request.enqueue(new Callback<Object>() {
-//            @Override
-//            public void onResponse(Call<Object> call, Response<Object> response) {
-//                try {
-//                    JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-//                    if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
-//                        printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
-//
-//                        BusProvider.getInstance().post(new PrintModel("",
-//                                "",
-//                                "CASHRECONCILE",
-//                                GsonHelper.getGson().toJson(collectionFinalPostModels),
-//                                "", "", ""));
-//
-//                        Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
-//
-////                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
-//
-//
-//                    } else {
-//                        Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Object> call, Throwable t) {
-//
-//            }
-//        });
+        Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
+        request.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                try {
+
+                    JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+                    if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
+                        printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+
+                        BusProvider.getInstance().post(new PrintModel("",
+                                "",
+                                "CASHRECONCILE",
+                                GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                "", "", ""));
+
+                        Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+
+//                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
+
+                        //ADD SIR GELO CUTOFF HERE
+                        SirGeloCutOffRequest sirGeloCutOffRequest =
+                                new SirGeloCutOffRequest(SharedPreferenceManager.getString(getContext(), ApplicationConstants.BRANCH).toLowerCase(), pShiftNumber);
+                        IUsers iUsers = PosClientCompany.mRestAdapter.create(IUsers.class);
+                        Call<ResponseBody> request = iUsers.sirGeloCutOff(sirGeloCutOffRequest.getMapValue());
+                        request.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                            }
+                        });
+
+
+                    } else {
+                        Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

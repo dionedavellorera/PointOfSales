@@ -160,6 +160,10 @@ public interface IUsers {
     @FormUrlEncoded
     Call<FetchOrderPendingViaControlNoResponse> fetchOrderPendingViaControlNo(@FieldMap Map<String, String> params);
 
+    @POST("/poserp_motel/api/fetchPOSMachineOrders/info")
+    @FormUrlEncoded
+    Call<ResponseBody> sirGeloCutOff(@FieldMap Map<String, String> params);
+
     @POST("getOrder")
     @FormUrlEncoded
     Call<GetOrderResponse> getOrder(@FieldMap Map<String, String> params);

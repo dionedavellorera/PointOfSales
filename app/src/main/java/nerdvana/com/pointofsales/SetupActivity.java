@@ -75,6 +75,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
         if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL))) {
             PosClient.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.API_BASE_URL));
+            PosClientCompany.changeApiBaseUrl(SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST)+"/api/");
         }
         userModel = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.userSettings), UserModel.class);
         if (userModel != null) {

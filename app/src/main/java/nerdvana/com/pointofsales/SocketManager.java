@@ -175,7 +175,10 @@ public class SocketManager {
             roomObject.put("userid", userId);
             roomObject.put("action", action);
             roomObject.put("from", "pos");
-            SocketManager.getInstance().emit("reloadposnerdvana", roomObject);
+            if (SocketManager.getInstance() != null) {
+                SocketManager.getInstance().emit("reloadposnerdvana", roomObject);
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -185,7 +188,10 @@ public class SocketManager {
         try {
             JSONObject roomObject = new JSONObject();
             roomObject.put("from", "pos");
-            SocketManager.getInstance().emit("reloadposgraph", roomObject);
+            if (SocketManager.getInstance() != null) {
+
+                SocketManager.getInstance().emit("reloadposgraph", roomObject);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -200,7 +206,10 @@ public class SocketManager {
             roomObject.put("new_room_no", newRoomNumber);
             roomObject.put("userid", userId);
             roomObject.put("from", "pos");
-            SocketManager.getInstance().emit("reloadposswitchnerdvana", roomObject);
+            if (SocketManager.getInstance() != null) {
+
+                SocketManager.getInstance().emit("reloadposswitchnerdvana", roomObject);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -214,7 +223,9 @@ public class SocketManager {
             roomObject.put("roomno", roomNumber);
             roomObject.put("userid", userId);
             roomObject.put("from", "pos");
-            SocketManager.getInstance().emit("reloadposbackoutnerdvana", roomObject);
+            if (SocketManager.getInstance() != null) {
+                SocketManager.getInstance().emit("reloadposbackoutnerdvana", roomObject);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

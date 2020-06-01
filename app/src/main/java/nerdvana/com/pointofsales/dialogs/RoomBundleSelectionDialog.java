@@ -85,7 +85,8 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
 
 
                     if (result.getProductBundleList().get(position).getProduct().getBranchAlaCart().size() > 0) {
-                        amount = result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getAmount();
+//                        amount = result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getAmount();
+                        amount = result.getProductBundleList().get(position).getProduct().getAmount();
 
                         if (result.getProductBundleList().get(position).getProduct().getBranchAlaCart().get(0).getBranchProduct().getBranchPrice() != null) {
                             DateTime branchUpdatedAt =

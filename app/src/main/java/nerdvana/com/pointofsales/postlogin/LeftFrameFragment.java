@@ -239,6 +239,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     //endregion
 
+    private String pShiftNumber = "";
+
     private String depositInfoData = "0.00";
 
     private boolean hasExistingRequest = false;
@@ -1941,7 +1943,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                 if (spotAuditDialog == null) {
-                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false) {
+                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false, pShiftNumber) {
                         @Override
                         public void printCashRecoData(String cashNRecoData) {
 
@@ -3607,7 +3609,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
             if (safeKeepingDialog == null) {
                 ApplicationConstants.IS_ACTIVE = "T";
-                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false) {
+                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false, pShiftNumber) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
 
@@ -5414,9 +5416,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
-
-
+                if (selectedRoom != null) {
+                    sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
+                }
             }
         });
 
@@ -6717,7 +6719,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             if (cutOffDialog == null) {
                 ApplicationConstants.IS_ACTIVE = "T";
 
-                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true) {
+                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true, pShiftNumber) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
                         try {
@@ -7165,7 +7167,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void infoModel(InfoModel infoModel) {
 //        Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();
         SharedPreferenceManager.saveString(getContext(), infoModel.getInformation(), ApplicationConstants.SHIFT_BLOCKER);
-
+        //dione add shift number
+        pShiftNumber = !TextUtils.isEmpty(infoModel.getShiftNumber()) ? infoModel.getShiftNumber() : "";
         if (ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("F")) {
             if (infoModel.getInformation().equalsIgnoreCase("please execute end of day")) {
                 Toast.makeText(getContext(), infoModel.getInformation(), Toast.LENGTH_SHORT).show();

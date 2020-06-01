@@ -107,6 +107,10 @@ public class TimerService extends Service {
                                     try {
                                         String rawResponse = response.body().string();
                                         JSONObject responseObject = new JSONObject(rawResponse);
+
+                                        JSONArray resArr = responseObject.optJSONArray("result");
+                                        String shiftNumberToSend = "";
+
                                         if (responseObject.getInt("status") == 0) {
 
                                             if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
@@ -114,26 +118,40 @@ public class TimerService extends Service {
 
                                                 } else {
                                                     if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+
+                                                        if (resArr != null) {
+                                                            JSONObject resultObj = resArr.getJSONObject(0);
+                                                            shiftNumberToSend = resultObj.getString("shift_no");
+                                                        }
+
+
                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
 
-                                                            BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+                                                            BusProvider.getInstance().post(new InfoModel("Please execute end of day", shiftNumberToSend));
                                                         }
                                                     } else {
                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
 
-                                                            BusProvider.getInstance().post(new InfoModel("Generate end of day"));
+                                                            BusProvider.getInstance().post(new InfoModel("Generate end of day", shiftNumberToSend));
                                                         }
                                                     }
                                                 }
                                             } else {
                                                 if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+
+                                                    if (resArr != null) {
+                                                        JSONObject resultObj = resArr.getJSONObject(0);
+                                                        shiftNumberToSend = resultObj.getString("shift_no");
+                                                    }
+
+
                                                     if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day"));
+                                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day", shiftNumberToSend));
 
                                                     }
                                                 } else {
                                                     if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                        BusProvider.getInstance().post(new InfoModel("Generate end of day"));
+                                                        BusProvider.getInstance().post(new InfoModel("Generate end of day", shiftNumberToSend));
                                                     }
                                                 }
                                             }
@@ -144,7 +162,7 @@ public class TimerService extends Service {
                                             if (resultArray.length() > 0) {
                                                 if (resultArray.getJSONObject(0).getString("eTime") == null) {
                                                     shiftDisplay = "0";
-                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                    BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                     if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
                                                         BusProvider.getInstance().post(new CheckSafeKeepingRequest());
                                                     }
@@ -154,10 +172,10 @@ public class TimerService extends Service {
                                                     shiftDisplay = String.valueOf(resultArray.getJSONObject(0).getString("shift_no"));
 
                                                     if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
-                                                        BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                        BusProvider.getInstance().post(new InfoModel("ALLOW", shiftDisplay));
                                                     } else {
                                                         if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
-                                                            BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                            BusProvider.getInstance().post(new InfoModel("ALLOW", shiftDisplay));
                                                         } else {
                                                             DateTime endShiftTime = fff.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
                                                             if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
@@ -165,8 +183,14 @@ public class TimerService extends Service {
 
                                                                 } else {
                                                                     if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+
+                                                                        if (resArr != null) {
+                                                                            JSONObject resultObj = resArr.getJSONObject(0);
+                                                                            shiftNumberToSend = resultObj.getString("shift_no");
+                                                                        }
+
                                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                                            BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                                                            BusProvider.getInstance().post(new InfoModel("Please execute cutoff", shiftNumberToSend));
                                                                         }
 
                                                                     } else {
@@ -175,13 +199,25 @@ public class TimerService extends Service {
 
                                                                         }
 
-                                                                        BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                                        if (resArr != null) {
+                                                                            JSONObject resultObj = resArr.getJSONObject(0);
+                                                                            shiftNumberToSend = resultObj.getString("shift_no");
+                                                                        }
+
+                                                                        BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                                     }
                                                                 }
                                                             } else {
                                                                 if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+
+                                                                    if (resArr != null) {
+                                                                        JSONObject resultObj = resArr.getJSONObject(0);
+                                                                        shiftNumberToSend = resultObj.getString("shift_no");
+                                                                    }
+
+
                                                                     if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                                        BusProvider.getInstance().post(new InfoModel("Please execute cutoff"));
+                                                                        BusProvider.getInstance().post(new InfoModel("Please execute cutoff", shiftNumberToSend));
                                                                     }
                                                                 } else {
                                                                     if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
@@ -189,7 +225,12 @@ public class TimerService extends Service {
 
                                                                     }
 
-                                                                    BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                                    if (resArr != null) {
+                                                                        JSONObject resultObj = resArr.getJSONObject(0);
+                                                                        shiftNumberToSend = resultObj.getString("shift_no");
+                                                                    }
+
+                                                                    BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                                 }
                                                             }
                                                         }
@@ -201,7 +242,7 @@ public class TimerService extends Service {
                                                 }
                                             } else {
                                                 shiftDisplay = "0";
-                                                BusProvider.getInstance().post(new InfoModel("ALLOW"));
+                                                BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                 if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
                                                     BusProvider.getInstance().post(new CheckSafeKeepingRequest());
                                                 }
@@ -227,14 +268,14 @@ public class TimerService extends Service {
 //                        }
                         if (SharedPreferenceManager.getString(null, ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).equalsIgnoreCase("y")) {
                             if (secsOfDate % 20 == 0){
-                                new WakeUpCallReminderAsync(secsOfDate).execute();
+//                                new WakeUpCallReminderAsync(secsOfDate).execute();
                             }
                         }
 
 
 
                         if (secsOfDate % 5 == 0) {
-                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
+//                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
                         }
                     }
                 }.start();

@@ -27,5 +27,8 @@ public class PosApplication extends SugarApp {
         Stetho.initializeWithDefaults(this);
 
         JodaTimeAndroid.init(this);
+
+        new SocketManager(getApplicationContext());
+
     }
 }

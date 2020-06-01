@@ -136,6 +136,7 @@ import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.GlobalServerTime;
+import nerdvana.com.pointofsales.model.InfoModel;
 import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.MachineChangeRefresh;
 import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public static String roomNumber;
     private Loading loadingInterface;
     private SelectionContract centralInterface;
-
+    private String pShiftNumber = "";
     private String globalServerTimeString = "";
 
 
@@ -226,6 +227,9 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
 
 
 //        SharedPreferenceManager.saveString(getApplicationContext(), "100", ApplicationConstants.POS_TO_ID);
@@ -463,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 //ROOM REFRESH NOT SPAM
                 //ROOM SEARCH APPLIES EVEN AFTER REFRESH
                 //SEARCH VIEW SWITCHED TO HIDINGEDITTEXT TO HIDE KEYBOARD
-                TooltipCompat.setTooltipText(v, "v1.3.5");
+                TooltipCompat.setTooltipText(v, "v1.3.6");
                 return false;
             }
         });
@@ -4223,7 +4227,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
                     if (collectionDialog == null) {
                         ApplicationConstants.IS_ACTIVE = "T";
-                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false) {
+                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false, pShiftNumber) {
                             @Override
                             public void printCashRecoData(String cashNRecoData) {
 
@@ -4863,6 +4867,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void globalServerTimeListener(GlobalServerTime globalServerTime) {
         globalServerTimeString = globalServerTime.getServerTime();
+    }
+
+    @Subscribe
+    public void infoModel(InfoModel infoModel) {
+        pShiftNumber = !TextUtils.isEmpty(infoModel.getShiftNumber()) ? infoModel.getShiftNumber() : "";
     }
 }
 
