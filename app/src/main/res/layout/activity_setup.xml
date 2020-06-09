@@ -1,163 +1,221 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+
+
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorWhite"
-    >
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardLogin"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="450dp"
-        android:layout_height="450dp">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/bgformotel_cropped"
+        >
 
-            <ImageView
-                android:layout_margin="10dp"
-                android:id="@+id/logo"
+        <androidx.cardview.widget.CardView
+            android:padding="3dp"
+            app:cardElevation="10dp"
+            android:alpha="0.8"
+            app:cardCornerRadius="10dp"
+            android:layout_margin="20dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5">
+            <FrameLayout
+                android:background="@drawable/card_edge"
                 android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:src="@drawable/pos_logo_edited"/>
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/ivBannerImage"
+                    android:layout_margin="0.5dp"
+                    android:visibility="visible"
+                    android:src="@drawable/no_image"
+                    android:scaleType="fitXY"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
 
+
+        </androidx.cardview.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5">
 
             <ImageView
-                android:layout_below="@id/logo"
+                android:id="@+id/logo"
+
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_above="@id/tilUsername"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="30dp"
+                android:src="@drawable/pos_logo_edited" />
+
+            <ImageView
+                android:visibility="gone"
                 android:id="@+id/watermark"
                 android:layout_width="match_parent"
                 android:layout_height="360dp"
                 android:src="@drawable/pos_logo_watermark_edited"/>
 
             <View
-                android:layout_below="@id/logo"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="360dp"
                 android:background="@color/colorWhite"
                 android:alpha="0.9"/>
 
-
-            <com.google.android.material.textfield.TextInputLayout
+            <RelativeLayout
+                android:background="@drawable/edittext_round_white"
+                android:layout_centerInParent="true"
                 android:id="@+id/tilUsername"
-                android:layout_below="@id/logo"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="50dp">
 
+                <ImageView
+                    android:background="#F5F5F5"
+                    android:id="@+id/ivUsername"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_person_black_24dp"/>
                 <nerdvana.com.pointofsales.custom.HidingEditText
                     android:id="@+id/username"
+                    android:layout_toRightOf="@id/ivUsername"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     android:hint="Username"
                     android:inputType="textAutoComplete"
                     android:maxLines="1"
+                    android:padding="5dp"
+                    android:background="@color/colorWhite"
                     android:singleLine="true"
                     android:imeOptions="actionDone"
                     android:textColor="@color/colorBlack"
-                    android:textColorHint="@color/colorBlack"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent" />
+                    android:textColorHint="@color/colorBlack"  />
 
-
-            </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
 
 
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPassword"
-                android:layout_below="@id/tilUsername"
-                app:passwordToggleEnabled="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+
+            <RelativeLayout
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:id="@+id/tilPassword"
+                android:background="@drawable/edittext_round_white"
+                android:layout_below="@id/tilUsername"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="50dp">
+
+                <ImageView
+                    android:background="#F5F5F5"
+                    android:id="@+id/ivPassword"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_lock_black_24dp"/>
 
                 <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:layout_toRightOf="@id/ivPassword"
                     android:singleLine="true"
                     android:imeOptions="actionDone"
-                    android:gravity="left"
+                    android:padding="5dp"
+                    android:gravity="center_vertical"
                     android:id="@+id/password"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorWhite"
                     android:hint="Password"
                     android:inputType="textPassword"
                     android:textColor="@color/colorBlack"
-                    android:textColorHint="@color/colorBlack"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/username" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:textColorHint="@color/colorBlack"/>
+
+
+            </RelativeLayout>
+
+
+
 
 
             <Button
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:alpha="0.8"
                 android:visibility="visible"
                 android:layout_below="@id/tilPassword"
                 android:id="@+id/proceed"
                 android:layout_width="match_parent"
+                android:textColor="@color/colorWhite"
                 android:layout_height="60dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="24dp"
                 android:background="@drawable/button_selector"
-                android:text="PROCEED"
+                android:text="LOGIN"
                 android:textSize="19sp" />
 
 
             <TextView
-                android:layout_margin="15dp"
+                android:id="@+id/tvBuild"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="20dp"
                 android:gravity="center"
-                android:layout_below="@id/proceed"
+                android:textColor="@color/colorWhite"
                 android:text="Release 1.0(build 1.0.0)"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
 
             <ImageView
+                android:tint="@color/colorWhite"
                 android:id="@+id/setup"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="15dp"
+                android:layout_toRightOf="@id/tvBuild"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="15dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@mipmap/baseline_settings_black_24"/>
 
 
+
         </RelativeLayout>
-    </androidx.cardview.widget.CardView>
-
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:indeterminate="true"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardLogin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_width="400dp"
-        android:layout_height="wrap_content" />
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content" />
+
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

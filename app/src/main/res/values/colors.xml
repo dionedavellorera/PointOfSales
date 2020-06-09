@@ -71,4 +71,5 @@
     <color name="lightSecondary">#cccccc</color>
     <color name="colorSemiLight">#cccccc</color>
     <color name="colorSemiLight2">#cccccc</color>
+    <color name="colorGreenWeb" >#3DDB86</color>
 </resources>

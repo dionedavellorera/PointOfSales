@@ -27,6 +27,7 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
     private String department;
     private double unitPrice;
     private String remarks;
+    private String barcode;
 
     private List<FetchProductsResponse.BranchAlaCart> branchAlaCartList;
     private List<FetchProductsResponse.BranchGroup> branchGroupList;
@@ -45,7 +46,8 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
                          double unitPrice,
                          List<FetchProductsResponse.BranchAlaCart> branchAlaCartList,
                          List<FetchProductsResponse.BranchGroup> branchGroupList,
-                         String remarks) {
+                         String remarks, String barcode) {
+        this.barcode = barcode;
         this.remarks = remarks;
         this.branchAlaCartList = branchAlaCartList;
         this.branchGroupList = branchGroupList;
@@ -66,6 +68,10 @@ public class ProductsModel extends SugarRecord<ProductsModel> {
         this.isPriceChanged = isPriceChanged;
         this.department = department;
         this.unitPrice = unitPrice;
+    }
+
+    public String getBarcode() {
+        return barcode;
     }
 
     public String getRemarks() {

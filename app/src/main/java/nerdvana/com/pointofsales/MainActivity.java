@@ -4,9 +4,11 @@ package nerdvana.com.pointofsales;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -47,6 +49,10 @@ import com.epson.epos2.printer.PrinterStatusInfo;
 import com.google.gson.reflect.TypeToken;
 import com.mazenrashed.printooth.ui.ScanningActivity;
 import com.squareup.otto.Subscribe;
+import com.sunmi.peripheral.printer.InnerPrinterCallback;
+import com.sunmi.peripheral.printer.InnerPrinterException;
+import com.sunmi.peripheral.printer.InnerPrinterManager;
+import com.sunmi.peripheral.printer.SunmiPrinterService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -123,9 +129,11 @@ import nerdvana.com.pointofsales.background.VoidAsync;
 import nerdvana.com.pointofsales.background.WakeUpCallAsync;
 import nerdvana.com.pointofsales.background.XReadAsync;
 import nerdvana.com.pointofsales.background.ZReadAsync;
+import nerdvana.com.pointofsales.custom.PrinterPresenter;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
 import nerdvana.com.pointofsales.dialogs.DialogWakeUpCall;
+import nerdvana.com.pointofsales.dialogs.InputDialog;
 import nerdvana.com.pointofsales.dialogs.RoomListViewDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.entities.RoomEntity;
@@ -134,9 +142,11 @@ import nerdvana.com.pointofsales.interfaces.PrinterContract;
 import nerdvana.com.pointofsales.interfaces.SelectionContract;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
+import nerdvana.com.pointofsales.model.CloseInputDialogModel;
 import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.GlobalServerTime;
 import nerdvana.com.pointofsales.model.InfoModel;
+import nerdvana.com.pointofsales.model.ItemScannedModel;
 import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.MachineChangeRefresh;
 import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
@@ -163,6 +173,15 @@ import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class MainActivity extends AppCompatActivity implements PreloginContract, View.OnClickListener, PrinterContract {
+
+    private static final String ACTION_DATA_CODE_RECEIVED =
+            "com.sunmi.scanner.ACTION_DATA_CODE_RECEIVED";
+    private static final String DATA = "data";
+    private static final String SOURCE = "source_byte";
+
+    private InputDialog inputDialog;
+    private SunmiPrinterService mSunmiPrintService;
+    private PrinterPresenter printerPresenter;
     private CollectionDialog collectionDialog;
     private String currentText = "";
     public static String roomNumber;
@@ -227,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        connectInnerPrinter();
 
 
 
@@ -754,13 +773,37 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     protected void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+        }
     }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_DATA_CODE_RECEIVED);
+        registerReceiver(receiver, filter);
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String code = intent.getStringExtra(DATA);
+            byte[] arr = intent.getByteArrayExtra(SOURCE);
+            if (code != null && !code.isEmpty()) {
+//                etInput.setText(code);
+                String fnl = code.replaceAll("\n", "");
+
+                BusProvider.getInstance().post(new ItemScannedModel(fnl));
+            }
+        }
+    };
+
 
     @Override
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
-
+        registerReceiver();
 //        JSONObject roomObject = new JSONObject();
 //        try {
 //            roomObject.put("roomno", "");
@@ -906,137 +949,230 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
         switch (printModel.getType()) {
             case "PRINT_WAKEUP_CALL":
-                addAsync(new WakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "wake_up_call");
+                addAsync(new WakeUpCallAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "wake_up_call");
                 break;
             case "ACK_SLIP":
-                addAsync(new AcknowledgementAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "ack_slip");
+                addAsync(new AcknowledgementAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "ack_slip");
                 break;
             case "SPOT_AUDIT_PRINT":
                 //willExecutGlobalPrint = false;
-                addAsync(new SpotAuditAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack, currentDateTime), "spot_audit");
+                addAsync(new SpotAuditAsync(printModel, MainActivity.this,
+                        userModel, asyncFinishCallBack,
+                        currentDateTime,
+                        printerPresenter, mSunmiPrintService), "spot_audit");
                 break;
-            case "CHANGE_QTY":
+            case "CHANGE_QTY": //ignore on new printer
                 //willExecutGlobalPrint = false;
-                //addAsync(new ChangeQtyAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "change_qty");
+                addAsync(new ChangeQtyAsync(printModel, MainActivity.this,
+                        userModel, asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "change_qty");
                 break;
-            case "FRANCHISE_OR":
+            case "FRANCHISE_OR": //ignore on new printer
                 willExecutGlobalPrint = false;
                 addAsync(new FranchiseCheckoutAsync(printModel, MainActivity.this, userModel, asyncFinishCallBack), "franchise_or");
                 break;
             case "IN_TRANSIT": //ignore header
                 //willExecutGlobalPrint = false;
-                addAsync(new IntransitAsync(printModel, MainActivity.this, userModel,currentDateTime, asyncFinishCallBack), "intransit");
+                addAsync(new IntransitAsync(printModel, MainActivity.this,
+                        userModel,currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "intransit");
                 break;
             case "POST_VOID": //ignore header
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new PostVoidAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "postvoid");
+                addAsync(new PostVoidAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "postvoid");
                 break;
             case "CHANGE_WAKE_UP_CALL": //done
                 //willExecutGlobalPrint = false;
-                //addAsync(new ChangeWakeUpCallAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "changewakeupcall");
+                addAsync(new ChangeWakeUpCallAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "changewakeupcall");
                 break;
             case "BACKOUT": //done
                 //willExecutGlobalPrint = false;
-                addAsync(new BackOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "backout");
+                addAsync(new BackOutAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "backout");
                 break;
             case "SHORTOVER"://ignore
                 //willExecutGlobalPrint = false;
-                addAsync(new ShortOverAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "shortover");
+                addAsync(new ShortOverAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "shortover");
                 break;
             case "CASHRECONCILE"://ignore
                 //willExecutGlobalPrint = false;
                 saveCashierReconcileToLocal(printModel, userModel, currentDateTime);
                 if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.IS_ALLOWED_FOR_XREADING).equalsIgnoreCase("y")) {
-                    addAsync(new CashNReconcileAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "cashreconcile");
+                    addAsync(new CashNReconcileAsync(printModel, MainActivity.this,
+                            userModel, currentDateTime,
+                            asyncFinishCallBack,
+                            printerPresenter, mSunmiPrintService), "cashreconcile");
                 }
 
                 break;
             case "SAFEKEEPING"://ignore
                 //willExecutGlobalPrint = false;
                 saveSafeKeepToLocal(printModel, userModel, currentDateTime);
-                addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
+                addAsync(new SafeKeepingAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "safekeeping");
                 break;//REPRINTZREAD
             case "RESAFEKEEPING"://ignore
                 //willExecutGlobalPrint = false;
                 saveSafeKeepToLocal(printModel, userModel, currentDateTime);
-                addAsync(new SafeKeepingAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "safekeeping");
+                addAsync(new SafeKeepingAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "safekeeping");
                 break;//REPRINTZREAD
             case "REPRINTZREAD"://ignore
                 willExecutGlobalPrint = false;
                 saveZReadToLocal(printModel, userModel, currentDateTime);
-                addAsync(new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "zread");
+                addAsync(new ZReadAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "zread");
                 break;
             case "ZREAD"://ignore
                 willExecutGlobalPrint = false;
                 saveZReadToLocal(printModel, userModel, currentDateTime);
-                addAsync(new ZReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "zread");
+                addAsync(new ZReadAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "zread");
                  break;
             case "REPRINTXREADING"://ignore
                 willExecutGlobalPrint = false;
-                addAsync(new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "xread");
+                addAsync(new XReadAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "xread");
                 break;
             case "REXREADING"://ignore
                 willExecutGlobalPrint = false;
                 saveXReadToLocal(printModel, userModel, currentDateTime);
-                addAsync(new XReadAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "xread");
+                addAsync(new XReadAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "xread");
                 break;
             case "SWITCH_ROOM"://done
                 //willExecutGlobalPrint = false;
 //                addAsync(new SwitchRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "switchroom_rb");
-                addAsync(new SwitchRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "switchroom");
+                addAsync(new SwitchRoomAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printModel.getKitchenPath(), printModel.getPrinterPath(),
+                        printerPresenter, mSunmiPrintService), "switchroom");
                 break;
             case "PRINT_FOC"://done //checkout
                 willExecutGlobalPrint = false;
                 saveFocToLocal(printModel, userModel, currentDateTime);
-                addAsync(new PrintFocAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "print_foc");
+                addAsync(new PrintFocAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "print_foc");
                 break;
             case "PRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, globalServerTimeString), "checkout");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack, globalServerTimeString,
+                        printerPresenter, mSunmiPrintService), "checkout");
 //                addAsync(new CheckOutRbAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "checkout_rb");
 
                 break;
             case "REPRINT_RECEIPT"://done //checkout
                 willExecutGlobalPrint = false;
                 saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, globalServerTimeString), "reprint_checkout");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack, globalServerTimeString,
+                        printerPresenter, mSunmiPrintService), "reprint_checkout");
                 break;
             case "REPRINT_RECEIPT_SPEC":
                 willExecutGlobalPrint = false;
 //                saveDataToLocal(printModel, userModel, currentDateTime);
-                addAsync(new CheckOutAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, globalServerTimeString), "reprint_checkout");
+                addAsync(new CheckOutAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack, globalServerTimeString,
+                        printerPresenter, mSunmiPrintService), "reprint_checkout");
                 break;
             case "DEPOSIT"://done
                 //willExecutGlobalPrint = false;
-                addAsync(new DepositAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "deposit");
+                addAsync(new DepositAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "deposit");
                 break;
             case "SOA-TO"://done"
                 willExecutGlobalPrint = false;
-                addAsync(new SoaToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soato");
-                addAsync(new SoaRbToAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath()), "soato_rb");
+                addAsync(new SoaToAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printModel.getKitchenPath(), printModel.getPrinterPath(),
+                        printerPresenter, mSunmiPrintService), "soato");
+//                addAsync(new SoaRbToAsync(printModel, MainActivity.this,
+//                        userModel, currentDateTime,
+//                        asyncFinishCallBack,
+//                        printModel.getKitchenPath(), printModel.getPrinterPath(),
+//                        printerPresenter, mSunmiPrintService), "soato_rb");
 
                 break;
             case "CHECKIN"://done
                 //willExecutGlobalPrint = false;
-                addAsync(new CheckInAsync(printModel, MainActivity.this, userModel, currentDateTime, selected, asyncFinishCallBack), "checkin");
+                addAsync(new CheckInAsync(printModel,
+                        MainActivity.this, userModel,
+                        currentDateTime, selected,
+                        asyncFinishCallBack, printerPresenter,
+                        mSunmiPrintService), "checkin");
                 break;
             case "VOID"://done
-                Log.d("VOIDASYNCDATA","START VOID PRINT");
                 willExecutGlobalPrint = false;
-                addAsync(new VoidAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack), "voiditem");
+                addAsync(new VoidAsync(printModel,
+                        MainActivity.this, userModel,
+                        currentDateTime, asyncFinishCallBack,
+                        printerPresenter, mSunmiPrintService), "voiditem");
                 break;
             case "SOA-ROOM"://done
                 willExecutGlobalPrint = false;
-                addAsync(new SoaRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath(), globalServerTimeString), "soaroom");
-                addAsync(new SoaRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath(), globalServerTimeString), "soaroom_rb");
+                addAsync(new SoaRoomAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack,
+                        printModel.getKitchenPath(), printModel.getPrinterPath(),
+                        globalServerTimeString,
+                        printerPresenter, mSunmiPrintService), "soaroom");
+//                addAsync(new SoaRbRoomAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack,printModel.getKitchenPath(), printModel.getPrinterPath(), globalServerTimeString), "soaroom_rb");
 
                 break;
             case "FO": //done
                 willExecutGlobalPrint = false;
-                addAsync(new FoAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath(), this), "fo");
-                addAsync(new FoKitchenAsync(printModel, MainActivity.this, userModel, currentDateTime, asyncFinishCallBack, printModel.getKitchenPath(), printModel.getPrinterPath()), "fo_kitchen");
+                addAsync(new FoAsync(printModel, MainActivity.this,
+                        userModel, currentDateTime,
+                        asyncFinishCallBack, printModel.getKitchenPath(),
+                        printModel.getPrinterPath(), this,
+                        printerPresenter, mSunmiPrintService), "fo");
+//                addAsync(new FoKitchenAsync(printModel, MainActivity.this,
+//                        userModel, currentDateTime,
+//                        asyncFinishCallBack, printModel.getKitchenPath(),
+//                        printModel.getPrinterPath(),
+//                        printerPresenter, mSunmiPrintService), "fo_kitchen");
 
                 break;
         }
@@ -1520,12 +1656,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         } else {
 
         }
-
-
-
-
-
-
 
     }
 
@@ -3112,41 +3242,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
 
 
-//                    List<List<String>> allData = new ArrayList<>();
-//                    List<String> str = new ArrayList<>();
-//                    for (int i = Integer.valueOf(toList1.getSoaCount()) - 1; i > 0; i--) {
-//                        if (i == Integer.valueOf(toList1.getSoaCount()) - 1) {
-//                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]));
-//                        } else {
-//                            str.add(Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +count);
-//                        }
-//
-//                        if (str.size() % 3 == 0) {
-//                            allData.add(str);
-//                            str = new ArrayList<>();
-//                        }else {
-//                            if (i == 1) {
-//                                allData.add(str);
-//                            }
-//                        }
-//
-//                        count++;
-//                    }
-//
-//
-//                    int displayCount = 0;
-//                    Collections.reverse(allData);
-//                    for (List<String> my : allData) {
-//                        if (displayCount == 0) {
-//                            finalString += receiptString("CANCELLED SOA", TextUtils.join(",", my), MainActivity.this, false);
-//                        } else {
-//                            finalString += receiptString("", TextUtils.join(",", my), MainActivity.this, false);
-//                        }
-//                        displayCount++;
-//                    }
-
-
-
                 }
 
             }
@@ -3261,14 +3356,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                     "", MainActivity.this, false);
 
 
-
-//            finalString += receiptString("NO OF PERSON/S",
-//                    returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())), MainActivity.this, false);
-//
-//            finalString += receiptString("NO OF FOOD ITEMS",
-//                    returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())), MainActivity.this, false);
-
-
             finalString += receiptString("",
                     "", MainActivity.this, false);
 
@@ -3291,11 +3378,6 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 finalString += receiptString(dc.getDiscountType() + " " + dc.getAve_discount_percentage(),
                         returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())), MainActivity.this, false);
             }
-
-//            finalString += receiptString("DISCOUNT",
-//                    toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())), MainActivity.this, false);
-
-
 
             finalString += receiptString("",
                     "", MainActivity.this, false);
@@ -4130,6 +4212,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     @Subscribe
     public void clickedButton(ButtonsModel clickedItem) {
         switch (clickedItem.getId()) {
+            case 152://OPEN INPUT
+                inputDialog = new InputDialog(MainActivity.this) {
+
+                    @Override
+                    public void searchCompleted(String toSearch) {
+                        BusProvider.getInstance().post(new ItemScannedModel(toSearch));
+
+                        dismiss();
+                    }
+                };
+                inputDialog.show();
+                break;
             case 128: //BACKUP
 
                 backupDatabase();
@@ -4416,6 +4510,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (event.isCtrlPressed()) {
             switch (keyCode) {
+                case KeyEvent.KEYCODE_F:
+                    inputDialog = new InputDialog(MainActivity.this) {
+
+                        @Override
+                        public void searchCompleted(String toSearch) {
+                            BusProvider.getInstance().post(new ItemScannedModel(toSearch));
+
+                            dismiss();
+                        }
+                    };
+                    inputDialog.show();
+                    break;
                 case KeyEvent.KEYCODE_R:
                     Intent roomSelectionIntent = new Intent(this, RoomsActivity.class);
                     startActivityForResult(roomSelectionIntent, 10);
@@ -4763,7 +4869,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         role.setBackgroundColor(getResources().getColor(R.color.lightColorAccent));
         role.setTextColor(getResources().getColor(R.color.colorBlack));
         mainContainerBg.setBackgroundColor(getResources().getColor(R.color.lightMainBg));
-        toolbar.setBackgroundColor(getResources().getColor(R.color.colorYellow));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorGreenWeb));
 
         separator.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
         separator2.setBackgroundColor(getResources().getColor(R.color.lightPrimaryFont));
@@ -4814,7 +4920,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         }
     }
 
-    private String receiptString(String partOne, String partTwo, Context context, boolean isCenter) {
+    public static String receiptString(String partOne, String partTwo, Context context, boolean isCenter) {
         String finalString = "";
         int filler = 0;
         int maxColumnDivideTwo = (Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT)) / 2);
@@ -4873,5 +4979,38 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public void infoModel(InfoModel infoModel) {
         pShiftNumber = !TextUtils.isEmpty(infoModel.getShiftNumber()) ? infoModel.getShiftNumber() : "";
     }
+
+    private void connectInnerPrinter() {
+        try {
+            InnerPrinterManager.getInstance().bindService(this,
+                    innerPrinterCallback);
+        } catch (InnerPrinterException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private InnerPrinterCallback innerPrinterCallback = new InnerPrinterCallback() {
+        @Override
+        protected void onConnected(SunmiPrinterService service) {
+
+            mSunmiPrintService = service;
+            printerPresenter = new PrinterPresenter(MainActivity.this, mSunmiPrintService);
+
+        }
+
+        @Override
+        protected void onDisconnected() {
+            mSunmiPrintService = null;
+
+        }
+    };
+    @Subscribe
+    public void closeInputDialog(CloseInputDialogModel closeInputDialogModel) {
+        if (inputDialog != null) {
+            inputDialog.dismiss();
+        }
+    }
+
+
 }
 

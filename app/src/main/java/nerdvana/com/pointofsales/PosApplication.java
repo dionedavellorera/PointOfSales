@@ -5,6 +5,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.mazenrashed.printooth.Printooth;
 import com.orm.SugarApp;
 import com.squareup.otto.Bus;
+import com.sunmi.devicesdk.core.DeviceManager;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -29,6 +30,6 @@ public class PosApplication extends SugarApp {
         JodaTimeAndroid.init(this);
 
         new SocketManager(getApplicationContext());
-
+        DeviceManager.getInstance().initialization(this);
     }
 }

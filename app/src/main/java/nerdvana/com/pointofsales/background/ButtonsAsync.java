@@ -78,6 +78,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                 if (!SharedPreferenceManager.getString(context, ApplicationConstants.IS_TELEPHONE_OPERATOR).isEmpty()) {
                     if (SharedPreferenceManager.getString(context, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
 //                        buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6, 129));
+                        buttonsModelList.add(new ButtonsModel(152,"SEARCH", "",5, 123));
                         buttonsModelList.add(new ButtonsModel(106,"SOA", "",5, 123));
 //                        buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14, 69));
 //                        buttonsModelList.add(new ButtonsModel(122,"CANCEL OT", "",18, 71));
@@ -107,6 +108,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                         buttonsModelList.add(new ButtonsModel(997,"LOGOUT", "",100, 0));
                         buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100, 125));
                     } else {
+                        buttonsModelList.add(new ButtonsModel(152,"SEARCH", "",5, 123));
                         buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6, 129));
                         buttonsModelList.add(new ButtonsModel(106,"SOA", "",5, 123));
                         buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14, 69));
@@ -139,6 +141,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                         buttonsModelList.add(new ButtonsModel(996,"VIEW RECEIPT.", "",100, 125));
                     }
                 } else {
+                    buttonsModelList.add(new ButtonsModel(152,"SEARCH", "",5, 123));
                     buttonsModelList.add(new ButtonsModel(105,"CHECKOUT", "",6, 129));
                     buttonsModelList.add(new ButtonsModel(106,"SOA", "",5, 123));
                     buttonsModelList.add(new ButtonsModel(114,"TRANSFER ROOM", "",14, 69));

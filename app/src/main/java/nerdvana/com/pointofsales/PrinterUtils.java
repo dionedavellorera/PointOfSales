@@ -19,6 +19,7 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResp
 import nerdvana.com.pointofsales.model.PrintModel;
 
 import static nerdvana.com.pointofsales.MainActivity.formatSeconds;
+import static nerdvana.com.pointofsales.MainActivity.receiptString;
 
 public class PrinterUtils {
 
@@ -147,6 +148,23 @@ public class PrinterUtils {
 
     }
 
+    public static String returnPtuFooter(Printer printer, Context context) {
+        String finalString = "";
+
+        finalString += MainActivity.receiptString(
+                "Permit No" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_NO),
+                "",
+                context, true);
+        finalString += MainActivity.receiptString(
+                "Date Issued :" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_ISSUED_DATE),
+                "",
+                context, true);
+        finalString += MainActivity.receiptString(
+                "Valid Until : " + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_END_DATE),
+                "",
+                context, true);
+        return finalString;
+    }
     public static void addPtuFooter(Printer printer, Context context) {
         addTextToPrinter(printer, "Permit No" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_NO) , Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1,1 ,1 );
         addTextToPrinter(printer, "Date Issued :" + SharedPreferenceManager.getString(context, ApplicationConstants.PERMIT_ISSUED_DATE), Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -284,6 +302,109 @@ public class PrinterUtils {
         }
 
     }
+
+    public static String returnHeader(PrintModel printModel, Printer printer) {
+        String finalString = "";
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), "", null, true);
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_ADDRESS), "", null, true);
+
+        finalString += receiptString(SharedPreferenceManager.getString(null, ApplicationConstants.BRANCH_TELEPHONE), "", null, true);
+        finalString += receiptString("SERIAL NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.SERIAL_NUMBER), "", null, true);
+        finalString += receiptString("VAT REG TIN NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.TIN_NUMBER), "", null, true);
+        finalString += receiptString("PERMIT NO:"+SharedPreferenceManager.getString(null, ApplicationConstants.PERMIT_NO), "", null, true);
+
+
+        if (printModel.getType().equalsIgnoreCase("FO")) {
+            finalString += receiptString("FOOD ORDER SLIP", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("BACKOUT")) {
+            finalString += receiptString("BACK OUT SLIP", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("PRINT_RECEIPT")) {
+            finalString += receiptString("OFFICIAL RECEIPT", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("DEPOSIT")) {
+            finalString += receiptString("DEPOSIT SLIP", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("CHECKIN")) {
+            finalString += receiptString("CHECK IN SLIP", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("VOID")) {
+            finalString += receiptString("VOID SLIP", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("SOA-ROOM")) {
+            FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class);
+            if (toList1.getIsSoa() > 1) {
+                finalString += receiptString("STATEMENT OF ACCOUNT(REPRINT)", "", null, true);
+            } else {
+                finalString += receiptString("STATEMENT OF ACCOUNT", "", null, true);
+
+            }
+        }
+        if (printModel.getType().equalsIgnoreCase("SOA-TO")) {
+            FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class);
+            if (toList1.getIsSoa() > 1) {
+                finalString += receiptString("STATEMENT OF ACCOUNT(REPRINT)", "", null, true);
+            } else {
+                finalString += receiptString("STATEMENT OF ACCOUNT", "", null, true);
+            }
+        }
+        if (printModel.getType().equalsIgnoreCase("POST_VOID")) {
+            finalString += receiptString("V O I D", "", null, true);
+        }
+        if (printModel.getType().equalsIgnoreCase("ZREAD")) {
+            finalString += receiptString("Z-READING", "", null, true);
+        }
+        //REPRINTZREAD
+        if (printModel.getType().equalsIgnoreCase("REPRINTZREAD")) {
+            finalString += receiptString("Z-READING(REPRINT)", "", null, true);
+        }
+
+
+        if (printModel.getType().equalsIgnoreCase("REPRINTXREADING")){
+            finalString += receiptString("X-READING(REPRINT)", "", null, true);
+
+        }
+        if (printModel.getType().equalsIgnoreCase("REPRINT_RECEIPT")) {
+            finalString += receiptString("OFFICIAL RECEIPT(REPRINT)", "", null, true);
+
+        }
+
+        if (printModel.getType().equalsIgnoreCase("REPRINT_RECEIPT_SPEC")) {
+            finalString += receiptString("OFFICIAL RECEIPT(CUSTOMERS COPY)", "", null, true);
+
+        }
+
+
+        if (printModel.getType().equalsIgnoreCase("FO") || printModel.getType().equalsIgnoreCase("BACKOUT") ||
+                printModel.getType().equalsIgnoreCase("PRINT_RECEIPT") || printModel.getType().equalsIgnoreCase("DEPOSIT") ||
+                printModel.getType().equalsIgnoreCase("CHECKIN") || printModel.getType().equalsIgnoreCase("VOID") ||
+                printModel.getType().equalsIgnoreCase("SOA-ROOM") || printModel.getType().equalsIgnoreCase("POST_VOID") ||
+                printModel.getType().equalsIgnoreCase("SOA-TO") || printModel.getType().equalsIgnoreCase("REPRINT_RECEIPT")) { //
+            if (!printModel.getRoomNumber().equalsIgnoreCase("takeout")) {
+                finalString += receiptString("ROOM #" + printModel.getRoomNumber(), "", null, true);
+
+            } else {
+                finalString += receiptString("TAKEOUT" + printModel.getRoomNumber(), "", null, true);
+
+            }
+        }
+
+        if (printModel.getType().equalsIgnoreCase("CHANGE_WAKE_UP_CALL")  ||
+                printModel.getType().equalsIgnoreCase("SWITCH_ROOM")) {
+            finalString += receiptString("ROOM #" + printModel.getRoomNumber(), "", null, true);
+
+        }
+
+
+        if (printModel.getType().equalsIgnoreCase("SOA-TO")) {
+            finalString += receiptString("TAKEOUT", "", null, true);
+        }
+
+        return  finalString +"\n";
+    }
+
+
 
     public static void addHeader(PrintModel printModel, Printer printer) {
         addTextToPrinter(printer, SharedPreferenceManager.getString(null, ApplicationConstants.RECEIPT_HEADER), Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);

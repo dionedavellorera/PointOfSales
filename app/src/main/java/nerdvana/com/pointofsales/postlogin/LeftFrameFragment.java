@@ -157,6 +157,7 @@ import nerdvana.com.pointofsales.dialogs.DiscountSelectionDialog;
 import nerdvana.com.pointofsales.dialogs.EmployeeSelectionDialog;
 import nerdvana.com.pointofsales.dialogs.FreebiesDialog;
 import nerdvana.com.pointofsales.dialogs.GuestInfoDialog;
+import nerdvana.com.pointofsales.dialogs.InputDialog;
 import nerdvana.com.pointofsales.dialogs.OpenPriceDialog;
 import nerdvana.com.pointofsales.dialogs.OrderSlipDialog;
 import nerdvana.com.pointofsales.dialogs.PasswordDialog;
@@ -193,6 +194,7 @@ import nerdvana.com.pointofsales.model.FragmentNotifierModel;
 import nerdvana.com.pointofsales.model.GlobalServerTime;
 import nerdvana.com.pointofsales.model.GuestReceiptInfoModel;
 import nerdvana.com.pointofsales.model.InfoModel;
+import nerdvana.com.pointofsales.model.ItemScannedModel;
 import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.OrderSlipModel;
 import nerdvana.com.pointofsales.model.PostedPaymentsModel;
@@ -236,6 +238,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     EmployeeSelectionDialog employeeSelectionDialog;
     CollectionDialog safeKeepingDialog;
     CollectionDialog spotAuditDialog;
+    private InputDialog inputDialog;
 
     //endregion
 
@@ -7075,7 +7078,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             BusProvider.getInstance().post(new PrintModel("X READ SUCCESS", "xread", "ACK_SLIP", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
         }
 
-//        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
+        BusProvider.getInstance().post(new PrintModel("", "SHORT/OVER", "SHORTOVER", GsonHelper.getGson().toJson(fetchXReadingViaIdResponse.getResult())));
     }
 
     private void fetchZReadViaIdRequest(String zReadId) {
@@ -7477,6 +7480,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void globalServerTimeListener(GlobalServerTime globalServerTime) {
         globalServerTimeString = globalServerTime.getServerTime();
     }
+
+
 
 
 }

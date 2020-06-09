@@ -2,7 +2,7 @@
 
     <!-- constants used for localization -->
 
-    <string name="app_name">PointOfSales</string>
+    <string name="app_name">POSitive-Motel</string>
     <string name="login_error_message">Incorrect credentials</string>
     <string name="login_success_message">Login success</string>
     <string name="home_text">Home</string>

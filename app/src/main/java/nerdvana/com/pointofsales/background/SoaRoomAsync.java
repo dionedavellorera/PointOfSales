@@ -13,6 +13,10 @@ import com.epson.epos2.printer.ReceiveListener;
 import com.epson.epos2.printer.StatusChangeListener;
 import com.facebook.stetho.common.StringUtil;
 import com.google.gson.reflect.TypeToken;
+import com.sunmi.devicemanager.cons.Cons;
+import com.sunmi.devicemanager.device.Device;
+import com.sunmi.devicesdk.core.PrinterManager;
+import com.sunmi.peripheral.printer.SunmiPrinterService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
@@ -34,6 +38,8 @@ import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_responses.FetchOrderPendingViaControlNoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomPendingResponse;
 import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
+import nerdvana.com.pointofsales.custom.PrinterPresenter;
+import nerdvana.com.pointofsales.custom.ThreadPoolManager;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -58,11 +64,17 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     private String printerPath;
 
     private String globalServerTime = "";
+
+    private PrinterPresenter printerPresenter;
+    private SunmiPrinterService mSunmiPrintService;
+
+
     public SoaRoomAsync(PrintModel printModel, Context context,
                         UserModel userModel, String currentDateTime,
                         MainActivity.AsyncFinishCallBack asyncFinishCallBack,
                         String kitchPath, String printerPath,
-                        String globalServerTime) {
+                        String globalServerTime,
+                        PrinterPresenter printerPresenter, SunmiPrinterService mSunmiPrintService) {
         this.globalServerTime = globalServerTime;
         this.context = context;
         this.printModel = printModel;
@@ -74,6 +86,8 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         this.kitchPath = kitchPath;
         this.printerPath = printerPath;
 
+        this.printerPresenter = printerPresenter;
+        this.mSunmiPrintService = mSunmiPrintService;
 
     }
 
@@ -85,140 +99,68 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
-                !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
-
-            //region connect printer
-            try {
-                printer = new Printer(
-                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
-                        Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
-                        context);
-
-                try {
-                    printer.addPulse(Printer.DRAWER_HIGH, Printer.PULSE_100);
-                } catch (Epos2Exception e) {
-                    try {
-                        printer.disconnect();
-                    } catch (Epos2Exception e1) {
-                        e1.printStackTrace();
-                    }
-                    e.printStackTrace();
-//                asyncFinishCallBack.doneProcessing();
-                }
-
-                printer.setReceiveEventListener(new ReceiveListener() {
-                    @Override
-                    public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    printer.clearCommandBuffer();
-                                    printer.setReceiveEventListener(null);
-//                                    printer.endTransaction();
-                                    printer.disconnect();
-                                    asyncFinishCallBack.doneProcessing();
-                                } catch (Epos2Exception e) {
-                                    try {
-                                        printer.disconnect();
-                                    } catch (Epos2Exception e1) {
-                                        e1.printStackTrace();
-                                    }
-                                    e.printStackTrace();
-//                                asyncFinishCallBack.doneProcessing();
-                                }
-                            }
-                        }).start();
-                    }
-                });
-                PrinterUtils.connect(context, printer);
-            } catch (Epos2Exception e) {
-                try {
-                    printer.disconnect();
-                } catch (Epos2Exception e1) {
-                    e1.printStackTrace();
-                }
-                e.printStackTrace();
-//            asyncFinishCallBack.doneProcessing();
+        if (SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER_MANUALLY).equalsIgnoreCase("sunmi")) {
+            if (printerPresenter == null) {
+                printerPresenter = new PrinterPresenter(context, mSunmiPrintService);
             }
-            //endregion
+            String finalString = "";
 
+            finalString += PrinterUtils.returnHeader(printModel, printer);
 
-
-            PrinterUtils.addHeader(printModel, printer);
 
 
 
             FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
                     ;
             if (toList1 != null) {
-//                if (toList1.getIsSoa() > 1) {
-//                    addTextToPrinter(printer, "REPRINT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-//                }
+
                 //region create receipt data
 
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                finalString += MainActivity.receiptString(
                         "CASHIER",
-                        toList1.getCashier().getName()
-                        ,
-                        40,
-                        2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        toList1.getCashier().getName(),
+                        context, false);
+
 
 
                 if (toList1.getGuestInfo() != null) {
                     if (toList1.getGuestInfo().getRoomBoy() != null) {
-                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        finalString += MainActivity.receiptString(
                                 "ROOM BOY",
-                                toList1.getGuestInfo().getRoomBoy().getName()
-                                ,
-                                40,
-                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                toList1.getGuestInfo().getRoomBoy().getName(),
+                                context, false);
                     } else {
-                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        finalString += MainActivity.receiptString(
                                 "ROOM BOY",
-                                "NA"
-                                ,
-                                40,
-                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                "NA",
+                                context, false);
                     }
                 } else {
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    finalString += MainActivity.receiptString(
                             "ROOM BOY",
-                            "NA"
-                            ,
-                            40,
-                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            "NA",
+                            context, false);
                 }
 
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                finalString += MainActivity.receiptString(
                         "CHECK IN",
-                        Utils.birDateTimeFormat(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA")
-                        ,
-                        40,
-                        2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        Utils.birDateTimeFormat(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA"),
+                        context, false);
 
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                finalString += MainActivity.receiptString(
                         "CHECK OUT",
-                        convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
-                        ,
-                        40,
-                        2,
-                        context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA"),
+                        context, false);
+
 
                 if (!TextUtils.isEmpty(globalServerTime)) {
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+
+                    finalString += MainActivity.receiptString(
                             "DURATION",
-                            toList1.getGuestInfo() != null ? Utils.durationOfStay(globalServerTime, toList1.getGuestInfo().getCheckIn()) : "NA"
-                            ,
-                            40,
-                            2,
-                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            toList1.getGuestInfo() != null ? Utils.durationOfStay(globalServerTime, toList1.getGuestInfo().getCheckIn()) : "NA",
+                            context, false);
+
                 }
 
 
@@ -226,34 +168,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 int count = 0;
                 if (Integer.valueOf(toList1.getSoaCount()) > 1) {
 
-
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    finalString += MainActivity.receiptString(
                             "SOA NO",
                             toList1.getControlNo().split("-")[2] + "-" + (Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1),
-                            40,
-                            2,
-                            context)
-                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            context, false);
 
-
-
-//                    if ((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1)  == 1) {
-//                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                                "CANCELLED SOA",
-//                                Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) ,
-//                                40,
-//                                2,
-//                                context)
-//                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                    } else {
-//                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                                "CANCELLED SOA",
-//                                Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +String.valueOf((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1) - 1) ,
-//                                40,
-//                                2,
-//                                context)
-//                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//                    }
 
 
                     List<List<String>> allData = new ArrayList<>();
@@ -282,21 +201,18 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                     Collections.reverse(allData);
                     for (String my : str) {
                         if (displayCount == 0) {
-                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            finalString += MainActivity.receiptString(
                                     "CANCELLED SOA",
                                     my,
-                                    40,
-                                    2,
-                                    context)
-                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    context, false);
+
                         } else {
-                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+
+                            finalString += MainActivity.receiptString(
                                     "",
                                     my,
-                                    40,
-                                    2,
-                                    context)
-                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    context, false);
+
                         }
                         displayCount++;
                     }
@@ -304,32 +220,34 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
                 } else {
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+
+                    finalString += MainActivity.receiptString(
                             "SOA NO",
                             toList1.getControlNo().split("-")[2],
-                            40,
-                            2,
-                            context)
-                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            context, false);
+
                 }
 
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                finalString += MainActivity.receiptString(
                         "TERMINAL NO",
                         SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context, false);
 
 
-                addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                finalString += MainActivity.receiptString(
+                        new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"),
+                        "",
+                        context, true);
+                finalString += MainActivity.receiptString(
+                        "QTY   DESCRIPTION         AMOUNT",
+                        SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
+                        context, false);
+                finalString += MainActivity.receiptString(
+                        new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"),
+                        "",
+                        context, true);
 
 
-                addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-                addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                 for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
                     if (soaTrans.getVoid() == 0) {
                         String qty = "";
@@ -359,37 +277,21 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
 
 
-
-                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                qty+ " "+item,
-                                returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty()))
-                                ,
-                                40,
-                                2,context),
-                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-
-
-
-
-
-
-
+                        finalString += MainActivity.receiptString(
+                                qty + " " + item,
+                                returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty())),
+                                context, false);
 
                         if (soaTrans.getFreebie() != null) {
                             if (soaTrans.getFreebie().getPostAlaCart().size() > 0) {
                                 for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getFreebie().getPostAlaCart()) {
 
 
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    finalString += MainActivity.receiptString(
                                             "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
-                                            ""
-                                            ,
-                                            40,
-                                            2,
-                                            context),
-                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            "",
+                                            context, false);
+
                                 }
                             }
 
@@ -397,17 +299,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                 for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getFreebie().getPostGroup()) {
                                     for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
 
-
-
-
-                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        finalString += MainActivity.receiptString(
                                                 "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
-                                                ""
-                                                ,
-                                                40,
-                                                2,
-                                                context),
-                                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                                "",
+                                                context, false);
+
                                     }
                                 }
                             }
@@ -420,15 +316,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                         if (soaTrans.getPostAlaCartList().size() > 0) {
                             for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
 
-
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                finalString += MainActivity.receiptString(
                                         "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
-                                        ""
-                                        ,
-                                        40,
-                                        2,
-                                        context),
-                                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        "",
+                                        context, false);
+
                             }
                         }
 
@@ -437,14 +329,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                 for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
 
 
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    finalString += MainActivity.receiptString(
                                             "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
-                                            ""
-                                            ,
-                                            40,
-                                            2,
-                                            context),
-                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            "",
+                                            context, false);
+
                                 }
 
                             }
@@ -459,13 +348,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                         itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
                                     }
 
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    finalString += MainActivity.receiptString(
                                             qtyFiller+ " "+itemDiscount,
-                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
-                                            ,
-                                            40,
-                                            2,context),
-                                            Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount())),
+                                            context, false);
+
                                 }
 
                             }
@@ -478,27 +365,20 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 if (toList1.getOtHours() > 0) {
 
-
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    finalString += MainActivity.receiptString(
                             String.valueOf(toList1.getOtHours()) + " " + "OT HOURS",
-                            returnWithTwoDecimal(String.valueOf(toList1.getOtAmount()))
-                            ,
-                            40,
-                            2,
-                            context
-                            ),
-                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            returnWithTwoDecimal(String.valueOf(toList1.getOtAmount())),
+                            context, false);
+
                 }
 
                 if (Integer.valueOf(toList1.getPersonCount()) > 2) {
 
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                            String.valueOf(Integer.valueOf(toList1.getPersonCount()) - 2) + " " + "EXTRA PERSON",
-                            returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount()))
-                            ,
-                            40,
-                            2,context),
-                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    finalString += MainActivity.receiptString(
+                            String.valueOf(Integer.valueOf(toList1.getPersonCount()) - 2),
+                            returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount())),
+                            context, false);
+
                 }
 
 
@@ -507,63 +387,42 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 if (toList1.getVatExempt() > 0 && toList1.getDiscountsList().size() > 0) {
                     addPrinterSpace(1);
-                    addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    finalString += MainActivity.receiptString(
+                            "",
+                            "",
+                            context, false);
+                    finalString += MainActivity.receiptString(
+                            "LESS",
+                            "",
+                            context, false);
+
                 }
 
                 if (toList1.getVatExempt() > 0) {
-                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                    finalString += MainActivity.receiptString(
                             "VAT DISCOUNT",
                             returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-//                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-                            40,
-                            2,
-                            context)
-                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            context, false);
+
                 }
-
-//                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-//
-//
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "VAT 12%",
-//                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-////                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
-//                        40,
-//                        2,
-//                        context)
-//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-
-//                String dc1 = "";
-//                for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
-//                    dc1 += dc.getDiscountType();
-//                }
-
-//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                        "DISCOUNT",
-//                        returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
-////                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
-//                        40,
-//                        2,
-//                        context)
-//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
                 for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
                     if (TextUtils.isEmpty(dc.getVoid_by())) {
-                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
-//                                dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
+
+                        finalString += MainActivity.receiptString(
                                 dc.getDiscountType(),
                                 returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
-                                40,
-                                2,
-                                context)
-                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                context, false);
+
                     }
 
                 }
 
-                addPrinterSpace(1);
+                finalString += MainActivity.receiptString(
+                        "",
+                        "",
+                        context, false);
+
 
 
 
@@ -654,29 +513,26 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                     if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
 
 
-                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        finalString += MainActivity.receiptString(
                                                 "MASTERCARD",
-                                                ""
-                                                ,
-                                                40,
-                                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                                "",
+                                                context, false);
+
                                     } else {
 
-                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        finalString += MainActivity.receiptString(
                                                 "VISA",
-                                                ""
-                                                ,
-                                                40,
-                                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                                "",
+                                                context, false);
+
                                     }
 
 
-                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    finalString += MainActivity.receiptString(
                                             pym.getPaymentDescription(),
-                                            finalData
-                                            ,
-                                            40,
-                                            2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            finalData,
+                                            context, false);
+
                                 }
                             }
                         }
@@ -684,55 +540,41 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
 
                 }
 
-
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "VATABLE SALES",
+                finalString += MainActivity.receiptString(
+                        "VATABLES SALES",
                         returnWithTwoDecimal(String.valueOf(toList1.getVatable())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context, false);
 
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                finalString += MainActivity.receiptString(
                         "VAT AMOUNT",
                         returnWithTwoDecimal(String.valueOf(toList1.getVat())),
-                        40,
-                        2,context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context, false);
 
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "VAT-EXEMPT SALES",
+                finalString += MainActivity.receiptString(
+                        "VAT EXEMPT SALES",
                         returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales())),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context, false);
 
 
-
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                finalString += MainActivity.receiptString(
                         "Zero-Rated Sales",
                         "0.00",
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        context, false);
 
-                addPrinterSpace(1);
+                finalString += MainActivity.receiptString(
+                        "",
+                        "",
+                        context, false);
+
 
                 for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
                     if (pym.getIsAdvance() == 1) {
 
-
-                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                        finalString += MainActivity.receiptString(
                                 pym.getPaymentDescription(),
                                 returnWithTwoDecimal(String.valueOf(pym.getAmount())),
-                                40,
-                                2,context)
-                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                context, false);
+
                     }
                 }
 
@@ -740,7 +582,11 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                 List<SeniorReceiptCheckoutModel> seniorReceiptList = new ArrayList<>();
                 if (toList1.getDiscountsList().size() > 0) {
 
-                    addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    finalString += MainActivity.receiptString(
+                            "DISCOUNT LIST",
+                            "",
+                            context, false);
+
                     for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
 
                         if (TextUtils.isEmpty(d.getVoid_by())) {
@@ -766,15 +612,949 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                     if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
 
 
-
-                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        finalString += MainActivity.receiptString(
                                                 d.getDiscountType() + " ID",
                                                 "NA",
+                                                context, false);
+
+                                    } else {
+
+                                        if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
+
+                                            finalString += MainActivity.receiptString(
+                                                    d.getDiscountType() + " ID",
+                                                    "NA",
+                                                    context, false);
+
+                                        } else {
+                                            if (d.getInfo().getCardNo() != null) {
+
+
+                                                finalString += MainActivity.receiptString(
+                                                        d.getDiscountType() + " ID",
+                                                        d.getInfo().getCardNo().toUpperCase(),
+                                                        context, false);
+
+                                            }
+
+                                            if (d.getInfo().getName() != null) {
+
+                                                finalString += MainActivity.receiptString(
+                                                        "NAME",
+                                                        d.getInfo().getName().toUpperCase(),
+                                                        context, false);
+
+                                            }
+                                        }
+
+
+                                    }
+
+                                }
+
+                                finalString += MainActivity.receiptString(
+                                        "ADDRESS",
+                                        "",
+                                        context, false);
+                                finalString += MainActivity.receiptString(
+                                        "SIGNATURE",
+                                        "",
+                                        context, false);
+
+                                finalString += MainActivity.receiptString(
+                                        "",
+                                        "",
+                                        context, false);
+
+
+
+                            }
+                        }
+                    }
+
+                }
+
+
+                finalString += MainActivity.receiptString(
+                        "SUB TOTAL",
+                        returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
+                        context, false);
+
+
+
+
+                finalString += MainActivity.receiptString(
+                        "AMOUNT DUE",
+                        returnWithTwoDecimal(String.valueOf(
+                                (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+                                        - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
+                        context, false);
+
+
+                finalString += MainActivity.receiptString(
+                        "",
+                        "",
+                        context, false);
+
+                finalString += MainActivity.receiptString(
+                        "NO OF PERSON/S",
+                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount())),
+                        context, false);
+
+                finalString += MainActivity.receiptString(
+                        "NO OF FOOD ITEMS",
+                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty())),
+                        context, false);
+
+
+                finalString += MainActivity.receiptString(
+                        "",
+                        "",
+                        context, false);
+
+
+                if (toList1.getCustomer() != null) {
+                    if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
+
+
+                        finalString += MainActivity.receiptString(
+                                "",
+                                "",
+                                context, false);
+
+
+
+                        finalString += MainActivity.receiptString(
+                                "SOLD TO",
+                                "",
+                                context, true);
+
+                        finalString += MainActivity.receiptString(
+                                "NAME:"+toList1.getCustomer().getCustomer(),
+                                "",
+                                context, true);
+
+
+                        if (toList1.getCustomer().getAddress() != null) {
+
+
+                            finalString += MainActivity.receiptString(
+                                    "ADDRESS:"+toList1.getCustomer().getAddress(),
+                                    "",
+                                    context, true);
+
+
+                        } else {
+                            finalString += MainActivity.receiptString(
+                                    "ADDRESS:________________________",
+                                    "",
+                                    context, true);
+
+                        }
+
+                        if (toList1.getCustomer().getTin() != null) {
+
+                            finalString += MainActivity.receiptString(
+                                    "TIN#:"+toList1.getCustomer().getTin(),
+                                    "",
+                                    context, true);
+
+
+                        } else {
+                            finalString += MainActivity.receiptString(
+                                    "TIN#:___________________________",
+                                    "",
+                                    context, true);
+
+
+                        }
+
+                        if (toList1.getCustomer().getBusinessStyle() != null) {
+
+                            finalString += MainActivity.receiptString(
+                                    "BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(),
+                                    "",
+                                    context, true);
+
+                            finalString += MainActivity.receiptString(
+                                    toList1.getCustomer().getBusinessStyle(),
+                                    "",
+                                    context, true);
+
+                        } else {
+
+                            finalString += MainActivity.receiptString(
+                                    "BUSINESS STYLE:_________________",
+                                    "",
+                                    context, true);
+
+                        }
+
+                        finalString += MainActivity.receiptString(
+                                "",
+                                "",
+                                context, false);
+
+
+                    } else {
+
+                        finalString += MainActivity.receiptString(
+                                "SOLD TO",
+                                "",
+                                context, false);
+                        finalString += MainActivity.receiptString(
+                                "NAME:___________________________",
+                                "",
+                                context, true);
+
+                        finalString += MainActivity.receiptString(
+                                "ADDRESS:________________________",
+                                "",
+                                context, true);
+                        finalString += MainActivity.receiptString(
+                                "TIN#:___________________________",
+                                "",
+                                context, true);
+                        finalString += MainActivity.receiptString(
+                                "BUSINESS STYLE:_________________",
+                                "",
+                                context, true);
+                    }
+                } else {
+
+                    finalString += MainActivity.receiptString(
+                            "SOLD TO",
+                            "",
+                            context, false);
+                    finalString += MainActivity.receiptString(
+                            "NAME:___________________________",
+                            "",
+                            context, true);
+
+                    finalString += MainActivity.receiptString(
+                            "ADDRESS:________________________",
+                            "",
+                            context, true);
+                    finalString += MainActivity.receiptString(
+                            "TIN#:___________________________",
+                            "",
+                            context, true);
+                    finalString += MainActivity.receiptString(
+                            "BUSINESS STYLE:_________________",
+                            "",
+                            context, true);
+                }
+
+
+                finalString += MainActivity.receiptString(
+                        "",
+                        "",
+                        context, true);
+                finalString += returnFooterPrinter(toList1.getCreatedAt(), PrinterUtils.yearPlusFive(toList1.getCreatedAt()));
+                printerPresenter.printNormal(finalString);
+                String finalString1 = finalString;
+                ThreadPoolManager.getsInstance().execute(() -> {
+                    List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
+                    if (deviceList == null || deviceList.isEmpty()) return;
+                    for (Device device : deviceList) {
+                        if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
+                            continue;
+                        }
+                        printerPresenter.printByDeviceManager(device, finalString1);
+                    }
+                });
+
+                asyncFinishCallBack.doneProcessing();
+
+
+                //endregion
+
+
+
+            } else {
+
+            }
+
+
+
+        } else {
+            if (!TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)) &&
+                    !TextUtils.isEmpty(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE))) {
+
+                //region connect printer
+                try {
+                    printer = new Printer(
+                            Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_PRINTER)),
+                            Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.SELECTED_LANGUAGE)),
+                            context);
+
+                    try {
+                        printer.addPulse(Printer.DRAWER_HIGH, Printer.PULSE_100);
+                    } catch (Epos2Exception e) {
+                        try {
+                            printer.disconnect();
+                        } catch (Epos2Exception e1) {
+                            e1.printStackTrace();
+                        }
+                        e.printStackTrace();
+//                asyncFinishCallBack.doneProcessing();
+                    }
+
+                    printer.setReceiveEventListener(new ReceiveListener() {
+                        @Override
+                        public void onPtrReceive(final Printer printer, int i, PrinterStatusInfo printerStatusInfo, String s) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        printer.clearCommandBuffer();
+                                        printer.setReceiveEventListener(null);
+//                                    printer.endTransaction();
+                                        printer.disconnect();
+                                        asyncFinishCallBack.doneProcessing();
+                                    } catch (Epos2Exception e) {
+                                        try {
+                                            printer.disconnect();
+                                        } catch (Epos2Exception e1) {
+                                            e1.printStackTrace();
+                                        }
+                                        e.printStackTrace();
+//                                asyncFinishCallBack.doneProcessing();
+                                    }
+                                }
+                            }).start();
+                        }
+                    });
+                    PrinterUtils.connect(context, printer);
+                } catch (Epos2Exception e) {
+                    try {
+                        printer.disconnect();
+                    } catch (Epos2Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    e.printStackTrace();
+//            asyncFinishCallBack.doneProcessing();
+                }
+                //endregion
+
+
+
+                PrinterUtils.addHeader(printModel, printer);
+
+
+
+                FetchOrderPendingViaControlNoResponse.Result toList1 = GsonHelper.getGson().fromJson(printModel.getData(), FetchOrderPendingViaControlNoResponse.Result.class)
+                        ;
+                if (toList1 != null) {
+//                if (toList1.getIsSoa() > 1) {
+//                    addTextToPrinter(printer, "REPRINT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+//                }
+                    //region create receipt data
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "CASHIER",
+                            toList1.getCashier().getName()
+                            ,
+                            40,
+                            2,
+                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                    if (toList1.getGuestInfo() != null) {
+                        if (toList1.getGuestInfo().getRoomBoy() != null) {
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    "ROOM BOY",
+                                    toList1.getGuestInfo().getRoomBoy().getName()
+                                    ,
+                                    40,
+                                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        } else {
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    "ROOM BOY",
+                                    "NA"
+                                    ,
+                                    40,
+                                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        }
+                    } else {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "ROOM BOY",
+                                "NA"
+                                ,
+                                40,
+                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "CHECK IN",
+                            Utils.birDateTimeFormat(toList1.getGuestInfo() != null ?toList1.getGuestInfo().getCheckIn() : "NA")
+                            ,
+                            40,
+                            2,
+                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "CHECK OUT",
+                            convertDateToReadableDate(toList1.getGuestInfo() != null ? toList1.getGuestInfo().getCheckOut() : "NA")
+                            ,
+                            40,
+                            2,
+                            context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    if (!TextUtils.isEmpty(globalServerTime)) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "DURATION",
+                                toList1.getGuestInfo() != null ? Utils.durationOfStay(globalServerTime, toList1.getGuestInfo().getCheckIn()) : "NA"
+                                ,
+                                40,
+                                2,
+                                context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+
+
+                    int count = 0;
+                    if (Integer.valueOf(toList1.getSoaCount()) > 1) {
+
+
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "SOA NO",
+                                toList1.getControlNo().split("-")[2] + "-" + (Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1),
+                                40,
+                                2,
+                                context)
+                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+//                    if ((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1)  == 1) {
+//                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                "CANCELLED SOA",
+//                                Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) ,
+//                                40,
+//                                2,
+//                                context)
+//                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                    } else {
+//                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                "CANCELLED SOA",
+//                                Utils.removeStartingZero(toList1.getControlNo().split("-")[2]) + "-" +String.valueOf((Integer.valueOf(Utils.removeStartingZero(toList1.getSoaCount())) - 1) - 1) ,
+//                                40,
+//                                2,
+//                                context)
+//                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//                    }
+
+
+                        List<List<String>> allData = new ArrayList<>();
+                        List<String> str = new ArrayList<>();
+                        for (int i = Integer.valueOf(toList1.getSoaCount()) - 1; i > 0; i--) {
+                            if (i == Integer.valueOf(toList1.getSoaCount()) - 1) {
+                                str.add(toList1.getControlNo().split("-")[2]);
+                            } else {
+                                str.add(toList1.getControlNo().split("-")[2] + "-" +count);
+                            }
+
+
+//                        if (str.size() % 3 == 0) {
+//                            allData.add(str);
+//                            str = new ArrayList<>();
+//                        }else {
+//                            if (i == 1) {
+//                                allData.add(str);
+//                            }
+//                        }
+                            count++;
+                        }
+
+
+                        int displayCount = 0;
+                        Collections.reverse(allData);
+                        for (String my : str) {
+                            if (displayCount == 0) {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "CANCELLED SOA",
+                                        my,
+                                        40,
+                                        2,
+                                        context)
+                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            } else {
+                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                        "",
+                                        my,
+                                        40,
+                                        2,
+                                        context)
+                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                            }
+                            displayCount++;
+                        }
+
+
+
+                    } else {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "SOA NO",
+                                toList1.getControlNo().split("-")[2],
+                                40,
+                                2,
+                                context)
+                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "TERMINAL NO",
+                            SharedPreferenceManager.getString(context, ApplicationConstants.MACHINE_ID),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                    addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                    addTextToPrinter(printer, "QTY   DESCRIPTION         AMOUNT", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                    addTextToPrinter(printer, new String(new char[Integer.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.MAX_COLUMN_COUNT))]).replace("\0", "-"), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    for (FetchOrderPendingViaControlNoResponse.Post soaTrans : toList1.getPost()) {
+                        if (soaTrans.getVoid() == 0) {
+                            String qty = "";
+                            String qtyFiller = "";
+
+                            qty += soaTrans.getQty();
+
+                            for (int i = 0; i < soaTrans.getQty(); i++) {
+                                qtyFiller += " ";
+                            }
+                            if (String.valueOf(soaTrans.getQty()).length() < 4) {
+
+                                for (int i = 0; i < 4 - String.valueOf(soaTrans.getQty()).length(); i++) {
+                                    qty += " ";
+                                    qtyFiller += " ";
+                                }
+                            } else {
+                                qtyFiller = "    ";
+                            }
+                            String item = "";
+
+                            if (soaTrans.getProductId() == 0) {
+                                item =soaTrans.getRoomRate().toString();
+                            } else {
+                                item =soaTrans.getProduct().getProductInitial();
+                            }
+
+
+
+
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    qty+ " "+item,
+                                    returnWithTwoDecimal(String.valueOf(soaTrans.getPrice() * soaTrans.getQty()))
+                                    ,
+                                    40,
+                                    2,context),
+                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+
+
+
+
+
+
+
+                            if (soaTrans.getFreebie() != null) {
+                                if (soaTrans.getFreebie().getPostAlaCart().size() > 0) {
+                                    for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getFreebie().getPostAlaCart()) {
+
+
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
+                                                ""
+                                                ,
                                                 40,
                                                 2,
-                                                context)
-                                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                    } else {
+                                                context),
+                                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+                                }
+
+                                if (soaTrans.getFreebie().getPostGroup().size() > 0) {
+                                    for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getFreebie().getPostGroup()) {
+                                        for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+
+
+
+
+                                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                    "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
+                                                    ""
+                                                    ,
+                                                    40,
+                                                    2,
+                                                    context),
+                                                    Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+
+
+                            if (soaTrans.getPostAlaCartList().size() > 0) {
+                                for (FetchRoomPendingResponse.PostAlaCart palac : soaTrans.getPostAlaCartList()) {
+
+
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            "   "+palac.getQty()+ " "+palac.getPostAlaCartProduct().getProductInitial(),
+                                            ""
+                                            ,
+                                            40,
+                                            2,
+                                            context),
+                                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                }
+                            }
+
+                            if (soaTrans.getPostGroupList().size() > 0) {
+                                for (FetchRoomPendingResponse.PostGroup postGroup : soaTrans.getPostGroupList()) {
+                                    for (FetchRoomPendingResponse.PostGroupItem pgi : postGroup.getPostGroupItems()) {
+
+
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                "   "+pgi.getQty()+ " "+ pgi.getPostGroupItemProduct().getProductInitial(),
+                                                ""
+                                                ,
+                                                40,
+                                                2,
+                                                context),
+                                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+
+                                }
+                            }
+                            if (soaTrans.getDiscounts().size() > 0) {
+                                for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount d : soaTrans.getDiscounts()) {
+                                    if (TextUtils.isEmpty(d.getDeleted_at())) {
+                                        String itemDiscount = "";
+                                        if (d.getDiscountPercentage().equalsIgnoreCase("0")) {
+                                            itemDiscount = "LESS " + d.getDiscountAmount();
+                                        } else {
+                                            itemDiscount = "LESS "+d.getDiscountPercentage() + "%";
+                                        }
+
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                qtyFiller+ " "+itemDiscount,
+                                                "-" + returnWithTwoDecimal(String.valueOf(d.getDiscountAmount()))
+                                                ,
+                                                40,
+                                                2,context),
+                                                Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+
+
+
+                    if (toList1.getOtHours() > 0) {
+
+
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                String.valueOf(toList1.getOtHours()) + " " + "OT HOURS",
+                                returnWithTwoDecimal(String.valueOf(toList1.getOtAmount()))
+                                ,
+                                40,
+                                2,
+                                context
+                                ),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+                    if (Integer.valueOf(toList1.getPersonCount()) > 2) {
+
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                String.valueOf(Integer.valueOf(toList1.getPersonCount()) - 2) + " " + "EXTRA PERSON",
+                                returnWithTwoDecimal(String.valueOf(toList1.getxPersonAmount()))
+                                ,
+                                40,
+                                2,context),
+                                Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+
+
+
+
+                    if (toList1.getVatExempt() > 0 && toList1.getDiscountsList().size() > 0) {
+                        addPrinterSpace(1);
+                        addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+                    if (toList1.getVatExempt() > 0) {
+                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                "VAT DISCOUNT",
+                                returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+                                40,
+                                2,
+                                context)
+                                ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    }
+
+//                addTextToPrinter(printer, "LESS", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "VAT 12%",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+////                        toList1.getVatExempt() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getVatExempt()))) : returnWithTwoDecimal(String.valueOf(toList1.getVatExempt())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+//                String dc1 = "";
+//                for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
+//                    dc1 += dc.getDiscountType();
+//                }
+
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "DISCOUNT",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+////                        toList1.getDiscount() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getDiscount())))  : returnWithTwoDecimal(String.valueOf(toList1.getDiscount())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    for (FetchOrderPendingViaControlNoResponse.Discounts dc : toList1.getDiscountsList()) {
+                        if (TextUtils.isEmpty(dc.getVoid_by())) {
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                                dc.getDiscountType() + " " + dc.getAve_discount_percentage() + "%",
+                                    dc.getDiscountType(),
+                                    returnWithTwoDecimal(String.valueOf(dc.getDiscountAmount())),
+                                    40,
+                                    2,
+                                    context)
+                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        }
+
+                    }
+
+                    addPrinterSpace(1);
+
+
+
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "   ADVANCED DEPOSIT",
+//                        toList1.getAdvance() > 0 ? String.format("-%s", returnWithTwoDecimal(String.valueOf(toList1.getAdvance()))) : returnWithTwoDecimal(String.valueOf(toList1.getAdvance())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+//            bookedList.get(0).getTransaction().getTotal() + bookedList.get(0).getTransaction().getOtAmount() + bookedList.get(0).getTransaction().getXPersonAmount()
+
+
+
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "SUB TOTAL",
+//                        returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+//            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                    "SUB TOTAL",
+//                    returnWithTwoDecimal(String.valueOf(toList1.getTotal())),
+//                    40,
+//                    2,
+//                    context)
+//                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "AMOUNT DUE",
+//                        returnWithTwoDecimal(String.valueOf(
+//                                (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+//                                        - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "TENDERED",
+//                        returnWithTwoDecimal(String.valueOf(toList1.getTendered())),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+//
+//
+//
+//                addTextToPrinter(printer, twoColumnsRightGreaterTr(
+//                        "CHANGE",
+//                        returnWithTwoDecimal(String.valueOf((toList1.getChange() < 0 ? toList1.getChange() * -1 : toList1.getChange()))),
+//                        40,
+//                        2,
+//                        context)
+//                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    List<Integer> tmpArr = new ArrayList<>();
+                    String pymType = "";
+                    List<String> ccardArray = new ArrayList<>();
+                    for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                        if (pym.getVoidBy() == null) {
+                            if (!tmpArr.contains(pym.getPaymentTypeId())) {
+                                tmpArr.add(pym.getPaymentTypeId());
+                                pymType = pym.getPaymentDescription();
+                            }
+
+                            if (pym.getPaymentTypeId() == 2) {
+                                if (pym.getCardDetail() != null) {
+                                    if (!pym.getCardDetail().getCardNumber().trim().isEmpty()) {
+                                        int starCount = 0;
+                                        String finalData = "";
+                                        if (pym.getCardDetail().getCardNumber().length() < 3) {
+                                            finalData += pym.getCardDetail().getCardNumber();
+                                        } else {
+                                            starCount = pym.getCardDetail().getCardNumber().length() - 3;
+                                            finalData += new String(new char[starCount]).replace("\0", "*");
+                                            finalData += pym.getCardDetail().getCardNumber().substring(starCount);
+                                        }
+
+                                        if (pym.getCardDetail().getCreditCardId().equalsIgnoreCase("1")) {
+
+
+                                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                    "MASTERCARD",
+                                                    ""
+                                                    ,
+                                                    40,
+                                                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        } else {
+
+                                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                    "VISA",
+                                                    ""
+                                                    ,
+                                                    40,
+                                                    2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                        }
+
+
+                                        addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                pym.getPaymentDescription(),
+                                                finalData
+                                                ,
+                                                40,
+                                                2,context), Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "VATABLE SALES",
+                            returnWithTwoDecimal(String.valueOf(toList1.getVatable())),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "VAT AMOUNT",
+                            returnWithTwoDecimal(String.valueOf(toList1.getVat())),
+                            40,
+                            2,context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "VAT-EXEMPT SALES",
+                            returnWithTwoDecimal(String.valueOf(toList1.getVatExemptSales())),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "Zero-Rated Sales",
+                            "0.00",
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+                    addPrinterSpace(1);
+
+                    for (FetchOrderPendingViaControlNoResponse.Payment pym : toList1.getPayments()) {
+                        if (pym.getIsAdvance() == 1) {
+
+
+                            addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                    pym.getPaymentDescription(),
+                                    returnWithTwoDecimal(String.valueOf(pym.getAmount())),
+                                    40,
+                                    2,context)
+                                    ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        }
+                    }
+
+                    boolean hasSpecial = false;
+                    List<SeniorReceiptCheckoutModel> seniorReceiptList = new ArrayList<>();
+                    if (toList1.getDiscountsList().size() > 0) {
+
+                        addTextToPrinter(printer, "DISCOUNT LIST", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                        for (FetchOrderPendingViaControlNoResponse.Discounts d : toList1.getDiscountsList()) {
+
+                            if (TextUtils.isEmpty(d.getVoid_by())) {
+                                if (d.getId().equalsIgnoreCase("0")) { //MANUAL
+//                        addTextToPrinter(printer, "    " + d.getDiscountReason(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                } else {
+
+                                    if (d.getInfo() != null) {
+
+//                                if (d.getDiscountTypes().getIsSpecial() == 1) {
+//                                    hasSpecial = true;
+//                                    seniorReceiptList.add(
+//                                            new SeniorReceiptCheckoutModel(
+//                                                    d.getInfo().getName() == null ? "" : d.getInfo().getName(),
+//                                                    d.getInfo().getCardNo() == null ? "" : d.getInfo().getCardNo(),
+//                                                    d.getInfo().getAddress() == null ? "" : d.getInfo().getAddress(),
+//                                                    d.getInfo().getTin() == null ? "" : d.getInfo().getTin(),
+//                                                    d.getInfo().getBusinessStyle() == null ? "" : d.getInfo().getBusinessStyle()
+//                                            )
+//                                    );
+//                                }
 
                                         if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
 
@@ -788,158 +1568,179 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                                                     context)
                                                     ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
                                         } else {
-                                            if (d.getInfo().getCardNo() != null) {
 
+                                            if (d.getInfo().getCardNo() == null && d.getInfo().getName() == null) {
 
 
 
                                                 addTextToPrinter(printer, twoColumnsRightGreaterTr(
                                                         d.getDiscountType() + " ID",
-                                                        d.getInfo().getCardNo().toUpperCase(),
+                                                        "NA",
                                                         40,
                                                         2,
                                                         context)
                                                         ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                            } else {
+                                                if (d.getInfo().getCardNo() != null) {
+
+
+
+
+                                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                            d.getDiscountType() + " ID",
+                                                            d.getInfo().getCardNo().toUpperCase(),
+                                                            40,
+                                                            2,
+                                                            context)
+                                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                                }
+
+                                                if (d.getInfo().getName() != null) {
+
+
+
+                                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                                            "NAME",
+                                                            d.getInfo().getName().toUpperCase(),
+                                                            40,
+                                                            2,
+                                                            context)
+                                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                                                }
                                             }
 
-                                            if (d.getInfo().getName() != null) {
 
-
-
-                                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                                        "NAME",
-                                                        d.getInfo().getName().toUpperCase(),
-                                                        40,
-                                                        2,
-                                                        context)
-                                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-                                            }
                                         }
-
 
                                     }
 
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            "ADDRESS",
+                                            d.getInfo().getAddress() != null ? d.getInfo().getAddress() : "",
+                                            40,
+                                            2,
+                                            context)
+                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                                            "SIGNATURE",
+                                            "",
+                                            40,
+                                            2,
+                                            context)
+                                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+
+
+                                    addPrinterSpace(1);
+
+
                                 }
-
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        "ADDRESS",
-                                        d.getInfo().getAddress() != null ? d.getInfo().getAddress() : "",
-                                        40,
-                                        2,
-                                        context)
-                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-                                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                                        "SIGNATURE",
-                                        "",
-                                        40,
-                                        2,
-                                        context)
-                                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-                                addPrinterSpace(1);
-
-
                             }
                         }
+
                     }
 
-                }
 
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "SUB TOTAL",
-                        returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
-                        40,
-                        2,
-                        context)
-                        ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "AMOUNT DUE",
-                        returnWithTwoDecimal(String.valueOf(
-                                (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
-                                        - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
-                        40,
-                        2,
-                        context)
-                        ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "SUB TOTAL",
+                            returnWithTwoDecimal(String.valueOf((toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount()))),
+                            40,
+                            2,
+                            context)
+                            ,Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
-                addPrinterSpace(1);
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF PERSON/S",
-                        returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
-                        ,
-                        40,
-                        2,context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-                addTextToPrinter(printer, twoColumnsRightGreaterTr(
-                        "NO OF FOOD ITEMS",
-                        returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
-                        ,
-                        40,
-                        2,context),
-                        Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
-
-
-                addPrinterSpace(1);
-
-                if (toList1.getCustomer() != null) {
-                    if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
-
-
-                        addPrinterSpace(1);
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "AMOUNT DUE",
+                            returnWithTwoDecimal(String.valueOf(
+                                    (toList1.getTotal() + toList1.getOtAmount() + toList1.getxPersonAmount())
+                                            - (toList1.getAdvance() + toList1.getDiscount() + toList1.getVatExempt()))),
+                            40,
+                            2,
+                            context)
+                            ,Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
 
-                        addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                    addPrinterSpace(1);
+
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "NO OF PERSON/S",
+                            returnWithTwoDecimal(String.valueOf(toList1.getPersonCount()))
+                            ,
+                            40,
+                            2,context),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                        addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        if (toList1.getCustomer().getAddress() != null) {
+                    addTextToPrinter(printer, twoColumnsRightGreaterTr(
+                            "NO OF FOOD ITEMS",
+                            returnWithTwoDecimal(String.valueOf(toList1.getTotalQty()))
+                            ,
+                            40,
+                            2,context),
+                            Printer.FALSE, Printer.FALSE, Printer.ALIGN_LEFT, 1,1,1);
 
 
-                            addTextToPrinter(printer, "ADDRESS:"+toList1.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        } else {
+                    addPrinterSpace(1);
 
-                            addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        }
-
-                        if (toList1.getCustomer().getTin() != null) {
-
-                            addTextToPrinter(printer, "TIN#:"+toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        } else {
+                    if (toList1.getCustomer() != null) {
+                        if (!toList1.getCustomer().getCustomer().equalsIgnoreCase("EMPTY") && !toList1.getCustomer().getCustomer().equalsIgnoreCase("To be filled")) {
 
 
-                            addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        }
-
-                        if (toList1.getCustomer().getBusinessStyle() != null) {
-
-                            addTextToPrinter(printer, "BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            addPrinterSpace(1);
 
 
-                            addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        } else {
 
-                            addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                        }
+                            addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+
+
+                            addTextToPrinter(printer, "NAME:"+toList1.getCustomer().getCustomer(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            if (toList1.getCustomer().getAddress() != null) {
+
+
+                                addTextToPrinter(printer, "ADDRESS:"+toList1.getCustomer().getAddress(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            } else {
+
+                                addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            }
+
+                            if (toList1.getCustomer().getTin() != null) {
+
+                                addTextToPrinter(printer, "TIN#:"+toList1.getCustomer().getTin(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            } else {
+
+
+                                addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            }
+
+                            if (toList1.getCustomer().getBusinessStyle() != null) {
+
+                                addTextToPrinter(printer, "BUSINESS STYLE:"+ toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+
+
+                                addTextToPrinter(printer, toList1.getCustomer().getBusinessStyle(), Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            } else {
+
+                                addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            }
 
 
 //                    addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
 
 
-                        addPrinterSpace(1);
+                            addPrinterSpace(1);
 
+                        } else {
+
+                            addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+                            addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                            addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
+                        }
                     } else {
 
                         addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
@@ -948,65 +1749,48 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
                         addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                         addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                     }
+
+
+                    addPrinterSpace(1);
+
+                    addFooterToPrinter(toList1.getCreatedAt(), PrinterUtils.yearPlusFive(toList1.getCreatedAt()));
+
+
+
+                    //endregion
+
+
+
                 } else {
 
-                    addTextToPrinter(printer, "SOLD TO", Printer.TRUE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
-                    addTextToPrinter(printer, "NAME:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    addTextToPrinter(printer, "ADDRESS:________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    addTextToPrinter(printer, "TIN#:___________________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
-                    addTextToPrinter(printer, "BUSINESS STYLE:_________________", Printer.TRUE, Printer.FALSE, Printer.ALIGN_LEFT, 1, 1, 1);
                 }
 
 
-                addPrinterSpace(1);
-
-                addFooterToPrinter(toList1.getCreatedAt(), PrinterUtils.yearPlusFive(toList1.getCreatedAt()));
 
 
-
-                //endregion
-
-
-
-            } else {
 
             }
 
 
-
-
-
-        }
-//        else {
-//            Toast.makeText(context, "Printer not set up", Toast.LENGTH_LONG).show();
-//        }
-
-
-
-
-
-
-        try {
-            if (printer != null) {
-                if (printer.getStatus().getConnection() == 1) {
-                    printer.addCut(Printer.CUT_FEED);
-                    printer.sendData(Printer.PARAM_DEFAULT);
-                    printer.clearCommandBuffer();
-                }
-            }
-
-
-
-//            printer.endTransaction();
-        } catch (Epos2Exception e) {
             try {
-                printer.disconnect();
-            } catch (Epos2Exception e1) {
-                e1.printStackTrace();
-            }
-            e.printStackTrace();
+                if (printer != null) {
+                    if (printer.getStatus().getConnection() == 1) {
+                        printer.addCut(Printer.CUT_FEED);
+                        printer.sendData(Printer.PARAM_DEFAULT);
+                        printer.clearCommandBuffer();
+                    }
+                }
+            } catch (Epos2Exception e) {
+                try {
+                    printer.disconnect();
+                } catch (Epos2Exception e1) {
+                    e1.printStackTrace();
+                }
+                e.printStackTrace();
 //            asyncFinishCallBack.doneProcessing();
+            }
         }
+
 
 
 
@@ -1169,6 +1953,76 @@ public class SoaRoomAsync extends AsyncTask<Void, Void, Void> {
         return res.toUpperCase();
 
     }
+
+    private String returnFooterPrinter(String currentDate, String currentDatePlus5) {
+        String finalString = "";
+        finalString += MainActivity.receiptString(
+                "Thank you come again",
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "POS Provider : NERDVANA CORP.",
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "Address : 1 CANLEY ROAD BRGY",
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "BAGONG ILOG PASIG CITY",
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "VAT REG TIN: 009-772-500-00000",
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "ACCRED NO:0430097725002019061099",
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "Date Issued : " + Utils.birDateTimeFormat(currentDate),
+                "",
+                context, true);
+
+        finalString += MainActivity.receiptString(
+                "Valid Until : " + Utils.birDateTimeFormat(currentDatePlus5),
+                "",
+                context, true);
+
+
+        finalString += PrinterUtils.returnPtuFooter(printer,context);
+
+
+
+//            addTextToPrinter(printer, "PTU No. : FPU 42434242424242423", Printer.FALSE, Printer.FALSE, Printer.ALIGN_CENTER, 1, 1, 1);
+        finalString += MainActivity.receiptString("", "", context, true);
+        finalString += MainActivity.receiptString("THIS DOCUMENT SHALL BE VALID FOR", "", context, true);
+        finalString += MainActivity.receiptString("FIVE(5) YEARS FROM THE DATE OF", "", context, true);
+        finalString += MainActivity.receiptString("THE PERMIT TO USE", "", context, true);
+
+        finalString += MainActivity.receiptString("", "", context, true);
+
+        finalString += MainActivity.receiptString("THIS DOCUMENT IS NOT", "", context, true);
+        finalString += MainActivity.receiptString("VALID FOR CLAIM", "", context, true);
+        finalString += MainActivity.receiptString("OF INPUT TAX", "", context, true);
+
+        finalString += MainActivity.receiptString("", "", context, true);
+
+        finalString += MainActivity.receiptString("------------", "", context, true);
+        finalString += MainActivity.receiptString("PRINTED DATE" , "", context, true);
+        finalString += MainActivity.receiptString(currentDateTime , "", context, true);
+        finalString += MainActivity.receiptString("PRINTED BY: " + userModel.getUsername(), "", context, true);
+
+        return finalString;
+    }
+
 
 
 }

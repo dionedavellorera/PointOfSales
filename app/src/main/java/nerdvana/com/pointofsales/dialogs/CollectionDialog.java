@@ -379,7 +379,7 @@ public abstract class CollectionDialog extends BaseDialog {
         editText.setId(id);
         editText.setLayoutParams(params1);
         editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-        editText.setTextIsSelectable(true);
+//        editText.setTextIsSelectable(true);
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

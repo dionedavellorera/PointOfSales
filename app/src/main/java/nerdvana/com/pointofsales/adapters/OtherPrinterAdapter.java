@@ -74,6 +74,8 @@ public class OtherPrinterAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             }
 
+
+
             if (printerSelected.equalsIgnoreCase(otherPrinterModelList.get(i).getHead())) {
                 ((OtherPrinterViewHolder)holder).activeText.setVisibility(View.VISIBLE);
             } else {

@@ -18,6 +18,7 @@ import com.epson.epos2.discovery.DeviceInfo;
 import com.epson.epos2.discovery.Discovery;
 import com.epson.epos2.discovery.DiscoveryListener;
 import com.epson.epos2.discovery.FilterOption;
+import com.sunmi.devicesdk.core.DeviceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +44,27 @@ public class PrinterConnectionFragment extends Fragment {
         activePrinter = view.findViewById(R.id.activePrinter);
         listOtherPrinter = view.findViewById(R.id.listOtherPrinter);
         otherPrinterModelList = new ArrayList<>();
+        otherPrinterModelList.add(new OtherPrinterModel("SUNMI", "SUNMI"));
 
         PrinterConnection printerConnection = new PrinterConnection() {
             @Override
             public void clicked(int position) {
                 SharedPreferenceManager.saveString(getContext(), otherPrinterModelList.get(position).getHead(), ApplicationConstants.SELECTED_PRINTER_MANUALLY);
                 activePrinter.setText(otherPrinterModelList.get(position).getHead());
+
+                if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY).equalsIgnoreCase("sunmi")) {
+                    activePrinter.setText(String.format("%s(press to enter device manager)",SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY)));
+                    activePrinter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DeviceManager.getInstance().startSettingActivity();
+                        }
+                    });
+                } else {
+                    activePrinter.setText(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY));
+                }
+
+
             }
         };
 
@@ -70,7 +86,18 @@ public class PrinterConnectionFragment extends Fragment {
         }
 
         if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY).isEmpty()) {
-            activePrinter.setText(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY));
+            if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY).equalsIgnoreCase("sunmi")) {
+                activePrinter.setText(String.format("%s(press to enter device manager)",SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY)));
+                activePrinter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DeviceManager.getInstance().startSettingActivity();
+                    }
+                });
+            } else {
+                activePrinter.setText(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PRINTER_MANUALLY));
+            }
+
         } else {
             if (SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT).isEmpty()) {
                 activePrinter.setText("No printer set");
@@ -78,6 +105,8 @@ public class PrinterConnectionFragment extends Fragment {
                 activePrinter.setText(SharedPreferenceManager.getString(getContext(), ApplicationConstants.SELECTED_PORT));
             }
         }
+
+
         return view;
     }
 

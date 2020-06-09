@@ -55,6 +55,7 @@ import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.background.ProductsAsync;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
 import nerdvana.com.pointofsales.dialogs.ChangeQtyDialog;
+import nerdvana.com.pointofsales.dialogs.InputDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
@@ -63,6 +64,8 @@ import nerdvana.com.pointofsales.model.BreadcrumbModel;
 import nerdvana.com.pointofsales.model.ButtonsModel;
 import nerdvana.com.pointofsales.model.ChangeThemeModel;
 import nerdvana.com.pointofsales.model.ClearSearchData;
+import nerdvana.com.pointofsales.model.CloseInputDialogModel;
+import nerdvana.com.pointofsales.model.ItemScannedModel;
 import nerdvana.com.pointofsales.model.ProductsModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.UserModel;
@@ -296,7 +299,7 @@ public class RightFrameFragment extends Fragment implements
                                     productsModel.getUnitPrice(),
                                     productsModel.getBranchAlaCartList(),
                                     productsModel.getBranchGroupList(),
-                                    ""));
+                                    "",""));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -495,7 +498,8 @@ public class RightFrameFragment extends Fragment implements
                             productsModel.getUnitPrice(),
                             productsModel.getBranchAlaCartList(),
                             productsModel.getBranchGroupList(),
-                            ""));
+                            "",
+                            productsModel.getBarcode()));
         }
     }
 
@@ -661,6 +665,53 @@ public class RightFrameFragment extends Fragment implements
                     changeQtyDialog.show();
                 }
                 break;
+        }
+    }
+
+    @Subscribe
+    public void itemScanned(ItemScannedModel itemScannedModel) {
+        if (!InputDialog.IS_SHOWN) { //auto punch item
+            ProductsModel productsModel = null;
+            boolean isExisting = false;
+            for (ProductsModel pm : productsList) {
+
+                if (pm.getBarcode().trim().equalsIgnoreCase(itemScannedModel.getProductBarcode().trim())) {
+                    isExisting = true;
+                    productsModel = pm;
+                    break;
+                }
+            }
+
+            if (!isExisting) {
+                Utils.showDialogMessage(getActivity(), "Item not found", "Information");
+            } else {
+                productsModel.setQty(Integer.valueOf(qtySelected));
+                search.setText("");
+                if (categoryClickedArray.size() > 0) {
+                    if (productsModel.getProductsList().size() != 0) {
+                        repopulateList(productsModel.getProductsList());
+                        productsAdapter.notifyDataSetChanged();
+
+                    } else {
+                        BusProvider.getInstance().post(productsModel);
+                    }
+                } else {
+
+                    if (productsModel.getProductsList().size() != 0) {
+                        repopulateList(productsModel.getProductsList());
+                        productsAdapter.notifyDataSetChanged();
+                    } else {
+                        BusProvider.getInstance().post(productsModel);
+                    }
+                }
+                qtySelected = "1";
+                btnChangeQty.setText("QTY : " + qtySelected);
+            }
+
+
+        } else { //search only
+            BusProvider.getInstance().post(new CloseInputDialogModel("11"));
+            search.setText(itemScannedModel.getProductBarcode());
         }
     }
 }

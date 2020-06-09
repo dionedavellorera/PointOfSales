@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/partial_header" />
+
+    <nerdvana.com.pointofsales.custom.HidingEditText
+        android:id="@+id/etInput"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:imeOptions="actionSearch"/>
+    <Button
+        android:background="@drawable/button_selector"
+        android:layout_margin="10dp"
+        android:id="@+id/btnSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="search"/>
+</LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/toptoptop"
     android:layout_marginBottom="5dp"
-    android:background="@color/colorYellow">
+    android:background="@color/colorGreenWeb">
 
     <ImageView
         android:layout_marginRight="5dp"

@@ -91,7 +91,8 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                         amount,
                         r.getBranchAlaCartList(),
                         r.getBranchGroupList(),
-                        ""));
+                        "",
+                        r.getProductBarcode() != null ? r.getProductBarcode().toString() : ""));
 
 
             }
