@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -145,26 +146,47 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
 
             List<String> nationalityArray = new ArrayList<>();
 
-            nationalityArray.add(fetchRoomPendingResult.getBooked().get(0).getBranchNationality().getNationality());
+            if (fetchRoomPendingResult.getBooked().get(0).getBranchNationality() != null) {
+                if (fetchRoomPendingResult.getBooked().get(0).getBranchNationality() != null) {
+                    if (!TextUtils.isEmpty(fetchRoomPendingResult.getBooked().get(0).getBranchNationality().getNationality())) {
+                        nationalityArray.add(fetchRoomPendingResult.getBooked().get(0).getBranchNationality().getNationality());
+                    }
+                }
+            }
+
             CustomSpinnerAdapter rateSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                     nationalityArray);
             spinnerNationalirt.setAdapter(rateSpinnerAdapter);
 
             List<String> carArray = new ArrayList<>();
 
-            carArray.add(fetchRoomPendingResult.getBooked().get(0).getCar().getCarMake());
+            if (fetchRoomPendingResult.getBooked().get(0).getCar() != null) {
+                if (!TextUtils.isEmpty(fetchRoomPendingResult.getBooked().get(0).getCar().getCarMake())) {
+                    carArray.add(fetchRoomPendingResult.getBooked().get(0).getCar().getCarMake());
+                }
+            }
+
             CustomSpinnerAdapter carSpinnerAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                     carArray);
             carSpinner.setAdapter(carSpinnerAdapter);
 
             List<String> guestTypeArray = new ArrayList<>();
 
-            guestTypeArray.add(fetchRoomPendingResult.getBooked().get(0).getGuestType().getGuestType());
+            if (fetchRoomPendingResult.getBooked().get(0).getGuestType() != null) {
+                if (fetchRoomPendingResult.getBooked().get(0).getGuestType() != null) {
+                    if (!TextUtils.isEmpty(fetchRoomPendingResult.getBooked().get(0).getGuestType().getGuestType())) {
+                        guestTypeArray.add(fetchRoomPendingResult.getBooked().get(0).getGuestType().getGuestType());
+                    }
+
+                }
+            }
+
             CustomSpinnerAdapter guestTypeAdapter = new CustomSpinnerAdapter(context, R.id.spinnerItem,
                     guestTypeArray);
             guestTypeSpinner.setAdapter(guestTypeAdapter);
 
             plateNumber.setEnabled(false);
+
             plateNumber.setText(fetchRoomPendingResult.getBooked().get(0).getPlateNo());
 
             adult.setEnabled(false);
@@ -191,6 +213,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
 
 
             List<String> vehicleArray = new ArrayList<>();
+
 
 
             for (FetchVehicleResponse.Result res : vehicleList) {

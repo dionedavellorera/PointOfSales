@@ -29,7 +29,9 @@ import nerdvana.com.pointofsales.api_responses.FetchVehicleResponse;
 import nerdvana.com.pointofsales.custom.PrinterPresenter;
 import nerdvana.com.pointofsales.custom.ThreadPoolManager;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.PrintingListModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
+import nerdvana.com.pointofsales.model.SunmiPrinterModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
 import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
@@ -89,7 +91,7 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
 
             finalString += MainActivity.receiptString("VEHICLE TYPE", fetchVehicleFromId(String.valueOf(checkinDetails.get(0).getVehicleId() != null ? checkinDetails.get(0).getVehicleId() : "NA")).toUpperCase(), context, false);
 
-            finalString += MainActivity.receiptString("CAR MAKE", checkinDetails.get(0).getCar().getCarMake() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA", context, false);
+            finalString += MainActivity.receiptString("CAR MAKE", checkinDetails.get(0).getCar() != null ? checkinDetails.get(0).getCar().getCarMake().toUpperCase() : "NA", context, false);
 
             finalString += MainActivity.receiptString("PLATE NUMBER", checkinDetails.get(0).getPlateNo() != null ? checkinDetails.get(0).getPlateNo().toUpperCase() : "NA", context, false);
 
@@ -118,18 +120,51 @@ public class CheckInAsync extends AsyncTask<Void, Void, Void> {
             finalString += MainActivity.receiptString("PRINTED BY: " + userModel.getUsername(),
                     "", context, true);
 
-            printerPresenter.printNormal(finalString);
-            String finalString1 = finalString;
-            ThreadPoolManager.getsInstance().execute(() -> {
-                List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
-                if (deviceList == null || deviceList.isEmpty()) return;
-                for (Device device : deviceList) {
-                    if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
-                        continue;
-                    }
-                    printerPresenter.printByDeviceManager(device, finalString1);
+            TypeToken<List<PrintingListModel>> collectionToken = new TypeToken<List<PrintingListModel>>() {};
+            List<PrintingListModel> pOutList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.PRINTER_PREFS), collectionToken.getType());
+            PrintingListModel tmpLstModel = null;
+            for (PrintingListModel list : pOutList) {
+                if (list.getType().equalsIgnoreCase(printModel.getType())) {
+                    String finalString1 = finalString;
+                    ThreadPoolManager.getsInstance().execute(() -> {
+                        for (PrintingListModel.SelectedPrinterData data : list.getSelectedPrinterList()) {
+                            if (data.getId().equalsIgnoreCase(SunmiPrinterModel.PRINTER_BUILT_IN)) {
+                                printerPresenter.printNormal(finalString1);
+                            }
+                        }
+                        List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
+                        if (deviceList == null || deviceList.isEmpty()) return;
+                        for (Device device : deviceList) {
+                            if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
+                                continue;
+                            }
+                            if (list.getSelectedPrinterList().size() > 0) {
+                                for (PrintingListModel.SelectedPrinterData data : list.getSelectedPrinterList()) {
+                                    if (data.getId().equalsIgnoreCase(device.getId())) {
+                                        printerPresenter.printByDeviceManager(device, finalString1);
+                                    }
+                                }
+
+                            }
+
+                        }
+                    });
+
                 }
-            });
+            }
+
+
+//            String finalString1 = finalString;
+//            ThreadPoolManager.getsInstance().execute(() -> {
+//                List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
+//                if (deviceList == null || deviceList.isEmpty()) return;
+//                for (Device device : deviceList) {
+//                    if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
+//                        continue;
+//                    }
+//                    printerPresenter.printByDeviceManager(device, finalString1);
+//                }
+//            });
 
             asyncFinishCallBack.doneProcessing();
 

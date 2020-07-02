@@ -84,6 +84,7 @@ import nerdvana.com.pointofsales.api_requests.FetchRoomAreaRequest;
 import nerdvana.com.pointofsales.api_requests.FetchRoomStatusRequest;
 import nerdvana.com.pointofsales.api_requests.FetchTimeRequest;
 import nerdvana.com.pointofsales.api_requests.FetchUserRequest;
+import nerdvana.com.pointofsales.api_requests.RepatchDataRequest;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchBranchInfoResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCompanyUserResponse;
@@ -153,6 +154,7 @@ import nerdvana.com.pointofsales.model.OpenWakeUpCallDialog;
 import nerdvana.com.pointofsales.model.PaymentPrintModel;
 import nerdvana.com.pointofsales.model.PrintJobModel;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.PrintingListModel;
 import nerdvana.com.pointofsales.model.ProgressBarModel;
 import nerdvana.com.pointofsales.model.RoomTableModel;
 import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
@@ -242,10 +244,38 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private String branchAndCode = "";
 
+
+    private void callRepatch() {
+        RepatchDataRequest repatchDataRequest = new RepatchDataRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<ResponseBody> repatchData = iUsers.repatchData(
+                repatchDataRequest.getMapValue());
+        repatchData.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        if (TextUtils.isEmpty(SharedPreferenceManager.getString(null, ApplicationConstants.SHOW_KEYBOARD))) {
+//            SharedPreferenceManager.saveString(MainActivity.this, "show", ApplicationConstants.SHOW_KEYBOARD);
+//        }
+
+        callRepatch();
+        SharedPreferenceManager.saveString(MainActivity.this, "sunmi", ApplicationConstants.SELECTED_PRINTER_MANUALLY);
+        savePrinterPreferences();
+
         connectInnerPrinter();
 
 
@@ -494,6 +524,40 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     }
 
+    private void savePrinterPreferences() {
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PRINTER_PREFS))) {
+            List<PrintingListModel> printoutList = new ArrayList<>();
+            printoutList.add(new PrintingListModel("PRINT_WAKEUP_CALL", "WAKE UP CALL", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("ACK_SLIP", "ACKNOWLEDGMENT SLIP", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("SPOT_AUDIT_PRINT", "SPOT AUDIT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("CHANGE_QTY", "CHANGE QUANTITY", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("IN_TRANSIT", "INTRANSIT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("POST_VOID", "POST VOID", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("CHANGE_WAKE_UP_CALL", "CHANGE WAKE UP CALL", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("BACKOUT", "BACKOUT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("SHORTOVER", "SHORT OVER", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("CASHRECONCILE", "CASHIER RECONCILE", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("SAFEKEEPING", "SAFEKEEPING", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("RESAFEKEEPING", "REPRINT SAFEKEEPING", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("REPRINTZREAD", "REPRINT Z READING", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("ZREAD", "Z READING", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("REPRINTXREADING", "REPRINT X READING", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("REXREADING", "X READING", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("SWITCH_ROOM", "SWITCH ROOM", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("PRINT_FOC", "FOC SLIP", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("PRINT_RECEIPT", "OFFICIAL RECEIPT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("REPRINT_RECEIPT", "REPRINT OFFICIAL RECEIPT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("REPRINT_RECEIPT_SPEC", "REPRINT OFFICIAL RECEIPT(SPECIAL)", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("DEPOSIT", "DEPOSIT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("SOA-TO", "SOA TAKE OUT", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("CHECKIN", "CHECK IN SLIP", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("VOID", "ITEM VOID", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("SOA-ROOM", "SOA ROOM", false, new ArrayList<>()));
+            printoutList.add(new PrintingListModel("FO", "FOOD ORDER SLIP", false, new ArrayList<>()));
+
+            SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(printoutList) , ApplicationConstants.PRINTER_PREFS);
+        }
+    }
 
 
     private void saveBranchInfo() {
@@ -901,16 +965,16 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     }
 
     private void fetchUserListRequest() {
+        Log.d("FETCHUSER", "REQUESt");
         BusProvider.getInstance().post(new FetchUserRequest());
     }
 
     @Subscribe
     public void fetchUserResponse(FetchUserResponse fetchUserResponse) {
-        if (fetchUserResponse.getResult().size() > 0) {
-            SharedPreferenceManager.saveString(getApplicationContext(),
-                    GsonHelper.getGson().toJson(fetchUserResponse.getResult()),
-                    ApplicationConstants.USER_JSON);
-        }
+        Log.d("FETCHUSER", "RESPONSE");
+        SharedPreferenceManager.saveString(getApplicationContext(),
+                GsonHelper.getGson().toJson(fetchUserResponse.getResult()),
+                ApplicationConstants.USER_JSON);
     }
 
     private void fetchDefaultCurrencyRequest() {
@@ -4009,7 +4073,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
     private void loadPrinter() {
 
-        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER))) {
+        if (!TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER)) &&
+            !TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_LANGUAGE))) {
             SPrinter sPrinter = new SPrinter(
                     Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_PRINTER)),
                     Integer.valueOf(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SELECTED_LANGUAGE)),
@@ -4321,7 +4386,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
                     if (collectionDialog == null) {
                         ApplicationConstants.IS_ACTIVE = "T";
-                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false, pShiftNumber) {
+                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false, pShiftNumber, "") {
                             @Override
                             public void printCashRecoData(String cashNRecoData) {
 
@@ -4470,23 +4535,23 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //    }
 
     private void savePaymentTypePref() {
-
-        if (TextUtils.isEmpty(SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.PAYMENT_TYPE_JSON))) {
-            FetchPaymentRequest fetchPaymentRequest = new FetchPaymentRequest();
-            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-            Call<FetchPaymentResponse> request = iUsers.sendFetchPaymentRequest(fetchPaymentRequest.getMapValue());
-            request.enqueue(new Callback<FetchPaymentResponse>() {
-                @Override
-                public void onResponse(Call<FetchPaymentResponse> call, Response<FetchPaymentResponse> response) {
+        FetchPaymentRequest fetchPaymentRequest = new FetchPaymentRequest();
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        Call<FetchPaymentResponse> request = iUsers.sendFetchPaymentRequest(fetchPaymentRequest.getMapValue());
+        request.enqueue(new Callback<FetchPaymentResponse>() {
+            @Override
+            public void onResponse(Call<FetchPaymentResponse> call, Response<FetchPaymentResponse> response) {
+                if (response.code() == 200) {
                     SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(response.body().getResult()), ApplicationConstants.PAYMENT_TYPE_JSON);
                 }
 
-                @Override
-                public void onFailure(Call<FetchPaymentResponse> call, Throwable t) {
+            }
 
-                }
-            });
-        }
+            @Override
+            public void onFailure(Call<FetchPaymentResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     private void fetchDiscountSpecialRequest() {

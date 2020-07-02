@@ -87,7 +87,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                         buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3, 0));
                         buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1, 0));
                         buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4, 0));
-                        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
+//                        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
 //                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));
                         buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8, 0));
                         buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3, 0));
@@ -118,7 +118,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                         buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3, 0));
                         buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1, 0));
                         buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4, 0));
-                        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
+//                        buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
                         buttonsModelList.add(new ButtonsModel(109,"REPRINT SK", "",10, 0));
 //                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));
                         buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8, 0));
@@ -151,7 +151,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
                     buttonsModelList.add(new ButtonsModel(100,"SAVE", "",3, 0));
                     buttonsModelList.add(new ButtonsModel(9999,"ROOMS", "",1, 0));
                     buttonsModelList.add(new ButtonsModel(111,"GUEST INFO", "",4, 0));
-                    buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
+//                    buttonsModelList.add(new ButtonsModel(107,"CHECK-IN", "",10, 0));
                     buttonsModelList.add(new ButtonsModel(109,"REPRINT SK", "",10, 0));
 
 //                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));

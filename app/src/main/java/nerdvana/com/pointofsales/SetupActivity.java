@@ -45,6 +45,7 @@ import java.net.URI;
 import nerdvana.com.pointofsales.api_requests.LoginRequest;
 import nerdvana.com.pointofsales.api_requests.RepatchDataRequest;
 import nerdvana.com.pointofsales.api_responses.LoginResponse;
+import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.custom.ImageFilePath;
 import nerdvana.com.pointofsales.dialogs.DialogProgressBar;
@@ -56,7 +57,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SetupActivity extends AppCompatActivity implements View.OnClickListener {
-
+    Call<LoginResponse> loginRequestApi;
     private DialogProgressBar dialogProgressBar;
 
     private Button proceed;
@@ -75,7 +76,7 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 //        checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 1000);
-        callRepatch();
+//        callRepatch();
         ivBannerImage = findViewById(R.id.ivBannerImage);
         if (!TextUtils.isEmpty(SharedPreferenceManager.getString(SetupActivity.this, "saved_image"))) {
 
@@ -275,6 +276,11 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
     protected void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+
+        if (loginRequestApi != null) {
+            loginRequestApi.cancel();
+            loginRequestApi = null;
+        }
     }
 
     @Override
@@ -369,40 +375,100 @@ public class SetupActivity extends AppCompatActivity implements View.OnClickList
 
     private void sendLoginRequest(String username, String password) {
         showPRogress();
-        BusProvider.getInstance().post(new LoginRequest(
+
+//        BusProvider.getInstance().post(new LoginRequest(
+//                username,
+//                password,
+//                ""
+//        ));
+        LoginRequest loginRequest = new LoginRequest(
                 username,
                 password,
                 ""
-        ));
+        );
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        if (loginRequestApi == null) {
+            loginRequestApi = iUsers.sendLoginRequest(loginRequest.getMapValue());
+            loginRequestApi.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                    dismissProgress();
+                    loginRequestApi = null;
+                    if (response.code() == 200) {
+                        if (response.body() != null) {
+                            if (response.body().getStatus() == 0) {
+                                //fail
+                                Utils.showDialogMessage(SetupActivity.this, response.body().getMessage(),"Information");
+//            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                //success
+                                UserModel userModel = new UserModel(response.body().getResult().get(0).getName(),
+                                        true,
+                                        SystemConstants.SYS_ROOM,
+                                        SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST),
+                                        SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH),
+                                        SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE),
+                                        String.valueOf(response.body().getResult().get(0).getId()),
+                                        String.valueOf(response.body().getResult().get(0).getRols().getRole()),
+                                        String.valueOf(response.body().getResult().get(0).getRols().getId()));
+                                SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+                                SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(response.body().getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
+                                SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(response.body().getResult().get(0).getUsername()), ApplicationConstants.USERNAME);
+                                SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(response.body().getResult().get(0).getRols().getGroup().getAccess()), ApplicationConstants.ACCESS_RIGHTS);
+
+                                startActivity(new Intent(SetupActivity.this, MainActivity.class));
+                                finish();
+
+                            }
+
+                        } else {
+
+                            Toast.makeText(SetupActivity.this, "Response body of login is null", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+
+                        Toast.makeText(SetupActivity.this, "There is an error in login", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    dismissProgress();
+                    loginRequestApi = null;
+                    Toast.makeText(SetupActivity.this, "LOGIN " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
     }
 
     @Subscribe
     public void onReceiveLoginResponse(LoginResponse loginResponse) {
-        dismissProgress();
-        if (loginResponse.getStatus() == 0) {
-            //fail
-            Utils.showDialogMessage(SetupActivity.this, loginResponse.getMessage(),"Information");
-//            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
-        } else {
-            //success
-            UserModel userModel = new UserModel(loginResponse.getResult().get(0).getName(),
-                    true,
-                    SystemConstants.SYS_ROOM,
-                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST),
-                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH),
-                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE),
-                    String.valueOf(loginResponse.getResult().get(0).getId()),
-                    String.valueOf(loginResponse.getResult().get(0).getRols().getRole()),
-                    String.valueOf(loginResponse.getResult().get(0).getRols().getId()));
-            SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
-            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
-            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUsername()), ApplicationConstants.USERNAME);
-            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getRols().getGroup().getAccess()), ApplicationConstants.ACCESS_RIGHTS);
-
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-
-        }
+//        dismissProgress();
+//        if (loginResponse.getStatus() == 0) {
+//            //fail
+//            Utils.showDialogMessage(SetupActivity.this, loginResponse.getMessage(),"Information");
+////            Toast.makeText(getApplicationContext(), loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+//        } else {
+//            //success
+//            UserModel userModel = new UserModel(loginResponse.getResult().get(0).getName(),
+//                    true,
+//                    SystemConstants.SYS_ROOM,
+//                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.HOST),
+//                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.BRANCH),
+//                    SharedPreferenceManager.getString(SetupActivity.this, ApplicationConstants.CODE),
+//                    String.valueOf(loginResponse.getResult().get(0).getId()),
+//                    String.valueOf(loginResponse.getResult().get(0).getRols().getRole()),
+//                    String.valueOf(loginResponse.getResult().get(0).getRols().getId()));
+//            SharedPreferenceManager.saveString(SetupActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
+//            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUserId()), ApplicationConstants.USER_ID);
+//            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getUsername()), ApplicationConstants.USERNAME);
+//            SharedPreferenceManager.saveString(SetupActivity.this, String.valueOf(loginResponse.getResult().get(0).getRols().getGroup().getAccess()), ApplicationConstants.ACCESS_RIGHTS);
+//
+//            startActivity(new Intent(this, MainActivity.class));
+//            finish();
+//
+//        }
     }
 
     private void showPRogress() {

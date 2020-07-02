@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -51,6 +53,10 @@ import retrofit2.Response;
 
 public class RoomsActivity extends AppCompatActivity implements AsyncContract,
         SelectionContract, RoomFilterContract, AsyncRequest {
+    Call<FetchRoomResponse> sendRoomApiRequest;
+    Call<ChangeRoomStatusResponse> changeRoomStatusApiRequest;
+
+
     private CollectionDialog collectionDialog;
     boolean isLoadingData = false;
 
@@ -128,7 +134,10 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                roomsTablesAdapter.getFilter().filter(s);
+                if (roomsTablesAdapter != null) {
+                    roomsTablesAdapter.getFilter().filter(s);
+                }
+
             }
 
             @Override
@@ -264,9 +273,9 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     }
 
     private void setRoomsTableAdapter() {
-        int spanCount = Integer.valueOf(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.MAX_GRID_COLUMN));
+//        int spanCount = Integer.valueOf(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.MAX_GRID_COLUMN));
         roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, spanCount));
+        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
 //        listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
         roomsTablesAdapter.notifyDataSetChanged();
@@ -297,36 +306,55 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
                 @Override
                 public void changeStatus(ChangeRoomStatusRequest changeRoomStatusRequest) {
                     IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                    Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(changeRoomStatusRequest.getMapValue());
-                    request.enqueue(new Callback<ChangeRoomStatusResponse>() {
-                        @Override
-                        public void onResponse(Call<ChangeRoomStatusResponse> call, Response<ChangeRoomStatusResponse> response) {
-                            if (response.body().getStatus() == 1) {
-                                setRoomsTableAdapter();
-                                sendRoomListRequest();
-                                setRoomFilter();
-                                SocketManager.reloadPos(
-                                        selectedItem.getName(),
-                                        String.valueOf(selectedItem.getRoomId()),
-                                        changeRoomStatusRequest.getNewValue(),
-                                        changeRoomStatusRequest.getNewValue(),
-                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                                        "end");
-                                if (!TextUtils.isEmpty(searchView.getText().toString())) {
-                                    roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
+                    if (changeRoomStatusApiRequest == null) {
+                        changeRoomStatusApiRequest = iUsers.changeRoomStatus(changeRoomStatusRequest.getMapValue());
+                        changeRoomStatusApiRequest.enqueue(new Callback<ChangeRoomStatusResponse>() {
+                            @Override
+                            public void onResponse(Call<ChangeRoomStatusResponse> call, Response<ChangeRoomStatusResponse> response) {
+                                changeRoomStatusApiRequest = null;
+
+                                if (response.code() == 200) {
+                                    if (response.body() != null) {
+                                        if (response.body().getStatus() == 1) {
+                                            setRoomsTableAdapter();
+                                            sendRoomListRequest();
+                                            setRoomFilter();
+                                            SocketManager.reloadPos(
+                                                    selectedItem.getName(),
+                                                    String.valueOf(selectedItem.getRoomId()),
+                                                    changeRoomStatusRequest.getNewValue(),
+                                                    changeRoomStatusRequest.getNewValue(),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                                    "end");
+                                            if (!TextUtils.isEmpty(searchView.getText().toString())) {
+                                                roomsTablesAdapter.getFilter().filter(searchView.getText().toString().toLowerCase());
+                                            }
+
+                                            changeRoomStatusDialog.dismiss();
+                                        } else {
+                                            Utils.showDialogMessage(RoomsActivity.this, response.body().getMessage(), "Information");
+                                        }
+                                    } else {
+
+                                        Toast.makeText(RoomsActivity.this, "Response body of change room status is null", Toast.LENGTH_LONG).show();
+                                    }
+                                } else {
+                                    Toast.makeText(RoomsActivity.this, "There is an error change room status", Toast.LENGTH_LONG).show();
                                 }
 
-                                changeRoomStatusDialog.dismiss();
-                            } else {
-                                Utils.showDialogMessage(RoomsActivity.this, response.body().getMessage(), "Information");
+
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<ChangeRoomStatusResponse> call, Throwable t) {
+                            @Override
+                            public void onFailure(Call<ChangeRoomStatusResponse> call, Throwable t) {
+                                changeRoomStatusApiRequest = null;
+                                Toast.makeText(RoomsActivity.this, "CHANGE ROOM STATUS" + t.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(RoomsActivity.this, "A change status request is still on processing", Toast.LENGTH_LONG).show();
+                    }
 
-                        }
-                    });
                 }
             };
             if (selectedItem.getStatus().equalsIgnoreCase("2") || selectedItem.getStatus().equalsIgnoreCase("17")) {
@@ -349,38 +377,101 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
             refreshRoom.setRefreshing(true);
             isLoadingData = true;
             BusProvider.getInstance().post(new FetchRoomRequest());
+
+
+            FetchRoomRequest fetchRoomRequest = new FetchRoomRequest();
+            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+            if (sendRoomApiRequest == null) {
+
+                sendRoomApiRequest = iUsers.sendRoomListRequest(
+                        fetchRoomRequest.getMapValue());
+
+                sendRoomApiRequest.enqueue(new Callback<FetchRoomResponse>() {
+                    @Override
+                    public void onResponse(Call<FetchRoomResponse> call, Response<FetchRoomResponse> response) {
+
+                        refreshRoom.setRefreshing(false);
+
+                        if (response.code() == 200) {
+                            if (response.body() != null) {
+                                if (response.body().getResult().size() > 0) {
+                                    new RoomsTablesAsync(RoomsActivity.this, response.body().getResult(), RoomsActivity.this).execute();
+                                    setRoomFilter();
+                                }
+                            } else {
+                                isLoadingData = false;
+                                Toast.makeText(RoomsActivity.this, "Response body of fetch room is null", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            isLoadingData = false;
+                            Toast.makeText(RoomsActivity.this, "There is an error in room list", Toast.LENGTH_LONG).show();
+                        }
+
+
+                        sendRoomApiRequest = null;
+                    }
+
+                    @Override
+                    public void onFailure(Call<FetchRoomResponse> call, Throwable t) {
+                        isLoadingData = false;
+                        refreshRoom.setRefreshing(false);
+                        sendRoomApiRequest = null;
+                        Toast.makeText(RoomsActivity.this, "ROOM LIST " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+
         }
 
     }
 
-    @Subscribe
-    public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
-        refreshRoom.setRefreshing(false);
-        if (fetchRoomResponse.getResult().size() > 0) {
-//            SharedPreferenceManager
-//                    .saveString(
-//                            RoomsActivity.this,
-//                            GsonHelper.getGson().toJson(fetchRoomResponse.getResult()),
-//                            ApplicationConstants.ROOM_JSON);
-            new RoomsTablesAsync(this, fetchRoomResponse.getResult(), this).execute();
-            setRoomFilter();
-
-
-
-//            isLoadingData = false;
-        }
-    }
+//    @Subscribe
+//    public void roomlistResponse(FetchRoomResponse fetchRoomResponse) {
+//        refreshRoom.setRefreshing(false);
+//        if (fetchRoomResponse.getResult().size() > 0) {
+////            SharedPreferenceManager
+////                    .saveString(
+////                            RoomsActivity.this,
+////                            GsonHelper.getGson().toJson(fetchRoomResponse.getResult()),
+////                            ApplicationConstants.ROOM_JSON);
+//            new RoomsTablesAsync(this, fetchRoomResponse.getResult(), this).execute();
+//            setRoomFilter();
+//
+//
+//
+////            isLoadingData = false;
+//        }
+//    }
 
     @Override
     protected void onPause() {
         super.onPause();
         BusProvider.getInstance().unregister(this);
+        if (sendRoomApiRequest != null) {
+            sendRoomApiRequest.cancel();
+            sendRoomApiRequest = null;
+        }
+
+        if (changeRoomStatusApiRequest != null) {
+            changeRoomStatusApiRequest.cancel();
+            changeRoomStatusApiRequest = null;
+        }
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         BusProvider.getInstance().register(this);
+
+//        if (sendRoomApiRequest != null) {
+//            sendRoomApiRequest.request();
+//        }
+//
+//        if (changeRoomStatusApiRequest != null) {
+//            changeRoomStatusApiRequest.request();
+//        }
     }
 
     @Subscribe
@@ -435,7 +526,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
         if (statusId == 0) { //SHOW ALL
             roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
+            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
 //            listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
             roomsTablesAdapter.notifyDataSetChanged();
@@ -459,7 +550,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             }
             roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, 5));
+            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
 
             roomsTablesAdapter.notifyDataSetChanged();
@@ -540,4 +631,14 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 //
 //    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
 //    Call<ChangeRoomStatusResponse> request = iUsers.changeRoomStatus(changeRoomStatusRequest.getMapValue());
+
+
+    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+        int noOfColumns = (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
+        return noOfColumns;
+    }
+
+
 }

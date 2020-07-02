@@ -83,6 +83,7 @@ public class ApplicationConstants {
 
     public static final String ROOM_JSON = "room_json";
     public static final String ACCESS_RIGHTS = "access_rights";
+    public static final String PRINTER_PREFS = "printer_prefs";
 
 
     public static String IS_ACTIVE = "F";

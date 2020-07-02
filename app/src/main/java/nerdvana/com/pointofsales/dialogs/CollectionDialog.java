@@ -34,6 +34,7 @@ import nerdvana.com.pointofsales.IUsers;
 import nerdvana.com.pointofsales.PosClient;
 import nerdvana.com.pointofsales.PosClientCompany;
 import nerdvana.com.pointofsales.R;
+import nerdvana.com.pointofsales.RoomsActivity;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
 import nerdvana.com.pointofsales.api_requests.CashNReconcileRequest;
@@ -45,6 +46,7 @@ import nerdvana.com.pointofsales.api_requests.SirGeloCutOffRequest;
 import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.CollectionResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.model.LogoutUserAction;
 import nerdvana.com.pointofsales.model.PrintModel;
 import nerdvana.com.pointofsales.model.SafeKeepDataModel;
@@ -58,6 +60,9 @@ import static nerdvana.com.pointofsales.PrinterUtils.addTextToPrinter;
 import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public abstract class CollectionDialog extends BaseDialog {
+    Call<Object> cutOffApiRequest;
+    CashNReconcileRequest collectionRequest;
+    Call<CollectionResponse> safeKeepingApiRequest;
     private String type;
     private LinearLayout relContainer;
     private LinearLayout linear;
@@ -79,11 +84,13 @@ public abstract class CollectionDialog extends BaseDialog {
 
 
     private String pShiftNumber = "";
+    private String adminPassword = "";
 
     public CollectionDialog(@NonNull Activity context,
                             String type, boolean continueCashReco,
-                            String shiftNumber) {
+                            String shiftNumber, String adminPassword) {
         super(context);
+        this.adminPassword = adminPassword;
         this.type = type;
         this.act = context;
         this.willCashReco = continueCashReco;
@@ -127,40 +134,11 @@ public abstract class CollectionDialog extends BaseDialog {
                 }
 
                 if (willCashReco) {
-                    if (Utils.isPasswordProtected(getContext(), "72")) {
-                        if (passwordDialog == null) {
-                            passwordDialog = new PasswordDialog(act, "X READING PROCESS", "") {
 
-                                @Override
-                                public void passwordSuccess(String employeeId, String employeeName) {
-                                    doCashAndRecoFunction(employeeId);
-                                }
 
-                                @Override
-                                public void passwordFailed() {
+                    doCashAndRecoFunction(
+                            adminPassword);
 
-                                }
-                            };
-
-                            passwordDialog.setOnCancelListener(new OnCancelListener() {
-                                @Override
-                                public void onCancel(DialogInterface dialog) {
-                                    passwordDialog = null;
-                                }
-                            });
-
-                            passwordDialog.setOnDismissListener(new OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    passwordDialog = null;
-                                }
-                            });
-                            passwordDialog.show();
-                        }
-
-                    } else {
-                        doCashAndRecoFunction(SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
-                    }
 
 
                 } else {
@@ -192,58 +170,85 @@ public abstract class CollectionDialog extends BaseDialog {
                                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
                                         CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
 
+                                        //dione return here
+                                        if (safeKeepingApiRequest == null) {
+                                            safeKeepingApiRequest = iUsers.collectionRequest(collectionRequest.getMapValue());
 
-                                        Call<CollectionResponse> request = iUsers.collectionRequest(collectionRequest.getMapValue());
+                                            safeKeepingApiRequest.enqueue(new Callback<CollectionResponse>() {
+                                                @Override
+                                                public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
 
-                                        request.enqueue(new Callback<CollectionResponse>() {
-                                            @Override
-                                            public void onResponse(Call<CollectionResponse> call, Response<CollectionResponse> response) {
-                                                if (response.body().getStatus() == 0) {
-                                                    Utils.showDialogMessage(act, response.body().getMessage(), "Information");
-                                                } else {
+                                                    if (response.code() == 200) {
+                                                        if (response.body() != null) {
+
+                                                            if (response.body().getStatus() == 0) {
+                                                                Utils.showDialogMessage(act, response.body().getMessage(), "Information");
+                                                            } else {
 
 
 
-                                                    for (CollectionFinalPostModel cfpm : collectionFinalPostModels) {
-                                                        Log.d("SAFEKEEPVALUE", cfpm.getAmount() +" - " + cfpm.getCash_valued());
-                                                    }
+                                                                for (CollectionFinalPostModel cfpm : collectionFinalPostModels) {
+                                                                    Log.d("SAFEKEEPVALUE", cfpm.getAmount() +" - " + cfpm.getCash_valued());
+                                                                }
 
-                                                    TypeToken<List<FetchDenominationResponse.Result>> collectionToken = new TypeToken<List<FetchDenominationResponse.Result>>() {};
-                                                    List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.CASH_DENO_JSON), collectionToken.getType());
-                                                    Double finalAmount = 0.00;
-                                                    for (FetchDenominationResponse.Result cfm : denoDetails) {
-                                                        String valueCount = "0";
-                                                        String valueAmount = "0.00";
-                                                        for (CollectionFinalPostModel c : collectionFinalPostModels) {
+                                                                TypeToken<List<FetchDenominationResponse.Result>> collectionToken = new TypeToken<List<FetchDenominationResponse.Result>>() {};
+                                                                List<FetchDenominationResponse.Result> denoDetails = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.CASH_DENO_JSON), collectionToken.getType());
+                                                                Double finalAmount = 0.00;
+                                                                for (FetchDenominationResponse.Result cfm : denoDetails) {
+                                                                    String valueCount = "0";
+                                                                    String valueAmount = "0.00";
+                                                                    for (CollectionFinalPostModel c : collectionFinalPostModels) {
 
-                                                            if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
-                                                                valueCount = c.getAmount();
-                                                                valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
-                                                                break;
+                                                                        if (c.getCash_denomination_id().equalsIgnoreCase(String.valueOf(cfm.getCoreId()))) {
+                                                                            valueCount = c.getAmount();
+                                                                            valueAmount = String.valueOf(Double.valueOf(c.getAmount()) * Double.valueOf(c.getCash_valued()));
+                                                                            break;
+                                                                        }
+                                                                    }
+
+
+                                                                }
+
+
+                                                                //print safekeeping twice, not an error
+                                                                //region print safekeep
+                                                                BusProvider.getInstance().post(new PrintModel("",
+                                                                        "",
+                                                                        "SAFEKEEPING",
+                                                                        GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                                                        "", "", ""));
+                                                                //endregion
+                                                                dismiss();
                                                             }
+
+
+                                                        } else {
+
+                                                            Toast.makeText(act, "Response body of safekeeping is null", Toast.LENGTH_LONG).show();
                                                         }
+                                                    } else {
 
-
+                                                        Toast.makeText(act, "There is an error in safekeeping", Toast.LENGTH_LONG).show();
                                                     }
 
 
-                                                    //print safekeeping twice, not an error
-                                                    //region print safekeep
-                                                    BusProvider.getInstance().post(new PrintModel("",
-                                                            "",
-                                                            "SAFEKEEPING",
-                                                            GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                                            "", "", ""));
-                                                    //endregion
-                                                    dismiss();
+
+                                                    safeKeepingApiRequest = null;
                                                 }
-                                            }
 
-                                            @Override
-                                            public void onFailure(Call<CollectionResponse> call, Throwable t) {
+                                                @Override
+                                                public void onFailure(Call<CollectionResponse> call, Throwable t) {
+                                                    safeKeepingApiRequest = null;
+                                                }
+                                            });
 
-                                            }
-                                        });
+
+                                        } else {
+                                            Toast.makeText(act, "SAKEPEEING STILL ONGOING", Toast.LENGTH_LONG).show();
+                                        }
+
+
+
                                     } else {
                                         Utils.showDialogMessage(act, "The amount you entered is more than the actual sales", "Error");
                                     }
@@ -253,6 +258,7 @@ public abstract class CollectionDialog extends BaseDialog {
 
                             @Override
                             public void onFailure(Call<CheckSafeKeepingResponse> call, Throwable t) {
+                                Toast.makeText(act, "CHECK SAFEKEEPING " + t.getMessage(), Toast.LENGTH_LONG).show();
 
                             }
                         });
@@ -268,60 +274,65 @@ public abstract class CollectionDialog extends BaseDialog {
 
     private void doCashAndRecoFunction(String employeeId) {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        CashNReconcileRequest collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
-        Log.d("CASHRECODATA", new CashNReconcileRequest(collectionFinalPostModels, employeeId).toString());
-        //return later
-        Call<Object> request = iUsers.cashNReconcile(collectionRequest.getMapValue());
-        request.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                try {
+        //RETURN CASHRECOHERE
+        if (cutOffApiRequest == null) {
+            collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
+            cutOffApiRequest = iUsers.cashNReconcile(collectionRequest.getMapValue());
+            cutOffApiRequest.enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(Call<Object> call, Response<Object> response) {
+                    try {
 
-                    JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
-                    if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
-                        printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
+                        JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
+                        if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
+                            printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
 
-                        BusProvider.getInstance().post(new PrintModel("",
-                                "",
-                                "CASHRECONCILE",
-                                GsonHelper.getGson().toJson(collectionFinalPostModels),
-                                "", "", ""));
+                            BusProvider.getInstance().post(new PrintModel("",
+                                    "",
+                                    "CASHRECONCILE",
+                                    GsonHelper.getGson().toJson(collectionFinalPostModels),
+                                    "", "", ""));
 
-                        Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
+                            Utils.showDialogMessage(act, "X READ SUCCESS", "Information");
 
 //                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
 
-                        //ADD SIR GELO CUTOFF HERE
-                        SirGeloCutOffRequest sirGeloCutOffRequest =
-                                new SirGeloCutOffRequest(SharedPreferenceManager.getString(getContext(), ApplicationConstants.BRANCH).toLowerCase(), pShiftNumber);
-                        IUsers iUsers = PosClientCompany.mRestAdapter.create(IUsers.class);
-                        Call<ResponseBody> request = iUsers.sirGeloCutOff(sirGeloCutOffRequest.getMapValue());
-                        request.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            //ADD SIR GELO CUTOFF HERE
+                            SirGeloCutOffRequest sirGeloCutOffRequest =
+                                    new SirGeloCutOffRequest(SharedPreferenceManager.getString(getContext(), ApplicationConstants.BRANCH).toLowerCase(), pShiftNumber);
+                            IUsers iUsers = PosClientCompany.mRestAdapter.create(IUsers.class);
+                            Call<ResponseBody> request = iUsers.sirGeloCutOff(sirGeloCutOffRequest.getMapValue());
+                            request.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                            }
-                        });
+                                }
+                            });
 
 
-                    } else {
-                        Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+                        } else {
+                            Utils.showDialogMessage(act, jsonObject.getString("message"), "Information");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    cutOffApiRequest = null;
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
+                @Override
+                public void onFailure(Call<Object> call, Throwable t) {
+                    cutOffApiRequest = null;
+                }
+            });
+        }
 
-            }
-        });
+
+
     }
 
     @Override

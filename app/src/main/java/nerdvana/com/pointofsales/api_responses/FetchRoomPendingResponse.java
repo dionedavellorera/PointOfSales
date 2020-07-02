@@ -2262,6 +2262,21 @@ public class FetchRoomPendingResponse {
         @Expose
         private String empId;
 
+        public Discount(String id, String discountPostingId, String postTransId, String discountId, String discountPercentage, String discountAmount, String empId) {
+            this.id = id;
+            this.discountPostingId = discountPostingId;
+            this.postTransId = postTransId;
+            this.discountId = discountId;
+            this.discountPercentage = discountPercentage;
+            this.discountAmount = discountAmount;
+            this.empId = empId;
+        }
+
+        public Discount() {
+
+        }
+
+
         public String getId() {
             return id;
         }

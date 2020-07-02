@@ -232,4 +232,20 @@ public class SocketManager {
     }
 
 
+//    public static void reloadTagboardCancelledSoa(String roomNumber,
+//                                            String userId) {
+//
+//        try {
+//            JSONObject roomObject = new JSONObject();
+//            roomObject.put("room_no", roomNumber);
+//            roomObject.put("userid", userId);
+//            roomObject.put("from", "pos");
+//            if (SocketManager.getInstance() != null) {
+//                SocketManager.getInstance().emit("poscancelsoa", roomObject);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
 }

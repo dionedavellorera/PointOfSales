@@ -53,6 +53,7 @@ import nerdvana.com.pointofsales.adapters.CustomSpinnerAdapter;
 import nerdvana.com.pointofsales.api_requests.FetchProductsRequest;
 import nerdvana.com.pointofsales.api_responses.FetchProductsResponse;
 import nerdvana.com.pointofsales.background.ProductsAsync;
+import nerdvana.com.pointofsales.custom.CustomGridLayoutManager;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
 import nerdvana.com.pointofsales.dialogs.ChangeQtyDialog;
 import nerdvana.com.pointofsales.dialogs.InputDialog;
@@ -385,7 +386,7 @@ public class RightFrameFragment extends Fragment implements
     private void setProductAdapter() {
         //set products adapter with 5 columns (grid layout)
         productsAdapter = new ProductsAdapter(productsList, this, getContext());
-        listProducts.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        listProducts.setLayoutManager(new CustomGridLayoutManager(getContext(), 4));
         listProducts.setAdapter(productsAdapter);
         listProducts.setLayoutAnimation(anim);
         productsAdapter.notifyDataSetChanged();

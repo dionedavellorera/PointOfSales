@@ -47,6 +47,7 @@ public class MachineSetupFragment extends Fragment {
         allowedWakeUpCall = view.findViewById(R.id.allowedWakeUpCall);
 
 
+
         if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).isEmpty()) {
             if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).equalsIgnoreCase("y")) {
                 allowedWakeUpCall.setChecked(true);

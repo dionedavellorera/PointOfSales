@@ -35,165 +35,169 @@ public class RoomsTablesAsync extends AsyncTask<RoomTableModel, Void, List<RoomT
         List<RoomTableModel> productsModelList = new ArrayList<>();
 
         for (FetchRoomResponse.Result r : roomList) {
-            List<RoomRateMain> roomRateMainList = new ArrayList<>();
-            List<Integer> tempList = new ArrayList<>();
+
+            if (r.getStatus() != null) {
+                List<RoomRateMain> roomRateMainList = new ArrayList<>();
+                List<Integer> tempList = new ArrayList<>();
 
 
 
-            for (RoomRateSub rateSub : r.getRoomRate()) {
-                if (!tempList.contains(rateSub.getRoomRatePriceId())) {
-                    if (rateSub.getRatePrice() != null) {
-                        roomRateMainList.add(
-                                new RoomRateMain(rateSub.getId(), rateSub.getRoomRatePriceId(),
-                                        r.getRoomTypeId(),rateSub.getCreatedBy(),
-                                        rateSub.getCreatedAt(), rateSub.getUpdatedAt(),
-                                        rateSub.getDeletedAt(), rateSub.getRatePrice())
-                        );
-                        tempList.add(rateSub.getRoomRatePriceId());
+                for (RoomRateSub rateSub : r.getRoomRate()) {
+                    if (!tempList.contains(rateSub.getRoomRatePriceId())) {
+                        if (rateSub.getRatePrice() != null) {
+                            roomRateMainList.add(
+                                    new RoomRateMain(rateSub.getId(), rateSub.getRoomRatePriceId(),
+                                            r.getRoomTypeId(),rateSub.getCreatedBy(),
+                                            rateSub.getCreatedAt(), rateSub.getUpdatedAt(),
+                                            rateSub.getDeletedAt(), rateSub.getRatePrice())
+                            );
+                            tempList.add(rateSub.getRoomRatePriceId());
+                        }
+
                     }
-
                 }
-            }
 
-            if (r.getType() != null) {
-                if (r.getType().getParent() != null) {
-                    for (RoomRateMain p : r.getType().getParent().getRoomRate()) {
-                        if (p.getRatePrice() != null) {
-                            if (!tempList.contains(p.getRoomRatePriceId())) {
-                                roomRateMainList.add(p);
-                                tempList.add(p.getRoomRatePriceId());
+                if (r.getType() != null) {
+                    if (r.getType().getParent() != null) {
+                        for (RoomRateMain p : r.getType().getParent().getRoomRate()) {
+                            if (p.getRatePrice() != null) {
+                                if (!tempList.contains(p.getRoomRatePriceId())) {
+                                    roomRateMainList.add(p);
+                                    tempList.add(p.getRoomRatePriceId());
+                                }
                             }
                         }
                     }
-                }
 
-                if (r.getType().getRoomRate() != null) {
-                    if (r.getType().getRoomRate().size() > 0) {
-                        for (RoomRateMain rateList : r.getType().getRoomRate()) {
-                            if (rateList.getRatePrice() != null) {
+                    if (r.getType().getRoomRate() != null) {
+                        if (r.getType().getRoomRate().size() > 0) {
+                            for (RoomRateMain rateList : r.getType().getRoomRate()) {
+                                if (rateList.getRatePrice() != null) {
 
-                                if (!tempList.contains(rateList.getRoomRatePriceId())) {
+                                    if (!tempList.contains(rateList.getRoomRatePriceId())) {
 
-                                    roomRateMainList.add(rateList);
-                                    tempList.add(rateList.getRoomRatePriceId());
+                                        roomRateMainList.add(rateList);
+                                        tempList.add(rateList.getRoomRatePriceId());
+
+                                    }
+
 
                                 }
 
-
                             }
+                        }
+                    }
 
+
+
+
+
+                }
+                int unpostedOrderCount = 0;
+
+                Double amountSelected = 0.00;
+                String checkoutExpected = "";
+                if (String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.OCCUPIED) ||
+                        String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.SOA)) {
+
+                    if (r.getTransaction() != null) {
+                        if (r.getTransaction().getExpectedCheckOut() != null) {
+                            DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                            DateTime jodatime = dtf.parseDateTime(r.getTransaction().getExpectedCheckOut());
+                            DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d hh:mm a");
+
+                            amountSelected = r.getTransaction().getTransaction().getTotal();
+                            checkoutExpected = dtfOut.print(jodatime);
+                        } else {
+                            checkoutExpected = "";
+                        }
+                    } else {
+                        checkoutExpected = "";
+                    }
+
+
+
+                } else {
+                    amountSelected = 0.00;
+                    checkoutExpected = "--";
+                }
+
+                String otHours = "";
+                if (r.getTransaction() != null) {
+                    if (r.getTransaction().getTransaction() != null) {
+                        if (r.getTransaction().getTransaction().getOtHours() != null) {
+                            otHours = String.valueOf(r.getTransaction().getTransaction().getOtHours());
                         }
                     }
                 }
 
-
-
-
-
-            }
-            int unpostedOrderCount = 0;
-
-            Double amountSelected = 0.00;
-            String checkoutExpected = "";
-            if (String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.OCCUPIED) ||
-                    String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(RoomConstants.SOA)) {
-
+                String controlNumber = "";
                 if (r.getTransaction() != null) {
-                    if (r.getTransaction().getExpectedCheckOut() != null) {
-                        DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                        DateTime jodatime = dtf.parseDateTime(r.getTransaction().getExpectedCheckOut());
-                        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("MMM d hh:mm a");
-
-                        amountSelected = r.getTransaction().getTransaction().getTotal();
-                        checkoutExpected = dtfOut.print(jodatime);
-                    } else {
-                        checkoutExpected = "";
-                    }
-                } else {
-                    checkoutExpected = "";
-                }
-
-
-
-            } else {
-                amountSelected = 0.00;
-                checkoutExpected = "--";
-            }
-
-            String otHours = "";
-            if (r.getTransaction() != null) {
-                if (r.getTransaction().getTransaction() != null) {
-                    if (r.getTransaction().getTransaction().getOtHours() != null) {
-                        otHours = String.valueOf(r.getTransaction().getTransaction().getOtHours());
+                    if (r.getTransaction().getTransaction() != null) {
+                        if (r.getTransaction().getTransaction().getControlNo() != null) {
+                            controlNumber = r.getTransaction().getTransaction().getControlNo();
+                        }
                     }
                 }
-            }
 
-            String controlNumber = "";
-            if (r.getTransaction() != null) {
-                if (r.getTransaction().getTransaction() != null) {
-                    if (r.getTransaction().getTransaction().getControlNo() != null) {
-                        controlNumber = r.getTransaction().getTransaction().getControlNo();
+                String checkInTime = "NA";
+                if (r.getTransaction() != null) {
+                    if (r.getTransaction().getCheckIn() != null) {
+                        checkInTime = r.getTransaction().getCheckIn();
                     }
                 }
-            }
 
-            String checkInTime = "NA";
-            if (r.getTransaction() != null) {
-                if (r.getTransaction().getCheckIn() != null) {
-                    checkInTime = r.getTransaction().getCheckIn();
+                int listPosition = 1;
+                switch (r.getStatus().getCoreId()) {
+                    case 59:
+                        listPosition = 1;
+                        break;
+                    case 17:
+                        listPosition = 2;
+                        break;
+                    case 2:
+                        listPosition = 3;
+                        break;
+                    case 1:
+                        listPosition = 4;
+                        break;
+                    default:
+                        listPosition = 5;
+                        break;
                 }
+
+                productsModelList.add(
+                        new RoomTableModel (
+                                r.getId(),
+                                r.getRoomTypeId(),
+                                r.getType().getRoomType(),
+                                0, //r.getType().getParent() == null ? 0 : r.getType().getParent().getId(),
+                                "test parent", //r.getType().getParent() == null ? "NONE" : r.getType().getParent().getRoomType(),
+                                r.getRoomAreaId(),
+                                r.getArea().getRoomArea(),
+                                r.getStatus().getRoomStatus(),
+                                r.getRoomNo(),
+                                roomRateMainList,
+                                true,
+                                "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
+                                String.valueOf(r.getCRoomStat()),
+                                r.getStatus().getColor(),
+                                amountSelected,
+                                false,
+                                controlNumber,
+                                unpostedOrderCount,
+                                r.getStatus().getIsBlink() == 1 ? true : false,
+                                r.getStatus().getIsTimer() == 1 ? true : false,
+                                checkoutExpected,
+                                otHours,
+                                checkInTime,
+                                listPosition
+                        )
+                );
+
+                Collections.sort(productsModelList);
             }
 
-            int listPosition = 1;
-            switch (r.getStatus().getCoreId()) {
-                case 59:
-                    listPosition = 1;
-                    break;
-                case 17:
-                    listPosition = 2;
-                    break;
-                case 2:
-                    listPosition = 3;
-                    break;
-                case 1:
-                    listPosition = 4;
-                    break;
-                default:
-                    listPosition = 5;
-                    break;
-            }
-
-            productsModelList.add(
-                    new RoomTableModel (
-                            r.getId(),
-                            r.getRoomTypeId(),
-                            r.getType().getRoomType(),
-                            0, //r.getType().getParent() == null ? 0 : r.getType().getParent().getId(),
-                            "test parent", //r.getType().getParent() == null ? "NONE" : r.getType().getParent().getRoomType(),
-                            r.getRoomAreaId(),
-                            r.getArea().getRoomArea(),
-                            r.getStatus().getRoomStatus(),
-                            r.getRoomNo(),
-                            roomRateMainList,
-                            true,
-                            "https://imageog.flaticon.com/icons/png/512/51/51882.png?size=1200x630f&pad=10,10,10,10&ext=png&bg=FFFFFFFF",
-                            String.valueOf(r.getCRoomStat()),
-                            r.getStatus().getColor(),
-                            amountSelected,
-                            false,
-                            controlNumber,
-                            unpostedOrderCount,
-                            r.getStatus().getIsBlink() == 1 ? true : false,
-                            r.getStatus().getIsTimer() == 1 ? true : false,
-                            checkoutExpected,
-                            otHours,
-                            checkInTime,
-                            listPosition
-                    )
-            );
-
-            Collections.sort(productsModelList);
 
         }
         return productsModelList;

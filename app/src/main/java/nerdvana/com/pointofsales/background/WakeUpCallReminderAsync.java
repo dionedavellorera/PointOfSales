@@ -62,41 +62,44 @@ public class WakeUpCallReminderAsync extends AsyncTask<Void, Void, List<WakeUpCa
                 if (response.body().getResult().size() > 0) {
                     boolean hasWelcome = false;
                     for (FetchRoomResponse.Result r : response.body().getResult()) {
-                        List<RoomEntity> insertedRoom = RoomEntity
-                                .findWithQuery(RoomEntity.class,
-                                        "SELECT * FROM Room_Entity WHERE roomnumber = ?", String.valueOf(r.getRoomName()));
+                        if (r.getStatus() != null) {
+                            List<RoomEntity> insertedRoom = RoomEntity
+                                    .findWithQuery(RoomEntity.class,
+                                            "SELECT * FROM Room_Entity WHERE roomnumber = ?", String.valueOf(r.getRoomName()));
 
-                        if (insertedRoom.size() == 0) {
-                            RoomEntity roomEntity = new RoomEntity(r.getRoomName(), r.getType().getRoomType(),
-                                    String.valueOf(r.getStatus().getCoreId()), r.getStatus().getRoomStatus(),
-                                    r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "", 0,
-                                    r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
-                            roomEntity.save();
-                        } else {
-                            RoomEntity room = insertedRoom.get(0);
-                            boolean hasChanged = false;
-                            if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
-                                room.setWake_up_call(r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "");
-                                room.setControl_number(r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
-                                hasChanged = true;
-                            }
+                            if (insertedRoom.size() == 0) {
+                                RoomEntity roomEntity = new RoomEntity(r.getRoomName(), r.getType().getRoomType(),
+                                        String.valueOf(r.getStatus().getCoreId()), r.getStatus().getRoomStatus(),
+                                        r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "", 0,
+                                        r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
+                                roomEntity.save();
+                            } else {
+                                RoomEntity room = insertedRoom.get(0);
+                                boolean hasChanged = false;
+                                if (r.getStatus().getCoreId() == 17 || r.getStatus().getCoreId() == 2) {
+                                    room.setWake_up_call(r.getTransaction() != null ? r.getTransaction().getWakeUpCall() : "");
+                                    room.setControl_number(r.getTransaction() != null ? r.getTransaction().getTransaction().getControlNo() : "");
+                                    hasChanged = true;
+                                }
 
-                            if (!String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(room.getRoom_status())) {
-                                room.setRoom_status(String.valueOf(r.getStatus().getCoreId()));
-                                room.setRoom_status_description(r.getStatus().getRoomStatus());
-                                room.setWake_up_call("");
-                                room.setIs_done(0);
-                                hasChanged = true;
-                            }
+                                if (!String.valueOf(r.getStatus().getCoreId()).equalsIgnoreCase(room.getRoom_status())) {
+                                    room.setRoom_status(String.valueOf(r.getStatus().getCoreId()));
+                                    room.setRoom_status_description(r.getStatus().getRoomStatus());
+                                    room.setWake_up_call("");
+                                    room.setIs_done(0);
+                                    hasChanged = true;
+                                }
 
-                            if (r.getStatus().getCoreId() == 59) {
-                                hasWelcome = true;
-                            }
+                                if (r.getStatus().getCoreId() == 59) {
+                                    hasWelcome = true;
+                                }
 
-                            if (hasChanged) {
-                                room.save();
+                                if (hasChanged) {
+                                    room.save();
+                                }
                             }
                         }
+
                     }
                     BusProvider.getInstance().post(new RoomWelcomeNotifier(hasWelcome));
                 }

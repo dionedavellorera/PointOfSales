@@ -51,6 +51,8 @@ public class TimerService extends Service {
     private String shiftDisplay = "";
     private static String currentDate = "";
 
+    private Call<ResponseBody> checkShiftApiRequest;
+
     CountDownTimer countUpTimer;
     @Override
     public void onCreate() {
@@ -99,23 +101,47 @@ public class TimerService extends Service {
 //                            });
 
 
-                            CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
-                            Call<ResponseBody> request = iUsers.checkShiftRaw(checkShiftRequest.getMapValue());
-                            request.enqueue(new Callback<ResponseBody>() {
-                                @Override
-                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    try {
-                                        String rawResponse = response.body().string();
-                                        JSONObject responseObject = new JSONObject(rawResponse);
 
-                                        JSONArray resArr = responseObject.optJSONArray("result");
-                                        String shiftNumberToSend = "";
+                            if (checkShiftApiRequest == null) {
+                                CheckShiftRequest checkShiftRequest = new CheckShiftRequest();
 
-                                        if (responseObject.getInt("status") == 0) {
+                                checkShiftApiRequest = iUsers.checkShiftRaw(checkShiftRequest.getMapValue());
+                                checkShiftApiRequest.enqueue(new Callback<ResponseBody>() {
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        checkShiftApiRequest = null;
+                                        try {
+                                            String rawResponse = response.body().string();
+                                            JSONObject responseObject = new JSONObject(rawResponse);
 
-                                            if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
-                                                if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+                                            JSONArray resArr = responseObject.optJSONArray("result");
+                                            String shiftNumberToSend = "";
 
+                                            if (responseObject.getInt("status") == 0) {
+
+                                                if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                                                    if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+
+                                                    } else {
+                                                        if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+
+                                                            if (resArr != null) {
+                                                                JSONObject resultObj = resArr.getJSONObject(0);
+                                                                shiftNumberToSend = resultObj.getString("shift_no");
+                                                            }
+
+
+                                                            if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+
+                                                                BusProvider.getInstance().post(new InfoModel("Please execute end of day", shiftNumberToSend));
+                                                            }
+                                                        } else {
+                                                            if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+
+                                                                BusProvider.getInstance().post(new InfoModel("Generate end of day", shiftNumberToSend));
+                                                            }
+                                                        }
+                                                    }
                                                 } else {
                                                     if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
 
@@ -126,61 +152,67 @@ public class TimerService extends Service {
 
 
                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-
                                                             BusProvider.getInstance().post(new InfoModel("Please execute end of day", shiftNumberToSend));
+
                                                         }
                                                     } else {
                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-
                                                             BusProvider.getInstance().post(new InfoModel("Generate end of day", shiftNumberToSend));
                                                         }
                                                     }
                                                 }
+
+
                                             } else {
-                                                if (responseObject.getString("message").equalsIgnoreCase("Please execute end of day")) {
+                                                JSONArray resultArray = responseObject.getJSONArray("result");
+                                                if (resultArray.length() > 0) {
+                                                    if (resultArray.getJSONObject(0).getString("eTime") == null) {
+                                                        shiftDisplay = "0";
+                                                        BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
+                                                        if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+                                                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                        }
 
-                                                    if (resArr != null) {
-                                                        JSONObject resultObj = resArr.getJSONObject(0);
-                                                        shiftNumberToSend = resultObj.getString("shift_no");
-                                                    }
-
-
-                                                    if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                        BusProvider.getInstance().post(new InfoModel("Please execute end of day", shiftNumberToSend));
-
-                                                    }
-                                                } else {
-                                                    if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                        BusProvider.getInstance().post(new InfoModel("Generate end of day", shiftNumberToSend));
-                                                    }
-                                                }
-                                            }
-
-
-                                        } else {
-                                            JSONArray resultArray = responseObject.getJSONArray("result");
-                                            if (resultArray.length() > 0) {
-                                                if (resultArray.getJSONObject(0).getString("eTime") == null) {
-                                                    shiftDisplay = "0";
-                                                    BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
-                                                    if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
-                                                    }
-
-                                                } else {
-                                                    DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-                                                    shiftDisplay = String.valueOf(resultArray.getJSONObject(0).getString("shift_no"));
-
-                                                    if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
-                                                        BusProvider.getInstance().post(new InfoModel("ALLOW", shiftDisplay));
                                                     } else {
+                                                        DateTimeFormatter fff = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+                                                        shiftDisplay = String.valueOf(resultArray.getJSONObject(0).getString("shift_no"));
+
                                                         if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
                                                             BusProvider.getInstance().post(new InfoModel("ALLOW", shiftDisplay));
                                                         } else {
-                                                            DateTime endShiftTime = fff.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
-                                                            if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
-                                                                if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
+                                                            if (resultArray.getJSONObject(0).getString("eTime").equalsIgnoreCase("null")){
+                                                                BusProvider.getInstance().post(new InfoModel("ALLOW", shiftDisplay));
+                                                            } else {
+                                                                DateTime endShiftTime = fff.parseDateTime(resultArray.getJSONObject(0).getString("date") + " " + resultArray.getJSONObject(0).getString("eTime"));
+                                                                if (!SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).isEmpty()) {
+                                                                    if (SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MACHINE_SETUP).equalsIgnoreCase("to")) {
 
+                                                                    } else {
+                                                                        if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
+
+                                                                            if (resArr != null) {
+                                                                                JSONObject resultObj = resArr.getJSONObject(0);
+                                                                                shiftNumberToSend = resultObj.getString("shift_no");
+                                                                            }
+
+                                                                            if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+                                                                                BusProvider.getInstance().post(new InfoModel("Please execute cutoff", shiftNumberToSend));
+                                                                            }
+
+                                                                        } else {
+                                                                            if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+                                                                                BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+
+                                                                            }
+
+                                                                            if (resArr != null) {
+                                                                                JSONObject resultObj = resArr.getJSONObject(0);
+                                                                                shiftNumberToSend = resultObj.getString("shift_no");
+                                                                            }
+
+                                                                            BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
+                                                                        }
+                                                                    }
                                                                 } else {
                                                                     if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
 
@@ -189,10 +221,10 @@ public class TimerService extends Service {
                                                                             shiftNumberToSend = resultObj.getString("shift_no");
                                                                         }
 
+
                                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
                                                                             BusProvider.getInstance().post(new InfoModel("Please execute cutoff", shiftNumberToSend));
                                                                         }
-
                                                                     } else {
                                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
                                                                             BusProvider.getInstance().post(new CheckSafeKeepingRequest());
@@ -207,76 +239,55 @@ public class TimerService extends Service {
                                                                         BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                                     }
                                                                 }
-                                                            } else {
-                                                                if ((secsOfDate >= (endShiftTime.getMillis() / 1000))) {
-
-                                                                    if (resArr != null) {
-                                                                        JSONObject resultObj = resArr.getJSONObject(0);
-                                                                        shiftNumberToSend = resultObj.getString("shift_no");
-                                                                    }
-
-
-                                                                    if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                                        BusProvider.getInstance().post(new InfoModel("Please execute cutoff", shiftNumberToSend));
-                                                                    }
-                                                                } else {
-                                                                    if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
-
-                                                                    }
-
-                                                                    if (resArr != null) {
-                                                                        JSONObject resultObj = resArr.getJSONObject(0);
-                                                                        shiftNumberToSend = resultObj.getString("shift_no");
-                                                                    }
-
-                                                                    BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
-                                                                }
                                                             }
+
+
                                                         }
 
 
                                                     }
-
-
+                                                } else {
+                                                    shiftDisplay = "0";
+                                                    BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
+                                                    if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
+                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                    }
                                                 }
-                                            } else {
-                                                shiftDisplay = "0";
-                                                BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
-                                                if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                    BusProvider.getInstance().post(new CheckSafeKeepingRequest());
-                                                }
+
                                             }
-
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        checkShiftApiRequest = null;
 
-                                }
-                            });
+                                    }
+                                });
+
+
+                            }
+
 
                         }
 //                        else if (secsOfDate % 15 == 0) {
 //                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
 //                        }
                         if (SharedPreferenceManager.getString(null, ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).equalsIgnoreCase("y")) {
-                            if (secsOfDate % 20 == 0){
-//                                new WakeUpCallReminderAsync(secsOfDate).execute();
+                            if (secsOfDate % 35 == 0){
+                                new WakeUpCallReminderAsync(secsOfDate).execute();
                             }
                         }
 
 
 
-                        if (secsOfDate % 5 == 0) {
-//                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
-                        }
+//                        if (secsOfDate % 5 == 0) {
+////                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
+//                        }
                     }
                 }.start();
             }

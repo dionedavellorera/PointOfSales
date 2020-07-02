@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +92,13 @@ public class PaymentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
 
             ((PaymentTypeViewHolder) holder).description.setText(paymentList.get(i).getPayment_type());
-            ImageLoader.loadImage("http://192.168.1.90/pos/uploads/icon/" +paymentList.get(i).getImage(), ((PaymentTypeViewHolder) holder).name);
+
+            if (!TextUtils.isEmpty(paymentList.get(i).getImage())) {
+                ImageLoader.loadImage(paymentList.get(i).getImage(), ((PaymentTypeViewHolder) holder).name);
+            } else {
+                ImageLoader.loadImage("http://192.168.1.89/" + paymentList.get(i).getImage(), ((PaymentTypeViewHolder) holder).name);
+            }
+
         }
     }
 

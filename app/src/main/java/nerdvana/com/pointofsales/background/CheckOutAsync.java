@@ -11,6 +11,7 @@ import com.epson.epos2.Epos2Exception;
 import com.epson.epos2.printer.Printer;
 import com.epson.epos2.printer.PrinterStatusInfo;
 import com.epson.epos2.printer.ReceiveListener;
+import com.google.gson.reflect.TypeToken;
 import com.sunmi.devicemanager.cons.Cons;
 import com.sunmi.devicemanager.device.Device;
 import com.sunmi.devicesdk.core.PrinterManager;
@@ -43,7 +44,9 @@ import nerdvana.com.pointofsales.api_responses.PrintSoaResponse;
 import nerdvana.com.pointofsales.custom.PrinterPresenter;
 import nerdvana.com.pointofsales.custom.ThreadPoolManager;
 import nerdvana.com.pointofsales.model.PrintModel;
+import nerdvana.com.pointofsales.model.PrintingListModel;
 import nerdvana.com.pointofsales.model.SeniorReceiptCheckoutModel;
+import nerdvana.com.pointofsales.model.SunmiPrinterModel;
 import nerdvana.com.pointofsales.model.UserModel;
 
 import static nerdvana.com.pointofsales.MainActivity.receiptString;
@@ -713,18 +716,50 @@ public class CheckOutAsync extends AsyncTask<Void, Void, Void> {
                 finalString += receiptString("THE PERMIT TO USE",
                         "", context, true);
 
-                printerPresenter.printNormal(finalString);
-                String finalString1 = finalString;
-                ThreadPoolManager.getsInstance().execute(() -> {
-                    List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
-                    if (deviceList == null || deviceList.isEmpty()) return;
-                    for (Device device : deviceList) {
-                        if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
-                            continue;
-                        }
-                        printerPresenter.printByDeviceManager(device, finalString1);
+                TypeToken<List<PrintingListModel>> myToken = new TypeToken<List<PrintingListModel>>() {};
+                List<PrintingListModel> pOutList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(context, ApplicationConstants.PRINTER_PREFS), myToken.getType());
+                PrintingListModel tmpLstModel = null;
+                for (PrintingListModel list : pOutList) {
+                    if (list.getType().equalsIgnoreCase(printModel.getType())) {
+                        String finalString1 = finalString;
+                        ThreadPoolManager.getsInstance().execute(() -> {
+                            for (PrintingListModel.SelectedPrinterData data : list.getSelectedPrinterList()) {
+                                if (data.getId().equalsIgnoreCase(SunmiPrinterModel.PRINTER_BUILT_IN)) {
+                                    printerPresenter.printNormal(finalString1);
+                                }
+                            }
+                            List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
+                            if (deviceList == null || deviceList.isEmpty()) return;
+                            for (Device device : deviceList) {
+                                if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
+                                    continue;
+                                }
+                                if (list.getSelectedPrinterList().size() > 0) {
+                                    for (PrintingListModel.SelectedPrinterData data : list.getSelectedPrinterList()) {
+                                        if (data.getId().equalsIgnoreCase(device.getId())) {
+                                            printerPresenter.printByDeviceManager(device, finalString1);
+                                        }
+                                    }
+
+                                }
+
+                            }
+                        });
                     }
-                });
+                }
+
+//                printerPresenter.printNormal(finalString);
+//                String finalString1 = finalString;
+//                ThreadPoolManager.getsInstance().execute(() -> {
+//                    List<Device> deviceList = PrinterManager.getInstance().getPrinterDevice();
+//                    if (deviceList == null || deviceList.isEmpty()) return;
+//                    for (Device device : deviceList) {
+//                        if (device.type == Cons.Type.PRINT && device.connectType == Cons.ConT.INNER) {
+//                            continue;
+//                        }
+//                        printerPresenter.printByDeviceManager(device, finalString1);
+//                    }
+//                });
 
                 asyncFinishCallBack.doneProcessing();
             }

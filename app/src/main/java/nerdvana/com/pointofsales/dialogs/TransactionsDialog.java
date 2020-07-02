@@ -90,8 +90,11 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
 
     private ViewReceiptResponse.Result selectedOrToPrintOrVoid;
 
-    public TransactionsDialog(@NonNull Context context, Boolean isViewing, Activity activity) {
+    private String adminPassword;
+    public TransactionsDialog(@NonNull Context context, Boolean isViewing, Activity activity,
+                              String adminPassword) {
         super(context);
+        this.adminPassword = adminPassword;
         this.isViewing = isViewing;
         this.act = activity;
     }
@@ -200,18 +203,7 @@ public abstract class TransactionsDialog extends BaseDialog implements CheckoutI
                 if (TextUtils.isEmpty(controlNumber)) {
                     Toast.makeText(getContext(), "Please select transaction to void", Toast.LENGTH_SHORT).show();
                 } else {
-                    PasswordDialog passwordDialog = new PasswordDialog(act,"CONFIRM VOID TRANSACTION", "") {
-                        @Override
-                        public void passwordSuccess(String employeeId, String employeeName) {
-                            postVoidRequest(controlNumber, employeeId);
-                        }
-
-                        @Override
-                        public void passwordFailed() {
-
-                        }
-                    };
-                    if (!passwordDialog.isShowing()) passwordDialog.show();
+                    postVoidRequest(controlNumber, adminPassword);
                 }
             }
         });

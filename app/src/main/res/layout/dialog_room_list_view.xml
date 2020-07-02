@@ -16,15 +16,26 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
-            android:layout_weight="0.2"
+            android:layout_weight="0.1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="ROOM"
             />
 
         <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
+
+        <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -34,17 +45,35 @@
             />
 
         <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
+        <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
-            android:layout_weight="0.2"
+            android:layout_weight="0.4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="RATE"
             />
 
+        <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
 
 
         <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -54,6 +83,16 @@
             />
 
         <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
+
+        <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -63,6 +102,17 @@
             />
 
         <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
+
+
+        <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -70,9 +120,17 @@
             android:layout_height="wrap_content"
             android:text="DATE OUT"
             />
-
+        <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
 
         <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -80,9 +138,17 @@
             android:layout_height="wrap_content"
             android:text="Wake Up Call"
             />
-
+        <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
 
         <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -90,8 +156,16 @@
             android:layout_height="wrap_content"
             android:text="REMARKS"
             />
-
         <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
+        <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"
@@ -99,8 +173,16 @@
             android:layout_height="wrap_content"
             android:text="DEPOSIT"
             />
-
         <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            />
+        <TextView
+            android:gravity="center"
             android:textStyle="bold"
             android:padding="2dp"
             android:layout_weight="0.2"

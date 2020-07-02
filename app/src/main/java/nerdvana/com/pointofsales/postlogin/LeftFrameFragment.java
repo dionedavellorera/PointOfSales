@@ -145,6 +145,7 @@ import nerdvana.com.pointofsales.api_responses.WelcomeGuestResponse;
 import nerdvana.com.pointofsales.api_responses.XReadResponse;
 import nerdvana.com.pointofsales.api_responses.ZReadResponse;
 import nerdvana.com.pointofsales.background.RetrieveCartItemsAsync;
+import nerdvana.com.pointofsales.background.RoomsTablesAsync;
 import nerdvana.com.pointofsales.background.SaveTransactionAsync;
 import nerdvana.com.pointofsales.custom.AlertYesNo;
 import nerdvana.com.pointofsales.custom.SwipeToDeleteCallback;
@@ -220,6 +221,15 @@ import static nerdvana.com.pointofsales.PrinterUtils.twoColumnsRightGreaterTr;
 
 public class LeftFrameFragment extends Fragment implements AsyncContract, CheckoutItemsContract,
          SaveTransactionContract, RetrieveCartItemContract, View.OnClickListener {
+    Call<XReadResponse> xreadApiRequest;
+    Call<ResponseBody> zreadApiRequest;
+    Call<AddRoomPriceResponse> addProductApiRequest;
+    Call<AddProductToResponse> addProductToApiRequest;
+    Call<FetchOrderPendingViaControlNoResponse> fetchOrderPendingViaControlNoApiRequest;
+    Call<FetchRoomPendingResponse> fetchRoomPendingApiRequest;
+
+
+
     DialogBundleComposition dialogBundleComposition;
     //regiondialogs
     ShiftCutOffMenuDialog shiftCutOffMenuDialog;
@@ -577,6 +587,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void notify(FragmentNotifierModel selectedRoom) {
 
 //        printReceiptFromCheckout("VCHI-2019-00000005", "ttete", "tet");
+
+
+        //dione start here
         if (selectedRoom.getSelectedRoom().isTakeOut()) {
             //takeout logic
 //            selectedRoom.getSelectedRoom().getControlNo()
@@ -635,13 +648,52 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     @Override
     public void onPause() {
         super.onPause();
+        if (fetchRoomPendingApiRequest != null) {
+            fetchRoomPendingApiRequest.cancel();
+            fetchRoomPendingApiRequest = null;
+        }
 
+        if (fetchOrderPendingViaControlNoApiRequest != null) {
+            fetchOrderPendingViaControlNoApiRequest.cancel();
+            fetchOrderPendingViaControlNoApiRequest = null;
+        }
+
+        if (addProductApiRequest != null) {
+            addProductApiRequest.cancel();
+            addProductApiRequest = null;
+        }
+
+        if (addProductToApiRequest != null) {
+            addProductToApiRequest.cancel();
+            addProductToApiRequest = null;
+        }
+
+        if (xreadApiRequest != null) {
+            xreadApiRequest.cancel();
+            xreadApiRequest = null;
+        }
+
+        if (zreadApiRequest != null) {
+            zreadApiRequest.cancel();
+            zreadApiRequest = null;
+        }
+
+
+        Log.d("HEYNAPAUSEAKO", "HEY NAPAUSE");
 //        BusProvider.getInstance().unregister(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (fetchRoomPendingApiRequest != null) {
+            fetchRoomPendingApiRequest.request();
+        }
+
+        if (fetchOrderPendingViaControlNoApiRequest != null) {
+            fetchOrderPendingViaControlNoApiRequest.request();
+        }
+        Log.d("HEYNAPAUSEAKO", "HEY NARESUME");
 //        BusProvider.getInstance().register(this);
     }
 
@@ -1734,99 +1786,92 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         Toast.makeText(getContext(), "CHANGE SHIFT", Toast.LENGTH_SHORT).show();
     }
 
-    private void doFocFunction() {
+    private void doFocFunction(String adminPassword) {
 
+
+        Log.d("FOCBALANC", String.valueOf((totalBalance - (advancePayment + discountPayment))));
         boolean isValid = true;
         String errorMessage = "";
 
 
         if (selectedRoom != null) {
-            if (TextUtils.isEmpty(employeeId)) {
-                if (employeeSelectionDialog == null) {
-                    employeeSelectionDialog = new EmployeeSelectionDialog(getActivity(), selectedRoom.getControlNo()) {
-                        @Override
-                        public void saveEmployeeToTransaction(final String userId, String wholeName) {
 
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM FOC", "") {
-                                @Override
-                                public void passwordSuccess(String employeeId, String employeeName) {
+            if ((totalBalance - (advancePayment + discountPayment)) <= 0) {
+                if (TextUtils.isEmpty(employeeId)) {
+                    if (employeeSelectionDialog == null) {
+                        employeeSelectionDialog = new EmployeeSelectionDialog(getActivity(), selectedRoom.getControlNo()) {
+                            @Override
+                            public void saveEmployeeToTransaction(final String userId, String wholeName) {
 
-                                    if (cartItemList.size() > 0) {
-                                        if (selectedRoom.isTakeOut()) {
+                                if (cartItemList.size() > 0) {
+                                    if (selectedRoom.isTakeOut()) {
 
-                                            BusProvider.getInstance().post(new FocTransactionRequest(
-                                                    "",
-                                                    selectedRoom.getControlNo(),
-                                                    userId
-                                            ));
-                                        } else {
-                                            BusProvider.getInstance().post(new FocTransactionRequest(
-                                                    String.valueOf(selectedRoom.getRoomId()),
-                                                    "",
-                                                    userId
-                                            ));
-                                        }
+
+                                        BusProvider.getInstance().post(new FocTransactionRequest(
+                                                "",
+                                                selectedRoom.getControlNo(),
+                                                adminPassword
+                                        ));
                                     } else {
-                                        Utils.showDialogMessage(getActivity(), "Please add a product for FOC", "Information");
+                                        BusProvider.getInstance().post(new FocTransactionRequest(
+                                                String.valueOf(selectedRoom.getRoomId()),
+                                                "",
+                                                adminPassword
+                                        ));
                                     }
-
-
-
-
+                                } else {
+                                    Utils.showDialogMessage(getActivity(), "Please add a product for FOC", "Information");
                                 }
 
-                                @Override
-                                public void passwordFailed() {
 
-                                }
-                            };
+                            }
+                        };
 
-                            if (!passwordDialog.isShowing()) passwordDialog.show();
+                        employeeSelectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                employeeSelectionDialog = null;
+                            }
+                        });
 
+                        employeeSelectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                employeeSelectionDialog = null;
+                            }
+                        });
 
-                        }
-                    };
-
-                    employeeSelectionDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            employeeSelectionDialog = null;
-                        }
-                    });
-
-                    employeeSelectionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            employeeSelectionDialog = null;
-                        }
-                    });
-
-                    employeeSelectionDialog.show();
-                }
-
-            } else {
-
-                if (cartItemList.size() > 0) {
-                    if (selectedRoom.isTakeOut()) {
-                        BusProvider.getInstance().post(new FocTransactionRequest(
-                                "",
-                                selectedRoom.getControlNo(),
-                                employeeId
-                        ));
-                    } else {
-                        BusProvider.getInstance().post(new FocTransactionRequest(
-                                String.valueOf(selectedRoom.getRoomId()),
-                                "",
-                                employeeId
-                        ));
+                        employeeSelectionDialog.show();
                     }
+
                 } else {
-                    Utils.showDialogMessage(getActivity(), "Please add a product for FOC", "Information");
+
+                    if (cartItemList.size() > 0) {
+                        if (selectedRoom.isTakeOut()) {
+                            BusProvider.getInstance().post(new FocTransactionRequest(
+                                    "",
+                                    selectedRoom.getControlNo(),
+                                    employeeId
+                            ));
+                        } else {
+                            BusProvider.getInstance().post(new FocTransactionRequest(
+                                    String.valueOf(selectedRoom.getRoomId()),
+                                    "",
+                                    employeeId
+                            ));
+                        }
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "Please add a product for FOC", "Information");
+                    }
+
+
+
                 }
-
-
-
+            } else {
+                Utils.showDialogMessage(getActivity(), "Cannot FOC a transaction with balance.", "Information");
             }
+
+
         } else {
             Utils.showDialogMessage(getActivity(), "Please select a room", "Information");
         }
@@ -1869,7 +1914,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     @Override
                     public void passwordSuccess(String employeeId, String employeeName) {
                         Log.d("WEKWEK", "TEST");
-                        doSwitchCaseFunction(clickedItem);
+                        doSwitchCaseFunction(clickedItem, employeeId);
                     }
 
                     @Override
@@ -1894,12 +1939,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 passwordDialog.show();
             }
         } else {
-            doSwitchCaseFunction(clickedItem);
+            doSwitchCaseFunction(clickedItem, "");
         }
 
     }
 
-    private void doSwitchCaseFunction(ButtonsModel clickedItem) {
+    private void doSwitchCaseFunction(ButtonsModel clickedItem, String adminPassword) {
+        if (TextUtils.isEmpty(adminPassword)) {
+            adminPassword = SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID);
+        }
+
+        Log.d("IDTRACING", adminPassword);
+        Log.d("IDTRACING", "UTUT");
         switch (clickedItem.getId()) {
             case 109://REPRINT SK
                 ReprintSkDialog reprintSkDialog = new ReprintSkDialog(getActivity());
@@ -1946,7 +1997,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                 if (spotAuditDialog == null) {
-                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false, pShiftNumber) {
+                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false, pShiftNumber, adminPassword) {
                         @Override
                         public void printCashRecoData(String cashNRecoData) {
 
@@ -1970,24 +2021,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     if (!spotAuditDialog.isShowing()) spotAuditDialog.show();
                 }
 
-
-
-//                CheckSafeKeepingRequest checkSafeKeepingRequest = new CheckSafeKeepingRequest();
-//                IUsers uiuser = PosClient.mRestAdapter.create(IUsers.class);
-//                Call<CheckSafeKeepingResponse> checkSafeKeepRequest = uiuser.checkSafeKeeping(checkSafeKeepingRequest.getMapValue());
-//                checkSafeKeepRequest.enqueue(new Callback<CheckSafeKeepingResponse>() {
-//                    @Override
-//                    public void onResponse(Call<CheckSafeKeepingResponse> call, Response<CheckSafeKeepingResponse> response) {
-//                        //return dione
-//
-////                        BusProvider.getInstance().post(new PrintModel("", "", "SPOT_AUDIT_PRINT", GsonHelper.getGson().toJson(response.body())));
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<CheckSafeKeepingResponse> call, Throwable t) {
-//
-//                    }
-//                });
                 break;
             case 131: //ADD GUEST COUNT
                 if (selectedRoom != null) {
@@ -2092,45 +2125,20 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 //check main activity for function
                 break;
             case 127://REPRINT Z READ
-                if (passwordDialog == null) {
-                    passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X/Z READ DATA ACCESS", "") {
-                        @Override
-                        public void passwordSuccess(String employeeId, String employeeName) {
-                            ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
-                            reprintZReadingDialog.show();
-                        }
 
-                        @Override
-                        public void passwordFailed() {
-
-                        }
-                    };
-
-                    passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            passwordDialog = null;
-                        }
-                    });
-
-                    passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            passwordDialog = null;
-                        }
-                    });
-                }
-
-                if (!passwordDialog.isShowing()) {
-                    passwordDialog.show();
-                }
+                ReprintZReadingDialog reprintZReadingDialog = new ReprintZReadingDialog(getActivity());
+                reprintZReadingDialog.show();
 
                 break;
             case 126: //FOC
-                if (canTransact()) doFocFunction();
+                if (canTransact()) {
+                    doFocFunction(adminPassword);
+                }
                 break;
             case 124: //BACKOUT
-                if (canTransact()) doBackOutGuestFunction();
+                if (canTransact()) {
+                    doBackOutGuestFunction(adminPassword);
+                }
                 break;
             case 123: //REPRINT X/Z READING
                 if (passwordDialog == null) {
@@ -2207,11 +2215,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (canTransact()) {
                     if (hasUnpostedItems()) {
+                        String finalAdminPassword = adminPassword;
                         AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
                             public void yesClicked() {
 
-                                cancelOverTime();
+                                cancelOverTime(finalAdminPassword);
                             }
 
 
@@ -2222,16 +2231,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         };
                         alertYesNo.show();
                     } else {
-                        cancelOverTime();
+                        cancelOverTime(adminPassword);
                     }
                 }
                 break;
             case 121: //CASH AND RECONCILE
                 if (hasUnpostedItems()) {
+                    String finalAdminPassword1 = adminPassword;
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
-                            cashNReconcile();
+                            cashNReconcile(finalAdminPassword1);
                         }
 
                         @Override
@@ -2241,15 +2251,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     alertYesNo.show();
                 } else {
-                    cashNReconcile();
+                    cashNReconcile(adminPassword);
                 }
                 break;
             case 120: //Z READ, END OF DAY
                 if (hasUnpostedItems()) {
+                    String finalAdminPassword2 = adminPassword;
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
-                            zReadRequest();
+                            zReadRequest(finalAdminPassword2);
                         }
 
                         @Override
@@ -2259,17 +2270,18 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     alertYesNo.show();
                 } else {
-                    zReadRequest();
+                    zReadRequest(adminPassword);
                 }
                 break;
             case 119: //X READ, SHIFT CUT OFF
 
 
                 if (hasUnpostedItems()) {
+                    String finalAdminPassword3 = adminPassword;
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
-                            xReadRequest();
+                            xReadRequest(finalAdminPassword3);
                         }
 
                         @Override
@@ -2279,7 +2291,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     alertYesNo.show();
                 } else {
-                    xReadRequest();
+                    xReadRequest(adminPassword);
                 }
 
 
@@ -2290,10 +2302,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (canTransact()) {
                     if (hasUnpostedItems()) {
+                        String finalAdminPassword4 = adminPassword;
                         AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
                             public void yesClicked() {
-                                doSafeKeepFunction();
+                                doSafeKeepFunction(finalAdminPassword4);
                             }
 
                             @Override
@@ -2303,7 +2316,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         };
                         alertYesNo.show();
                     } else {
-                        doSafeKeepFunction();
+                        doSafeKeepFunction(adminPassword);
                     }
                 }
 
@@ -2318,105 +2331,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 115://DISCOUNT
                 switch (Utils.getSystemType(getContext())) {
-                    case "not_supported":
-                        Utils.showDialogMessage(getActivity(), "System not supported", "Information");
-                        break;
-                    case "franchise":
-                        if (selectedRoom == null) {
-                            Utils.showDialogMessage(getActivity(), "No transaction", "Information");
-                            return;
-                        } else {
-                            if (cartItemList.size() > 0) {
-                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-                                final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-                                for (CartItemsModel cim : cartItemList) {
-                                    if (!cim.isPosted()) {
-
-                                        if (cim.isUpdated()) {
-                                            updateModel.add(new UpdateProductModel(
-                                                    cim.getPostId(),
-                                                    cim.getName(),
-                                                    String.valueOf(cim.getUnitPrice()),
-                                                    String.valueOf(cim.getQuantity())
-                                            ));
-                                        } else {
-                                            model.add(new AddRateProductModel(
-                                                    String.valueOf(cim.getProductId()),
-                                                    "0",
-                                                    String.valueOf(cim.getQuantity()),
-                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                                    String.valueOf(cim.getUnitPrice()),
-                                                    cim.getIsPriceChanged(),
-                                                    cim.getName(),
-                                                    cim.getAlaCarteList(),
-                                                    cim.getGroupList(),
-                                                    ""
-                                            ));
-                                        }
-                                    }
-                                    if (cim.isForVoid()) {
-                                        voidModel.add(new VoidProductModel(
-                                                cim.getPostId(),
-                                                cim.getName(),
-                                                String.valueOf(cim.getAmount()),
-                                                String.valueOf(cim.getQuantity()),
-                                                ""
-                                        ));
-                                    }
-                                }
-
-                                AddProductToRequest addProductToRequest = new AddProductToRequest(
-                                        model,
-                                        "",
-                                        "",
-                                        selectedRoom.getControlNo(),
-                                        voidModel,
-                                        "",
-                                        "0",
-                                        "0",
-                                        updateModel);
-
-                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                Call<AddProductToResponse> request = iUsers.addProductTo(addProductToRequest.getMapValue());
-                                request.enqueue(new Callback<AddProductToResponse>() {
-                                    @Override
-                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
-
-                                        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo());
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
-                                        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
-                                            @Override
-                                            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
-                                                fetchOrderPendingViaControlNumberFunction(response.body());
-
-
-                                                //return dione
-                                                doDiscountFunction();
-
-
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
-
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
-
-                                    }
-                                });
-                            } else {
-                                Utils.showDialogMessage(getActivity(), "No product selected", "Information");
-                            }
-                        }
-                        break;
-                    case "table":
-                        break;
                     case "room":
                         if (canTransact()) {
                             if (selectedRoom != null) {
@@ -2454,10 +2368,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (canTransact()) {
                     if (selectedRoom != null) {
                         if (hasUnpostedItems()) {
+                            String finalAdminPassword6 = adminPassword;
                             AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                                 @Override
                                 public void yesClicked() {
-                                    doSwitchRoomFunction();
+                                    doSwitchRoomFunction(finalAdminPassword6);
                                 }
 
                                 @Override
@@ -2467,7 +2382,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             };
                             alertYesNo.show();
                         } else {
-                            doSwitchRoomFunction();
+                            doSwitchRoomFunction(adminPassword);
                         }
 
 
@@ -2480,10 +2395,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
                 if (canTransact()) {
                     if (hasUnpostedItems()) {
+                        String finalAdminPassword5 = adminPassword;
                         AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                             @Override
                             public void yesClicked() {
-                                doPostVoidFunction();
+                                doPostVoidFunction(finalAdminPassword5);
                             }
 
                             @Override
@@ -2493,7 +2409,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         };
                         alertYesNo.show();
                     } else {
-                        doPostVoidFunction();
+                        doPostVoidFunction(adminPassword);
                     }
                 }
 
@@ -2502,7 +2418,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 break;
             case 112://VIEW RECEIPT
                 if (transactionsDialog == null) {
-                    transactionsDialog = new TransactionsDialog(getActivity(), true, getActivity()) {
+                    transactionsDialog = new TransactionsDialog(getActivity(),
+                            true, getActivity(),
+                            adminPassword) {
                         @Override
                         public void postVoidSuccess() {
                             defaultView();
@@ -2807,106 +2725,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             case 102: //ADVANCE PAYMENT
 
                 switch (Utils.getSystemType(getContext())) {
-                    case "not_supported":
-                        Utils.showDialogMessage(getActivity(), "System not supported", "Information");
-                        break;
-                    case "franchise":
-                        if (selectedRoom == null) {
-                            Utils.showDialogMessage(getActivity(), "No transaction", "Information");
-                            return;
-                        } else {
-                            if (cartItemList.size() > 0) {
-                                final ArrayList<AddRateProductModel> model = new ArrayList<>();
-                                final ArrayList<VoidProductModel> voidModel = new ArrayList<>();
-                                final ArrayList<UpdateProductModel> updateModel = new ArrayList<>();
-                                for (CartItemsModel cim : cartItemList) {
-                                    if (!cim.isPosted()) {
-
-                                        if (cim.isUpdated()) {
-                                            updateModel.add(new UpdateProductModel(
-                                                    cim.getPostId(),
-                                                    cim.getName(),
-                                                    String.valueOf(cim.getUnitPrice()),
-                                                    String.valueOf(cim.getQuantity())
-                                            ));
-                                        } else {
-                                            model.add(new AddRateProductModel(
-                                                    String.valueOf(cim.getProductId()),
-                                                    "0",
-                                                    String.valueOf(cim.getQuantity()),
-                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.TAX_RATE),
-                                                    String.valueOf(cim.getUnitPrice()),
-                                                    cim.getIsPriceChanged(),
-                                                    cim.getName(),
-                                                    cim.getAlaCarteList(),
-                                                    cim.getGroupList(),
-                                                    ""
-                                            ));
-                                        }
-                                    }
-                                    if (cim.isForVoid()) {
-                                        voidModel.add(new VoidProductModel(
-                                                cim.getPostId(),
-                                                cim.getName(),
-                                                String.valueOf(cim.getAmount()),
-                                                String.valueOf(cim.getQuantity()),
-                                                ""
-                                        ));
-                                    }
-                                }
-
-                                AddProductToRequest addProductToRequest = new AddProductToRequest(
-                                        model,
-                                        "",
-                                        "",
-                                        selectedRoom.getControlNo(),
-                                        voidModel,
-                                        "",
-                                        "0",
-                                        "0",
-                                        updateModel);
-
-                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                Call<AddProductToResponse> request = iUsers.addProductTo(addProductToRequest.getMapValue());
-                                request.enqueue(new Callback<AddProductToResponse>() {
-                                    @Override
-                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
-                                        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo());
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<FetchOrderPendingViaControlNoResponse> request = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
-                                        request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
-                                            @Override
-                                            public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
-                                                fetchOrderPendingViaControlNumberFunction(response.body());
-
-
-                                                //return dione
-                                                doAdvancePaymentFunction();
-
-
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
-
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
-
-                                    }
-                                });
-                            } else {
-                                Utils.showDialogMessage(getActivity(), "No product selected", "Information");
-                            }
-                        }
-
-
-                        break;
-                    case "table":
-                        break;
                     case "room":
                         if (selectedRoom != null) {
                             if (hasUnpostedItems()) {
@@ -3205,17 +3023,66 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         if (model.size() == 0 && voidModel.size() == 0 && updateModel.size() == 0) {
                             Utils.showDialogMessage(getActivity(), "Please select item/s to order", "Information");
                         } else {
-                            BusProvider.getInstance().post(
-                                    new AddProductToRequest(
-                                            model,
-                                            String.valueOf(selectedRoom.getRoomId()),
-                                            String.valueOf(selectedRoom.getAreaId()),
-                                            selectedRoom.getControlNo(),
-                                            voidModel,
-                                            "",
-                                            "0",
-                                            "0",
-                                            updateModel));
+
+                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                            if (addProductToApiRequest == null) {
+                                AddProductToRequest addProductToRequest = new AddProductToRequest(
+                                        model,
+                                        String.valueOf(selectedRoom.getRoomId()),
+                                        String.valueOf(selectedRoom.getAreaId()),
+                                        selectedRoom.getControlNo(),
+                                        voidModel,
+                                        "",
+                                        "0",
+                                        "0",
+                                        updateModel);
+                                addProductToApiRequest = iUsers.addProductTo(addProductToRequest.getMapValue());
+                                addProductToApiRequest.enqueue(new Callback<AddProductToResponse>() {
+                                    @Override
+                                    public void onResponse(Call<AddProductToResponse> call, Response<AddProductToResponse> response) {
+                                        addProductToApiRequest = null;
+
+                                        if (response.code() == 200) {
+                                            if (response.body() != null) {
+
+                                                if (selectedRoom != null) {
+                                                    fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+                                                }
+                                                endLoading();
+
+                                            } else {
+                                                Toast.makeText(getContext(), "Response body of add product to is null", Toast.LENGTH_LONG).show();
+                                            }
+                                        } else {
+                                            Toast.makeText(getContext(), "There is an error add product to", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<AddProductToResponse> call, Throwable t) {
+                                        addProductToApiRequest = null;
+                                        Toast.makeText(getContext(), "ADD PRODUCT TO " + t.getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+
+                            } else {
+                                Toast.makeText(getContext(), "ADD PRODUCT TO REQUEST STILL ON GOING", Toast.LENGTH_LONG).show();
+                            }
+
+
+
+//                            BusProvider.getInstance().post(
+//                                    new AddProductToRequest(
+//                                            model,
+//                                            String.valueOf(selectedRoom.getRoomId()),
+//                                            String.valueOf(selectedRoom.getAreaId()),
+//                                            selectedRoom.getControlNo(),
+//                                            voidModel,
+//                                            "",
+//                                            "0",
+//                                            "0",
+//                                            updateModel));
                             showLoading();
                         }
                     } else {
@@ -3265,14 +3132,62 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 }
 
 
-                                BusProvider.getInstance().post(new AddRoomPriceRequest(
-                                        model,
-                                        String.valueOf(selectedRoom.getRoomId()),
-                                        new ArrayList<VoidProductModel>(),
-                                        "",
-                                        "",
-                                        "0", "0",
-                                        updateModel));
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                if (addProductApiRequest == null) {
+                                    AddRoomPriceRequest addRoomPriceRequest = new AddRoomPriceRequest(
+                                            model,
+                                            String.valueOf(selectedRoom.getRoomId()),
+                                            new ArrayList<VoidProductModel>(),
+                                            "",
+                                            "",
+                                            "0", "0",
+                                            updateModel);
+
+                                    addProductApiRequest = iUsers.sendAddRoomPriceRequest(addRoomPriceRequest.getMapValue());
+                                    addProductApiRequest.enqueue(new Callback<AddRoomPriceResponse>() {
+                                        @Override
+                                        public void onResponse(Call<AddRoomPriceResponse> call, Response<AddRoomPriceResponse> response) {
+                                            addProductApiRequest = null;
+
+                                            if (response.code() == 200) {
+                                                if (response.body() != null) {
+
+                                                    if (selectedRoom!=null) {
+                                                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+                                                    }
+                                                    endLoading();
+
+                                                } else {
+                                                    Toast.makeText(getContext(), "Response body of add product is null", Toast.LENGTH_LONG).show();
+                                                }
+                                            } else {
+                                                Toast.makeText(getContext(), "There is an error add product ", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<AddRoomPriceResponse> call, Throwable t) {
+                                            addProductApiRequest = null;
+                                            Toast.makeText(getContext(), "ADD PRODUCT " + t.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+
+
+                                } else {
+                                    Toast.makeText(getContext(), "ADD PRODUCT REQ STILL ON GOING" , Toast.LENGTH_LONG).show();
+                                }
+
+
+
+
+//                                BusProvider.getInstance().post(new AddRoomPriceRequest(
+//                                        model,
+//                                        String.valueOf(selectedRoom.getRoomId()),
+//                                        new ArrayList<VoidProductModel>(),
+//                                        "",
+//                                        "",
+//                                        "0", "0",
+//                                        updateModel));
                                 showLoading();
                             }
                         }
@@ -3282,337 +3197,205 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
-    private void doBackOutGuestFunction() {
-        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
-            boolean hasPosted = false;
-            for (CartItemsModel cim : cartItemList) {
-                if (cim.isPosted()) {
-                    hasPosted = true;
-                    break;
-                }
-            }
+    private void doBackOutGuestFunction(String adminPassword) {
+        if (selectedRoom != null) {
+            if (hasUnpostedItems()) {
+                AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+                    @Override
+                    public void yesClicked() {
 
-            if (hasPosted) {
-                if (backoutGuestDialog == null) {
-                    backoutGuestDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
-                        @Override
-                        public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST", "") {
-                                @Override
-                                public void passwordSuccess(String employeeId, final String employeeName) {
-
-                                    if (!selectedRoom.isTakeOut()) {
-                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                        request.enqueue(new Callback<BackOutGuestResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-
-                                                selectedRoom.setDepositInfo(depositInfoData);
-
-                                                SocketManager.reloadPosBackoutRoom(
-                                                        selectedRoom.getName(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
-                                                        );
-
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        selectedRoom.getName(),
-                                                        "BACKOUT",
-                                                        GsonHelper.getGson().toJson(selectedRoom),
-                                                        selectedRoom.getRoomType(),employeeName,
-                                                        remarks,
-                                                        kitchenPath, printerPath));
-                                                defaultView();
-                                                clearCartItems();
-                                                endLoading();
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                endLoading();
-                                            }
-                                        });
-                                    } else {
-                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                        request.enqueue(new Callback<BackOutGuestResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+                        final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
+                            @Override
+                            public void save(final String remarks) {
 
 
-                                                selectedRoom.setDepositInfo(depositInfoData);
+                                if (!selectedRoom.isTakeOut()) {
+                                    BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", adminPassword);
+                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                    Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                    request.enqueue(new Callback<BackOutGuestResponse>() {
+                                        @Override
+                                        public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
 
-                                                SocketManager.reloadPosBackoutRoom(
-                                                        selectedRoom.getName(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
-                                                );
+
+                                            selectedRoom.setDepositInfo(depositInfoData);
+
+                                            SocketManager.reloadPosBackoutRoom(
+                                                    selectedRoom.getName(),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                            );
+                                            BusProvider.getInstance().post(new PrintModel("",
+                                                    selectedRoom.getName(),
+                                                    "BACKOUT",
+                                                    GsonHelper.getGson().toJson(selectedRoom),
+                                                    selectedRoom.getRoomType(),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                                    remarks,
+                                                    kitchenPath, printerPath));
+                                            defaultView();
+                                            clearCartItems();
+                                            endLoading();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                            endLoading();
+                                        }
+                                    });
+                                } else {
+                                    BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), adminPassword);
+                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                    Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                    request.enqueue(new Callback<BackOutGuestResponse>() {
+                                        @Override
+                                        public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
 
 
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        selectedRoom.getName(),
-                                                        "BACKOUT",
-                                                        GsonHelper.getGson().toJson(selectedRoom),
-                                                        selectedRoom.getRoomType(),employeeName,
-                                                        remarks,
-                                                        kitchenPath, printerPath));
-                                                defaultView();
-                                                clearCartItems();
-                                                endLoading();
-                                            }
+                                            selectedRoom.setDepositInfo(depositInfoData);
 
-                                            @Override
-                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                endLoading();
-                                            }
-                                        });
+                                            SocketManager.reloadPosBackoutRoom(
+                                                    selectedRoom.getName(),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                            );
+                                            BusProvider.getInstance().post(new PrintModel("",
+                                                    selectedRoom.getName(),
+                                                    "BACKOUT",
+                                                    GsonHelper.getGson().toJson(selectedRoom),
+                                                    selectedRoom.getRoomType(),
+                                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                                    remarks,
+                                                    kitchenPath, printerPath));
+                                            defaultView();
+                                            clearCartItems();
+                                            endLoading();
+                                        }
 
-//                                    Utils.showDialogMessage(getActivity(), "Transaction for take out only", "Information");
+                                        @Override
+                                        public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                            endLoading();
+                                        }
+                                    });
+                                }
+
+
+
+
+                            }
+                        };
+                        if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
+                        showLoading();
+                    }
+
+                    @Override
+                    public void noClicked() {
+
+                    }
+                };
+                alertYesNo.show();
+            } else {
+                ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
+                    @Override
+                    public void save(final String remarks) {
+
+                        Log.d("BACKOUTTRACE", "START");
+                        if (selectedRoom != null) {
+                            Log.d("BACKOUTTRACE", "START 1");
+                            if (!selectedRoom.isTakeOut()) {
+                                Log.d("BACKOUTTRACE", "START 1-1");
+                                BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", adminPassword);
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                request.enqueue(new Callback<BackOutGuestResponse>() {
+                                    @Override
+                                    public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
+
+
+                                        selectedRoom.setDepositInfo(depositInfoData);
+
+                                        SocketManager.reloadPosBackoutRoom(
+                                                selectedRoom.getName(),
+                                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                        );
+
+
+                                        BusProvider.getInstance().post(new PrintModel("",
+                                                selectedRoom.getName(),
+                                                "BACKOUT",
+                                                GsonHelper.getGson().toJson(selectedRoom),
+                                                selectedRoom.getRoomType(),adminPassword,
+                                                remarks,
+                                                kitchenPath, printerPath));
+                                        defaultView();
+                                        clearCartItems();
+                                        endLoading();
                                     }
 
+                                    @Override
+                                    public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                        endLoading();
+                                    }
+                                });
+                            } else {
+                                Log.d("BACKOUTTRACE", "START 1-2");
+                                BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), adminPassword);
+                                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
+                                request.enqueue(new Callback<BackOutGuestResponse>() {
+                                    @Override
+                                    public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
 
-                                }
 
-                                @Override
-                                public void passwordFailed() {
+                                        selectedRoom.setDepositInfo(depositInfoData);
 
-                                }
-                            };
-                            if (!passwordDialog.isShowing()) passwordDialog.show();
+                                        SocketManager.reloadPosBackoutRoom(
+                                                selectedRoom.getName(),
+                                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
+                                        );
+
+
+                                        BusProvider.getInstance().post(new PrintModel("",
+                                                selectedRoom.getName(),
+                                                "BACKOUT",
+                                                GsonHelper.getGson().toJson(selectedRoom),
+                                                selectedRoom.getRoomType(),adminPassword,
+                                                remarks,
+                                                kitchenPath, printerPath));
+                                        defaultView();
+                                        clearCartItems();
+                                        endLoading();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
+                                        endLoading();
+                                    }
+                                });
+
+//                                    Utils.showDialogMessage(getActivity(), "Transaction for take out only", "Information");
+                            }
                         }
-                    };
 
-                    backoutGuestDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            backoutGuestDialog = null;
-                        }
-                    });
 
-                    backoutGuestDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            backoutGuestDialog = null;
-                        }
-                    });
-                }
-
-                if (!backoutGuestDialog.isShowing()) backoutGuestDialog.show();
-
-            } else {
-                Utils.showDialogMessage(getActivity(), "No posted product", "Information");
+                    }
+                };
+                if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
             }
+
+
+
+
         } else {
-            if (selectedRoom != null) {
-                if (hasUnpostedItems()) {
-                    AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                        @Override
-                        public void yesClicked() {
-
-                            final ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
-                                @Override
-                                public void save(final String remarks) {
-
-
-                                    if (!selectedRoom.isTakeOut()) {
-                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                        request.enqueue(new Callback<BackOutGuestResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-
-
-                                                selectedRoom.setDepositInfo(depositInfoData);
-
-                                                SocketManager.reloadPosBackoutRoom(
-                                                        selectedRoom.getName(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
-                                                );
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        selectedRoom.getName(),
-                                                        "BACKOUT",
-                                                        GsonHelper.getGson().toJson(selectedRoom),
-                                                        selectedRoom.getRoomType(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                                                        remarks,
-                                                        kitchenPath, printerPath));
-                                                defaultView();
-                                                clearCartItems();
-                                                endLoading();
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                endLoading();
-                                            }
-                                        });
-                                    } else {
-                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                        request.enqueue(new Callback<BackOutGuestResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-
-
-                                                selectedRoom.setDepositInfo(depositInfoData);
-
-                                                SocketManager.reloadPosBackoutRoom(
-                                                        selectedRoom.getName(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
-                                                );
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        selectedRoom.getName(),
-                                                        "BACKOUT",
-                                                        GsonHelper.getGson().toJson(selectedRoom),
-                                                        selectedRoom.getRoomType(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                                                        remarks,
-                                                        kitchenPath, printerPath));
-                                                defaultView();
-                                                clearCartItems();
-                                                endLoading();
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                endLoading();
-                                            }
-                                        });
-                                    }
-
-
-
-
-                                }
-                            };
-                            if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
-                            showLoading();
-                        }
-
-                        @Override
-                        public void noClicked() {
-
-                        }
-                    };
-                    alertYesNo.show();
-                } else {
-                    ConfirmWithRemarksDialog confirmWithRemarksDialog = new ConfirmWithRemarksDialog(getActivity(), true) {
-                        @Override
-                        public void save(final String remarks) {
-                            PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM BACKOUT GUEST" , "") {
-                                @Override
-                                public void passwordSuccess(String employeeId, final String employeeName) {
-
-                                    if (!selectedRoom.isTakeOut()) {
-                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest(String.valueOf(selectedRoom.getRoomId()), remarks, "", employeeId);
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                        request.enqueue(new Callback<BackOutGuestResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-
-
-                                                selectedRoom.setDepositInfo(depositInfoData);
-
-                                                SocketManager.reloadPosBackoutRoom(
-                                                        selectedRoom.getName(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
-                                                );
-
-
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        selectedRoom.getName(),
-                                                        "BACKOUT",
-                                                        GsonHelper.getGson().toJson(selectedRoom),
-                                                        selectedRoom.getRoomType(),employeeName,
-                                                        remarks,
-                                                        kitchenPath, printerPath));
-                                                defaultView();
-                                                clearCartItems();
-                                                endLoading();
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                endLoading();
-                                            }
-                                        });
-                                    } else {
-                                        BackOutGuestRequest backOutGuestRequest = new BackOutGuestRequest("", remarks, selectedRoom.getControlNo(), employeeId);
-                                        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        Call<BackOutGuestResponse> request = iUsers.backOutGuest(backOutGuestRequest.getMapValue());
-                                        request.enqueue(new Callback<BackOutGuestResponse>() {
-                                            @Override
-                                            public void onResponse(Call<BackOutGuestResponse> call, Response<BackOutGuestResponse> response) {
-
-
-                                                selectedRoom.setDepositInfo(depositInfoData);
-
-                                                SocketManager.reloadPosBackoutRoom(
-                                                        selectedRoom.getName(),
-                                                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME)
-                                                );
-
-
-                                                BusProvider.getInstance().post(new PrintModel("",
-                                                        selectedRoom.getName(),
-                                                        "BACKOUT",
-                                                        GsonHelper.getGson().toJson(selectedRoom),
-                                                        selectedRoom.getRoomType(),employeeName,
-                                                        remarks,
-                                                        kitchenPath, printerPath));
-                                                defaultView();
-                                                clearCartItems();
-                                                endLoading();
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<BackOutGuestResponse> call, Throwable t) {
-                                                endLoading();
-                                            }
-                                        });
-
-//                                    Utils.showDialogMessage(getActivity(), "Transaction for take out only", "Information");
-                                    }
-
-
-                                }
-
-                                @Override
-                                public void passwordFailed() {
-
-                                }
-                            };
-                            if (!passwordDialog.isShowing()) passwordDialog.show();
-                        }
-                    };
-                    if (!confirmWithRemarksDialog.isShowing()) confirmWithRemarksDialog.show();
-                }
-
-
-
-
-            } else {
-                Utils.showDialogMessage(getActivity(), "No room selected", "Information");
-            }
+            Utils.showDialogMessage(getActivity(), "No room selected", "Information");
         }
-
-
-
-
-
 
     }
 
-    private void doSafeKeepFunction() {
+    private void doSafeKeepFunction(String adminPassword) {
 
         if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
             if (safeKeepingDialog == null) {
                 ApplicationConstants.IS_ACTIVE = "T";
-                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false, pShiftNumber) {
+                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false, pShiftNumber, adminPassword) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
 
@@ -3641,9 +3424,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     }
 
-    private void doPostVoidFunction() {
+    private void doPostVoidFunction(String adminPassword) {
         if (postVoid == null) {
-            postVoid = new TransactionsDialog(getActivity(), false, getActivity()) {
+            postVoid = new TransactionsDialog(getActivity(), false, getActivity(), adminPassword) {
                 @Override
                 public void postVoidSuccess() {
                     defaultView();
@@ -3787,7 +3570,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         }
     }
 
-    private void doSwitchRoomFunction() {
+    private void doSwitchRoomFunction(String adminPassword) {
         if (switchRoomDialog == null) {
             switchRoomDialog = new SwitchRoomDialog(getActivity(), selectedRoom.getName()) {
                 @Override
@@ -3817,7 +3600,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                     roomRatePriceId,
                                     remarks,
                                     roomId,
-                                    employeeId,
+                                    adminPassword,
                                     voidModel
                             );
 
@@ -4104,11 +3887,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 }
             }
 
-
-            Log.d("PEKPEK", String.valueOf(totalRoomCounter));
-            Log.d("PEKPEK", String.valueOf(roomCounterToVoid));
-            Log.d("PEKPEK", String.valueOf(hasRemainingRate));
-
             if (hasRemainingRate == false) {
                 Utils.showDialogMessage(getActivity(), "Cannot void the remaining room rate", "Information");
             } else {
@@ -4354,38 +4132,560 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void fetchRoomPending(final String roomId) {
 
-        if (hasUnpostedItems()) {
-            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                @Override
-                public void yesClicked() {
-                    BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+        sendFetchRoomPendingRequest(roomId);
 
-                    showLoading();
+
+        showLoading();
+
+
+//        if (hasUnpostedItems()) {
+//            AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+//                @Override
+//                public void yesClicked() {
+//
+//
+//                    sendFetchRoomPendingRequest(roomId);
+//
+//
+//                    showLoading();
+//                }
+//
+//                @Override
+//                public void noClicked() {
+//                    checkoutSwipe.setRefreshing(false);
+//                }
+//            };
+//
+//            alertYesNo.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                @Override
+//                public void onDismiss(DialogInterface dialog) {
+//                    checkoutSwipe.setRefreshing(false);
+//                }
+//            });
+//            alertYesNo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                @Override
+//                public void onCancel(DialogInterface dialog) {
+//                    checkoutSwipe.setRefreshing(false);
+//                }
+//            });
+//
+//            alertYesNo.show();
+//        } else {
+////            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+//            sendFetchRoomPendingRequest(roomId);
+//        }
+    }
+
+    private void sendFetchRoomPendingRequest(String roomId) {
+
+//        BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        if (fetchRoomPendingApiRequest == null) {
+            FetchRoomPendingRequest fetchRoomPendingRequest = new FetchRoomPendingRequest(roomId);
+            fetchRoomPendingApiRequest = iUsers.sendFetchRoomPendingRequest(
+                    fetchRoomPendingRequest.getMapValue());
+            fetchRoomPendingApiRequest.enqueue(new Callback<FetchRoomPendingResponse>() {
+                @Override
+                public void onResponse(Call<FetchRoomPendingResponse> call, Response<FetchRoomPendingResponse> response) {
+                    fetchRoomPendingApiRequest = null;
+
+                    if (response.code() == 200) {
+                        if (response.body() != null) {
+
+
+                            BusProvider.getInstance().post(new ClearSearchData("d"));
+                            forVoidDiscountModels = new ArrayList<>();
+                            guestReceiptInfoModel = null;
+                            checkoutSwipe.setRefreshing(false);
+
+                            cartItemList = new ArrayList<>();
+                            orderSlipList = new ArrayList<>();
+                            postedPaymentsList = new ArrayList<>();
+                            Double totalAmount = 0.00;
+                            discountPayment = 0.00;
+                            advancePayment = 0.00;
+                            currentRoomStatus = String.valueOf(response.body().getResult().getStatus());
+//        Utils.showDialogMessage(getActivity(), currentRoomStatus, "SIR PAKITANDAAN(DONT IGNORE)");
+                            if (response.body().getResult().getBooked().size() > 0) {
+
+                                kitchenPath = response.body().getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
+                                printerPath = response.body().getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
+                                for (FetchRoomPendingResponse.Booked r : response.body().getResult().getBooked()) {
+//                                    if (!TextUtils.isEmpty(r.getRoomNo())) {
+//                                        SocketManager.reloadTagboardCancelledSoa(r.getRoomNo(), SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
+//                                    } else {
+//                                        if (r.getRoom() != null) {
+//                                            SocketManager.reloadTagboardCancelledSoa(r.getRoom().getRoomNo(), SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
+//                                        }
+//                                    }
+
+                                    if (r.getTransaction() != null) {
+                                        if (r.getTransaction().getEmployee_id() != null && !TextUtils.isEmpty(r.getTransaction().getEmployee_id())) {
+                                            employeeId = r.getTransaction().getEmployee_id();
+                                        }
+                                        if (r.getTransaction().getCustomerTrans() != null) {
+                                            if (r.getTransaction().getCustomerTrans() != null) {
+                                                guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(),
+                                                        r.getTransaction().getCustomerTrans().getAddress() != null ? r.getTransaction().getCustomerTrans().getAddress() : "",
+                                                        r.getTransaction().getCustomerTrans().getTin() != null ? r.getTransaction().getCustomerTrans().getTin() : "");
+                                            }
+                                        }
+                                    }
+                                    //regionpayments
+                                    overTimeValue =  r.getTransaction().getOtHours();
+                                    if (r.getTransaction().getPayments().size() > 0) {
+                                        for(FetchRoomPendingResponse.Payment pym : r.getTransaction().getPayments()) {
+
+                                            String paymentDescription = "";
+                                            if (pym.getPaymentTypeId() == 5) {
+                                                if (pym.getOuterAr() != null) {
+                                                    paymentDescription = pym.getPaymentDescription() + " - " + pym.getOuterAr().getInnerAr().getArOnline() + "(" + pym.getOuterAr().getVoucherCode() +")";
+                                                } else {
+                                                    paymentDescription = pym.getPaymentDescription();
+                                                }
+                                            } else {
+                                                paymentDescription = pym.getPaymentDescription();
+                                            }
+
+
+                                            String symbolLeft = "";
+                                            String symbolRight = "";
+
+                                            if (pym.getCurrency() != null) {
+                                                if (pym.getCurrency().getSymbolLeft() != null) {
+                                                    symbolLeft = pym.getCurrency().getSymbolLeft();
+                                                }
+
+
+                                                if (pym.getCurrency().getSymbolRight() != null) {
+                                                    symbolRight = pym.getCurrency().getSymbolRight();
+                                                }
+                                            }
+
+                                            postedPaymentsList.add(new PostedPaymentsModel(
+                                                    String.valueOf(pym.getPaymentTypeId()),
+                                                    String.valueOf(pym.getAmount()),
+                                                    paymentDescription,
+                                                    true,
+                                                    String.valueOf(pym.getCurrencyId()),
+                                                    String.valueOf(pym.getCurrencyValue()),
+                                                    new JSONObject(),
+                                                    symbolLeft,
+                                                    symbolRight,
+                                                    pym.getIsAdvance() == 1 ? true : false,
+                                                    "",
+                                                    String.valueOf(pym.getId()),
+                                                    ""
+                                            ));
+                                        }
+                                    }
+                                    //endregion
+                                    //region order list
+                                    if (r.getTransaction().getTrans().size() > 0) {
+
+                                        forVoidDiscountModels = new ArrayList<>();
+                                        for (FetchRoomPendingResponse.DiscountsOuter dos  : r.getTransaction().getDiscountsOuter()) {
+                                            if (dos.getVoid_by() == null) {
+                                                forVoidDiscountModels.add(new ForVoidDiscountModel(dos.getId(), dos.getDiscountType(), dos.getDiscountAmount()));
+                                            }
+
+                                        }
+
+                                        selectedRoom.setControlNo(r.getTransaction().getControlNo());
+                                        totalBalance = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((response.body().getResult().getBooked().get(0).getTransaction().getTotal() +
+                                                Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(response.body().getResult().getBooked().get(0).getTransaction().getOtAmount()))) +
+                                                Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(response.body().getResult().getBooked().get(0).getTransaction().getXPersonAmount()))))
+//                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered());
+                                                - (Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(response.body().getResult().getBooked().get(0).getTransaction().getTendered())))
+                                                + Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(response.body().getResult().getBooked().get(0).getTransaction().getVatExempt())))))));
+
+                                        advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
+                                        depositInfoData = String.valueOf(advancePayment);
+                                        discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
+                                        subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)))));
+
+
+                                        total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))))));
+                                        if (discountPayment > totalBalance) {
+                                            discount.setText(Utils.digitsWithComma(totalBalance));
+                                        } else {
+                                            discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
+                                        }
+                                        if (r.getCheckIn() != null && !TextUtils.isEmpty(globalServerTimeString)) {
+
+                                            if (selectedRoom.getRoomType() != null) {
+                                                setView(selectedRoom.getName(), selectedRoom.getRoomType());
+                                            } else {
+                                                setView(selectedRoom.getName(), "TO");
+                                            }
+
+
+
+                                            header.setText(String.format("%s(%s)", header.getText().toString(),
+                                                    Utils.durationOfStay(globalServerTimeString, r.getCheckIn().toString())));
+                                        }
+                                        deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())))));
+                                        depositInfoData = String.valueOf(r.getTransaction().getAdvance());
+                                        for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
+                                            List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
+                                            for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
+                                                List<OrderSlipModel.OrderSlipProduct> osp = new ArrayList<>();
+                                                for (FetchRoomPendingResponse.PostTrans prod : osi.getPost()) {
+                                                    if (prod.getProductId() == 0) { //room
+                                                        osp.add(
+                                                                new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+                                                                        "",
+                                                                        "",
+                                                                        "",
+                                                                        String.valueOf(prod.getRoomTypeId()),
+                                                                        "",
+                                                                        String.valueOf(prod.getRoomRatePriceId()),
+                                                                        prod.getRoomType(),
+                                                                        prod.getRoomRate().toString(),
+                                                                        String.valueOf(prod.getQty()),
+                                                                        String.valueOf(prod.getPrice()),
+                                                                        String.valueOf(prod.getPrice()),
+                                                                        String.valueOf(prod.getTotal()),
+                                                                        prod.getVoid() == 0 ? false : true));
+                                                    } else { //product
+                                                        osp.add(
+                                                                new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+                                                                        String.valueOf(prod.getProduct().getId()),
+                                                                        prod.getProduct().getProduct(),
+                                                                        prod.getProduct().getProductInitial(),
+                                                                        "",
+                                                                        "",
+                                                                        "",
+                                                                        "",
+                                                                        "",
+                                                                        String.valueOf(prod.getQty()),
+                                                                        String.valueOf(prod.getUnitCost()),
+                                                                        String.valueOf(prod.getPrice()),
+                                                                        String.valueOf(prod.getTotal()),
+                                                                        prod.getVoid() == 0 ? false : true));
+                                                    }
+
+                                                }
+                                                OrderSlipModel.OrderSlipInfo slipInfoList =
+                                                        new OrderSlipModel.OrderSlipInfo(String.valueOf(osi.getId()),
+                                                                String.valueOf(osi.getPostOrderId()),
+                                                                String.valueOf(osi.getPostTransId()),
+                                                                osp);
+                                                osiList.add(slipInfoList);
+                                            }
+                                            OrderSlipModel orderSlipModel = new OrderSlipModel(transPost.getControlNo(), osiList, String.valueOf(transPost.getId()));
+                                            orderSlipList.add(orderSlipModel);
+
+
+                                        }
+                                    }
+                                    //endregion
+                                    //region orders
+                                    roomRateCounter = new ArrayList<>();
+
+
+                                    for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
+                                        if (tpost.getVoid() == 0) {
+                                            if (tpost.getTransactionPostFreebies() != null) {
+                                                //whatis this
+                                            }
+                                            if (tpost.getRoomRateId() != null) {
+                                                roomRateCounter.add(1);
+                                                cartItemList.add(0, new CartItemsModel(
+                                                        tpost.getControlNo(),
+                                                        tpost.getRoomId() == null ? 0 : tpost.getRoomId(),
+                                                        tpost.getProductId(),
+                                                        tpost.getRoomTypeId() == null ? 0 : tpost.getRoomTypeId(),
+                                                        tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
+                                                        tpost.getRoomRatePriceId() == null ? 0 : tpost.getRoomRatePriceId(),
+                                                        tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toUpperCase(),
+                                                        tpost.getProductId() == 0 ? false : true,
+                                                        tpost.getTotal(),
+                                                        tpost.getId(),
+                                                        tpost.getQty(),
+                                                        true,
+                                                        0.00,
+                                                        0,
+                                                        tpost.getPrice(),
+                                                        false,
+                                                        String.valueOf(tpost.getId()),
+                                                        false,
+                                                        "room",
+                                                        new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                        new ArrayList<AddRateProductModel.Group>(),
+                                                        false,
+                                                        tpost.getTransactionPostFreebies(),
+                                                        TextUtils.isEmpty(tpost.getRemarks()) ? "" : tpost.getRemarks()
+                                                ));
+                                            } else {
+
+                                                ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+                                                ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
+                                                ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
+                                                ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
+
+                                                if (tpost.getPostGroupList() != null) {
+                                                    for (FetchRoomPendingResponse.PostGroup sipm : tpost.getPostGroupList()) {
+                                                        groupCompoList = new ArrayList<>();
+                                                        groupCompoProductsList = new ArrayList<>();
+//                                    if (sipm.getPostGroupInfo() != null) {
+                                                        for (FetchRoomPendingResponse.PostGroupItem bpm : sipm.getPostGroupItems()) {
+                                                            groupCompoProductsList.add(
+                                                                    new AddRateProductModel(
+                                                                            "",
+                                                                            "0",
+                                                                            String.valueOf(bpm.getQty()),
+                                                                            SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                                            "",
+                                                                            0,
+                                                                            bpm.getPostGroupItemProduct().getProduct(),
+                                                                            new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                                            new ArrayList<AddRateProductModel.Group>(),
+                                                                            ""
+                                                                    ));
+
+                                                        }
+                                                        groupLst.add(
+                                                                new AddRateProductModel.Group(
+                                                                        new AddRateProductModel.GroupCompo(
+                                                                                0,
+                                                                                sipm.getPostGroupInfo() == null ? "PB" : sipm.getPostGroupInfo().getGroupName(),
+                                                                                0,
+                                                                                groupCompoProductsList)));
+//                                    }
+                                                    }
+                                                }
+
+
+                                                for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
+
+
+                                                    alaCartes.add(new AddRateProductModel.AlaCarte(
+                                                            "",
+                                                            "0",
+                                                            String.valueOf(balac.getQty()),
+                                                            SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+                                                            "0.00",
+                                                            0,
+                                                            balac.getPostAlaCartProduct().getProduct()
+                                                    ));
+                                                }
+
+
+                                                cartItemList.add(roomRateCounter.size(), new CartItemsModel(
+                                                        tpost.getControlNo(),
+                                                        tpost.getRoomId() == null ? 0 : tpost.getRoomId(),
+                                                        tpost.getProductId(),
+                                                        tpost.getRoomTypeId() == null ? 0 :tpost.getRoomTypeId(),
+                                                        tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
+                                                        tpost.getRoomRatePriceId() == null ? 0 : tpost.getRoomRatePriceId(),
+                                                        tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toUpperCase(),
+                                                        tpost.getProductId() == 0 ? false : true,
+                                                        tpost.getTotal(),
+                                                        tpost.getId(),
+                                                        tpost.getQty(),
+                                                        true,
+                                                        0.00,
+                                                        0,
+                                                        tpost.getPrice(),
+                                                        false,
+                                                        String.valueOf(tpost.getId()),
+                                                        false,
+                                                        "room",
+                                                        alaCartes,
+                                                        groupLst,
+                                                        false,
+                                                        tpost.getTransactionPostFreebies(),
+                                                        TextUtils.isEmpty(tpost.getRemarks()) ? "" : tpost.getRemarks()
+                                                ));
+                                            }
+
+                                            totalAmount += tpost.getTotal();
+                                        }
+                                    }
+                                    //endregion
+                                    //region ot
+                                    if (r.getTransaction().getOtHours() > 0) {
+                                        cartItemList.add(new CartItemsModel(
+                                                r.getTransaction().getControlNo(),
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                "OT HOURS",
+                                                true,
+                                                r.getTransaction().getOtAmount(),
+                                                0,
+                                                r.getTransaction().getOtHours(),
+                                                true,
+                                                0.00,
+                                                0,
+                                                Double.valueOf(r.getTransaction().getOtAmount()),
+                                                false,
+                                                "",
+                                                false,
+                                                "ot",
+                                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                new ArrayList<AddRateProductModel.Group>(),
+                                                false,
+                                                null,
+                                                ""
+                                        ));
+                                    }
+
+                                    if (Integer.valueOf(r.getTransaction().getPersonCount()) > 2) {
+                                        cartItemList.add(new CartItemsModel(
+                                                r.getTransaction().getControlNo(),
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                0,
+                                                "EXTRA PERSON",
+                                                true,
+                                                r.getTransaction().getXPersonAmount(),
+                                                0,
+                                                Integer.valueOf(r.getTransaction().getPersonCount()) - 2,
+                                                true,
+                                                0.00,
+                                                0,
+                                                r.getTransaction().getXPersonAmount(),
+                                                false,
+                                                "",
+                                                false,
+                                                "misc",
+                                                new ArrayList<AddRateProductModel.AlaCarte>(),
+                                                new ArrayList<AddRateProductModel.Group>(),
+                                                false,
+                                                null,
+                                                ""
+                                        ));
+                                    }
+
+                                    //endregion
+
+                                }
+                            } else {
+                                subTotal.setText("0.00");
+                                discount.setText("0.00");
+                                deposit.setText("0.00");
+                                total.setText("0.00");
+                                totalBalance = 0;
+                            }
+
+
+                            checkoutAdapter = new CheckoutAdapter(cartItemList, LeftFrameFragment.this, getContext());
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+                            listCheckoutItems.setLayoutManager(linearLayoutManager);
+                            listCheckoutItems.setLayoutAnimation(anim);
+                            listCheckoutItems.setAdapter(checkoutAdapter);
+                            checkoutAdapter.notifyDataSetChanged();
+
+
+                            if (response.body().getResult() != null) {
+                                fetchRoomPendingResult = response.body().getResult();
+                                switch (response.body().getResult().getStatus()) {
+                                    case 1://clean
+                                        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                                            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                                                showGuestInfoDialog(String.valueOf(response.body().getResult().getStatus()));
+                                            } else {
+                                                showCheckInNotAllowed();
+                                            }
+                                        } else {
+                                            showCheckInNotAllowed();
+                                        }
+
+                                        break;
+                                    case 3: //dirty
+
+                                        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                                            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                                                showGuestInfoDialog(
+                                                        String.valueOf(response.body().getResult().getStatus()));
+                                            } else {
+                                                showCheckInNotAllowed();
+                                            }
+                                        } else {
+                                            showCheckInNotAllowed();
+                                        }
+
+
+                                        break;
+                                    case 19:
+                                        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                                            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                                                showGuestInfoDialog(String.valueOf(response.body().getResult().getStatus()));
+                                            } else {
+                                                showCheckInNotAllowed();
+                                            }
+                                        } else {
+                                            showCheckInNotAllowed();
+                                        }
+                                        break;// ongoing nego
+                                    case 20: //onnego show check in form
+                                        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                                            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                                                showGuestInfoDialog(String.valueOf(response.body().getResult().getStatus()));
+                                            } else {
+                                                showCheckInNotAllowed();
+                                            }
+                                        } else {
+                                            showCheckInNotAllowed();
+                                        }
+
+                                        break;
+                                    case 32:
+//                    showCheckInDialog(fetchRoomPendingResponse.getResult());
+                                        break;
+                                    case 4:
+//                    showCheckInDialog(fetchRoomPendingResponse.getResult());
+                                        break;
+                                    case 59: //check in guest
+                                        if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+                                            if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+                                                showCheckInDialog();
+                                            } else {
+                                                showCheckInNotAllowed();
+                                            }
+                                        } else {
+                                            showCheckInNotAllowed();
+                                        }
+                                        break;
+
+                                    case 2: //already checked in, can now order
+//                    Toast.makeText(getContext(), "Please order", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    default:
+//                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+                                        break;
+                                }
+                            } else {
+                                Toast.makeText(getContext(), "Call fetch room pending", Toast.LENGTH_SHORT).show();
+                            }
+                            endLoading();
+                        } else {
+
+                            Toast.makeText(getContext(), "Response body of fetch room pending is null", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+
+                        Toast.makeText(getContext(), "There is an error in fetch room pending", Toast.LENGTH_LONG).show();
+                    }
+
+
                 }
 
                 @Override
-                public void noClicked() {
-                    checkoutSwipe.setRefreshing(false);
-                }
-            };
-
-            alertYesNo.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    checkoutSwipe.setRefreshing(false);
+                public void onFailure(Call<FetchRoomPendingResponse> call, Throwable t) {
+                    fetchRoomPendingApiRequest = null;
+                    Toast.makeText(getContext(), "FETCH ROOM PENDING " + t.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
-            alertYesNo.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    checkoutSwipe.setRefreshing(false);
-                }
-            });
-
-            alertYesNo.show();
-        } else {
-            BusProvider.getInstance().post(new FetchRoomPendingRequest(roomId));
         }
+
+
     }
 
     private void showLoading() {
@@ -4402,41 +4702,86 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     private void fetchOrderPendingViaControlNo(final String controlNo) {
 
-        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
-            BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
-        } else {
-            if (hasUnpostedItems()) {
-                AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
-                    @Override
-                    public void yesClicked() {
-                        BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+        sendFetchOrderPendingRequest(controlNo);
+
+//        if (Utils.getSystemType(getContext()).equalsIgnoreCase("franchise")) {
+////            BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+//            sendFetchOrderPendingRequest(controlNo);
+//        } else {
+//            if (hasUnpostedItems()) {
+//                AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
+//                    @Override
+//                    public void yesClicked() {
+//                        sendFetchOrderPendingRequest(controlNo);
+//
+//                    }
+//
+//                    @Override
+//                    public void noClicked() {
+//                        checkoutSwipe.setRefreshing(false);
+//                    }
+//                };
+//
+//                alertYesNo.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//                    @Override
+//                    public void onDismiss(DialogInterface dialog) {
+//                        checkoutSwipe.setRefreshing(false);
+//                    }
+//                });
+//                alertYesNo.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                    @Override
+//                    public void onCancel(DialogInterface dialog) {
+//                        checkoutSwipe.setRefreshing(false);
+//                    }
+//                });
+//                alertYesNo.show();
+//            } else {
+////                BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+//                sendFetchOrderPendingRequest(controlNo);
+//            }
+//        }
+
+
+
+
+    }
+
+    private void sendFetchOrderPendingRequest(String controlNo) {
+//        BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
+        FetchOrderPendingViaControlNoRequest fetchOrderPendingViaControlNoRequest = new FetchOrderPendingViaControlNoRequest(controlNo);
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        if (fetchOrderPendingViaControlNoApiRequest == null) {
+            fetchOrderPendingViaControlNoApiRequest = iUsers.fetchOrderPendingViaControlNo(fetchOrderPendingViaControlNoRequest.getMapValue());
+            fetchOrderPendingViaControlNoApiRequest.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
+                @Override
+                public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
+                    fetchOrderPendingViaControlNoApiRequest = null;
+
+                    if (response.code() == 200) {
+                        if (response.body() != null) {
+                            if (response.body().getResult() != null) {
+                                fetchOrderPendingRresult = response.body().getResult();
+                                fetchOrderPendingViaControlNumberFunction(response.body());
+                            }
+                        } else {
+
+                            Toast.makeText(getContext(), "Response body of order pending is null", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "There is an error in fetch order pending", Toast.LENGTH_LONG).show();
                     }
 
-                    @Override
-                    public void noClicked() {
-                        checkoutSwipe.setRefreshing(false);
-                    }
-                };
 
-                alertYesNo.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        checkoutSwipe.setRefreshing(false);
-                    }
-                });
-                alertYesNo.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        checkoutSwipe.setRefreshing(false);
-                    }
-                });
-                alertYesNo.show();
-            } else {
-                BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(controlNo));
-            }
+                }
+
+                @Override
+                public void onFailure(Call<FetchOrderPendingViaControlNoResponse> call, Throwable t) {
+                    fetchOrderPendingViaControlNoApiRequest = null;
+                    Toast.makeText(getContext(), "FETCH ORDER PENDING " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+
         }
-
-
 
 
     }
@@ -4839,470 +5184,470 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchRoomPendingResponse(FetchRoomPendingResponse fetchRoomPendingResponse) {
-        BusProvider.getInstance().post(new ClearSearchData("d"));
-        forVoidDiscountModels = new ArrayList<>();
-        guestReceiptInfoModel = null;
-        checkoutSwipe.setRefreshing(false);
-
-        cartItemList = new ArrayList<>();
-        orderSlipList = new ArrayList<>();
-        postedPaymentsList = new ArrayList<>();
-        Double totalAmount = 0.00;
-        discountPayment = 0.00;
-        advancePayment = 0.00;
-        currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
-//        Utils.showDialogMessage(getActivity(), currentRoomStatus, "SIR PAKITANDAAN(DONT IGNORE)");
-        if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
-
-            kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
-            printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
-            for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
-                if (r.getTransaction() != null) {
-                    if (r.getTransaction().getEmployee_id() != null && !TextUtils.isEmpty(r.getTransaction().getEmployee_id())) {
-                        employeeId = r.getTransaction().getEmployee_id();
-                    }
-                    if (r.getTransaction().getCustomerTrans() != null) {
-                        if (r.getTransaction().getCustomerTrans() != null) {
-                            guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(),
-                                    r.getTransaction().getCustomerTrans().getAddress() != null ? r.getTransaction().getCustomerTrans().getAddress() : "",
-                                    r.getTransaction().getCustomerTrans().getTin() != null ? r.getTransaction().getCustomerTrans().getTin() : "");
-                        }
-                    }
-                }
-                //regionpayments
-                overTimeValue =  r.getTransaction().getOtHours();
-                if (r.getTransaction().getPayments().size() > 0) {
-                    for(FetchRoomPendingResponse.Payment pym : r.getTransaction().getPayments()) {
-
-                        String paymentDescription = "";
-                        if (pym.getPaymentTypeId() == 5) {
-                            if (pym.getOuterAr() != null) {
-                                paymentDescription = pym.getPaymentDescription() + " - " + pym.getOuterAr().getInnerAr().getArOnline() + "(" + pym.getOuterAr().getVoucherCode() +")";
-                            } else {
-                                paymentDescription = pym.getPaymentDescription();
-                            }
-                        } else {
-                            paymentDescription = pym.getPaymentDescription();
-                        }
-
-
-                        String symbolLeft = "";
-                        String symbolRight = "";
-
-                        if (pym.getCurrency() != null) {
-                            if (pym.getCurrency().getSymbolLeft() != null) {
-                                symbolLeft = pym.getCurrency().getSymbolLeft();
-                            }
-
-
-                            if (pym.getCurrency().getSymbolRight() != null) {
-                                symbolRight = pym.getCurrency().getSymbolRight();
-                            }
-                        }
-
-                        postedPaymentsList.add(new PostedPaymentsModel(
-                                String.valueOf(pym.getPaymentTypeId()),
-                                String.valueOf(pym.getAmount()),
-                                paymentDescription,
-                                true,
-                                String.valueOf(pym.getCurrencyId()),
-                                String.valueOf(pym.getCurrencyValue()),
-                                new JSONObject(),
-                                symbolLeft,
-                                symbolRight,
-                                pym.getIsAdvance() == 1 ? true : false,
-                                "",
-                                String.valueOf(pym.getId()),
-                                ""
-                        ));
-                    }
-                }
-                //endregion
-                //region order list
-                if (r.getTransaction().getTrans().size() > 0) {
-
-                    forVoidDiscountModels = new ArrayList<>();
-                    for (FetchRoomPendingResponse.DiscountsOuter dos  : r.getTransaction().getDiscountsOuter()) {
-                        if (dos.getVoid_by() == null) {
-                            forVoidDiscountModels.add(new ForVoidDiscountModel(dos.getId(), dos.getDiscountType(), dos.getDiscountAmount()));
-                        }
-
-                    }
-
-                    selectedRoom.setControlNo(r.getTransaction().getControlNo());
-                    totalBalance = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
-                            Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount()))) +
-                            Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount()))))
-//                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered());
-                            - (Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered())))
-                            + Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt())))))));
-
-                    advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
-                    depositInfoData = String.valueOf(advancePayment);
-                    discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
-                    subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)))));
-
-
-                    total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))))));
-                    if (discountPayment > totalBalance) {
-                        discount.setText(Utils.digitsWithComma(totalBalance));
-                    } else {
-                        discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
-                    }
-                    if (r.getCheckIn() != null && !TextUtils.isEmpty(globalServerTimeString)) {
-
-                        if (selectedRoom.getRoomType() != null) {
-                            setView(selectedRoom.getName(), selectedRoom.getRoomType());
-                        } else {
-                            setView(selectedRoom.getName(), "TO");
-                        }
-
-
-
-                        header.setText(String.format("%s(%s)", header.getText().toString(),
-                                Utils.durationOfStay(globalServerTimeString, r.getCheckIn().toString())));
-                    }
-                    deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())))));
-                    depositInfoData = String.valueOf(r.getTransaction().getAdvance());
-                    for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
-                        List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
-                        for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
-                            List<OrderSlipModel.OrderSlipProduct> osp = new ArrayList<>();
-                            for (FetchRoomPendingResponse.PostTrans prod : osi.getPost()) {
-                                if (prod.getProductId() == 0) { //room
-                                    osp.add(
-                                            new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
-                                                    "",
-                                                    "",
-                                                    "",
-                                                    String.valueOf(prod.getRoomTypeId()),
-                                                    "",
-                                                    String.valueOf(prod.getRoomRatePriceId()),
-                                                    prod.getRoomType(),
-                                                    prod.getRoomRate().toString(),
-                                                    String.valueOf(prod.getQty()),
-                                                    String.valueOf(prod.getPrice()),
-                                                    String.valueOf(prod.getPrice()),
-                                                    String.valueOf(prod.getTotal()),
-                                                    prod.getVoid() == 0 ? false : true));
-                                } else { //product
-                                    osp.add(
-                                            new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
-                                                    String.valueOf(prod.getProduct().getId()),
-                                                    prod.getProduct().getProduct(),
-                                                    prod.getProduct().getProductInitial(),
-                                                    "",
-                                                    "",
-                                                    "",
-                                                    "",
-                                                    "",
-                                                    String.valueOf(prod.getQty()),
-                                                    String.valueOf(prod.getUnitCost()),
-                                                    String.valueOf(prod.getPrice()),
-                                                    String.valueOf(prod.getTotal()),
-                                                    prod.getVoid() == 0 ? false : true));
-                                }
-
-                            }
-                            OrderSlipModel.OrderSlipInfo slipInfoList =
-                                    new OrderSlipModel.OrderSlipInfo(String.valueOf(osi.getId()),
-                                            String.valueOf(osi.getPostOrderId()),
-                                            String.valueOf(osi.getPostTransId()),
-                                            osp);
-                            osiList.add(slipInfoList);
-                        }
-                        OrderSlipModel orderSlipModel = new OrderSlipModel(transPost.getControlNo(), osiList, String.valueOf(transPost.getId()));
-                        orderSlipList.add(orderSlipModel);
-
-
-                    }
-                }
-                //endregion
-                //region orders
-                roomRateCounter = new ArrayList<>();
-
-
-                for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
-                    if (tpost.getVoid() == 0) {
-                        if (tpost.getTransactionPostFreebies() != null) {
-                            //whatis this
-                        }
-                        if (tpost.getRoomRateId() != null) {
-                            roomRateCounter.add(1);
-                            cartItemList.add(0, new CartItemsModel(
-                                    tpost.getControlNo(),
-                                    tpost.getRoomId() == null ? 0 : tpost.getRoomId(),
-                                    tpost.getProductId(),
-                                    tpost.getRoomTypeId() == null ? 0 : tpost.getRoomTypeId(),
-                                    tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
-                                    tpost.getRoomRatePriceId() == null ? 0 : tpost.getRoomRatePriceId(),
-                                    tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toUpperCase(),
-                                    tpost.getProductId() == 0 ? false : true,
-                                    tpost.getTotal(),
-                                    tpost.getId(),
-                                    tpost.getQty(),
-                                    true,
-                                    0.00,
-                                    0,
-                                    tpost.getPrice(),
-                                    false,
-                                    String.valueOf(tpost.getId()),
-                                    false,
-                                    "room",
-                                    new ArrayList<AddRateProductModel.AlaCarte>(),
-                                    new ArrayList<AddRateProductModel.Group>(),
-                                    false,
-                                    tpost.getTransactionPostFreebies(),
-                                    TextUtils.isEmpty(tpost.getRemarks()) ? "" : tpost.getRemarks()
-                            ));
-                        } else {
-
-                            ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
-                            ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
-                            ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
-                            ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
-
-                            if (tpost.getPostGroupList() != null) {
-                                for (FetchRoomPendingResponse.PostGroup sipm : tpost.getPostGroupList()) {
-                                    groupCompoList = new ArrayList<>();
-                                    groupCompoProductsList = new ArrayList<>();
-//                                    if (sipm.getPostGroupInfo() != null) {
-                                        for (FetchRoomPendingResponse.PostGroupItem bpm : sipm.getPostGroupItems()) {
-                                            groupCompoProductsList.add(
-                                                    new AddRateProductModel(
-                                                            "",
-                                                            "0",
-                                                            String.valueOf(bpm.getQty()),
-                                                            SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
-                                                            "",
-                                                            0,
-                                                            bpm.getPostGroupItemProduct().getProduct(),
-                                                            new ArrayList<AddRateProductModel.AlaCarte>(),
-                                                            new ArrayList<AddRateProductModel.Group>(),
-                                                            ""
-                                                    ));
-
-                                        }
-                                        groupLst.add(
-                                                new AddRateProductModel.Group(
-                                                        new AddRateProductModel.GroupCompo(
-                                                                0,
-                                                                sipm.getPostGroupInfo() == null ? "PB" : sipm.getPostGroupInfo().getGroupName(),
-                                                                0,
-                                                                groupCompoProductsList)));
-//                                    }
-                                }
-                            }
-
-
-                            for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
-
-
-                                alaCartes.add(new AddRateProductModel.AlaCarte(
-                                        "",
-                                        "0",
-                                        String.valueOf(balac.getQty()),
-                                        SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
-                                        "0.00",
-                                        0,
-                                        balac.getPostAlaCartProduct().getProduct()
-                                ));
-                            }
-
-
-                            cartItemList.add(roomRateCounter.size(), new CartItemsModel(
-                                    tpost.getControlNo(),
-                                    tpost.getRoomId() == null ? 0 : tpost.getRoomId(),
-                                    tpost.getProductId(),
-                                    tpost.getRoomTypeId() == null ? 0 :tpost.getRoomTypeId(),
-                                    tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
-                                    tpost.getRoomRatePriceId() == null ? 0 : tpost.getRoomRatePriceId(),
-                                    tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toUpperCase(),
-                                    tpost.getProductId() == 0 ? false : true,
-                                    tpost.getTotal(),
-                                    tpost.getId(),
-                                    tpost.getQty(),
-                                    true,
-                                    0.00,
-                                    0,
-                                    tpost.getPrice(),
-                                    false,
-                                    String.valueOf(tpost.getId()),
-                                    false,
-                                    "room",
-                                    alaCartes,
-                                    groupLst,
-                                    false,
-                                    tpost.getTransactionPostFreebies(),
-                                    TextUtils.isEmpty(tpost.getRemarks()) ? "" : tpost.getRemarks()
-                            ));
-                        }
-
-                        totalAmount += tpost.getTotal();
-                    }
-                }
-                //endregion
-                //region ot
-                if (r.getTransaction().getOtHours() > 0) {
-                    cartItemList.add(new CartItemsModel(
-                            r.getTransaction().getControlNo(),
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            "OT HOURS",
-                            true,
-                            r.getTransaction().getOtAmount(),
-                            0,
-                            r.getTransaction().getOtHours(),
-                            true,
-                            0.00,
-                            0,
-                            Double.valueOf(r.getTransaction().getOtAmount()),
-                            false,
-                            "",
-                            false,
-                            "ot",
-                            new ArrayList<AddRateProductModel.AlaCarte>(),
-                            new ArrayList<AddRateProductModel.Group>(),
-                            false,
-                            null,
-                            ""
-                    ));
-                }
-
-                if (Integer.valueOf(r.getTransaction().getPersonCount()) > 2) {
-                    cartItemList.add(new CartItemsModel(
-                            r.getTransaction().getControlNo(),
-                            0,
-                            0,
-                            0,
-                            0,
-                            0,
-                            "EXTRA PERSON",
-                            true,
-                            r.getTransaction().getXPersonAmount(),
-                            0,
-                            Integer.valueOf(r.getTransaction().getPersonCount()) - 2,
-                            true,
-                            0.00,
-                            0,
-                            r.getTransaction().getXPersonAmount(),
-                            false,
-                            "",
-                            false,
-                            "misc",
-                            new ArrayList<AddRateProductModel.AlaCarte>(),
-                            new ArrayList<AddRateProductModel.Group>(),
-                            false,
-                            null,
-                            ""
-                    ));
-                }
-
-                //endregion
-
-            }
-        } else {
-            subTotal.setText("0.00");
-            discount.setText("0.00");
-            deposit.setText("0.00");
-            total.setText("0.00");
-            totalBalance = 0;
-        }
-
-
-        checkoutAdapter = new CheckoutAdapter(this.cartItemList, this, getContext());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        listCheckoutItems.setLayoutManager(linearLayoutManager);
-        listCheckoutItems.setLayoutAnimation(anim);
-        listCheckoutItems.setAdapter(checkoutAdapter);
-        checkoutAdapter.notifyDataSetChanged();
-
-
-        if (fetchRoomPendingResponse.getResult() != null) {
-            fetchRoomPendingResult = fetchRoomPendingResponse.getResult();
-            switch (fetchRoomPendingResponse.getResult().getStatus()) {
-                case 1://clean
-                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
-                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
-                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
-                        } else {
-                            showCheckInNotAllowed();
-                        }
-                    } else {
-                        showCheckInNotAllowed();
-                    }
-
-                    break;
-                case 3: //dirty
-
-                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
-                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
-                            showGuestInfoDialog(
-                                    String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
-                        } else {
-                            showCheckInNotAllowed();
-                        }
-                    } else {
-                        showCheckInNotAllowed();
-                    }
-
-
-                    break;
-                case 19:
-                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
-                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
-                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
-                        } else {
-                            showCheckInNotAllowed();
-                        }
-                    } else {
-                        showCheckInNotAllowed();
-                    }
-                    break;// ongoing nego
-                case 20: //onnego show check in form
-                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
-                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
-                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
-                        } else {
-                            showCheckInNotAllowed();
-                        }
-                    } else {
-                        showCheckInNotAllowed();
-                    }
-
-                    break;
-                case 32:
-//                    showCheckInDialog(fetchRoomPendingResponse.getResult());
-                    break;
-                case 4:
-//                    showCheckInDialog(fetchRoomPendingResponse.getResult());
-                    break;
-                case 59: //check in guest
-                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
-                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
-                            showCheckInDialog();
-                        } else {
-                            showCheckInNotAllowed();
-                        }
-                    } else {
-                        showCheckInNotAllowed();
-                    }
-                    break;
-
-                case 2: //already checked in, can now order
-//                    Toast.makeText(getContext(), "Please order", Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-//                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
-                    break;
-            }
-        } else {
-            Toast.makeText(getContext(), "Call fetch room pending", Toast.LENGTH_SHORT).show();
-        }
-        endLoading();
+//        BusProvider.getInstance().post(new ClearSearchData("d"));
+//        forVoidDiscountModels = new ArrayList<>();
+//        guestReceiptInfoModel = null;
+//        checkoutSwipe.setRefreshing(false);
+//
+//        cartItemList = new ArrayList<>();
+//        orderSlipList = new ArrayList<>();
+//        postedPaymentsList = new ArrayList<>();
+//        Double totalAmount = 0.00;
+//        discountPayment = 0.00;
+//        advancePayment = 0.00;
+//        currentRoomStatus = String.valueOf(fetchRoomPendingResponse.getResult().getStatus());
+////        Utils.showDialogMessage(getActivity(), currentRoomStatus, "SIR PAKITANDAAN(DONT IGNORE)");
+//        if (fetchRoomPendingResponse.getResult().getBooked().size() > 0) {
+//
+//            kitchenPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getKitchenPath();
+//            printerPath = fetchRoomPendingResponse.getResult().getBooked().get(0).getRoom().getArea().getPrinterPath();
+//            for (FetchRoomPendingResponse.Booked r : fetchRoomPendingResponse.getResult().getBooked()) {
+//                if (r.getTransaction() != null) {
+//                    if (r.getTransaction().getEmployee_id() != null && !TextUtils.isEmpty(r.getTransaction().getEmployee_id())) {
+//                        employeeId = r.getTransaction().getEmployee_id();
+//                    }
+//                    if (r.getTransaction().getCustomerTrans() != null) {
+//                        if (r.getTransaction().getCustomerTrans() != null) {
+//                            guestReceiptInfoModel = new GuestReceiptInfoModel(r.getTransaction().getCustomerTrans().getCustomer(),
+//                                    r.getTransaction().getCustomerTrans().getAddress() != null ? r.getTransaction().getCustomerTrans().getAddress() : "",
+//                                    r.getTransaction().getCustomerTrans().getTin() != null ? r.getTransaction().getCustomerTrans().getTin() : "");
+//                        }
+//                    }
+//                }
+//                //regionpayments
+//                overTimeValue =  r.getTransaction().getOtHours();
+//                if (r.getTransaction().getPayments().size() > 0) {
+//                    for(FetchRoomPendingResponse.Payment pym : r.getTransaction().getPayments()) {
+//
+//                        String paymentDescription = "";
+//                        if (pym.getPaymentTypeId() == 5) {
+//                            if (pym.getOuterAr() != null) {
+//                                paymentDescription = pym.getPaymentDescription() + " - " + pym.getOuterAr().getInnerAr().getArOnline() + "(" + pym.getOuterAr().getVoucherCode() +")";
+//                            } else {
+//                                paymentDescription = pym.getPaymentDescription();
+//                            }
+//                        } else {
+//                            paymentDescription = pym.getPaymentDescription();
+//                        }
+//
+//
+//                        String symbolLeft = "";
+//                        String symbolRight = "";
+//
+//                        if (pym.getCurrency() != null) {
+//                            if (pym.getCurrency().getSymbolLeft() != null) {
+//                                symbolLeft = pym.getCurrency().getSymbolLeft();
+//                            }
+//
+//
+//                            if (pym.getCurrency().getSymbolRight() != null) {
+//                                symbolRight = pym.getCurrency().getSymbolRight();
+//                            }
+//                        }
+//
+//                        postedPaymentsList.add(new PostedPaymentsModel(
+//                                String.valueOf(pym.getPaymentTypeId()),
+//                                String.valueOf(pym.getAmount()),
+//                                paymentDescription,
+//                                true,
+//                                String.valueOf(pym.getCurrencyId()),
+//                                String.valueOf(pym.getCurrencyValue()),
+//                                new JSONObject(),
+//                                symbolLeft,
+//                                symbolRight,
+//                                pym.getIsAdvance() == 1 ? true : false,
+//                                "",
+//                                String.valueOf(pym.getId()),
+//                                ""
+//                        ));
+//                    }
+//                }
+//                //endregion
+//                //region order list
+//                if (r.getTransaction().getTrans().size() > 0) {
+//
+//                    forVoidDiscountModels = new ArrayList<>();
+//                    for (FetchRoomPendingResponse.DiscountsOuter dos  : r.getTransaction().getDiscountsOuter()) {
+//                        if (dos.getVoid_by() == null) {
+//                            forVoidDiscountModels.add(new ForVoidDiscountModel(dos.getId(), dos.getDiscountType(), dos.getDiscountAmount()));
+//                        }
+//
+//                    }
+//
+//                    selectedRoom.setControlNo(r.getTransaction().getControlNo());
+//                    totalBalance = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTotal() +
+//                            Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getOtAmount()))) +
+//                            Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getXPersonAmount()))))
+////                            - (fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered());
+//                            - (Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getTendered())))
+//                            + Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(fetchRoomPendingResponse.getResult().getBooked().get(0).getTransaction().getVatExempt())))))));
+//
+//                    advancePayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())));
+//                    depositInfoData = String.valueOf(advancePayment);
+//                    discountPayment = Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getDiscount())));
+//                    subTotal.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(totalBalance)))));
+//
+//
+//                    total.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf((totalBalance - (advancePayment + discountPayment)) < 0 ? 0 : (totalBalance - (advancePayment + discountPayment)))))));
+//                    if (discountPayment > totalBalance) {
+//                        discount.setText(Utils.digitsWithComma(totalBalance));
+//                    } else {
+//                        discount.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(discountPayment)))));
+//                    }
+//                    if (r.getCheckIn() != null && !TextUtils.isEmpty(globalServerTimeString)) {
+//
+//                        if (selectedRoom.getRoomType() != null) {
+//                            setView(selectedRoom.getName(), selectedRoom.getRoomType());
+//                        } else {
+//                            setView(selectedRoom.getName(), "TO");
+//                        }
+//
+//
+//
+//                        header.setText(String.format("%s(%s)", header.getText().toString(),
+//                                Utils.durationOfStay(globalServerTimeString, r.getCheckIn().toString())));
+//                    }
+//                    deposit.setText(Utils.digitsWithComma(Double.valueOf(Utils.returnWithTwoDecimal(String.valueOf(r.getTransaction().getAdvance())))));
+//                    depositInfoData = String.valueOf(r.getTransaction().getAdvance());
+//                    for (FetchRoomPendingResponse.Tran transPost : r.getTransaction().getTrans()) {
+//                        List<OrderSlipModel.OrderSlipInfo> osiList = new ArrayList<>();
+//                        for (FetchRoomPendingResponse.Order osi : transPost.getOrder()) {
+//                            List<OrderSlipModel.OrderSlipProduct> osp = new ArrayList<>();
+//                            for (FetchRoomPendingResponse.PostTrans prod : osi.getPost()) {
+//                                if (prod.getProductId() == 0) { //room
+//                                    osp.add(
+//                                            new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+//                                                    "",
+//                                                    "",
+//                                                    "",
+//                                                    String.valueOf(prod.getRoomTypeId()),
+//                                                    "",
+//                                                    String.valueOf(prod.getRoomRatePriceId()),
+//                                                    prod.getRoomType(),
+//                                                    prod.getRoomRate().toString(),
+//                                                    String.valueOf(prod.getQty()),
+//                                                    String.valueOf(prod.getPrice()),
+//                                                    String.valueOf(prod.getPrice()),
+//                                                    String.valueOf(prod.getTotal()),
+//                                                    prod.getVoid() == 0 ? false : true));
+//                                } else { //product
+//                                    osp.add(
+//                                            new OrderSlipModel.OrderSlipProduct(String.valueOf(prod.getId()),
+//                                                    String.valueOf(prod.getProduct().getId()),
+//                                                    prod.getProduct().getProduct(),
+//                                                    prod.getProduct().getProductInitial(),
+//                                                    "",
+//                                                    "",
+//                                                    "",
+//                                                    "",
+//                                                    "",
+//                                                    String.valueOf(prod.getQty()),
+//                                                    String.valueOf(prod.getUnitCost()),
+//                                                    String.valueOf(prod.getPrice()),
+//                                                    String.valueOf(prod.getTotal()),
+//                                                    prod.getVoid() == 0 ? false : true));
+//                                }
+//
+//                            }
+//                            OrderSlipModel.OrderSlipInfo slipInfoList =
+//                                    new OrderSlipModel.OrderSlipInfo(String.valueOf(osi.getId()),
+//                                            String.valueOf(osi.getPostOrderId()),
+//                                            String.valueOf(osi.getPostTransId()),
+//                                            osp);
+//                            osiList.add(slipInfoList);
+//                        }
+//                        OrderSlipModel orderSlipModel = new OrderSlipModel(transPost.getControlNo(), osiList, String.valueOf(transPost.getId()));
+//                        orderSlipList.add(orderSlipModel);
+//
+//
+//                    }
+//                }
+//                //endregion
+//                //region orders
+//                roomRateCounter = new ArrayList<>();
+//
+//
+//                for (FetchRoomPendingResponse.Post tpost : r.getTransaction().getPost()) {
+//                    if (tpost.getVoid() == 0) {
+//                        if (tpost.getTransactionPostFreebies() != null) {
+//                            //whatis this
+//                        }
+//                        if (tpost.getRoomRateId() != null) {
+//                            roomRateCounter.add(1);
+//                            cartItemList.add(0, new CartItemsModel(
+//                                    tpost.getControlNo(),
+//                                    tpost.getRoomId() == null ? 0 : tpost.getRoomId(),
+//                                    tpost.getProductId(),
+//                                    tpost.getRoomTypeId() == null ? 0 : tpost.getRoomTypeId(),
+//                                    tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
+//                                    tpost.getRoomRatePriceId() == null ? 0 : tpost.getRoomRatePriceId(),
+//                                    tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toUpperCase(),
+//                                    tpost.getProductId() == 0 ? false : true,
+//                                    tpost.getTotal(),
+//                                    tpost.getId(),
+//                                    tpost.getQty(),
+//                                    true,
+//                                    0.00,
+//                                    0,
+//                                    tpost.getPrice(),
+//                                    false,
+//                                    String.valueOf(tpost.getId()),
+//                                    false,
+//                                    "room",
+//                                    new ArrayList<AddRateProductModel.AlaCarte>(),
+//                                    new ArrayList<AddRateProductModel.Group>(),
+//                                    false,
+//                                    tpost.getTransactionPostFreebies(),
+//                                    TextUtils.isEmpty(tpost.getRemarks()) ? "" : tpost.getRemarks()
+//                            ));
+//                        } else {
+//
+//                            ArrayList<AddRateProductModel.AlaCarte> alaCartes = new ArrayList<>();
+//                            ArrayList<AddRateProductModel.Group> groupLst = new ArrayList<>();
+//                            ArrayList<AddRateProductModel.GroupCompo> groupCompoList = new ArrayList<>();
+//                            ArrayList<AddRateProductModel> groupCompoProductsList = new ArrayList<>();
+//
+//                            if (tpost.getPostGroupList() != null) {
+//                                for (FetchRoomPendingResponse.PostGroup sipm : tpost.getPostGroupList()) {
+//                                    groupCompoList = new ArrayList<>();
+//                                    groupCompoProductsList = new ArrayList<>();
+////                                    if (sipm.getPostGroupInfo() != null) {
+//                                        for (FetchRoomPendingResponse.PostGroupItem bpm : sipm.getPostGroupItems()) {
+//                                            groupCompoProductsList.add(
+//                                                    new AddRateProductModel(
+//                                                            "",
+//                                                            "0",
+//                                                            String.valueOf(bpm.getQty()),
+//                                                            SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+//                                                            "",
+//                                                            0,
+//                                                            bpm.getPostGroupItemProduct().getProduct(),
+//                                                            new ArrayList<AddRateProductModel.AlaCarte>(),
+//                                                            new ArrayList<AddRateProductModel.Group>(),
+//                                                            ""
+//                                                    ));
+//
+//                                        }
+//                                        groupLst.add(
+//                                                new AddRateProductModel.Group(
+//                                                        new AddRateProductModel.GroupCompo(
+//                                                                0,
+//                                                                sipm.getPostGroupInfo() == null ? "PB" : sipm.getPostGroupInfo().getGroupName(),
+//                                                                0,
+//                                                                groupCompoProductsList)));
+////                                    }
+//                                }
+//                            }
+//
+//
+//                            for (FetchRoomPendingResponse.PostAlaCart balac : tpost.getPostAlaCartList()) {
+//
+//
+//                                alaCartes.add(new AddRateProductModel.AlaCarte(
+//                                        "",
+//                                        "0",
+//                                        String.valueOf(balac.getQty()),
+//                                        SharedPreferenceManager.getString(getContext(),ApplicationConstants.TAX_RATE),
+//                                        "0.00",
+//                                        0,
+//                                        balac.getPostAlaCartProduct().getProduct()
+//                                ));
+//                            }
+//
+//
+//                            cartItemList.add(roomRateCounter.size(), new CartItemsModel(
+//                                    tpost.getControlNo(),
+//                                    tpost.getRoomId() == null ? 0 : tpost.getRoomId(),
+//                                    tpost.getProductId(),
+//                                    tpost.getRoomTypeId() == null ? 0 :tpost.getRoomTypeId(),
+//                                    tpost.getRoomRateId() == null ? 0 : Integer.parseInt(String.format("%.0f", Double.valueOf(tpost.getRoomRateId().toString()))) ,
+//                                    tpost.getRoomRatePriceId() == null ? 0 : tpost.getRoomRatePriceId(),
+//                                    tpost.getRoomRateId() == null ? tpost.getProduct().getProductInitial().toUpperCase() : tpost.getRoomRate().toUpperCase(),
+//                                    tpost.getProductId() == 0 ? false : true,
+//                                    tpost.getTotal(),
+//                                    tpost.getId(),
+//                                    tpost.getQty(),
+//                                    true,
+//                                    0.00,
+//                                    0,
+//                                    tpost.getPrice(),
+//                                    false,
+//                                    String.valueOf(tpost.getId()),
+//                                    false,
+//                                    "room",
+//                                    alaCartes,
+//                                    groupLst,
+//                                    false,
+//                                    tpost.getTransactionPostFreebies(),
+//                                    TextUtils.isEmpty(tpost.getRemarks()) ? "" : tpost.getRemarks()
+//                            ));
+//                        }
+//
+//                        totalAmount += tpost.getTotal();
+//                    }
+//                }
+//                //endregion
+//                //region ot
+//                if (r.getTransaction().getOtHours() > 0) {
+//                    cartItemList.add(new CartItemsModel(
+//                            r.getTransaction().getControlNo(),
+//                            0,
+//                            0,
+//                            0,
+//                            0,
+//                            0,
+//                            "OT HOURS",
+//                            true,
+//                            r.getTransaction().getOtAmount(),
+//                            0,
+//                            r.getTransaction().getOtHours(),
+//                            true,
+//                            0.00,
+//                            0,
+//                            Double.valueOf(r.getTransaction().getOtAmount()),
+//                            false,
+//                            "",
+//                            false,
+//                            "ot",
+//                            new ArrayList<AddRateProductModel.AlaCarte>(),
+//                            new ArrayList<AddRateProductModel.Group>(),
+//                            false,
+//                            null,
+//                            ""
+//                    ));
+//                }
+//
+//                if (Integer.valueOf(r.getTransaction().getPersonCount()) > 2) {
+//                    cartItemList.add(new CartItemsModel(
+//                            r.getTransaction().getControlNo(),
+//                            0,
+//                            0,
+//                            0,
+//                            0,
+//                            0,
+//                            "EXTRA PERSON",
+//                            true,
+//                            r.getTransaction().getXPersonAmount(),
+//                            0,
+//                            Integer.valueOf(r.getTransaction().getPersonCount()) - 2,
+//                            true,
+//                            0.00,
+//                            0,
+//                            r.getTransaction().getXPersonAmount(),
+//                            false,
+//                            "",
+//                            false,
+//                            "misc",
+//                            new ArrayList<AddRateProductModel.AlaCarte>(),
+//                            new ArrayList<AddRateProductModel.Group>(),
+//                            false,
+//                            null,
+//                            ""
+//                    ));
+//                }
+//
+//                //endregion
+//
+//            }
+//        } else {
+//            subTotal.setText("0.00");
+//            discount.setText("0.00");
+//            deposit.setText("0.00");
+//            total.setText("0.00");
+//            totalBalance = 0;
+//        }
+//
+//
+//        checkoutAdapter = new CheckoutAdapter(this.cartItemList, this, getContext());
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+//        listCheckoutItems.setLayoutManager(linearLayoutManager);
+//        listCheckoutItems.setLayoutAnimation(anim);
+//        listCheckoutItems.setAdapter(checkoutAdapter);
+//        checkoutAdapter.notifyDataSetChanged();
+//
+//
+//        if (fetchRoomPendingResponse.getResult() != null) {
+//            fetchRoomPendingResult = fetchRoomPendingResponse.getResult();
+//            switch (fetchRoomPendingResponse.getResult().getStatus()) {
+//                case 1://clean
+//                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+//                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+//                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+//                        } else {
+//                            showCheckInNotAllowed();
+//                        }
+//                    } else {
+//                        showCheckInNotAllowed();
+//                    }
+//
+//                    break;
+//                case 3: //dirty
+//
+//                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+//                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+//                            showGuestInfoDialog(
+//                                    String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+//                        } else {
+//                            showCheckInNotAllowed();
+//                        }
+//                    } else {
+//                        showCheckInNotAllowed();
+//                    }
+//
+//
+//                    break;
+//                case 19:
+//                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+//                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+//                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+//                        } else {
+//                            showCheckInNotAllowed();
+//                        }
+//                    } else {
+//                        showCheckInNotAllowed();
+//                    }
+//                    break;// ongoing nego
+//                case 20: //onnego show check in form
+//                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+//                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+//                            showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+//                        } else {
+//                            showCheckInNotAllowed();
+//                        }
+//                    } else {
+//                        showCheckInNotAllowed();
+//                    }
+//
+//                    break;
+//                case 32:
+////                    showCheckInDialog(fetchRoomPendingResponse.getResult());
+//                    break;
+//                case 4:
+////                    showCheckInDialog(fetchRoomPendingResponse.getResult());
+//                    break;
+//                case 59: //check in guest
+//                    if (!SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).isEmpty()) {
+//                        if(SharedPreferenceManager.getString(getContext(), ApplicationConstants.IS_ALLOWED_FOR_CHECK_IN).equalsIgnoreCase("y")) {
+//                            showCheckInDialog();
+//                        } else {
+//                            showCheckInNotAllowed();
+//                        }
+//                    } else {
+//                        showCheckInNotAllowed();
+//                    }
+//                    break;
+//
+//                case 2: //already checked in, can now order
+////                    Toast.makeText(getContext(), "Please order", Toast.LENGTH_SHORT).show();
+//                    break;
+//                default:
+////                    showGuestInfoDialog(String.valueOf(fetchRoomPendingResponse.getResult().getStatus()));
+//                    break;
+//            }
+//        } else {
+//            Toast.makeText(getContext(), "Call fetch room pending", Toast.LENGTH_SHORT).show();
+//        }
+//        endLoading();
     }
 
     private void showCheckInNotAllowed() {
@@ -5353,13 +5698,19 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             public void successCheckIn(final WelcomeGuestRequest welcomeGuestRequest) {
                 BusProvider.getInstance().post(welcomeGuestRequest);
 
-                SocketManager.reloadPos(
-                        selectedRoom.getName(),
-                        String.valueOf(selectedRoom.getRoomId()),
-                        "2",
-                        "2",
-                        SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                        "end");
+                if (selectedRoom != null) {
+                    if (!TextUtils.isEmpty(selectedRoom.getName())) {
+                        SocketManager.reloadPos(
+                                selectedRoom.getName(),
+                                String.valueOf(selectedRoom.getRoomId()),
+                                "2",
+                                "2",
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                "end");
+                    }
+
+                }
+
 
 
 
@@ -5430,6 +5781,12 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     private void showCheckInDialog() {
         if (fetchRoomPendingResult != null) {
             if (fetchRoomPendingResult.getBooked().size() > 0) {
+
+
+                TypeToken<List<FetchUserResponse.Result>> token = new TypeToken<List<FetchUserResponse.Result>>() {};
+                userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(getContext(), ApplicationConstants.USER_JSON), token.getType());
+
+
                 checkInDialog = new CheckInDialog(getActivity(), selectedRoom,
                         carList, vehicleList,
                         guestTypeList, userList,
@@ -5440,13 +5797,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 welcomeGuestRequest.getRoomRatePriceId(),
                                 ""));
 
-                        SocketManager.reloadPos(
-                                selectedRoom.getName(),
-                                String.valueOf(selectedRoom.getRoomId()),
-                                "2",
-                                "2",
-                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
-                                "end");
+                        if (selectedRoom != null){
+                            SocketManager.reloadPos(
+                                    selectedRoom.getName(),
+                                    String.valueOf(selectedRoom.getRoomId()),
+                                    "2",
+                                    "2",
+                                    SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                    "end");
+                        }
+
 
 
 
@@ -5457,7 +5817,10 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 checkInDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
+                        if (selectedRoom != null) {
+                            sendOffGoingNegoRequest(String.valueOf(selectedRoom.getRoomId()));
+                        }
+
                     }
                 });
             } else {
@@ -5489,12 +5852,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void save(String remarks) {
 
-                BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model),kitchenPath, printerPath, remarks,kitchenPath, printerPath));
-                BusProvider.getInstance().post(new AddRoomPriceRequest(
-                        model,
-                        roomId, new ArrayList<VoidProductModel>(),
-                        remarks, "","0", "0",
-                        new ArrayList<UpdateProductModel>()));
+                if (selectedRoom != null) {
+
+                    BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "FO", GsonHelper.getGson().toJson(model),kitchenPath, printerPath, remarks,kitchenPath, printerPath));
+                    BusProvider.getInstance().post(new AddRoomPriceRequest(
+                            model,
+                            roomId, new ArrayList<VoidProductModel>(),
+                            remarks, "","0", "0",
+                            new ArrayList<UpdateProductModel>()));
+                }
             }
         };
 
@@ -5506,7 +5872,11 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     public void addProductResponse(AddRoomPriceResponse addRoomPriceResponse) {
 //        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
 
-        BusProvider.getInstance().post(new FetchRoomPendingRequest(String.valueOf(selectedRoom.getRoomId())));
+        if (selectedRoom!=null) {
+            //DIONE RETURN HERE
+            fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
+//            BusProvider.getInstance().post(new FetchRoomPendingRequest(String.valueOf(selectedRoom.getRoomId())));
+        }
 
         showLoading();
 
@@ -5543,6 +5913,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                         endLoading();
                     } else {
 
+
                         BusProvider.getInstance().post(new PrintModel("",
                                 selectedRoom.getName(),
                                 "DEPOSIT",
@@ -5578,6 +5949,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         request.enqueue(new Callback<AddPaymentResponse>() {
             @Override
             public void onResponse(Call<AddPaymentResponse> call, Response<AddPaymentResponse> response) {
+
                 if (selectedRoom != null) {
                     if (response.body().getStatus() == 0) {
                         Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
@@ -5688,13 +6060,16 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             @Override
             public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
 
-                BusProvider.getInstance().post(new PrintModel("",
-                        selectedRoom.getName(),
-                        "SOA-ROOM",
-                        GsonHelper.getGson().toJson(response.body().getResult()),
-                                kitchenPath,
-                                printerPath
-                ));
+                if (selectedRoom!=null) {
+
+                    BusProvider.getInstance().post(new PrintModel("",
+                            selectedRoom.getName(),
+                            "SOA-ROOM",
+                            GsonHelper.getGson().toJson(response.body().getResult()),
+                            kitchenPath,
+                            printerPath
+                    ));
+                }
             }
 
             @Override
@@ -5985,14 +6360,15 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     @Subscribe
     public void fetchOrderPendingViaControlNoResponse(FetchOrderPendingViaControlNoResponse fetchOrderPendingViaControlNoResponse) {
-        this.fetchOrderPendingRresult = fetchOrderPendingViaControlNoResponse.getResult();
-        fetchOrderPendingViaControlNumberFunction(fetchOrderPendingViaControlNoResponse);
+//        this.fetchOrderPendingRresult = fetchOrderPendingViaControlNoResponse.getResult();
+//        fetchOrderPendingViaControlNumberFunction(fetchOrderPendingViaControlNoResponse);
     }
 
     @Subscribe
     public void addProductToResponse(AddProductToResponse addProductToResponse) {
         if (selectedRoom != null) {
-            BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo()));
+            fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
+//            BusProvider.getInstance().post(new FetchOrderPendingViaControlNoRequest(selectedRoom.getControlNo()));
         }
         endLoading();
 
@@ -6066,10 +6442,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
-                        printReceiptFromCheckout(selectedRoom.getControlNo(),
-                                selectedRoom.getName(),
-                                selectedRoom.getRoomType());
-                        Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+                        if (selectedRoom!= null) {
+
+                            printReceiptFromCheckout(selectedRoom.getControlNo(),
+                                    selectedRoom.getName(),
+                                    selectedRoom.getRoomType());
+                            Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+                        }
 
 
                         BusProvider.getInstance().post(new CheckSafeKeepingRequest());
@@ -6125,12 +6504,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     int index = 0;
                     for (String str : wul) {
 
+                        if (selectedRoom!=null) {
+                            if (str.equalsIgnoreCase(selectedRoom.getName())) {
+                                break;
+                            }
+                            index += 1;
 
-
-                        if (str.equalsIgnoreCase(selectedRoom.getName())) {
-                            break;
                         }
-                        index += 1;
+
                     }
                     wul.remove(index);
                 }
@@ -6179,10 +6560,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
 
-            printReceiptFromCheckout(selectedRoom.getControlNo(),
-                    selectedRoom.getName(),
-                    selectedRoom.getRoomType());
-            Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+            if (selectedRoom!=null) {
+
+                printReceiptFromCheckout(selectedRoom.getControlNo(),
+                        selectedRoom.getName(),
+                        selectedRoom.getRoomType());
+                Toast.makeText(getContext(), "CHECK OUT SUCCESS", Toast.LENGTH_SHORT).show();
+            }
 
 
 
@@ -6282,8 +6666,8 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
         Log.d("MYAPIREQ", "CHECK IN REQUEST");
 
-        BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHECKIN", GsonHelper.getGson().toJson(checkInResponse.getResult().getBooked())));
         if (selectedRoom != null) {
+            BusProvider.getInstance().post(new PrintModel("", selectedRoom.getName(), "CHECKIN", GsonHelper.getGson().toJson(checkInResponse.getResult().getBooked())));
             if (selectedRoom.isTakeOut()) {
                 fetchOrderPendingViaControlNo(selectedRoom.getControlNo());
             } else {
@@ -6384,22 +6768,25 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                 if (switchRoomResponse.getResults().getBooked().size() > 0) {
 
 
-                    SwitchRoomPrintModel switchRoomPrintModel =
-                            new SwitchRoomPrintModel(
-                                    selectedRoom.getName(),
-                                    selectedRoom.getRoomType(),
-                                    switchRoomResponse.getResults().getBooked().get(0).getRoomNumber(),
-                                    switchRoomResponse.getResults().getBooked().get(0).getRoomType(),
-                                    switchRoomResponse.getResults().getBooked().get(0).getCheckInTime(),
-                                    switchRoomResponse.getResults().getBooked().get(0).getUser_id());
+                    if (selectedRoom!=null) {
 
-                    BusProvider.getInstance().post(
-                            new PrintModel("", switchRoomResponse.getResults().getBooked().get(0).getRoomNumber(),
-                                    "SWITCH_ROOM" ,GsonHelper.getGson().toJson(switchRoomPrintModel),
-                                    kitchenPath, printerPath));
+                        SwitchRoomPrintModel switchRoomPrintModel =
+                                new SwitchRoomPrintModel(
+                                        selectedRoom.getName(),
+                                        selectedRoom.getRoomType(),
+                                        switchRoomResponse.getResults().getBooked().get(0).getRoomNumber(),
+                                        switchRoomResponse.getResults().getBooked().get(0).getRoomType(),
+                                        switchRoomResponse.getResults().getBooked().get(0).getCheckInTime(),
+                                        switchRoomResponse.getResults().getBooked().get(0).getUser_id());
 
-                    fetchRoomViaIdRequest(String.valueOf(switchRoomResponse.getResults().getBooked().get(0).getRoomId()));
-                    Utils.showDialogMessage(getActivity(), "Switch room succeeded", "Success");
+                        BusProvider.getInstance().post(
+                                new PrintModel("", switchRoomResponse.getResults().getBooked().get(0).getRoomNumber(),
+                                        "SWITCH_ROOM" ,GsonHelper.getGson().toJson(switchRoomPrintModel),
+                                        kitchenPath, printerPath));
+
+                        fetchRoomViaIdRequest(String.valueOf(switchRoomResponse.getResults().getBooked().get(0).getRoomId()));
+                        Utils.showDialogMessage(getActivity(), "Switch room succeeded", "Success");
+                    }
                 }
 
             }
@@ -6715,14 +7102,14 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         return hasUnposted;
     }
 
-    private void cashNReconcile() {
+    private void cashNReconcile(String adminPassword) {
 
         if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
 
             if (cutOffDialog == null) {
                 ApplicationConstants.IS_ACTIVE = "T";
 
-                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true, pShiftNumber) {
+                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true, pShiftNumber, adminPassword) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
                         try {
@@ -6791,152 +7178,93 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
     }
 
-    private void zReadRequest() {
-
-        if (Utils.isPasswordProtected(getActivity(), "73")) {
-
-            if (passwordDialog == null) {
-                passwordDialog = new PasswordDialog(getActivity(), "END OF DAY PROCESS \n", "") {
-                    @Override
-                    public void passwordSuccess(String empId, String employeeName) {
-                        doZReadFunction(employeeId);
-                    }
-
-                    @Override
-                    public void passwordFailed() {
-
-                    }
-                };
-                passwordDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        passwordDialog = null;
-                    }
-                });
-                passwordDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        passwordDialog = null;
-                    }
-                });
-                passwordDialog.show();
-            }
-        } else {
-            doZReadFunction(SharedPreferenceManager.getString(null, ApplicationConstants.USER_ID));
-        }
+    private void zReadRequest(String adminPassword) {
+        doZReadFunction(adminPassword);
     }
 
     private void doZReadFunction(String employeeId) {
         ZReadRequest zReadRequest = new ZReadRequest(employeeId);
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-        Call<ResponseBody> request = iUsers.zReading(zReadRequest.getMapValue());
-        request.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    String result = response.body().string();
-                    JSONObject zReadObject = new JSONObject(result);
-                    if (zReadObject.getString("status").equalsIgnoreCase("0")) {
-                        Utils.showDialogMessage(getActivity(), zReadObject.getString("message"), "Information");
-                    } else {
-                        JSONObject zReadResultObject = zReadObject.getJSONObject("result");
-                        JSONObject ZReadResultDataObject = zReadResultObject.getJSONObject("data");
-                        fetchZReadViaIdRequest(ZReadResultDataObject.getString("id"));
-                        Utils.showDialogMessage(getActivity(), "ZREAD SUCCESS", "Information");
+        //return z read here
+        if (zreadApiRequest == null) {
+            zreadApiRequest = iUsers.zReading(zReadRequest.getMapValue());
+            zreadApiRequest.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    zreadApiRequest = null;
+                    try {
+                        String result = response.body().string();
+                        JSONObject zReadObject = new JSONObject(result);
+                        if (zReadObject.getString("status").equalsIgnoreCase("0")) {
+                            Utils.showDialogMessage(getActivity(), zReadObject.getString("message"), "Information");
+                        } else {
+                            JSONObject zReadResultObject = zReadObject.getJSONObject("result");
+                            JSONObject ZReadResultDataObject = zReadResultObject.getJSONObject("data");
+                            fetchZReadViaIdRequest(ZReadResultDataObject.getString("id"));
+                            Utils.showDialogMessage(getActivity(), "ZREAD SUCCESS", "Information");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
+
+                    BackupDatabaseRequest backupDatabaseRequest = new BackupDatabaseRequest();
+                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                    Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
+                    request.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
                 }
 
-                BackupDatabaseRequest backupDatabaseRequest = new BackupDatabaseRequest();
-                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                Call<ResponseBody> request = iUsers.backupDb(backupDatabaseRequest.getMapValue());
-                request.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    zreadApiRequest = null;
+                }
+            });
+        }
 
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
     }
 
-    private void xReadRequest() {
+    private void xReadRequest(String adminPassword) {
 
-        PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM X READING", "") {
-            @Override
-            public void passwordSuccess(String employeeId, String employeeName) {
-                IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                XReadRequest collectionRequest = new XReadRequest(new ArrayList<CollectionFinalPostModel>(), employeeId);
-                Call<XReadResponse> request = iUsers.xReading(collectionRequest.getMapValue());
+        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+        XReadRequest collectionRequest = new XReadRequest(new ArrayList<CollectionFinalPostModel>(), adminPassword);
+        if (xreadApiRequest == null) {
+            xreadApiRequest = iUsers.xReading(collectionRequest.getMapValue());
 
-                request.enqueue(new Callback<XReadResponse>() {
-                    @Override
-                    public void onResponse(Call<XReadResponse> call, Response<XReadResponse> response) {
-                        if (response.body().getStatus() == 0) {
-                            Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
-                        } else {
-                            Utils.showDialogMessage(getActivity(), "X READ SUCCESS", "Information");
-                            BusProvider.getInstance().post(new LogoutUserAction("xread"));
-                        }
+            xreadApiRequest.enqueue(new Callback<XReadResponse>() {
+                @Override
+                public void onResponse(Call<XReadResponse> call, Response<XReadResponse> response) {
+                    xreadApiRequest = null;
+                    if (response.body().getStatus() == 0) {
+                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+                    } else {
+                        Utils.showDialogMessage(getActivity(), "X READ SUCCESS", "Information");
+                        BusProvider.getInstance().post(new LogoutUserAction("xread"));
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<XReadResponse> call, Throwable t) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void passwordFailed() {
-
-            }
-        };
-
-        if (!passwordDialog.isShowing()) passwordDialog.show();
+                @Override
+                public void onFailure(Call<XReadResponse> call, Throwable t) {
+                    xreadApiRequest = null;
+                }
+            });
+        }
 
 
-//        CheckXReadRequest xReadRequest = new CheckXReadRequest();
-//        IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-//        Call<CheckXReadResponse> request = iUsers.checkXREad(xReadRequest.getMapValue());
-//        request.enqueue(new Callback<CheckXReadResponse>() {
-//            @Override
-//            public void onResponse(Call<CheckXReadResponse> call, Response<CheckXReadResponse> response) {
-//                if (response.body().getStatus() == 1) {
-//
-//
-//
-//
-//                    //open safekeep, upon success of safekeep call cash and reconcile
-////                    CollectionDialog cutOffDialog = new CollectionDialog(getActivity(), "CUTOFF", true);
-////                    if (!cutOffDialog.isShowing()) cutOffDialog.show();
-//                } else {
-//                    Utils.showDialogMessage((MainActivity)getContext(), response.body().getMessage(), "Information");
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CheckXReadResponse> call, Throwable t) {
-//
-//            }
-//        });
+
     }
 
-    private void cancelOverTime() {
+    private void cancelOverTime(String adminPassword) {
 
         if (selectedRoom != null) {
             if (selectedRoom.isTakeOut()) {
@@ -6959,39 +7287,28 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             removeOtDialog = new RemoveOtDialog(getContext(), String.valueOf(overTimeValue), getActivity()) {
                                 @Override
                                 public void removeOtSuccess(final String oldOtValue, final String remainingOt) {
+                                    IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
+                                    if (selectedRoom!=null) {
 
-                                    PasswordDialog passwordDialog = new PasswordDialog(getActivity(),"CONFIRM CANCEL OT", "") {
-                                        @Override
-                                        public void passwordSuccess(String employeeId, String employeeName) {
-                                            IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                            CancelOverTimeRequest cancelOverTimeRequest = new CancelOverTimeRequest(String.valueOf(selectedRoom.getRoomId()), selectedRoom.getControlNo(), oldOtValue, remainingOt, employeeId);
-                                            Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
-                                            request.enqueue(new Callback<CancelOverTimeResponse>() {
-                                                @Override
-                                                public void onResponse(Call<CancelOverTimeResponse> call, Response<CancelOverTimeResponse> response) {
-                                                    if (response.body().getStatus() == 0) {
-                                                        Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
-                                                    } else {
-                                                        Utils.showDialogMessage(getActivity(), "Cancel OT Success", "Information");
-                                                        fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
-                                                    }
+                                        CancelOverTimeRequest cancelOverTimeRequest = new CancelOverTimeRequest(String.valueOf(selectedRoom.getRoomId()), selectedRoom.getControlNo(), oldOtValue, remainingOt, adminPassword);
+                                        Call<CancelOverTimeResponse> request = iUsers.cancelOverTime(cancelOverTimeRequest.getMapValue());
+                                        request.enqueue(new Callback<CancelOverTimeResponse>() {
+                                            @Override
+                                            public void onResponse(Call<CancelOverTimeResponse> call, Response<CancelOverTimeResponse> response) {
+                                                if (response.body().getStatus() == 0) {
+                                                    Utils.showDialogMessage(getActivity(), response.body().getMessage(), "Information");
+                                                } else {
+                                                    Utils.showDialogMessage(getActivity(), "Cancel OT Success", "Information");
+                                                    fetchRoomPending(String.valueOf(selectedRoom.getRoomId()));
                                                 }
+                                            }
 
-                                                @Override
-                                                public void onFailure(Call<CancelOverTimeResponse> call, Throwable t) {
+                                            @Override
+                                            public void onFailure(Call<CancelOverTimeResponse> call, Throwable t) {
 
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void passwordFailed() {
-
-                                        }
-                                    };
-
-                                    if (!passwordDialog.isShowing()) passwordDialog.show();
-
+                                            }
+                                        });
+                                    }
                                 }
                             };
 
@@ -7128,21 +7445,35 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
             request.enqueue(new Callback<FetchOrderPendingViaControlNoResponse>() {
                 @Override
                 public void onResponse(Call<FetchOrderPendingViaControlNoResponse> call, Response<FetchOrderPendingViaControlNoResponse> response) {
-                    Log.d("FOCRESPONSe"," GO RESPONSE RECEIVED");
-                    Log.d("FOCRESPONSe",String.valueOf(selectedRoom.isTakeOut()));
-                    if (selectedRoom.isTakeOut()) {
-                        BusProvider.getInstance().post(new PrintModel(
-                                "", "takeout",
-                                "PRINT_FOC",
-                                GsonHelper.getGson().toJson(response.body().getResult()),
-                                "", kitchenPath, printerPath));
-                    } else {
-                        BusProvider.getInstance().post(new PrintModel(
-                                "", selectedRoom.getName(),
-                                "PRINT_FOC",
-                                GsonHelper.getGson().toJson(response.body().getResult()),
-                                selectedRoom.getRoomType(), kitchenPath, printerPath));
+                    if (selectedRoom != null) {
+
+
+                        SocketManager.reloadPos(
+                                selectedRoom.getName(),
+                                String.valueOf(selectedRoom.getRoomId()),
+                                "3",
+                                "3",
+                                SharedPreferenceManager.getString(getContext(), ApplicationConstants.USERNAME),
+                                "end");
+
+
+                        if (selectedRoom.isTakeOut()) {
+                            BusProvider.getInstance().post(new PrintModel(
+                                    "", "takeout",
+                                    "PRINT_FOC",
+                                    GsonHelper.getGson().toJson(response.body().getResult()),
+                                    "", kitchenPath, printerPath));
+                        } else {
+                            BusProvider.getInstance().post(new PrintModel(
+                                    "", selectedRoom.getName(),
+                                    "PRINT_FOC",
+                                    GsonHelper.getGson().toJson(response.body().getResult()),
+                                    selectedRoom.getRoomType(), kitchenPath, printerPath));
+                        }
+
+
                     }
+
 
 
                     defaultView();
@@ -7212,7 +7543,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
 
-                                    zReadRequest();
+                                    BusProvider.getInstance().post(new ButtonsModel(120,"ZREAD", "",21, 0));
+
+//                                    zReadRequest(SharedPreferenceManager);
                                     blockerDialog = null;
                                     break;
                                 case DialogInterface.BUTTON_NEGATIVE:

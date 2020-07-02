@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:background="@drawable/button_selector"
+        android:text="OPEN DEVICE MANAGER"
+        android:id="@+id/btnDeviceManager"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_margin="5dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="AVAILABLE PRINTERS"/>
+        <Spinner
+            android:layout_margin="5dp"
+            android:id="@+id/spinnerPrinterAvailable"
+
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btnAddPrinter"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_selector"
+            android:layout_gravity="center_vertical"
+            android:text="ADD"
+            android:layout_weight="0.1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnSelectAll"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_selector"
+            android:layout_gravity="center_vertical"
+            android:text="SELECT ALL"
+            android:layout_weight="0.2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnRemoveAllAssigned"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_selector"
+            android:layout_gravity="center_vertical"
+            android:text="DEL. ALL"
+            android:layout_weight="0.2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPrinterList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

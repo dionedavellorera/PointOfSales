@@ -232,6 +232,21 @@ public abstract class ManualDiscountDialog extends BaseDialog {
                                     new ArrayList<FetchRoomPendingResponse.Discount>(),
                                     true
                             ));
+                        } else {
+//                            for (FetchOrderPendingViaControlNoResponse.PostObjectDiscount dc : result.getDiscounts()) {
+//                                temp.getDiscountList().add();
+//                            }
+                            DiscountListModel.DiscountProduct discProduct =
+                                    new DiscountListModel.DiscountProduct(
+                                            String.valueOf(result.getId()),
+                                            result.getControlNo(),
+                                            String.valueOf(result.getPrice()),
+                                            String.valueOf(result.getTotal()),
+                                            String.valueOf(result.getDiscount()),
+                                            result.getProduct().getProduct(),
+                                            true);
+
+                            temp.getDiscountProductList().add(discProduct);
                         }
                     }
 
