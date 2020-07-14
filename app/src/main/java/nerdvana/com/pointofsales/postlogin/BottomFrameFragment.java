@@ -23,6 +23,7 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 import nerdvana.com.pointofsales.ApplicationConstants;
 import nerdvana.com.pointofsales.BusProvider;
 import nerdvana.com.pointofsales.IUsers;
@@ -79,6 +80,9 @@ public class BottomFrameFragment extends Fragment implements ButtonsContract, As
         listButtons.setLayoutManager(new GridLayoutManager(getContext(),2,  GridLayoutManager.HORIZONTAL, false));
         listButtons.setAdapter(buttonsAdapter);
         listButtons.setLayoutAnimation(anim);
+
+        OverScrollDecoratorHelper.setUpOverScroll(listButtons, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
+
         FetchBranchInfoRequest fetchBranchInfoRequest = new FetchBranchInfoRequest();
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         Call<FetchBranchInfoResponse> request = iUsers.fetchBranchInfo(fetchBranchInfoRequest.getMapValue());

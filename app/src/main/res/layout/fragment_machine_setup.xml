@@ -1,65 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView android:layout_width="match_parent" android:layout_height="match_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/firstLabel"
-        android:textSize="17sp"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Machine Setup"/>
+        <TextView
+            android:id="@+id/firstLabel"
+            android:textSize="17sp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Machine Setup"/>
 
-    <View
-        android:id="@+id/topSeparator"
-        android:layout_marginLeft="10dp"
-        android:layout_below="@id/firstLabel"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorLtGrey" />
+        <View
+            android:id="@+id/topSeparator"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/firstLabel"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorLtGrey" />
 
-    <CheckBox
-        android:visibility="visible"
-        android:id="@+id/machineSwitchTo"
-        android:layout_margin="10dp"
-        android:layout_below="@id/topSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Telephone Operator"/>
+        <CheckBox
+            android:visibility="visible"
+            android:id="@+id/machineSwitchTo"
+            android:layout_margin="10dp"
+            android:layout_below="@id/topSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Telephone Operator"/>
 
-    <CheckBox
-        android:id="@+id/allowedToCheckInSwitch"
-        android:layout_margin="10dp"
-        android:layout_below="@id/machineSwitchTo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Check-in allowed?"/>
+        <CheckBox
+            android:id="@+id/allowedToCheckInSwitch"
+            android:layout_margin="10dp"
+            android:layout_below="@id/machineSwitchTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Check-in allowed?"/>
 
-    <CheckBox
-        android:id="@+id/allowedXRead"
-        android:layout_margin="10dp"
-        android:layout_below="@id/allowedToCheckInSwitch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Can print x reading?"/>
+        <CheckBox
+            android:id="@+id/allowedXRead"
+            android:layout_margin="10dp"
+            android:layout_below="@id/allowedToCheckInSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Can print x reading?"/>
 
-    <CheckBox
-        android:id="@+id/allowedZRead"
-        android:layout_margin="10dp"
-        android:layout_below="@id/allowedXRead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Can print z reading?"/>
+        <CheckBox
+            android:id="@+id/allowedZRead"
+            android:layout_margin="10dp"
+            android:layout_below="@id/allowedXRead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Can print z reading?"/>
 
-    <CheckBox
-        android:id="@+id/allowedWakeUpCall"
-        android:layout_margin="10dp"
-        android:layout_below="@id/allowedZRead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Will remind for wake up call?"/>
+        <CheckBox
+            android:id="@+id/allowedWakeUpCall"
+            android:layout_margin="10dp"
+            android:layout_below="@id/allowedZRead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Will remind for wake up call?"/>
+
+        <LinearLayout
+            android:id="@+id/linWakeUpCall"
+            android:layout_below="@+id/allowedWakeUpCall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSkTimeTrigger"
+                android:layout_margin="10dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:inputType="numberDecimal"
+                    android:maxLength="80"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
+                    android:id="@+id/skTimeTrigger"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Safekeeping time trigger in minutes or 0.5 for 30 seconds"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:id="@+id/btnSaveSafeKeeping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAVE"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linSafeKeeping"
+            android:layout_below="@+id/linWakeUpCall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilWakeUpCallTimeTrigger"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <nerdvana.com.pointofsales.custom.HidingEditText
+                    android:inputType="numberDecimal"
+                    android:maxLength="80"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionDone"
+                    android:id="@+id/wakeUpCallTimeTrigger"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="wrap_content"
+                    android:hint="Wake up call time trigger in minutes or 0.5 for 30 seconds"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:id="@+id/btnSaveWakeUpCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAVE"/>
+
+        </LinearLayout>
 
 
 
-</RelativeLayout>
+
+
+    </RelativeLayout>
+</ScrollView>
+

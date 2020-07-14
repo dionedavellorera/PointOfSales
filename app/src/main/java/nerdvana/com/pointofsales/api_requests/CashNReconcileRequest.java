@@ -10,7 +10,8 @@ import nerdvana.com.pointofsales.GsonHelper;
 public class CashNReconcileRequest extends BaseRequest{
     private Map<String, String> mapValue;
 
-    public CashNReconcileRequest(List<CollectionFinalPostModel> collectionFinalPostModels, String empId) {
+    public CashNReconcileRequest(List<CollectionFinalPostModel> collectionFinalPostModels, String empId,
+                                 String fromPopUp) {
         mapValue = new HashMap<>();
         mapValue.put("post", GsonHelper.getGson().toJson(collectionFinalPostModels));
         mapValue.put("user_id", userId);
@@ -19,6 +20,7 @@ public class CashNReconcileRequest extends BaseRequest{
         mapValue.put("currency_id", currencyId);
         mapValue.put("currency_value", currencyValue);
         mapValue.put("emp_id", empId);
+        mapValue.put("from_pop_up", fromPopUp);
 
         mapValue.put(ApplicationConstants.POS_TO_ID, toId);
 

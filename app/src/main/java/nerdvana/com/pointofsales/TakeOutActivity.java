@@ -1,5 +1,6 @@
 package nerdvana.com.pointofsales;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,6 +27,7 @@ import nerdvana.com.pointofsales.api_responses.FetchOrderPendingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomAreaResponse;
 import nerdvana.com.pointofsales.api_responses.GetOrderResponse;
 import nerdvana.com.pointofsales.background.FetchOrderPendingAsync;
+import nerdvana.com.pointofsales.custom.CustomGridLayoutManager;
 import nerdvana.com.pointofsales.custom.SpacesItemDecoration;
 import nerdvana.com.pointofsales.dialogs.TakeOutCreateCustomerDialog;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
@@ -164,7 +167,7 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
                 this,
                 TakeOutActivity.this,
                 Utils.getSystemType(getApplicationContext()));
-        listTableRoomSelection.setLayoutManager(new GridLayoutManager(TakeOutActivity.this, 5));
+        listTableRoomSelection.setLayoutManager(new CustomGridLayoutManager(TakeOutActivity.this, calculateNoOfColumns(TakeOutActivity.this, 100)));
         listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
         roomsTablesAdapter.notifyDataSetChanged();
@@ -186,5 +189,13 @@ public class TakeOutActivity extends AppCompatActivity implements AsyncContract,
         refreshRoom.setRefreshing(false);
         fetchOrderPendingRequest();
     }
+
+    public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
+        int noOfColumns = (int) (screenWidthDp / columnWidthDp + 0.5); // +0.5 for correct rounding to int.
+        return noOfColumns;
+    }
+
 
 }

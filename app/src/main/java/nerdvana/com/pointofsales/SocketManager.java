@@ -179,6 +179,8 @@ public class SocketManager {
                 SocketManager.getInstance().emit("reloadposnerdvana", roomObject);
             }
 
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -1822,8 +1822,6 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                                 } else {
                                     Utils.showDialogMessage(getActivity(), "Please add a product for FOC", "Information");
                                 }
-
-
                             }
                         };
 
@@ -1851,13 +1849,13 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             BusProvider.getInstance().post(new FocTransactionRequest(
                                     "",
                                     selectedRoom.getControlNo(),
-                                    employeeId
+                                    adminPassword
                             ));
                         } else {
                             BusProvider.getInstance().post(new FocTransactionRequest(
                                     String.valueOf(selectedRoom.getRoomId()),
                                     "",
-                                    employeeId
+                                    adminPassword
                             ));
                         }
                     } else {
@@ -1997,7 +1995,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
 
 
                 if (spotAuditDialog == null) {
-                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false, pShiftNumber, adminPassword) {
+                    spotAuditDialog = new CollectionDialog(getActivity(), "Spot Audit", false, pShiftNumber, adminPassword, 0) {
                         @Override
                         public void printCashRecoData(String cashNRecoData) {
 
@@ -2241,7 +2239,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     AlertYesNo alertYesNo = new AlertYesNo(getActivity(), ApplicationConstants.DISCARD_STRING) {
                         @Override
                         public void yesClicked() {
-                            cashNReconcile(finalAdminPassword1);
+                            cashNReconcile(finalAdminPassword1, clickedItem.getFromPopUp());
                         }
 
                         @Override
@@ -2251,7 +2249,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     };
                     alertYesNo.show();
                 } else {
-                    cashNReconcile(adminPassword);
+                    cashNReconcile(adminPassword, clickedItem.getFromPopUp());
                 }
                 break;
             case 120: //Z READ, END OF DAY
@@ -3395,7 +3393,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
             if (safeKeepingDialog == null) {
                 ApplicationConstants.IS_ACTIVE = "T";
-                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false, pShiftNumber, adminPassword) {
+                safeKeepingDialog = new CollectionDialog(getActivity(), "SAFEKEEPING", false, pShiftNumber, adminPassword, 0) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
 
@@ -7102,14 +7100,17 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
         return hasUnposted;
     }
 
-    private void cashNReconcile(String adminPassword) {
-
+    private void cashNReconcile(String adminPassword, String fromPopUp) {
+        int fromPop = 0;
         if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
 
             if (cutOffDialog == null) {
+                if (fromPopUp.equalsIgnoreCase("1")) {
+                    fromPop = 1;
+                }
                 ApplicationConstants.IS_ACTIVE = "T";
 
-                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true, pShiftNumber, adminPassword) {
+                cutOffDialog = new CollectionDialog(getActivity(), "Cash and Reconcile", true, pShiftNumber, adminPassword, fromPop) {
                     @Override
                     public void printCashRecoData(String cashNRecoData) {
                         try {
@@ -7179,7 +7180,27 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
     }
 
     private void zReadRequest(String adminPassword) {
-        doZReadFunction(adminPassword);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("End of day confirmation");
+        builder.setMessage("after this action you cannot add any more transaction for this day, continue?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        doZReadFunction(adminPassword);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        androidx.appcompat.app.AlertDialog alert = builder.create();
+        if (!alert.isShowing()) {
+            alert.show();
+        }
+
     }
 
     private void doZReadFunction(String employeeId) {
@@ -7412,6 +7433,9 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                     BusProvider.getInstance().post(new PrintModel("Z READ SUCCESS", "zread", "ACK_SLIP", GsonHelper.getGson().toJson(response.body().getResult())));
                 }
 
+                if (shiftCutOffMenuDialog != null) {
+                    shiftCutOffMenuDialog.dismiss();
+                }
 
 
 
@@ -7514,7 +7538,7 @@ public class LeftFrameFragment extends Fragment implements AsyncContract, Checko
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
                                     if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
-                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19, 0));
+                                        BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19, 0, "1"));
                                     }
                                     blockerDialog = null;
                                     break;

@@ -123,7 +123,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
 //                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));
                         buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8, 0));
                         buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3, 0));
-                        buttonsModelList.add(new ButtonsModel(126,"FOC", "",24, 0)); //return later
+                        buttonsModelList.add(new ButtonsModel(126,"FOC", "",24, 78)); //return later
                         buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24, 0));
                         buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24, 0));
                         buttonsModelList.add(new ButtonsModel(133,"SHIFT CUT OFF", "",24, 0));
@@ -157,7 +157,7 @@ public class ButtonsAsync extends AsyncTask<ButtonsModel, Void, List<ButtonsMode
 //                buttonsModelList.add(new ButtonsModel(108,"ORDER SLIP", "",15, 0));
                     buttonsModelList.add(new ButtonsModel(125,"ROOM LIST VIEW", "",8, 0));
                     buttonsModelList.add(new ButtonsModel(130,"FREEBIES", "",3, 0));
-                    buttonsModelList.add(new ButtonsModel(126,"FOC", "",24, 0)); //return later
+                    buttonsModelList.add(new ButtonsModel(126,"FOC", "",24, 78)); //return later
                     buttonsModelList.add(new ButtonsModel(131,"ADD GUEST", "",24, 0));
                     buttonsModelList.add(new ButtonsModel(132,"SPOT AUDIT", "",24, 0));
                     buttonsModelList.add(new ButtonsModel(133,"SHIFT CUT OFF", "",24, 0));

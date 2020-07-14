@@ -45,6 +45,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TimerService extends Service {
+    long totalSeconds = 999999999;
+    //    long totalSeconds = 10;
+    long intervalSeconds = 1;
+    private CountDownTimer timer;
+
+
     long secsOfDate = 0;
     String startDate = "";
     String shiftInfoStringArray = "";
@@ -52,6 +58,8 @@ public class TimerService extends Service {
     private static String currentDate = "";
 
     private Call<ResponseBody> checkShiftApiRequest;
+
+    Double skTimeTrigger = 0.00;
 
     CountDownTimer countUpTimer;
     @Override
@@ -64,18 +72,22 @@ public class TimerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             if (intent.getStringExtra("start_time") != null) {
+                skTimeTrigger = Double.valueOf(SharedPreferenceManager.getString(null, ApplicationConstants.SK_TIME_TRIGGER)) * 60;
                 startDate = intent.getStringExtra("start_time");
                 shiftInfoStringArray = intent.getStringExtra("shift_info_array");
 
                 TypeToken<List<FetchBranchInfoResponse.Shift>> branchInfo = new TypeToken<List<FetchBranchInfoResponse.Shift>>() {};
                 final List<FetchBranchInfoResponse.Shift> userList = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(this, ApplicationConstants.SHIFT_INFO_ARRAY), branchInfo.getType());
-;
+                ;
 
                 secsOfDate = Utils.getDurationInSecs(startDate);
 
-                countUpTimer = new CountUpTimer(999999999) {
+                timer = new CountDownTimer(totalSeconds * 1000, intervalSeconds * 1000) {
+
                     @Override
-                    public void onTick(int second) {
+                    public void onTick(long l) {
+//                        Log.d("TIMERSERVICE", "TICKING");
+
                         secsOfDate+= 1;
                         //currentDate = Utils.convertSecondsToSqlDate(secsOfDate);
 
@@ -170,7 +182,12 @@ public class TimerService extends Service {
                                                         shiftDisplay = "0";
                                                         BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+
+                                                            if (secsOfDate % skTimeTrigger == 0) {
+
+                                                                BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                            }
+
                                                         }
 
                                                     } else {
@@ -201,7 +218,10 @@ public class TimerService extends Service {
 
                                                                         } else {
                                                                             if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                                                BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                                                if (secsOfDate % skTimeTrigger == 0) {
+
+                                                                                    BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                                                }
 
                                                                             }
 
@@ -227,7 +247,10 @@ public class TimerService extends Service {
                                                                         }
                                                                     } else {
                                                                         if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                                            if (secsOfDate % skTimeTrigger == 0) {
+
+                                                                                BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                                            }
 
                                                                         }
 
@@ -250,7 +273,10 @@ public class TimerService extends Service {
                                                     shiftDisplay = "0";
                                                     BusProvider.getInstance().post(new InfoModel("ALLOW", shiftNumberToSend));
                                                     if (!SharedPreferenceManager.getString(null, ApplicationConstants.IS_TELEPHONE_OPERATOR).equalsIgnoreCase("y")) {
-                                                        BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                        if (secsOfDate % skTimeTrigger == 0) {
+
+                                                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
+                                                        }
                                                     }
                                                 }
 
@@ -278,21 +304,37 @@ public class TimerService extends Service {
 //                            BusProvider.getInstance().post(new CheckSafeKeepingRequest());
 //                        }
                         if (SharedPreferenceManager.getString(null, ApplicationConstants.IS_ALLOWED_WAKE_UP_CALL).equalsIgnoreCase("y")) {
-                            if (secsOfDate % 35 == 0){
+                           double wakeUpCallTriggerInSeconds = Double.valueOf(SharedPreferenceManager.getString(null, ApplicationConstants.WAKEUP_CALL_TIME_TRIGGER)) * 60;
+
+                            if (secsOfDate % wakeUpCallTriggerInSeconds == 0){
                                 new WakeUpCallReminderAsync(secsOfDate).execute();
                             }
                         }
 
 
 
-//                        if (secsOfDate % 5 == 0) {
-////                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
-//                        }
+                        if (secsOfDate % 5 == 0) {
+                            BusProvider.getInstance().post(new ServerConnectionModel(Utils.canConnectToServer()));
+                        }
+
+
                     }
-                }.start();
+
+                    @Override
+                    public void onFinish() {
+                        this.cancel();
+                        this.start();
+                        Log.d("TIMERSERVICE", "RESTARTED");
+                    }
+                };
+                Log.d("TIMERSERVICE", "STARTED");
+                timer.start();
+
             }
+
         }
-        return super.onStartCommand(intent, flags, startId);
+
+        return START_NOT_STICKY;
     }
 
     private String shiftNumber(List<FetchBranchInfoResponse.Shift> userList, long secsOfDate) {

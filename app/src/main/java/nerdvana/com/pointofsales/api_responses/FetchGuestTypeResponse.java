@@ -57,6 +57,28 @@ public class FetchGuestTypeResponse {
         @SerializedName("deleted_at")
         @Expose
         private Object deletedAt;
+        @SerializedName("require_vehicle")
+        @Expose
+        private String requireVehicle;
+        @SerializedName("require_car_make")
+        @Expose
+        private String requireCarMake;
+
+        public String getRequireVehicle() {
+            return requireVehicle;
+        }
+
+        public void setRequireVehicle(String requireVehicle) {
+            this.requireVehicle = requireVehicle;
+        }
+
+        public String getRequireCarMake() {
+            return requireCarMake;
+        }
+
+        public void setRequireCarMake(String requireCarMake) {
+            this.requireCarMake = requireCarMake;
+        }
 
         public Integer getId() {
             return id;

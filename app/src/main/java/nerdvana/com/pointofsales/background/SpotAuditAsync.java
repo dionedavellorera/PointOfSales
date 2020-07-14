@@ -335,7 +335,7 @@ public class SpotAuditAsync extends AsyncTask<Void, Void, Void> {
             tmpString += MainActivity.receiptString("CASH COUNT", String.valueOf(finalAmount), context, false);
             tmpString += MainActivity.receiptString("CASH OUT", "0.00", context, false);
             tmpString += MainActivity.receiptString("", "", context, false);
-            tmpString += MainActivity.receiptString("SHORT/IVER", shortOver, context, false);
+            tmpString += MainActivity.receiptString("SHORT/OVER", shortOver, context, false);
             tmpString += MainActivity.receiptString("", "", context, false);
 
             tmpString += MainActivity.receiptString("------------", "", context, true);

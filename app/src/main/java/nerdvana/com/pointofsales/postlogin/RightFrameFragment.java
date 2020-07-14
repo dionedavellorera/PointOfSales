@@ -57,6 +57,7 @@ import nerdvana.com.pointofsales.custom.CustomGridLayoutManager;
 import nerdvana.com.pointofsales.custom.DrawableClickListener;
 import nerdvana.com.pointofsales.dialogs.ChangeQtyDialog;
 import nerdvana.com.pointofsales.dialogs.InputDialog;
+import nerdvana.com.pointofsales.dialogs.ProductFilterDialog;
 import nerdvana.com.pointofsales.entities.CurrentTransactionEntity;
 import nerdvana.com.pointofsales.interfaces.AsyncContract;
 import nerdvana.com.pointofsales.interfaces.ProductsContract;
@@ -80,6 +81,8 @@ public class RightFrameFragment extends Fragment implements
 
     private Timer timer;
 
+    private Button btnProductFilter;
+    ProductFilterDialog productFilterDialog;
     private View view;
     private TextView labelQty;
     private RoomTableModel selectedRoom;
@@ -236,6 +239,8 @@ public class RightFrameFragment extends Fragment implements
 
     @SuppressLint("ClickableViewAccessibility")
     private void initializeViews(View view) {
+        btnProductFilter = view.findViewById(R.id.btnProductFilter);
+        btnProductFilter.setOnClickListener(this);
         btnChangeQty = view.findViewById(R.id.btnChangeQty);
         btnChangeQty.setOnClickListener(this);
         search = view.findViewById(R.id.search);
@@ -300,7 +305,8 @@ public class RightFrameFragment extends Fragment implements
                                     productsModel.getUnitPrice(),
                                     productsModel.getBranchAlaCartList(),
                                     productsModel.getBranchGroupList(),
-                                    "",""));
+                                    "","",
+                                    productsModel.getCoreDepartmentId()));
                 }
                 productsAdapter.notifyDataSetChanged();
 
@@ -500,7 +506,8 @@ public class RightFrameFragment extends Fragment implements
                             productsModel.getBranchAlaCartList(),
                             productsModel.getBranchGroupList(),
                             "",
-                            productsModel.getBarcode()));
+                            productsModel.getBarcode(),
+                            productsModel.getCoreDepartmentId()));
         }
     }
 
@@ -639,6 +646,34 @@ public class RightFrameFragment extends Fragment implements
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btnProductFilter:
+                if (productFilterDialog == null) {
+                    productFilterDialog = new ProductFilterDialog(getActivity()) {
+                        @Override
+                        public void filtersClosed() {
+                            if (productsAdapter != null) {
+                                productsAdapter.getFilter().filter(search.getText().toString());
+                            }
+
+                        }
+                    };
+                    productFilterDialog.show();
+                    productFilterDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            productFilterDialog = null;
+                        }
+                    });
+
+                    productFilterDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            productFilterDialog = null;
+                        }
+                    });
+                }
+
+                break;
             case R.id.btnChangeQty:
                 if (changeQtyDialog == null) {
 

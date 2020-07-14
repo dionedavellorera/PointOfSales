@@ -84,6 +84,8 @@ public class ApplicationConstants {
     public static final String ROOM_JSON = "room_json";
     public static final String ACCESS_RIGHTS = "access_rights";
     public static final String PRINTER_PREFS = "printer_prefs";
+    public static final String SK_TIME_TRIGGER = "sk_time_trigger";
+    public static final String WAKEUP_CALL_TIME_TRIGGER = "wakeup_call_time_trigger";
 
 
     public static String IS_ACTIVE = "F";
@@ -96,5 +98,7 @@ public class ApplicationConstants {
     public static final String PERMIT_END_DATE = "permit_valid_at";
     public static final String RECEIPT_HEADER = "receipt_header";
     public static final String TELEPHONE = "telephone";
+
+    public static final String PRODUCT_FILTERS = "product_filters";
 
 }

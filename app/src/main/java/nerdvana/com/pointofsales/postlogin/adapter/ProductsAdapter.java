@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nerdvana.com.pointofsales.ApplicationConstants;
+import nerdvana.com.pointofsales.GsonHelper;
 import nerdvana.com.pointofsales.R;
 import nerdvana.com.pointofsales.SharedPreferenceManager;
 import nerdvana.com.pointofsales.Utils;
@@ -55,17 +56,51 @@ public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 String charSting = constraint.toString();
                 productsFilteredList = new ArrayList<>();
                 if (charSting.isEmpty()) {
-                    productsFilteredList = productsModelList;
+                    List<ProductsModel> filteredList = new ArrayList<>();
+                    List<String> filtersSelected = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(null, ApplicationConstants.PRODUCT_FILTERS), List.class);
+
+                    if (filtersSelected != null) {
+                        for (ProductsModel pm : productsModelList) {
+
+                            if (filtersSelected.contains(pm.getCoreDepartmentId())) {
+                                filteredList.add(pm);
+                            }
+                        }
+
+                        productsFilteredList = filteredList;
+                    } else {
+                        productsFilteredList = productsModelList;
+                    }
+
+
                 } else {
                     List<ProductsModel> filteredList = new ArrayList<>();
+
+                    List<String> filtersSelected = GsonHelper.getGson().fromJson(SharedPreferenceManager.getString(null, ApplicationConstants.PRODUCT_FILTERS), List.class);
+
                     for (ProductsModel pm : productsModelList) {
-                        if (pm.getName().toLowerCase().contains(charSting.toLowerCase()) ||
-                            String.valueOf(pm.getPrice()).contains(charSting.toLowerCase()) ||
-                            pm.getDepartment().toLowerCase().contains(charSting.toLowerCase()) ||
-                            pm.getBarcode().toLowerCase().contains(charSting.toLowerCase())) {
-                            filteredList.add(pm);
+
+                        if (filtersSelected != null) {
+                            if (filtersSelected.contains(pm.getCoreDepartmentId())) {
+                                if (pm.getName().toLowerCase().contains(charSting.toLowerCase()) ||
+                                        String.valueOf(pm.getPrice()).contains(charSting.toLowerCase()) ||
+                                        pm.getDepartment().toLowerCase().contains(charSting.toLowerCase()) ||
+                                        pm.getBarcode().toLowerCase().contains(charSting.toLowerCase())) {
+                                    filteredList.add(pm);
+                                }
+                            }
+                        } else {
+                            if (pm.getName().toLowerCase().contains(charSting.toLowerCase()) ||
+                                    String.valueOf(pm.getPrice()).contains(charSting.toLowerCase()) ||
+                                    pm.getDepartment().toLowerCase().contains(charSting.toLowerCase()) ||
+                                    pm.getBarcode().toLowerCase().contains(charSting.toLowerCase())) {
+                                filteredList.add(pm);
+                            }
                         }
+
+
                     }
+
                     productsFilteredList = filteredList;
                 }
                 FilterResults filterResults = new FilterResults();

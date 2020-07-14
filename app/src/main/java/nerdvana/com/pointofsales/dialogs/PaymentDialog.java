@@ -630,6 +630,12 @@ public abstract class PaymentDialog extends BaseDialog  {
 
                 if (postedPaymentsAdapter != null) {
                     postedPaymentsAdapter.notifyDataSetChanged();
+
+                    cardNumber.setText("");
+                    cardHoldersName.setText("");
+                    cardExpiration.setText("");
+                    authorization.setText("");
+                    remarks.setText("");
                 }
                 computeTotal();
             }
@@ -646,7 +652,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                     errorMessage += "Invalid payment method \n";
                 }
 
-                if (TextUtils.isEmpty(takasId.trim())) {
+                if (TextUtils.isEmpty(takasId)) {
                     isValid = false;
                     errorMessage += "Please select takas type \n" ;
                 }
@@ -683,6 +689,8 @@ public abstract class PaymentDialog extends BaseDialog  {
 
                 if (postedPaymentsAdapter != null) {
                     postedPaymentsAdapter.notifyDataSetChanged();
+
+                    takasRemarks.setText("");
                 }
                 computeTotal();
             }
@@ -699,7 +707,7 @@ public abstract class PaymentDialog extends BaseDialog  {
                     errorMessage += "Invalid payment method \n";
                 }
 
-                if (TextUtils.isEmpty(onlineId.trim())) {
+                if (TextUtils.isEmpty(onlineId)) {
                     isValid = false;
                     errorMessage += "Please select ar type \n" ;
                 }
@@ -707,6 +715,16 @@ public abstract class PaymentDialog extends BaseDialog  {
                 if (TextUtils.isEmpty(voucherCode.getText().toString().trim())) {
                     isValid = false;
                     errorMessage += "Empty voucher code \n";
+                }
+
+                if (!TextUtils.isEmpty(voucherAmount.getText().toString().trim())) {
+                    if (Double.valueOf(voucherAmount.getText().toString()) < 1) {
+                        isValid = false;
+                        errorMessage += "Amount cannot be zero \n";
+                    }
+                } else {
+                    isValid = false;
+                    errorMessage += "Amount cannot be empty \n";
                 }
 
                 if (isValid) {
@@ -735,6 +753,9 @@ public abstract class PaymentDialog extends BaseDialog  {
 
                 if (postedPaymentsAdapter != null) {
                     postedPaymentsAdapter.notifyDataSetChanged();
+
+                    voucherCode.setText("");
+                    voucherAmount.setText("");
                 }
                 computeTotal();
             }
@@ -867,6 +888,11 @@ public abstract class PaymentDialog extends BaseDialog  {
 
                 if (postedPaymentsAdapter != null) {
                     postedPaymentsAdapter.notifyDataSetChanged();
+
+                    guestNameInput.setText("");
+                    guestAddressInput.setText("");
+                    guestTinInput.setText("");
+                    guestBusinessStyle.setText("");
                 }
                 computeTotal();
             }

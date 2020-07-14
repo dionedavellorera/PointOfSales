@@ -185,7 +185,7 @@ public abstract class RoomBundleSelectionDialog extends BaseDialog {
                             b.getProduct().getAmount(),
                             result.getProductBundleList().get(position).getProduct().getBranchAlaCart(),
                             result.getProductBundleList().get(position).getProduct().getBranchGroup(),
-                            "","");
+                            "","", "");
 
 
 

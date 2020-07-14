@@ -133,6 +133,8 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
         setNationality();
 
         setSelectedFields();
+
+
     }
 
     private void setSelectedFields() {
@@ -250,7 +252,7 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
         spinnerNationalirt.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                nationalityId = nationalityList.get(position).getCoreId();
+                nationalityId = nationalityList.get(position).getId();
 
             }
 
@@ -394,6 +396,18 @@ public abstract class CheckInDialog extends BaseDialog implements View.OnClickLi
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 guestTypeId = guestTypeList.get(position).getId();
+
+                if (guestTypeList.get(position).getRequireCarMake().equalsIgnoreCase("1")) {
+                    carSpinner.setEnabled(true);
+                } else {
+                    carSpinner.setEnabled(false);
+                }
+
+                if (guestTypeList.get(position).getRequireVehicle().equalsIgnoreCase("1")) {
+                    vehicleSpinner.setEnabled(true);
+                } else {
+                    vehicleSpinner.setEnabled(false);
+                }
             }
 
             @Override

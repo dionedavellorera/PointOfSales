@@ -288,6 +288,18 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         List<RoomEntity> books = RoomEntity.listAll(RoomEntity.class);
 
+
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.SK_TIME_TRIGGER))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "1", ApplicationConstants.SK_TIME_TRIGGER);
+        }
+
+
+        if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.WAKEUP_CALL_TIME_TRIGGER))) {
+            SharedPreferenceManager.saveString(getApplicationContext(), "1", ApplicationConstants.WAKEUP_CALL_TIME_TRIGGER);
+        }
+
+
         if (TextUtils.isEmpty(SharedPreferenceManager.getString(getApplicationContext(), ApplicationConstants.MAX_GRID_COLUMN))) {
             SharedPreferenceManager.saveString(getApplicationContext(), "5", ApplicationConstants.MAX_GRID_COLUMN);
         }
@@ -516,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 //ROOM REFRESH NOT SPAM
                 //ROOM SEARCH APPLIES EVEN AFTER REFRESH
                 //SEARCH VIEW SWITCHED TO HIDINGEDITTEXT TO HIDE KEYBOARD
-                TooltipCompat.setTooltipText(v, "v1.3.6");
+                TooltipCompat.setTooltipText(v, "v1.4.1 - " + SharedPreferenceManager.getString(null, ApplicationConstants.SAFEKEEPING_AMOUNT));
                 return false;
             }
         });
@@ -761,6 +773,12 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 
         if (mHandler != null) { mHandler.removeCallbacks(mRunnable); }
 
+        if (timerIntent != null) {
+            timerIntent = new Intent(this, TimerService.class);
+            stopService(timerIntent);
+            timerIntent = null;
+        }
+
 //        try {
 //            SPrinter.getPrinter().disconnect();
 //        } catch (Epos2Exception e) {
@@ -768,6 +786,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
 //        }
         if (timerIntent != null) {
             stopService(timerIntent);
+        }
+
+        if (SocketManager.getInstance() != null) {
+            SocketManager.getInstance().disconnect();
+            SocketManager.getInstance().close();
         }
 
 
@@ -840,7 +863,11 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
+
+
     }
+
+
 
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
@@ -4338,8 +4365,10 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 startActivityForResult(takeOutIntent, 20);
                 break;
             case 997: //logout
+
                 if (timerIntent != null) {
                     stopService(timerIntent);
+                    timerIntent = null;
                 }
                 RoomEntity.deleteAll(RoomEntity.class);
                 ApplicationConstants.IS_THEME_CHANGED = "T";
@@ -4347,7 +4376,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 SharedPreferenceManager.saveString(MainActivity.this, GsonHelper.getGson().toJson(userModel), ApplicationConstants.userSettings);
                 SharedPreferenceManager.saveString(MainActivity.this, "", ApplicationConstants.ACCESS_RIGHTS);
                 CurrentTransactionEntity.deleteAll(CurrentTransactionEntity.class);
-//                finish();
+                finish();
                 startActivity(new Intent(MainActivity.this, SetupActivity.class));
                 break;
         }
@@ -4386,7 +4415,7 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
                 if (!ApplicationConstants.IS_ACTIVE.equalsIgnoreCase("T")) {
                     if (collectionDialog == null) {
                         ApplicationConstants.IS_ACTIVE = "T";
-                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false, pShiftNumber, "") {
+                        collectionDialog = new CollectionDialog(MainActivity.this, "Safekeeping", false, pShiftNumber, "", 1) {
                             @Override
                             public void printCashRecoData(String cashNRecoData) {
 
@@ -4446,14 +4475,19 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
     public void fetchServerTime(FetchTimeResponse fetchTimeResponse) {
         if (fetchTimeResponse != null) {
             if (fetchTimeResponse.getTime() != null) {
-                timerIntent = new Intent(this, TimerService.class);
-                timerIntent.putExtra("start_time", fetchTimeResponse.getTime());
-                timerIntent.putExtra("shift_info_array", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SHIFT_INFO_ARRAY));
-                startService(timerIntent);
+                if (timerIntent == null) {
+                    timerIntent = new Intent(this, TimerService.class);
+                    timerIntent.putExtra("start_time", fetchTimeResponse.getTime());
+                    timerIntent.putExtra("shift_info_array", SharedPreferenceManager.getString(MainActivity.this, ApplicationConstants.SHIFT_INFO_ARRAY));
+                    startService(timerIntent);
+                }
+
             }
         }
 
     }
+
+
 
 
 
@@ -5075,6 +5109,8 @@ public class MainActivity extends AppCompatActivity implements PreloginContract,
             inputDialog.dismiss();
         }
     }
+
+
 
 
 }

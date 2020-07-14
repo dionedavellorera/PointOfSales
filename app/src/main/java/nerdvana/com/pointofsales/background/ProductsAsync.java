@@ -57,15 +57,18 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
 
             amount = ((amount * (r.getMarkUp() + 1))) * Double.valueOf(SharedPreferenceManager.getString(context, ApplicationConstants.DEFAULT_CURRENCY_VALUE));
             String branchDepartment = "";
+            String branchDepartmentId = "";
             if (r.getBranchDepartments().size() > 0) {
                 if (r.getBranchDepartments().get(0).getBranchDepartment() != null) {
-                    if (r.getBranchDepartments().get(0).getDepartmentId() == 3 ||
-                            r.getBranchDepartments().get(0).getDepartmentId() == 4 ||
-                            r.getBranchDepartments().get(0).getDepartmentId() == 5 ||
-                            r.getBranchDepartments().get(0).getDepartmentId() == 6) {
-                        shouldDisplay = true;
-                    }
+//                    if (r.getBranchDepartments().get(0).getDepartmentId() == 3 ||
+//                            r.getBranchDepartments().get(0).getDepartmentId() == 4 ||
+//                            r.getBranchDepartments().get(0).getDepartmentId() == 5 ||
+//                            r.getBranchDepartments().get(0).getDepartmentId() == 6) {
+//
+//                    }
+                    shouldDisplay = true;
                     branchDepartment = r.getBranchDepartments().get(0).getBranchDepartment().getDepartment();
+                    branchDepartmentId = String.valueOf(r.getBranchDepartments().get(0).getBranchDepartment().getCoreId());
                 }
             }
 
@@ -92,7 +95,8 @@ public class ProductsAsync extends AsyncTask<ProductsModel, Void, List<ProductsM
                         r.getBranchAlaCartList(),
                         r.getBranchGroupList(),
                         "",
-                        r.getProductBarcode() != null ? r.getProductBarcode().toString() : ""));
+                        r.getProductBarcode() != null ? r.getProductBarcode().toString() : "",
+                        branchDepartmentId));
 
 
             }

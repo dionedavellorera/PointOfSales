@@ -28,6 +28,7 @@ import nerdvana.com.pointofsales.api_responses.FetchCreditCardResponse;
 import nerdvana.com.pointofsales.api_responses.FetchCurrencyExceptDefaultResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDefaultCurrenyResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDenominationResponse;
+import nerdvana.com.pointofsales.api_responses.FetchDepartmentsResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountReasonResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountResponse;
 import nerdvana.com.pointofsales.api_responses.FetchDiscountSpecialResponse;
@@ -406,4 +407,8 @@ public interface IUsers {
     @POST("addRemakrsPostTrans") //for adding remarks to selected product
     @FormUrlEncoded
     Call<ResponseBody> addRemarksToProduct(@FieldMap Map<String, String> params);
+
+    @POST("fetchDepartments") //for adding remarks to selected product
+    @FormUrlEncoded
+    Call<FetchDepartmentsResponse> fetchDepartments(@FieldMap Map<String, String> params);
 }

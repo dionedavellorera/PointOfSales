@@ -46,10 +46,10 @@ public class ShiftCutOffMenuDialog extends BaseDialog implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnXread:
-                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19, 0));
+                BusProvider.getInstance().post(new ButtonsModel(121,"XREAD", "",19, 72));
                 break;
             case R.id.btnZread:
-                BusProvider.getInstance().post(new ButtonsModel(120,"ZREAD", "",21, 0));
+                BusProvider.getInstance().post(new ButtonsModel(120,"ZREAD", "",21, 73));
                 break;
             case R.id.btnReprintXRead:
                 BusProvider.getInstance().post(new ButtonsModel(123,"REPRINT X READING", "",22, 75));

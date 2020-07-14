@@ -11,6 +11,8 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
     private int core_id;
 
     private boolean hasWelcome;
+
+    private String fromPopUp = "";
     public ButtonsModel(int id, String name, String imageUrl, int position, int core_id) {
         this.id = id;
         this.name = name;
@@ -26,6 +28,44 @@ public class ButtonsModel implements Comparable<ButtonsModel>{
         this.imageUrl = imageUrl;
         this.position = position;
         this.isSpecial = isSpecial;
+    }
+
+
+    public ButtonsModel(int id, String name, String imageUrl, int position, int core_id, String fromPopUp) {
+        this.id = id;
+        this.name = name;
+        this.imageUrl = imageUrl;
+        this.position = position;
+        this.core_id = core_id;
+        this.fromPopUp = fromPopUp;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public void setSpecial(boolean special) {
+        isSpecial = special;
+    }
+
+    public String getFromPopUp() {
+        return fromPopUp;
+    }
+
+    public void setFromPopUp(String fromPopUp) {
+        this.fromPopUp = fromPopUp;
     }
 
     public boolean isEnabled() {

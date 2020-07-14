@@ -37,6 +37,7 @@ import nerdvana.com.pointofsales.api_responses.CheckSafeKeepingResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomResponse;
 import nerdvana.com.pointofsales.api_responses.FetchRoomStatusResponse;
 import nerdvana.com.pointofsales.background.RoomsTablesAsync;
+import nerdvana.com.pointofsales.custom.CustomGridLayoutManager;
 import nerdvana.com.pointofsales.custom.HidingEditText;
 import nerdvana.com.pointofsales.dialogs.ChangeRoomStatusDialog;
 import nerdvana.com.pointofsales.dialogs.CollectionDialog;
@@ -275,7 +276,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
     private void setRoomsTableAdapter() {
 //        int spanCount = Integer.valueOf(SharedPreferenceManager.getString(RoomsActivity.this, ApplicationConstants.MAX_GRID_COLUMN));
         roomsTablesAdapter = new RoomsTablesAdapter(new ArrayList<RoomTableModel>(), this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-        listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
+        listTableRoomSelection.setLayoutManager(new CustomGridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
 //        listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
         listTableRoomSelection.setAdapter(roomsTablesAdapter);
         roomsTablesAdapter.notifyDataSetChanged();
@@ -526,7 +527,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
         if (statusId == 0) { //SHOW ALL
             roomsTablesAdapter = new RoomsTablesAdapter(originalRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
+            listTableRoomSelection.setLayoutManager(new CustomGridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
 //            listTableRoomSelection.addItemDecoration(new SpacesItemDecoration( 10));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
             roomsTablesAdapter.notifyDataSetChanged();
@@ -550,7 +551,7 @@ public class RoomsActivity extends AppCompatActivity implements AsyncContract,
 
             }
             roomsTablesAdapter = new RoomsTablesAdapter(filteredRoomList, this, RoomsActivity.this, Utils.getSystemType(getApplicationContext()));
-            listTableRoomSelection.setLayoutManager(new GridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
+            listTableRoomSelection.setLayoutManager(new CustomGridLayoutManager(RoomsActivity.this, calculateNoOfColumns(RoomsActivity.this, 100)));
             listTableRoomSelection.setAdapter(roomsTablesAdapter);
 
             roomsTablesAdapter.notifyDataSetChanged();

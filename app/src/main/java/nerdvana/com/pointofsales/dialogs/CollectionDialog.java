@@ -86,10 +86,13 @@ public abstract class CollectionDialog extends BaseDialog {
     private String pShiftNumber = "";
     private String adminPassword = "";
 
+    private int fromPopUp = 0;
     public CollectionDialog(@NonNull Activity context,
                             String type, boolean continueCashReco,
-                            String shiftNumber, String adminPassword) {
+                            String shiftNumber, String adminPassword,
+                            int fromPopUp) {
         super(context);
+        this.fromPopUp = fromPopUp;
         this.adminPassword = adminPassword;
         this.type = type;
         this.act = context;
@@ -168,7 +171,7 @@ public abstract class CollectionDialog extends BaseDialog {
                                 } else {
                                     if (totalSafeKeepAmount <= response.body().getResult().getUnCollected()) {
                                         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
-                                        CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels);
+                                        CollectionRequest collectionRequest = new CollectionRequest(collectionFinalPostModels, String.valueOf(fromPopUp));
 
                                         //dione return here
                                         if (safeKeepingApiRequest == null) {
@@ -276,13 +279,12 @@ public abstract class CollectionDialog extends BaseDialog {
         IUsers iUsers = PosClient.mRestAdapter.create(IUsers.class);
         //RETURN CASHRECOHERE
         if (cutOffApiRequest == null) {
-            collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId);
+            collectionRequest = new CashNReconcileRequest(collectionFinalPostModels, employeeId, String.valueOf(fromPopUp));
             cutOffApiRequest = iUsers.cashNReconcile(collectionRequest.getMapValue());
             cutOffApiRequest.enqueue(new Callback<Object>() {
                 @Override
                 public void onResponse(Call<Object> call, Response<Object> response) {
                     try {
-
                         JSONObject jsonObject = new JSONObject(GsonHelper.getGson().toJson(response.body()));
                         if (jsonObject.getString("status").equalsIgnoreCase("1.0") || jsonObject.getString("status").equalsIgnoreCase("1")) {
                             printCashRecoData(GsonHelper.getGson().toJson(jsonObject.getJSONArray("result").get(0)));
